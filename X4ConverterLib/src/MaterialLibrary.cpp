@@ -21,7 +21,7 @@ MaterialCollection* MaterialLibrary::GetCollection ( const std::string& name )
     if ( it != _collections.end () )
         return &(it->second);
 
-    pugi::xml_node collectionNode = _doc.select_single_node ( (format("/materiallibrary/collection[@name='%s']") % name).str().c_str() ).node ();
+    pugi::xml_node collectionNode = _doc.select_node ( (format("/materiallibrary/collection[@name='%s']") % name).str().c_str() ).node ();
     if ( !collectionNode )
         return nullptr;
 

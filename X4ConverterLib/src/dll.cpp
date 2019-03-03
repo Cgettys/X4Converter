@@ -10,7 +10,7 @@ extern "C" bool ConvertXmlToDae ( const char* pszGameBaseFolderPath, const char*
     const aiScene* pScene = importer.ReadFile ( pszXmlFilePath, 0 );
     if ( !pScene )
     {
-        strcpy_s =( pszError, iMaxErrorSize, importer.GetErrorString () );
+        strncpy( pszError, importer.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
@@ -18,7 +18,7 @@ extern "C" bool ConvertXmlToDae ( const char* pszGameBaseFolderPath, const char*
     aiReturn result = exporter.Export ( pScene, "collada", pszDaeFilePath );
     if ( result != aiReturn_SUCCESS )
     {
-        strcpy_s ( pszError, iMaxErrorSize, exporter.GetErrorString () );
+       strncpy( pszError, exporter.GetErrorString (), iMaxErrorSize  );
         return false;
     }
 
@@ -31,17 +31,17 @@ extern "C" bool ConvertDaeToXml ( const char* pszGameBaseFolderPath, const char*
     const aiScene* pScene = importer.ReadFile ( pszDaeFilePath, 0 );
     if ( !pScene )
     {
-        strcpy_s ( pszError, iMaxErrorSize, importer.GetErrorString () );
+       strncpy( pszError, importer.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
     Assimp::Exporter exporter;
-    exporter.RegisterExporter ( XfmExporter::Format );
-    XfmExporter::GameBaseFolderPath = pszGameBaseFolderPath;
+    exporter.RegisterExporter ( XmfExporter::Format );
+    XmfExporter::GameBaseFolderPath = pszGameBaseFolderPath;
     aiReturn result = exporter.Export ( pScene, "xmf", pszXmfFilePath );
     if ( result != aiReturn_SUCCESS )
     {
-        strcpy_s ( pszError, iMaxErrorSize, exporter.GetErrorString () );
+       strncpy( pszError, exporter.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
@@ -55,7 +55,7 @@ extern "C" bool ConvertXacToDae ( const char* pszGameBaseFolderPath, const char*
     const aiScene* pScene = importer.ReadFile ( pszXacFilePath, 0 );
     if ( !pScene )
     {
-        strcpy_s ( pszError, iMaxErrorSize, importer.GetErrorString () );
+       strncpy( pszError, importer.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
@@ -63,7 +63,7 @@ extern "C" bool ConvertXacToDae ( const char* pszGameBaseFolderPath, const char*
     aiReturn result = exporter.Export ( pScene, "collada", pszDaeFilePath );
     if ( result != aiReturn_SUCCESS )
     {
-        strcpy_s ( pszError, iMaxErrorSize, exporter.GetErrorString () );
+       strncpy( pszError, exporter.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
@@ -76,7 +76,7 @@ extern "C" bool ConvertDaeToXac ( const char* pszGameBaseFolderPath, const char*
     const aiScene* pScene = importer.ReadFile ( pszDaeFilePath, 0 );
     if ( !pScene )
     {
-        strcpy_s ( pszError, iMaxErrorSize, importer.GetErrorString () );
+       strncpy( pszError, importer.GetErrorString (), iMaxErrorSize );
         return false;
     }
 
@@ -86,7 +86,7 @@ extern "C" bool ConvertDaeToXac ( const char* pszGameBaseFolderPath, const char*
     aiReturn result = exporter.Export ( pScene, "xac", pszXacFilePath );
     if ( result != aiReturn_SUCCESS )
     {
-        strcpy_s ( pszError, iMaxErrorSize, exporter.GetErrorString () );
+       strncpy( pszError, exporter.GetErrorString (), iMaxErrorSize );
         return false;
     }
 

@@ -8,7 +8,7 @@ public:
     static std::string                  GameBaseFolderPath;
 
 private:
-    static void                         Export                  ( const char* pFilePath, Assimp::IOSystem* pIOHandler, const aiScene* pScene );
+    static void                         Export                  ( const char* pFilePath, Assimp::IOSystem* pIOHandler, const aiScene* pScene, const Assimp::ExportProperties* props );
     static void                         ConvertPartNode         ( Component& component, const std::string& parentPartName, const aiScene* pScene, aiNode* pPartNode );
     static void                         ConvertLodNode          ( ComponentPart& part, int lodIndex, const aiScene* pScene, aiNode* pLodNode );
     static void                         ConvertCollisionNode    ( ComponentPart& part, const aiScene* pScene, aiNode* pCollisionNode );

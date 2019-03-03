@@ -2,10 +2,10 @@
 #include "Xmf/XmfExporter.h"
 using namespace boost;
 
-Assimp::Exporter::ExportFormatEntry XmfExporter::Format ( "xmf", "EgoSoft XuMeshFile exporter", ".xml", XmfExporter::Export );
+Assimp::Exporter::ExportFormatEntry XmfExporter::Format ( "xmf", "EgoSoft XuMeshFile exporter", ".xml",XmfExporter::Export);
 std::string XmfExporter::GameBaseFolderPath;
 
-void XmfExporter::Export ( const char* pFilePath, Assimp::IOSystem* pIOHandler, const aiScene* pScene )
+void XmfExporter::Export ( const char* pFilePath, Assimp::IOSystem* pIOHandler, const aiScene* pScene, const Assimp::ExportProperties* props)
 {
     try
     {
