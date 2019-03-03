@@ -1,0 +1,18 @@
+# ninja log v5
+0	3228	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Util/BinaryWriter.cpp.o	985a53889942851b
+0	3555	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Util/DXUtil.cpp.o	6b21c5f4b2089d99
+2	3582	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Xmf/XmfVertexElement.cpp.o	fb396b4d09fb780a
+1	3685	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Xmf/XmfDataBuffer.cpp.o	4d5a42f6690b6072
+0	3750	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Util/AssimpUtil.cpp.o	97fea50b29836f68
+0	3759	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Util/BinaryReader.cpp.o	971a9fb88a8c6845
+1	3876	1551648473	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Util/PathUtil.cpp.o	6a11cc4f85bf6ff3
+1	4833	1551648474	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Xmf/XmfMaterial.cpp.o	345bba40f779019d
+1	5355	1551648475	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Xmf/XmfImporter.cpp.o	b76474b378c7fd7f
+3	4040	1551648545	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Color.cpp.o	de35176ab52cf561
+8	4148	1551648545	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/ComponentPart.cpp.o	ad079a62b8b37132
+9	4368	1551648546	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/ComponentPartLod.cpp.o	5c9d1a8277d5c7b3
+4	4721	1551648546	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Color8.cpp.o	73db0aaaab3f6fac
+16	4916	1551648546	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Material.cpp.o	3dc4fe4bd28995b0
+23	6218	1551648547	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/MaterialCollection.cpp.o	5d311c40a3da2874
+3	6525	1551648548	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Xmf/XuMeshFile.cpp.o	e40525d8ce2516b6
+7	6656	1551648548	X4ConverterLib/CMakeFiles/X4ConverterLib.dir/src/Component.cpp.o	d52701cf9cb998f6
