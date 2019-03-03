@@ -1,0 +1,16 @@
+set(XAC_SRCS 
+src/Xac/ActorFile.cpp
+src/Xac/ActorMaterial.cpp
+src/Xac/ActorMaterialLayer.cpp
+src/Xac/ActorMorphTarget.cpp
+src/Xac/ActorNode.cpp
+src/Xac/ActorSubMesh.cpp
+src/Xac/BoneInfluence.cpp
+src/Xac/XacChunkHeader.cpp
+src/Xac/XacDeformVec3D16.cpp
+src/Xac/XacDeformVec3D8.cpp
+src/Xac/XacExporter.cpp
+src/Xac/XacImporter.cpp
+src/Xac/XacSkinningChunkv3Influence.cpp
+src/Xac/XacSkinningChunkv3InfluenceRange.cpp
+PARENT_SCOPE)
