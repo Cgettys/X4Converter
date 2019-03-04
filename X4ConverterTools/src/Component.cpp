@@ -85,8 +85,9 @@ path Component::GetGeometryFolderPath(pugi::xml_node componentNode,
 			"source/@geometry").attribute();
 	if (!geometryAttr)
 		throw std::string("File has no geometry source");
-
-	path geometryFolderPath = path(gameBaseFolderPath) / geometryAttr.value();
+	std::string windowsPath = geometryAttr.value();
+	std::replace(windowsPath.begin(),windowsPath.end(), '\\', '/');
+	path geometryFolderPath = path(gameBaseFolderPath) / windowsPath;
 	if (!is_directory(geometryFolderPath)) {
 		if (!createIfMissing)
 			throw(format("Directory %s doesn't exist")

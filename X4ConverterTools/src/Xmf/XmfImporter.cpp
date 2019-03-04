@@ -66,8 +66,10 @@ void XmfImporter::InternReadFile ( const std::string& filePath, aiScene* pScene,
                 }
                 else
                 {
+                	aiString* tempString = new aiString ( it->first );
                     pAiMaterial = new aiMaterial ();
-                    pAiMaterial->AddProperty ( new aiString ( it->first ), AI_MATKEY_NAME );
+                    pAiMaterial->AddProperty ( tempString, AI_MATKEY_NAME );
+                    delete tempString;
                 }
                 pScene->mMaterials[it->second] = pAiMaterial;
             }

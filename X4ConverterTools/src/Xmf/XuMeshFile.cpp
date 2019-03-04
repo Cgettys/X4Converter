@@ -86,7 +86,10 @@ XmfHeader XuMeshFile::ReadHeader ( IOStream* pStream )
 
     if ( header.BigEndian )
         throw std::string ( "Big endian .xmf files are not supported by this importer" );
-
+    if (header.DataBufferDescOffset!=0x40){
+    	std::cout << header.DataBufferDescOffset << std::endl;
+    	throw std::string ( "Offset should be 0x40");
+    }
     if ( header.DataBufferDescSize > sizeof(XmfDataBufferDesc) )
         throw std::string ( "Data buffer description size is too large" );
 

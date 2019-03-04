@@ -3,7 +3,6 @@ add_subdirectory(src)
 #https://rix0r.nl/blog/2015/08/13/cmake-guide/
 add_library(X4ConverterTools SHARED ${LIB_SRCS})
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem ${pugixml_LIB} ${ZLIB_LIBRARIES} ${assimp_LIB} )
-message(STATUS "HELLO" ${ZLIB_INCLUDE_DIRS})
 target_include_directories(X4ConverterTools PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>

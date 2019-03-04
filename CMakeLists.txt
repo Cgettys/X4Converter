@@ -4,6 +4,7 @@ project (X4Converter)
 include(GNUInstallDirs)
 set (CMAKE_C_STANDARD 11)
 set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
 find_package( ZLIB REQUIRED )
 find_package(Boost COMPONENTS filesystem REQUIRED)
 
