@@ -75,9 +75,9 @@ void XmfImporter::InternReadFile ( const std::string& filePath, aiScene* pScene,
             }
         }
     }
-    catch ( std::string error )
+    catch (const std::string error )
     {
-        throw DeadlyImportError ( error );
+        throw DeadlyImportError (error );
     }
 }
 

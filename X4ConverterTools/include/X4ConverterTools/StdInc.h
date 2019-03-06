@@ -30,9 +30,9 @@ typedef unsigned long   ulong;
 #include <assimp/IOSystem.hpp>
 #include <assimp/ProgressHandler.hpp>
 #include <assimp/importerdesc.h>
-#include "BaseImporter.h"
+#include <assimp/BaseImporter.h>
 #include "BaseProcess.h"
-#include "Exceptional.h"
+#include <assimp/Exceptional.h>
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
 #include <assimp/scene.h>
