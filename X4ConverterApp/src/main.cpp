@@ -181,6 +181,11 @@ int main(int ac, char* av[]) {
 		printf("Handling exception:");
 		std::cout << e.what() << "\n";
 		return 1;
+	} catch (std::string &e){
+		printf("String exception caught:");
+		std::cout << e << "\n";
+	} catch (...){
+		printf("Something went horribly wrong. Oh god... not again.");
 	}
 	return 0;
 }

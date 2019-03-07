@@ -81,13 +81,13 @@ XacHeader ActorFile::ReadHeader ( BinaryReader reader )
 {
     XacHeader header = reader.Read < XacHeader > ();
     if ( memcmp ( header.Magic, "XAC ", 4 ) )
-        throw std::string ( "Not an XAC file: invalid header magic" );
+        throw std::runtime_error( "Not an XAC file: invalid header magic" );
 
     if ( header.MajorVersion != 1 || header.MinorVersion != 0 )
         throw (format("Unsupported .xac version: expected v1.0, file is v%d.%d") % header.MajorVersion % header.MinorVersion).str ();
 
     if ( header.BigEndian )
-        throw std::string ( "XAC file is encoded in big endian which is not supported by this importer" );
+        throw std::runtime_error( "XAC file is encoded in big endian which is not supported by this importer" );
 
     return header;
 }
@@ -107,7 +107,7 @@ void ActorFile::ReadNodeHierarchyV1 ( BinaryReader reader, ReadContext& context 
     int numRootNodes = reader.ReadInt32 ();
 
     if ( numNodes <= 0 )
-        throw std::string ( "Invalid number of nodes" );
+        throw std::runtime_error( "Invalid number of nodes" );
 
     context.Nodes.reserve ( numNodes );
     for ( int i = 0; i < numNodes; ++i )
@@ -132,7 +132,7 @@ void ActorFile::ReadNodeHierarchyV1 ( BinaryReader reader, ReadContext& context 
         {
             ActorNode* pParentNode = context.Nodes[nodeInfo.ParentNodeId];
             if ( !pParentNode )
-                throw std::string ( "Child node specified before its parent" );
+                throw std::runtime_error( "Child node specified before its parent" );
 
             pNode->Parent = pParentNode;
             pParentNode->Children.push_back ( pNode );
@@ -142,20 +142,20 @@ void ActorFile::ReadNodeHierarchyV1 ( BinaryReader reader, ReadContext& context 
     }
 
     if ( RootNodes.size () != numRootNodes )
-        throw std::string ( "numRootNodes does not match number of nodes with parent ID -1" );
+        throw std::runtime_error( "numRootNodes does not match number of nodes with parent ID -1" );
 }
 
 void ActorFile::ReadMaterialTotalsV1 ( BinaryReader reader, ReadContext& context )
 {
     auto totals = reader.Read < XacMaterialTotalsChunkv1 > ();
     if ( totals.NumStandardMaterials <= 0 )
-        throw std::string ( "Invalid number of standard materials" );
+        throw std::runtime_error( "Invalid number of standard materials" );
 
     if ( totals.NumFxMaterials != 0 )
-        throw std::string ( "Actor uses FX materials which are not supported by this importer" );
+        throw std::runtime_error( "Actor uses FX materials which are not supported by this importer" );
 
     if ( totals.NumTotalMaterials != totals.NumStandardMaterials + totals.NumFxMaterials )
-        throw std::string ( "Incorrect numTotalMaterials (must be sum of standard materials and fx materials" );
+        throw std::runtime_error( "Incorrect numTotalMaterials (must be sum of standard materials and fx materials" );
 
     Materials.reserve ( totals.NumStandardMaterials );
 }
@@ -163,7 +163,7 @@ void ActorFile::ReadMaterialTotalsV1 ( BinaryReader reader, ReadContext& context
 void ActorFile::ReadMaterialDefinitionV2 ( BinaryReader reader, ReadContext& context )
 {
     if ( Materials.size () == Materials.capacity () )
-        throw std::string ( "Too many materials defined" );
+        throw std::runtime_error( "Too many materials defined" );
 
     auto materialInfo = reader.Read < XacMaterialDefinitionChunkv2Header > ();
     std::string materialName = reader.ReadString ();
@@ -189,7 +189,7 @@ void ActorFile::ReadMaterialDefinitionV2 ( BinaryReader reader, ReadContext& con
         std::string texture = reader.ReadString ();
 
         if ( layerInfo.MaterialId != Materials.size () - 1 )
-            throw std::string ( "Invalid material ID in material layer" );
+            throw std::runtime_error( "Invalid material ID in material layer" );
 
         ActorMaterialLayer& layer = material.Layers[i];
         layer.Texture = texture;
@@ -207,36 +207,36 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
 {
     auto meshInfo = reader.Read < XacMeshChunkv1Header > ();
     if ( meshInfo.NodeId < 0 || meshInfo.NodeId >= context.Nodes.size () )
-        throw std::string ( "Invalid node ID in mesh" );
+        throw std::runtime_error( "Invalid node ID in mesh" );
 
     if ( meshInfo.NumInfluenceRanges < 0 )
-        throw std::string ( "Invalid number of influence ranges in mesh" );
+        throw std::runtime_error( "Invalid number of influence ranges in mesh" );
 
     if ( meshInfo.NumVertices <= 0 )
-        throw std::string ( "Invalid number of vertices in mesh" );
+        throw std::runtime_error( "Invalid number of vertices in mesh" );
 
     if ( meshInfo.NumIndices <= 0 )
-        throw std::string ( "Invalid number of indices in mesh" );
+        throw std::runtime_error( "Invalid number of indices in mesh" );
 
     if ( meshInfo.NumSubMeshes <= 0 )
-        throw std::string ( "Invalid number of sub meshes in mesh" );
+        throw std::runtime_error( "Invalid number of sub meshes in mesh" );
 
     if ( meshInfo.NumVertexElements <= 0 )
-        throw std::string ( "Invalid number of vertex elements in mesh" );
+        throw std::runtime_error( "Invalid number of vertex elements in mesh" );
 
     ActorNode* pNode = context.Nodes[meshInfo.NodeId];
     std::shared_ptr < ActorMesh > pMesh = std::make_shared < ActorMesh > ();
     if ( !meshInfo.IsCollisionMesh )
     {
         if ( pNode->VisualMesh )
-            throw std::string ( "Node already has a visual mesh" );
+            throw std::runtime_error( "Node already has a visual mesh" );
 
         pNode->VisualMesh = pMesh;
     }
     else
     {
         if ( pNode->CollisionMesh )
-            throw std::string ( "Node already has a collision mesh" );
+            throw std::runtime_error( "Node already has a collision mesh" );
 
         pNode->CollisionMesh = pMesh;
     }
@@ -258,40 +258,40 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
         {
             case EMOFX_DECLUSAGE_POSITION:
                 if ( elemInfo.ElementSize != sizeof(positions[0]) )
-                    throw std::string ( "Invalid position element size" );
+                    throw std::runtime_error( "Invalid position element size" );
 
                 if ( !positions.empty () )
-                    throw std::string ( "Duplicate position element list" );
+                    throw std::runtime_error( "Duplicate position element list" );
 
                 reader.Read ( positions, meshInfo.NumVertices );
                 break;
 
             case EMOFX_DECLUSAGE_NORMAL:
                 if ( elemInfo.ElementSize != sizeof(normals[0]) )
-                    throw std::string ( "Invalid normal element size" );
+                    throw std::runtime_error( "Invalid normal element size" );
 
                 if ( !normals.empty () )
-                    throw std::string ( "Duplicate normal element list" );
+                    throw std::runtime_error( "Duplicate normal element list" );
 
                 reader.Read ( normals, meshInfo.NumVertices );
                 break;
 
             case EMOFX_DECLUSAGE_TANGENT:
                 if ( elemInfo.ElementSize != sizeof(tangents[0]) )
-                    throw std::string ( "Invalid tangent element size" );
+                    throw std::runtime_error( "Invalid tangent element size" );
 
                 if ( tangents.empty () )
                     reader.Read ( tangents, meshInfo.NumVertices );
                 else if ( bitangents.empty () )
                     reader.Read ( bitangents, meshInfo.NumVertices );
                 else
-                    throw std::string ( "Duplicate tangent element list" );
+                    throw std::runtime_error( "Duplicate tangent element list" );
                 
                 break;
 
             case EMOFX_DECLUSAGE_TEXCOORD:
                 if ( elemInfo.ElementSize != sizeof(uvs[0][0]) )
-                    throw std::string ( "Invalid UV element size" );
+                    throw std::runtime_error( "Invalid UV element size" );
 
                 uvs.resize ( uvs.size () + 1 );
                 reader.Read ( uvs.back (), meshInfo.NumVertices );
@@ -300,10 +300,10 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
             case EMOFX_DECLUSAGE_INFLUENCERANGEIDX:
             {
                 if ( elemInfo.ElementSize != sizeof(influenceRangeIndices[0]) )
-                    throw std::string ( "Invalid influence range index element size" );
+                    throw std::runtime_error( "Invalid influence range index element size" );
 
                 if ( !influenceRangeIndices.empty () )
-                    throw std::string ( "Duplicate influence range element list" );
+                    throw std::runtime_error( "Duplicate influence range element list" );
 
                 reader.Read ( influenceRangeIndices, meshInfo.NumVertices );
                 break;
@@ -311,7 +311,7 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
 
             case EMOFX_DECLUSAGE_COLOR32:
                 if ( elemInfo.ElementSize != sizeof(colors32[0][0]) )
-                    throw std::string ( "Invalid 32-bit color element size" );
+                    throw std::runtime_error( "Invalid 32-bit color element size" );
 
                 colors32.resize ( colors32.size () + 1 );
                 reader.Read ( colors32.back (), meshInfo.NumVertices );
@@ -319,7 +319,7 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
 
             case EMOFX_DECLUSAGE_COLOR128:
                 if ( elemInfo.ElementSize != sizeof(colors128[0][0]) )
-                    throw std::string ( "Invalid 128-bit color element list" );
+                    throw std::runtime_error( "Invalid 128-bit color element list" );
 
                 colors128.resize ( colors128.size () + 1 );
                 reader.Read ( colors128.back (), meshInfo.NumVertices );
@@ -337,19 +337,19 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
     {
         auto subMeshInfo = reader.Read < XacMeshChunkv1SubMesh > ();
         if ( subMeshInfo.NumVertices <= 0 || vertexOffset + subMeshInfo.NumVertices > meshInfo.NumVertices )
-            throw std::string ( "Invalid number of vertices in submesh" );
+            throw std::runtime_error( "Invalid number of vertices in submesh" );
         
         if ( subMeshInfo.NumIndices <= 0 || indexOffset + subMeshInfo.NumIndices > meshInfo.NumIndices )
-            throw std::string ( "Invalid number of indices in submesh" );
+            throw std::runtime_error( "Invalid number of indices in submesh" );
 
         if ( subMeshInfo.NumIndices % 3 )
-            throw std::string ( "Number of indices in submesh is not divisible by 3" );
+            throw std::runtime_error( "Number of indices in submesh is not divisible by 3" );
 
         if ( subMeshInfo.NumBones < 0 )
-            throw std::string ( "Invalid number of bones in submesh" );
+            throw std::runtime_error( "Invalid number of bones in submesh" );
 
         if ( subMeshInfo.MaterialId < 0 || subMeshInfo.MaterialId >= Materials.size () )
-            throw std::string ( "Invalid material ID in submesh" );
+            throw std::runtime_error( "Invalid material ID in submesh" );
 
         ActorSubMesh& subMesh = pMesh->SubMeshes[i];
         subMesh.MaterialId = subMeshInfo.MaterialId;
@@ -379,7 +379,7 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
             context.SubMeshInfluenceRangeIndices[&subMesh].assign ( influenceRangeIndices.begin () + vertexOffset, influenceRangeIndices.begin () + vertexOffset + subMeshInfo.NumVertices );
 
         if ( !colors32.empty () && !colors128.empty () )
-            throw std::string ( "Mesh is using both 32-bit and 128-bit colors" );
+            throw std::runtime_error( "Mesh is using both 32-bit and 128-bit colors" );
 
         if ( !colors32.empty () )
         {
@@ -406,25 +406,25 @@ void ActorFile::ReadMeshV1 ( BinaryReader reader, ReadContext& context )
     }
 
     if ( vertexOffset != meshInfo.NumVertices )
-        throw std::string ( "Number of vertices in mesh does not equal total number of vertices in submeshes" );
+        throw std::runtime_error( "Number of vertices in mesh does not equal total number of vertices in submeshes" );
 
     if ( indexOffset != meshInfo.NumIndices )
-        throw std::string ( "Number of indices in mesh does not equal total number of indices in submeshes" );
+        throw std::runtime_error( "Number of indices in mesh does not equal total number of indices in submeshes" );
 }
 
 void ActorFile::ReadBoneInfluencesV3 ( BinaryReader reader, ReadContext& context )
 {
     auto influencesHeader = reader.Read < XacSkinningChunkv3Header > ();
     if ( influencesHeader.NodeId < 0 || influencesHeader.NodeId >= context.Nodes.size () )
-        throw std::string ( "Invalid node ID in skinning chunk" );
+        throw std::runtime_error( "Invalid node ID in skinning chunk" );
 
     if ( influencesHeader.NumInfluences <= 0 )
-        throw std::string ( "Invalid number of influences in skinning chunk" );
+        throw std::runtime_error( "Invalid number of influences in skinning chunk" );
 
     ActorNode* pNode = context.Nodes[influencesHeader.NodeId];
     std::shared_ptr<ActorMesh> pMesh = (!influencesHeader.IsForCollisionMesh ? pNode->VisualMesh : pNode->CollisionMesh);
     if ( !pMesh )
-        throw std::string ( "File contains skinning data for nonexistant mesh" );
+        throw std::runtime_error( "File contains skinning data for nonexistant mesh" );
 
     std::vector < XacSkinningChunkv3Influence > influences;
     reader.Read ( influences, influencesHeader.NumInfluences );
@@ -436,7 +436,7 @@ void ActorFile::ReadBoneInfluencesV3 ( BinaryReader reader, ReadContext& context
     foreach ( ActorSubMesh& subMesh, pMesh->SubMeshes )
     {
         if ( !subMesh.VertexInfluences.empty () )
-            throw std::string ( "Duplicate vertex influences for submesh" );
+            throw std::runtime_error( "Duplicate vertex influences for submesh" );
 
         std::vector < int >& influenceRangeIndices = context.SubMeshInfluenceRangeIndices[&subMesh];
         if ( influenceRangeIndices.empty () )
@@ -460,27 +460,27 @@ void ActorFile::ReadMorphTargetsV1 ( BinaryReader reader, ReadContext& context )
 {
     int numMorphTargets = reader.ReadInt32 ();
     if ( numMorphTargets <= 0 )
-        throw std::string ( "Invalid number of morph targets" );
+        throw std::runtime_error( "Invalid number of morph targets" );
 
     int morphTargetLodIdx = reader.ReadInt32 ();
     if ( morphTargetLodIdx != 0 )
-        throw std::string ( "Unexpected morph target LOD index" );
+        throw std::runtime_error( "Unexpected morph target LOD index" );
 
     if ( !MorphTargets.empty () )
-        throw std::string ( "Duplicate morph target list" );
+        throw std::runtime_error( "Duplicate morph target list" );
 
     MorphTargets.resize ( numMorphTargets );
     foreach ( ActorMorphTarget& morphTarget, MorphTargets )
     {
         auto morphTargetInfo = reader.Read < XacMorphTargetsChunkv1MorphTarget > ();
         if ( morphTargetInfo.LodLevel != 0 )
-            throw std::string ( "Unexpected morph target LOD level" );
+            throw std::runtime_error( "Unexpected morph target LOD level" );
 
         if ( morphTargetInfo.NumDeformations < 0 )
-            throw std::string ( "Invalid number of deformations in morph target" );
+            throw std::runtime_error( "Invalid number of deformations in morph target" );
 
         if ( morphTargetInfo.NumTransformations != 0 )
-            throw std::string ( "Morph target uses transformations which are not supported by this importer" );
+            throw std::runtime_error( "Morph target uses transformations which are not supported by this importer" );
 
         morphTarget.Name = reader.ReadString ();
         morphTarget.RangeMin = morphTargetInfo.RangeMin;
@@ -492,7 +492,7 @@ void ActorFile::ReadMorphTargetsV1 ( BinaryReader reader, ReadContext& context )
         {
             auto deformationInfo = reader.Read < XacMorphTargetsChunkv1Deformation > ();
             if ( deformationInfo.NodeId < 0 || deformationInfo.NodeId >= context.Nodes.size () )
-                throw std::string ( "Deformation has invalid node ID" );
+                throw std::runtime_error( "Deformation has invalid node ID" );
 
             deformation.Node = context.Nodes[deformationInfo.NodeId];
 

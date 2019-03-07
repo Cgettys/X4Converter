@@ -138,7 +138,7 @@ int XmfDataBuffer::GetVertexDeclarationSize ()
 D3DFORMAT XmfDataBuffer::GetIndexFormat ()
 {
     if ( !IsIndexBuffer () )
-        throw "The data buffer is not an index buffer";
+        throw std::runtime_error("The data buffer is not an index buffer");
 
     return Description.Format == 30 ? D3DFMT_INDEX16 : D3DFMT_INDEX32;
 }

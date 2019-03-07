@@ -9,7 +9,7 @@ public:
 	template<typename T>
 	T Read() {
 		if (_pStream->FileSize() - _pStream->Tell() < sizeof(T))
-			throw std::string("Attempt to read past end of stream");
+			throw std::runtime_error("Attempt to read past end of stream");
 
 		T result;
 		_pStream->Read(&result, sizeof(T), 1);
@@ -19,7 +19,7 @@ public:
 	template<typename T>
 	void Read(T* pOut, int count) {
 		if (_pStream->FileSize() - _pStream->Tell() < sizeof(T) * count)
-			throw std::string("Stream is too short");
+			throw std::runtime_error("Stream is too short");
 
 		_pStream->Read(pOut, sizeof(T), count);
 	}
@@ -34,7 +34,7 @@ public:
 	template<typename T>
 	void Skip(int count) {
 		if (_pStream->FileSize() - _pStream->Tell() < count * sizeof(T))
-			throw std::string("Attempt to skip past end of stream");
+			throw std::runtime_error("Attempt to skip past end of stream");
 
 		_pStream->Seek(count * sizeof(T), aiOrigin_CUR);
 	}

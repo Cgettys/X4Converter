@@ -14,10 +14,10 @@ void XacExporter::Export ( const char* pFilePath, IOSystem* pIOHandler, const ai
     try
     {
         if ( GameBaseFolderPath.empty () )
-            throw std::string ( "GameBaseFolderPath not set" );
+            throw std::runtime_error( "GameBaseFolderPath not set" );
 
         if ( !pScene->mRootNode || pScene->mRootNode->mNumChildren != 1 )
-            throw std::string ( "Scene must have exactly one root node (make sure to remove any lights and cameras)" );
+            throw std::runtime_error( "Scene must have exactly one root node (make sure to remove any lights and cameras)" );
 
         for ( int i = 0; i < pScene->mNumMeshes; ++i )
         {

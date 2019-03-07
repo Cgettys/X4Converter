@@ -68,6 +68,7 @@ void XmfImporter::InternReadFile(const std::string& filePath, aiScene* pScene,
 			}
 		}
 	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 		throw DeadlyImportError(e.what());
 	}
 }
@@ -94,8 +95,8 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 
 		auto parentIt = partNodes.find(it->second.ParentName);
 		if (parentIt == partNodes.end()){
-			throw(format("Node %s has invalid parent %s") % it->first
-					% it->second.ParentName).str();
+			throw std::runtime_error(str(format("Node %s has invalid parent %s") % it->first
+					% it->second.ParentName));
 		}
 		nodeChildren[parentIt->second].push_back(pPartNode);
 	}
@@ -119,7 +120,7 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 
 // Create component node that contains all the part nodes
 	if (rootNodes.empty())
-		throw std::string("No root parts found");
+		throw std::runtime_error("No root parts found");
 
 	aiNode* pComponentNode = new aiNode(component.Name);
 	pComponentNode->mChildren = new aiNode*[rootNodes.size()];
@@ -232,7 +233,7 @@ aiMesh* XmfImporter::ConvertXuMeshToAiMesh(XuMeshFile& mesh, int firstIndex,
 void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		int numVertices) {
 	if (numVertices <= 0)
-		throw std::string("AllocMeshVertices: numVertices must be > 0");
+		throw std::runtime_error("AllocMeshVertices: numVertices must be > 0");
 
 	foreach ( XmfDataBuffer& buffer, meshFile.GetBuffers () ){
 	if ( !buffer.IsVertexBuffer () )
@@ -247,7 +248,7 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 			if ( !pMesh->mVertices )
 			pMesh->mVertices = new aiVector3D[numVertices];
 			else
-			throw std::string ( "Duplicate POSITION vertex element" );
+			throw std::runtime_error( "Duplicate POSITION vertex element" );
 
 			break;
 
@@ -255,7 +256,7 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 			if ( !pMesh->mNormals )
 			pMesh->mNormals = new aiVector3D[numVertices];
 			else
-			throw std::string ( "Duplicate NORMAL vertex element" );
+			throw std::runtime_error( "Duplicate NORMAL vertex element" );
 
 			break;
 
@@ -265,23 +266,23 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 				if ( !pMesh->mTangents )
 				pMesh->mTangents = new aiVector3D[numVertices];
 				else
-				throw std::string ( "Duplicate TANGENT vertex element with usage index 0" );
+				throw std::runtime_error( "Duplicate TANGENT vertex element with usage index 0" );
 			}
 			else if ( vertexElem.UsageIndex == 1 )
 			{
 				if ( !pMesh->mBitangents )
 				pMesh->mBitangents = new aiVector3D[numVertices];
 				else
-				throw std::string ( "Duplicate TANGENT vertex element with usage index 1" );
+				throw std::runtime_error( "Duplicate TANGENT vertex element with usage index 1" );
 			}
 			else if ( vertexElem.UsageIndex > 1 )
-			throw std::string ( "Invalid usage index for TANGENT vertex element" );
+			throw std::runtime_error( "Invalid usage index for TANGENT vertex element" );
 
 			break;
 
 			case D3DDECLUSAGE_TEXCOORD:
 			if ( vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_TEXTURECOORDS )
-			throw std::string ( "Invalid usage index for TEXCOORD vertex element" );
+			throw std::runtime_error( "Invalid usage index for TEXCOORD vertex element" );
 
 			if ( !pMesh->mTextureCoords[vertexElem.UsageIndex] )
 			{
@@ -290,18 +291,18 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 			}
 			else
 			{
-				throw std::string ( "Duplicate TEXCOORD element" );
+				throw std::runtime_error( "Duplicate TEXCOORD element" );
 			}
 			break;
 
 			case D3DDECLUSAGE_COLOR:
 			if ( vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_COLOR_SETS )
-			throw std::string ( "Invalid usage index for COLOR vertex element" );
+			throw std::runtime_error( "Invalid usage index for COLOR vertex element" );
 
 			if ( !pMesh->mColors[vertexElem.UsageIndex] )
 			pMesh->mColors[vertexElem.UsageIndex] = new aiColor4D[numVertices];
 			else
-			throw std::string ( "Duplicate COLOR element" );
+			throw std::runtime_error( "Duplicate COLOR element" );
 		}
 	}
 }
@@ -310,10 +311,10 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 void XmfImporter::AllocMeshFaces(aiMesh* pMesh, XuMeshFile& meshFile,
 		int numIndices) {
 	if (numIndices <= 0)
-		throw std::string("AllocMeshFaces: numIndices must be > 0");
+		throw std::runtime_error("AllocMeshFaces: numIndices must be > 0");
 
 	if (numIndices % 3)
-		throw std::string("AllocMeshFaces: numIndices must be a multiple of 3");
+		throw std::runtime_error("AllocMeshFaces: numIndices must be a multiple of 3");
 
 	pMesh->mFaces = new aiFace[numIndices / 3];
 }
@@ -322,16 +323,16 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		int firstIndex, int numIndices) {
 	XmfDataBuffer* pIndexBuffer = meshFile.GetIndexBuffer();
 	if (!pIndexBuffer)
-		throw std::string("Mesh file has no index buffer");
+		throw std::runtime_error("Mesh file has no index buffer");
 
 	if (numIndices <= 0)
-		throw std::string("PopulateMeshVertices: numIndices must be > 0");
+		throw std::runtime_error("PopulateMeshVertices: numIndices must be > 0");
 
 	if (firstIndex < 0)
-		throw std::string("PopulateMeshVertices: firstIndex must be >= 0");
+		throw std::runtime_error("PopulateMeshVertices: firstIndex must be >= 0");
 
 	if (firstIndex + numIndices > pIndexBuffer->Description.NumItemsPerSection)
-		throw std::string("PopulateMeshVertices: numIndices is too large");
+		throw std::runtime_error("PopulateMeshVertices: numIndices is too large");
 
 	byte* pIndexes = pIndexBuffer->GetData();
 	D3DFORMAT indexFormat = pIndexBuffer->GetIndexFormat();
@@ -353,7 +354,7 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		{
 			int vertexIdx = (indexFormat == D3DFMT_INDEX16 ? ((ushort *)pIndexes)[vertexIdxIdx] : ((int *)pIndexes)[vertexIdxIdx] );
 			if ( vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection )
-			throw std::string ( "PopulateMeshVertices: invalid index" );
+			throw std::runtime_error( "PopulateMeshVertices: invalid index" );
 
 			byte* pVertexElemData = pVertexBuffer + vertexIdx*declarationSize + elemOffset;
 			int localVertexIdx = vertexIdxIdx - firstIndex;

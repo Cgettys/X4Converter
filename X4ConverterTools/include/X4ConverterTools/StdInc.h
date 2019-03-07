@@ -8,8 +8,7 @@
 #include <set>
 #include <string>
 #include <vector>
-
-
+#include <stdexcept>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>

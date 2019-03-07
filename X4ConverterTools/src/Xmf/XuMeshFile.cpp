@@ -75,28 +75,28 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile ( const std::string& filePa
 XmfHeader XuMeshFile::ReadHeader ( IOStream* pStream )
 {
     if ( pStream->FileSize () < sizeof(XmfHeader) )
-        throw std::string ( ".xmf file is too small" );
+        throw std::runtime_error( ".xmf file is too small" );
 
     XmfHeader header;
     pStream->Read ( &header, sizeof(header), 1 );
 
     if ( memcmp ( header.Magic, "XUMF\x03", 5 ) )
-        throw std::string ( "Invalid header magic" );
+        throw std::runtime_error( "Invalid header magic" );
 
     if ( header.BigEndian )
-        throw std::string ( "Big endian .xmf files are not supported by this importer" );
+        throw std::runtime_error( "Big endian .xmf files are not supported by this importer" );
     if (header.DataBufferDescOffset!=0x40){
     	std::cout << header.DataBufferDescOffset << std::endl;
-    	throw std::string ( "Offset should be 0x40");
+    	throw std::runtime_error( "Offset should be 0x40");
     }
     if ( header.DataBufferDescSize > sizeof(XmfDataBufferDesc) )
-        throw std::string ( "Data buffer description size is too large" );
+        throw std::runtime_error( "Data buffer description size is too large" );
 
     if ( header.MaterialSize != sizeof(XmfMaterial) )
-        throw std::string ( "Material size is invalid" );
+        throw std::runtime_error( "Material size is invalid" );
 
     if ( header.PrimitiveType != D3DPT_TRIANGLELIST )
-        throw std::string ( "File is using a DirectX primitive type that's not supported by this importer" );
+        throw std::runtime_error( "File is using a DirectX primitive type that's not supported by this importer" );
 
     return header;
 }
@@ -104,7 +104,7 @@ XmfHeader XuMeshFile::ReadHeader ( IOStream* pStream )
 void XuMeshFile::ReadBufferDescs ( Assimp::IOStream* pStream, XmfHeader& header )
 {
     if ( pStream->FileSize () < header.DataBufferDescOffset + header.NumDataBuffers*header.DataBufferDescSize )
-        throw std::string ( ".xmf file is too small" );
+        throw std::runtime_error( ".xmf file is too small" );
 
     _buffers.resize ( header.NumDataBuffers );
 
@@ -116,11 +116,11 @@ void XuMeshFile::ReadBufferDescs ( Assimp::IOStream* pStream, XmfHeader& header 
         buffer.NormalizeVertexDeclaration ();
 
         if ( buffer.Description.NumSections != 1 )
-            throw std::string ( "Unexpected number of sections (must be 1)" );
+            throw std::runtime_error( "Unexpected number of sections (must be 1)" );
 
         if ( buffer.IsVertexBuffer () && buffer.Description.ItemSize != buffer.GetVertexDeclarationSize () )
         {
-            throw std::string ( "Item size for vertex buffer is incorrect" );
+            throw std::runtime_error( "Item size for vertex buffer is incorrect" );
         }
         else if ( buffer.IsIndexBuffer () )
         {
@@ -128,7 +128,7 @@ void XuMeshFile::ReadBufferDescs ( Assimp::IOStream* pStream, XmfHeader& header 
             if ( (format == D3DFMT_INDEX16 && buffer.Description.ItemSize != sizeof(ushort)) ||
                  (format == D3DFMT_INDEX32 && buffer.Description.ItemSize != sizeof(uint)) )
             {
-                throw std::string ( "Item size for index buffer is incorrect" );
+                throw std::runtime_error( "Item size for index buffer is incorrect" );
             }
         }
     }
@@ -148,16 +148,16 @@ void XuMeshFile::ReadBuffers ( IOStream* pStream, XmfHeader& header )
     foreach ( XmfDataBuffer& buffer, _buffers )
     {
         if ( pStream->Tell () - baseFileOffset != buffer.Description.DataOffset )
-            throw std::string ( "Mismatching buffer data offset" );
+            throw std::runtime_error( "Mismatching buffer data offset" );
 
         if ( pStream->FileSize () - pStream->Tell () < buffer.GetCompressedDataSize () )
-            throw std::string ( ".xmf file is too small" );
+            throw std::runtime_error( ".xmf file is too small" );
 
         buffer.AllocData ();
         if ( !buffer.IsCompressed () )
         {
             if ( buffer.GetCompressedDataSize () != buffer.GetUncompressedDataSize () )
-                throw std::string ( "Noncompressed buffer has invalid size" );
+                throw std::runtime_error( "Noncompressed buffer has invalid size" );
 
             pStream->Read ( buffer.GetData (), 1, buffer.GetUncompressedDataSize () );
         }
@@ -169,10 +169,10 @@ void XuMeshFile::ReadBuffers ( IOStream* pStream, XmfHeader& header )
             unsigned long uncompressedSize = buffer.GetUncompressedDataSize ();
             int status = uncompress ( buffer.GetData (), &uncompressedSize, compressedData.data (), buffer.GetCompressedDataSize () );
             if ( status != Z_OK )
-                throw std::string ( "Failed to decompress data buffer" );
+                throw std::runtime_error( "Failed to decompress data buffer" );
 
             if ( uncompressedSize != buffer.GetUncompressedDataSize () )
-                throw std::string ( "Decompression did not return enough data" );
+                throw std::runtime_error( "Decompression did not return enough data" );
         }
     }
 }
@@ -188,7 +188,7 @@ void XuMeshFile::Validate ()
         if ( numVertices == -1 )
             numVertices = buffer.Description.NumItemsPerSection;
         else if ( buffer.Description.NumItemsPerSection != numVertices )
-            throw std::string ( "Inconsistent vertex count across vertex buffers" );
+            throw std::runtime_error( "Inconsistent vertex count across vertex buffers" );
     }
 }
 
@@ -217,7 +217,7 @@ std::map < XmfDataBuffer*, std::vector<byte> > XuMeshFile::CompressBuffers ()
         ulong compressedSize = compressedData.size ();
         int status = compress ( compressedData.data (), &compressedSize, buffer.GetData (), buffer.GetUncompressedDataSize () );
         if ( status != Z_OK )
-            throw std::string ( "Failed to compress XMF data buffer" );
+            throw std::runtime_error( "Failed to compress XMF data buffer" );
 
         compressedData.resize ( compressedSize );
     }

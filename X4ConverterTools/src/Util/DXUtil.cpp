@@ -29,7 +29,7 @@ int DXUtil::GetVertexElementTypeSize ( D3DDECLTYPE type )
         case D3DDECLTYPE_FLOAT4:
             return 16;
     }
-    throw std::string ( "Unknown vertex element type" );
+    throw std::runtime_error( "Unknown vertex element type" );
 }
 
 Vec3D DXUtil::ConvertVertexAttributeToVec3D ( byte* pAttribute, D3DDECLTYPE type )
@@ -74,7 +74,7 @@ Vec3D DXUtil::ConvertVertexAttributeToVec3D ( byte* pAttribute, D3DDECLTYPE type
             return Vec3D ( ((half_float::half *)pAttribute)[0], ((half_float::half *)pAttribute)[1], ((half_float::half *)pAttribute)[2] );
 
         default:
-            throw std::string ( "Unsupported vertex element type for vectors" );
+            throw std::runtime_error( "Unsupported vertex element type for vectors" );
     }
 }
 
@@ -95,7 +95,7 @@ Color DXUtil::ConvertVertexAttributeToColorF ( byte* pAttribute, D3DDECLTYPE typ
             return Color ( (float)pAttribute[2] / 255.0f, (float)pAttribute[1] / 255.0f, (float)pAttribute[0] / 255.0f, (float)pAttribute[3] / 255.0f );
 
         default:
-            throw std::string ( "Unsupported vertex element type for colors" );
+            throw std::runtime_error( "Unsupported vertex element type for colors" );
     }
 }
 
@@ -181,7 +181,7 @@ int DXUtil::WriteVec3DToVertexAttribute ( const Vec3D& vector, D3DDECLTYPE type,
             break;
 
         default:
-            throw std::string ( "Unsupported vertex element type for vectors" );
+            throw std::runtime_error( "Unsupported vertex element type for vectors" );
     }
     return GetVertexElementTypeSize ( type );
 }
@@ -218,7 +218,7 @@ int DXUtil::WriteColorFToVertexAttribute ( const Color& color, D3DDECLTYPE type,
             break;
 
         default:
-            throw std::string ( "Unsupported vertex element type for colors" );
+            throw std::runtime_error( "Unsupported vertex element type for colors" );
     }
     return GetVertexElementTypeSize ( type );
 }

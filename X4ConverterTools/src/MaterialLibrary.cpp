@@ -8,11 +8,11 @@ MaterialLibrary::MaterialLibrary ( const std::string& gameBaseFolderPath )
 {
     std::string filePath = (path(gameBaseFolderPath) / "libraries" / "material_library.xml").string ();
     if ( !is_regular_file ( filePath ) )
-        throw (format("Failed to load material library: %s does not exist") % filePath).str ();
+        throw std::runtime_error(str(format("Failed to load material library: %s does not exist") % filePath));
 
     auto result = _doc.load_file ( filePath.c_str () );
     if ( result.status != pugi::status_ok )
-        throw (format("Failed to parse material library: %s") % result.description ()).str ();
+        throw std::runtime_error(str(format("Failed to parse material library: %s") % result.description ()));
 }
 
 MaterialCollection* MaterialLibrary::GetCollection ( const std::string& name )

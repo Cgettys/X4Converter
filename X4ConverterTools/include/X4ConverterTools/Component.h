@@ -1,6 +1,7 @@
 #pragma once
 #include "pugixml.hpp"
 #include <map>
+#include <stdexcept>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>

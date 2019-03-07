@@ -12,7 +12,7 @@ XmfMaterial::XmfMaterial ()
 XmfMaterial::XmfMaterial ( int firstIndex, int numIndices, const std::string& name )
 {
     if ( name.size () >= sizeof(Name) )
-        throw (format("Material name %s is too long") % name).str ();
+        throw std::runtime_error(str(format("Material name %s is too long") % name));
 
     FirstIndex = firstIndex;
     NumIndices = numIndices;

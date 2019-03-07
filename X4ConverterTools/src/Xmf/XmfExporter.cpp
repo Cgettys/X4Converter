@@ -10,10 +10,10 @@ void XmfExporter::Export ( const char* pFilePath, Assimp::IOSystem* pIOHandler, 
     try
     {
         if ( GameBaseFolderPath.empty () )
-            throw std::string ( "GameBaseFolderPath not set" );
+            throw std::runtime_error( "GameBaseFolderPath not set" );
 
         if ( !pScene->mRootNode || pScene->mRootNode->mNumChildren != 1 )
-            throw std::string ( "Scene must have exactly one root node (make sure to remove any lights and cameras)" );
+            throw std::runtime_error( "Scene must have exactly one root node (make sure to remove any lights and cameras)" );
 
         for ( int i = 0; i < pScene->mNumMeshes; ++i )
         {
@@ -33,7 +33,6 @@ void XmfExporter::Export ( const char* pFilePath, Assimp::IOSystem* pIOHandler, 
     }
     catch ( std::exception &e )
     {
-    	std::cout << "fail"<<e.what()<< std::endl;
         throw DeadlyExportError ( e.what() );
     }
 }
@@ -42,10 +41,10 @@ void XmfExporter::ConvertPartNode ( Component& component, const std::string& par
 {
     std::string partName = pPartNode->mName.C_Str ();
     if ( !std::regex_match ( partName, std::regex("\\w+") ) )
-        throw (format("Invalid part name %s: must contain only letters, numbers and underscores") % partName).str ();
+        throw std::runtime_error(str(format("Invalid part name %s: must contain only letters, numbers and underscores") % partName));
 
     if ( component.Parts.find ( partName ) != component.Parts.end () )
-        throw (format("Duplicate part name %s") % partName).str ();
+        throw std::runtime_error(str(format("Duplicate part name %s") % partName));
 
     ComponentPart& part = component.Parts[partName];
     part.Name = partName;
@@ -285,7 +284,7 @@ void XmfExporter::ExtendVertexDeclaration ( aiMesh* pMesh, std::vector<XmfVertex
 void XmfExporter::ApplyVertexDeclaration ( std::vector<XmfVertexElement>& declaration, XmfDataBuffer& buffer )
 {
     if ( declaration.size () > sizeof(buffer.Description.VertexElements)/sizeof(buffer.Description.VertexElements[0]) )
-        throw std::string ( "Too many vertex elements in vertex declaration" );
+        throw std::runtime_error( "Too many vertex elements in vertex declaration" );
 
     int declarationSize = 0;
 
@@ -361,5 +360,5 @@ int XmfExporter::WriteVertexElement ( aiMesh* pMesh, int vertexIdx, XmfVertexEle
             return DXUtil::WriteColorFToVertexAttribute ( color, type, pElemData );
         }
     }
-    throw std::string("Usage not recognized");
+    throw std::runtime_error("Usage not recognized");
 }

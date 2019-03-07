@@ -254,7 +254,7 @@ int XacImporter::ConvertSubMesh ( const std::string& subMeshName, ActorSubMesh* 
     if ( !pSubMesh->VertexUVs.empty () )
     {
         if ( pSubMesh->VertexUVs.size () > AI_MAX_NUMBER_OF_TEXTURECOORDS )
-            throw std::string ( "Mesh has too many UV maps" );
+            throw std::runtime_error( "Mesh has too many UV maps" );
 
         for ( int setIdx = 0; setIdx < pSubMesh->VertexUVs.size (); ++setIdx )
         {
@@ -274,7 +274,7 @@ int XacImporter::ConvertSubMesh ( const std::string& subMeshName, ActorSubMesh* 
     if ( !pSubMesh->VertexColors32.empty () )
     {
         if ( pSubMesh->VertexColors32.size () > AI_MAX_NUMBER_OF_COLOR_SETS )
-            throw std::string ( "Mesh has too many 32-bit color sets" );
+            throw std::runtime_error( "Mesh has too many 32-bit color sets" );
 
         for ( int setIdx = 0; setIdx < pSubMesh->VertexColors32.size (); ++setIdx )
         {
@@ -288,7 +288,7 @@ int XacImporter::ConvertSubMesh ( const std::string& subMeshName, ActorSubMesh* 
     else if ( !pSubMesh->VertexColors128.empty () )
     {
         if ( pSubMesh->VertexColors128.size () > AI_MAX_NUMBER_OF_COLOR_SETS )
-            throw std::string ( "Mesh has too many 128-bit color sets" );
+            throw std::runtime_error( "Mesh has too many 128-bit color sets" );
 
         for ( int setIdx = 0; setIdx < pSubMesh->VertexColors128.size (); ++setIdx )
         {
@@ -339,7 +339,7 @@ void XacImporter::ConvertMorphTargets ( ConversionContext& context )
                 vertexIdx -= itSubMesh->first;
                 aiMesh* pBaseSubMesh = itSubMesh->second;
                 if ( vertexIdx >= pBaseSubMesh->mNumVertices )
-                    throw std::string ( "Invalid vertex index in deformation" );
+                    throw std::runtime_error( "Invalid vertex index in deformation" );
 
                 aiMesh* pDeformedSubMesh = nullptr;
                 auto itBaseMesh = deformedSubMeshes.find ( pBaseSubMesh );

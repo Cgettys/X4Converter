@@ -5,17 +5,23 @@ using namespace boost::filesystem;
 path PathUtil::GetRelativePath(const path& filePath,
 		const path& relativeToFolderPath) {
 	if (filePath.is_relative())
-		throw std::string("filePath is already relative");
+		throw std::runtime_error("filePath is already relative");
 
 	if (!relativeToFolderPath.is_absolute())
-		throw std::string("relativeToPath is not absolute");
+		throw std::runtime_error("relativeToPath is not absolute");
 
 	std::vector<std::string> filePathParts;
-	split(filePathParts, filePath.string(), [](char c) {return c == '\\';});
+
+#ifdef BOOST_OS_LINUX
+	const char sep = '/';
+#else
+	const char sep = '\\';
+#endif
+	split(filePathParts, filePath.string(), [](char c) {return c == sep;});
 
 	std::vector<std::string> relativeToFolderPathParts;
 	split(relativeToFolderPathParts, relativeToFolderPath.string(),
-			[](char c) {return c == '\\';});
+			[](char c) {return c == sep;});
 
 	int differenceStart = 0;
 	while (differenceStart < filePathParts.size() - 1
@@ -26,12 +32,7 @@ path PathUtil::GetRelativePath(const path& filePath,
 	}
 
 	if (differenceStart == 0) {
-
-		printf("here");
-		std::string err = str(format("Paths do not have a common root: %s, %s\n") % filePath.string()
-				% relativeToFolderPath.string());
-		std::cerr << err << std::endl;
-		throw err;
+		throw std::runtime_error(str(format("Paths do not have a common root %s %s")%filePath %relativeToFolderPath));
 	}
 	path result;
 	for (int i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
