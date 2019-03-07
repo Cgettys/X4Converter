@@ -1,4 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
+#include <X4ConverterTools/Color.h>
 Color::Color ()
 {
     R = 0.0f;

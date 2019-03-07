@@ -4,26 +4,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <unordered_map>
-#include <map>
 #include <regex>
 #include <set>
 #include <string>
 #include <vector>
 
-typedef unsigned char   byte;
-typedef unsigned short  word;
-typedef unsigned int    dword;
-
-typedef unsigned short  ushort;
-typedef unsigned int    uint;
-typedef unsigned long   ulong;
 
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/range.hpp>
 
+
+#include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 #include <assimp/ai_assert.h>
@@ -40,20 +33,10 @@ typedef unsigned long   ulong;
 #include "zlib.h"
 
 #include "../Vendor/half/half.hpp"
-
-#include "pugixml.hpp"
-
-#include "Color8.h"
-#include "Color.h"
-#include "Vec2D.h"
-#include "Vec3D.h"
-#include "Vec4D.h"
-#include "Quaternion.h"
-#include "Matrix44.h"
+#include "Types.h"
 
 #include "DirectX.h"
 #include "Util/DXUtil.h"
-#include "Util/PathUtil.h"
 #include "Util/BinaryReader.h"
 #include "Util/BinaryWriter.h"
 #include "Util/AssimpUtil.h"
@@ -75,7 +58,7 @@ typedef unsigned long   ulong;
 #include "Xmf/XmfImporter.h"
 #include "Xmf/XmfExporter.h"
 
-#include "EmotionFX.h"
+//#include "EmotionFX.h"
 //#include "Xac/XacHeader.h"
 //#include "Xac/XacChunkHeader.h"
 //#include "Xac/XacMetaDataChunkv2Header.h"

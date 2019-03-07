@@ -1,5 +1,29 @@
 #pragma once
+#include <map>
+#include "zlib.h"
+#include "../Vendor/half/half.hpp"
+#include "../Types.h"
+#include <string>
+#include <vector>
 
+
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+#include <assimp/IOSystem.hpp>
+
+#include "../DirectX.h"
+#include "../Util/DXUtil.h"
+#include "../Util/BinaryReader.h"
+#include "../Util/BinaryWriter.h"
+
+#include "XmfHeader.h"
+#include "XmfVertexElement.h"
+#include "XmfMaterial.h"
+#include "XmfDataBufferDesc.h"
+#include "XmfDataBuffer.h"
 class XuMeshFile
 {
 public:

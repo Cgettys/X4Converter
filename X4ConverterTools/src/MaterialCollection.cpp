@@ -1,14 +1,12 @@
-#include <X4ConverterTools/StdInc.h>
-
+#include <X4ConverterTools/MaterialCollection.h>
 using namespace boost;
 
 MaterialCollection::MaterialCollection() {
-	_pLibrary = nullptr;
+	_name = "";
 }
 
-MaterialCollection::MaterialCollection(MaterialLibrary* pLibrary,
-		pugi::xml_node node) {
-	_pLibrary = pLibrary;
+
+MaterialCollection::MaterialCollection(pugi::xml_node node) {
 	_node = node;
 	_name = node.attribute("name").value();
 }
@@ -23,6 +21,6 @@ Material* MaterialCollection::GetMaterial(const std::string& name) {
 	if (!materialNode)
 		return nullptr;
 
-	_materials[name] = Material(this, materialNode);
+	_materials[name] = Material(_name, materialNode);
 	return &_materials[name];
 }

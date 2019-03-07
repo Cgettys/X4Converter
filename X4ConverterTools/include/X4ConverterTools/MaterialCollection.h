@@ -1,20 +1,19 @@
 #pragma once
-
-class MaterialLibrary;
-
+#include <map>
+#include <boost/format.hpp>
+#include <boost/range.hpp>
+#include <X4ConverterTools/Material.h>
+#include "pugixml.hpp"
 class MaterialCollection
 {
-public:
-                                        MaterialCollection  ();
-                                        MaterialCollection  ( MaterialLibrary* pLibrary, pugi::xml_node node );
+public:								    MaterialCollection  ();
+                                        MaterialCollection  ( pugi::xml_node node );
 
-    MaterialLibrary*                    GetLibrary          () const    { return _pLibrary; }
     Material*                           GetMaterial         ( const std::string& name );
 
     const std::string&                  GetName             () const    { return _name; }
 
 private:
-    MaterialLibrary*                    _pLibrary;
 
     std::string                         _name;
     pugi::xml_node                      _node;

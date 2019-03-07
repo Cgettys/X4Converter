@@ -1,5 +1,19 @@
 #pragma once
-
+#include "pugixml.hpp"
+#include <map>
+#include <boost/format.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+#include <assimp/ai_assert.h>
+#include <assimp/IOSystem.hpp>
+#include <assimp/ProgressHandler.hpp>
+#include <assimp/Exceptional.h>
+#include <assimp/scene.h>
+#include <assimp/SceneCombiner.h>
+#include <X4ConverterTools/Util/PathUtil.h>
+#include <X4ConverterTools/ComponentPart.h>
+#include <X4ConverterTools/ComponentPartLod.h>
 class Component
 {
 public:

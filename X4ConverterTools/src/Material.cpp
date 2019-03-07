@@ -1,11 +1,10 @@
-#include <X4ConverterTools/StdInc.h>
-
+#include <X4ConverterTools/Material.h>
 using namespace boost;
 using namespace boost::algorithm;
 using namespace boost::filesystem;
 
 Material::Material() {
-	_pCollection = nullptr;
+	_pCollectionName = "";
 
 	_diffuseStrength = NAN;
 	_normalStrength = NAN;
@@ -14,8 +13,8 @@ Material::Material() {
 
 }
 
-Material::Material(MaterialCollection* pCollection, pugi::xml_node node) {
-	_pCollection = pCollection;
+Material::Material(std::string pCollectionName, pugi::xml_node node) {
+	_pCollectionName = pCollectionName;
 	_name = node.attribute("name").value();
 
 	pugi::xpath_node_set properties = node.select_nodes("properties/property");
@@ -47,54 +46,36 @@ Material::Material(MaterialCollection* pCollection, pugi::xml_node node) {
 	}
 }
 
-std::string Material::GetDiffuseMapFilePath() const {
-	return GetTextureFilePath(_diffuseMapFilePath);
-}
-
-std::string Material::GetSpecularMapFilePath() const {
-	return GetTextureFilePath(_specularMapFilePath);
-}
-
-std::string Material::GetNormalMapFilePath() const {
-	return GetTextureFilePath(_normalMapFilePath);
-}
-
-std::string Material::GetEnvironmentMapFilePath() const {
-	return GetTextureFilePath(_environmentMapFilePath);
-}
-
 aiMaterial* Material::ConvertToAiMaterial(
-		const boost::filesystem::path& modelFolderPath) const {
+		const path& modelFolderPath) const {
 	aiMaterial* pAiMaterial = new aiMaterial();
-	aiString* name = new aiString(_pCollection->GetName() + "X" + GetName());
+	aiString* name = new aiString(_pCollectionName + "X" + GetName());
 	pAiMaterial->AddProperty(name, AI_MATKEY_NAME);
 	delete name;
 
 	aiString temp = aiString();
-	std::string textureFilePath = GetDecompressedTextureFilePath(
-			GetDiffuseMapFilePath());
+	std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath, modelFolderPath);
 	if (!textureFilePath.empty()) {
 		temp =
 				PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string();
 		pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
 	}
 
-	textureFilePath = GetDecompressedTextureFilePath(GetSpecularMapFilePath());
+	textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath, modelFolderPath);
 	if (!textureFilePath.empty()) {
 		temp =
 				PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string();
 		pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
 	}
 
-	textureFilePath = GetDecompressedTextureFilePath(GetNormalMapFilePath());
+	textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, modelFolderPath);
 	if (!textureFilePath.empty()) {
 		temp =
 				PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string();
 		pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
 	}
 
-	textureFilePath = GetDecompressedTextureFilePath(
-			GetEnvironmentMapFilePath());
+	textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath, modelFolderPath);
 	if (!textureFilePath.empty()) {
 		temp =
 				PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string();
@@ -103,13 +84,13 @@ aiMaterial* Material::ConvertToAiMaterial(
 	return pAiMaterial;
 }
 
-std::string Material::GetTextureFilePath(const std::string& filePath) const {
+std::string Material::GetTextureFilePath(const std::string filePath, const path& modelFolderPath) const {
 	static const char* ppszAllowedExtensions[] = { "gz", "dds", "tga", "jpg" };
 
 	if (filePath.empty())
 		return std::string();
 
-	path textureFilePath(_pCollection->GetLibrary()->_gameBaseFolderPath);
+	path textureFilePath(modelFolderPath);
 	textureFilePath /= filePath;
 	if (is_regular_file(textureFilePath))
 		return textureFilePath.string();
@@ -127,8 +108,8 @@ std::string Material::GetTextureFilePath(const std::string& filePath) const {
 	return std::string();
 }
 
-std::string Material::GetDecompressedTextureFilePath(
-		const std::string& filePath) {
+std::string Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, const path& modelFolderPath) const {
+	std::string filePath = GetTextureFilePath(compressedFilePath,modelFolderPath);
 	if (filePath.empty())
 		return std::string();
 

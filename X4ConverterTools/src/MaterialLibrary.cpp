@@ -1,4 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
+#include <X4ConverterTools/MaterialLibrary.h>
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -25,7 +25,7 @@ MaterialCollection* MaterialLibrary::GetCollection ( const std::string& name )
     if ( !collectionNode )
         return nullptr;
 
-    _collections[name] = MaterialCollection ( this, collectionNode );
+    _collections[name] = MaterialCollection (collectionNode);
     return &_collections[name];
 }
 

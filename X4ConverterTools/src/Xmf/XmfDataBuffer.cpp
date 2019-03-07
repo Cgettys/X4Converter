@@ -115,6 +115,7 @@ void XmfDataBuffer::DenormalizeVertexDeclaration ()
 
         case D3DDECLUSAGE_PSIZE:
             Description.Type = 20;
+            break;
 
         default:
             Description.Type = 31;

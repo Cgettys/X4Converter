@@ -1,5 +1,5 @@
 #pragma once
-
+#include <X4ConverterTools/Xmf/XuMeshFile.h>
 struct ComponentPartLod
 {
                                     ComponentPartLod    ( int lodIndex, std::shared_ptr<XuMeshFile> pMesh );

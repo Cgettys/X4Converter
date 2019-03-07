@@ -1,4 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
+#include <X4ConverterTools/Color8.h>
 
 Color8::Color8 ()
 {

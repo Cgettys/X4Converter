@@ -1,5 +1,6 @@
 #pragma once
-
+#include <assimp/scene.h>
+#include <X4ConverterTools/Types.h>
 struct Color8
 {
             Color8              ();

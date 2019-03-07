@@ -1,5 +1,5 @@
 #pragma once
-
+#include <assimp/scene.h>
 struct Color
 {
                 Color                   ();

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ComponentPartLod.h"
 struct ComponentPart
 {
     ComponentPartLod*                               GetLod              ( int lodIndex );

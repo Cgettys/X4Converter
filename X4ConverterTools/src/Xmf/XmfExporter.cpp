@@ -31,9 +31,10 @@ void XmfExporter::Export ( const char* pFilePath, Assimp::IOSystem* pIOHandler, 
     
         component.WriteToFile ( pFilePath, GameBaseFolderPath, pIOHandler );
     }
-    catch ( std::string error )
+    catch ( std::exception &e )
     {
-        throw DeadlyExportError ( error );
+    	std::cout << "fail"<<e.what()<< std::endl;
+        throw DeadlyExportError ( e.what() );
     }
 }
 
@@ -360,4 +361,5 @@ int XmfExporter::WriteVertexElement ( aiMesh* pMesh, int vertexIdx, XmfVertexEle
             return DXUtil::WriteColorFToVertexAttribute ( color, type, pElemData );
         }
     }
+    throw std::string("Usage not recognized");
 }

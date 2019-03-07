@@ -55,10 +55,9 @@ int main(int ac, char* av[]) {
 				("action", po::value<std::string>(&action), action_string)
 				("datdir", po::value<std::string>(&dat_dir),"path where unpacked catalog files can be found")
 				("target", po::value<std::string>(&target), "target .xml/.xac/.dae file")
-				("extdir", po::value<std::string>(&ext_dir), "path to folder where extensions are stored")
 				("config", po::value<std::string>(&config_file), "path to config file")
 				;
-
+//		("extdir", po::value<std::string>(&ext_dir), "path to folder where extensions are stored")
 		po::options_description cmdline_options;
 		cmdline_options.add(generic).add(config);
 
@@ -110,17 +109,17 @@ int main(int ac, char* av[]) {
 		printf("Specified .dat file content folder does not exist.\n");
 		return 1;
 	}
-	path gameExtsFolderPath ;
-	if (vm.count("extdir")){
-		gameExtsFolderPath = canonical(ext_dir).make_preferred();
-		if (!is_directory(gameExtsFolderPath)) {
-			printf("Specified .dat file content folder does not exist.\n");
-			return 1;
-		}
-	}
-	else {
-		gameExtsFolderPath = gameBaseFolderPath / "extensions";
-	}
+//	path gameExtsFolderPath ;
+//	if (vm.count("extdir")){
+//		gameExtsFolderPath = canonical(ext_dir).make_preferred();
+//		if (!is_directory(gameExtsFolderPath)) {
+//			printf("Specified .dat file content folder does not exist.\n");
+//			return 1;
+//		}
+//	}
+//	else {
+//		gameExtsFolderPath = gameBaseFolderPath / "extensions";
+//	}
 
 	path inputFilePath = canonical(target).make_preferred();
 	if (!is_regular_file(inputFilePath)) {
@@ -133,16 +132,18 @@ int main(int ac, char* av[]) {
 	bool success;
 	if (action == "importxmf") {
 		// .xml/.xmf -> .dae
+//gameExtsFolderPath.string().c_str(),
 		outputFilePath.replace_extension(".out.dae");
 		success = ConvertXmlToDae(gameBaseFolderPath.string().c_str(),
-				inputFilePath.string().c_str(), outputFilePath.string().c_str(),
-				gameExtsFolderPath.string().c_str(),szError, sizeof(szError));
+				inputFilePath.string().c_str(), outputFilePath.string().c_str()
+				,szError, sizeof(szError));
 	} else if (action == "exportxmf") {
 		// .dae -> .xml/.xmf
 		outputFilePath.replace_extension(".out.xml");
+		std::cout << outputFilePath << std::endl;
 		success = ConvertDaeToXml(gameBaseFolderPath.string().c_str(),
 				inputFilePath.string().c_str(), outputFilePath.string().c_str(),
-				gameExtsFolderPath.string().c_str(), szError, sizeof(szError));
+				 szError, sizeof(szError));
 	} else if (action == "importxac") {
 		printf("Currently not supported, sorry\n");
 		// .xac -> .dae
@@ -174,9 +175,10 @@ int main(int ac, char* av[]) {
 	}
 
 	if (!success){
-		printf("%s\n", szError);
+		printf("Failed because: %s\n", szError);
 	}
 	} catch (std::exception& e) {
+		printf("Handling exception:");
 		std::cout << e.what() << "\n";
 		return 1;
 	}

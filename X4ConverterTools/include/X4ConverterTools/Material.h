@@ -1,30 +1,31 @@
 #pragma once
 
-class MaterialLibrary;
-class MaterialCollection;
+#include "pugixml.hpp"
+#include "zlib.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <assimp/scene.h>
+#include <X4ConverterTools/Types.h>
+#include <X4ConverterTools/Util/PathUtil.h>
 
 class Material
 {
 public:
                         Material                        ();
-                        Material                        ( MaterialCollection* pCollection, pugi::xml_node node );
+                        Material                        ( std::string pCollectionName, pugi::xml_node node );
 
-    MaterialCollection* GetCollection                   () const    { return _pCollection; }
+    std::string         GetCollectionName               () const    { return _pCollectionName; }
 
     const std::string&  GetName                         () const    { return _name; }
 
-    std::string         GetDiffuseMapFilePath           () const;
-    std::string         GetSpecularMapFilePath          () const;
-    std::string         GetNormalMapFilePath            () const;
-    std::string         GetEnvironmentMapFilePath       () const;
 
     aiMaterial*         ConvertToAiMaterial             ( const boost::filesystem::path& modelFolderPath ) const;
 
 private:
-    std::string         GetTextureFilePath              ( const std::string& filePath ) const;
-    static std::string  GetDecompressedTextureFilePath  ( const std::string& filePath );
+    std::string         GetTextureFilePath              ( const std::string filePath, const boost::filesystem::path& modelFolderPath) const;
+    std::string         GetDecompressedTextureFilePath  ( const std::string filePath, const boost::filesystem::path& modelFolderPath) const;
 
-    MaterialCollection* _pCollection;
+    std::string         _pCollectionName;
     std::string         _name;
     
     aiColor4D           _emissiveColor;

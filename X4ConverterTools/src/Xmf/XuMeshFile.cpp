@@ -1,5 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
-
+#include <X4ConverterTools/Xmf/XuMeshFile.h>
 using namespace Assimp;
 using namespace boost;
 
