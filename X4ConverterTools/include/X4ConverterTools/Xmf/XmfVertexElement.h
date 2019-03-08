@@ -11,7 +11,7 @@ struct XmfVertexElement
     dword               Type;
     byte                Usage;
     byte                UsageIndex;
-    byte                _pad0[2];
+    byte                _pad0[2] = {0,0};
 };
 
 #pragma pack(pop)

@@ -9,12 +9,12 @@ struct XmfHeader
     byte                Version;
     bool                BigEndian;
     byte                DataBufferDescOffset;
-    byte                _pad0;
+    byte                _pad0 = 0;
     byte                NumDataBuffers;
     byte                DataBufferDescSize;
     byte                NumMaterials;
     byte                MaterialSize;
-    byte                _pad1[10];
+    byte                _pad1[10] = {0,0,0,0,0,0,0,0,0,0};
     dword               PrimitiveType;
 };
 

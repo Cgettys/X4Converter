@@ -94,9 +94,11 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 		}
 
 		auto parentIt = partNodes.find(it->second.ParentName);
-		if (parentIt == partNodes.end()){
-			throw std::runtime_error(str(format("Node %s has invalid parent %s") % it->first
-					% it->second.ParentName));
+		if (parentIt == partNodes.end()) {
+			throw std::runtime_error(
+					str(
+							format("Node %s has invalid parent %s") % it->first
+									% it->second.ParentName));
 		}
 		nodeChildren[parentIt->second].push_back(pPartNode);
 	}
@@ -232,90 +234,96 @@ aiMesh* XmfImporter::ConvertXuMeshToAiMesh(XuMeshFile& mesh, int firstIndex,
 
 void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		int numVertices) {
-	if (numVertices <= 0)
+	if (numVertices <= 0) {
 		throw std::runtime_error("AllocMeshVertices: numVertices must be > 0");
+	}
 
 	foreach ( XmfDataBuffer& buffer, meshFile.GetBuffers () ){
-	if ( !buffer.IsVertexBuffer () )
-	continue;
-
-	for ( int i = 0; i < buffer.Description.NumVertexElements; ++i )
-	{
+	if (!buffer.IsVertexBuffer()) {
+		continue;
+	}
+	for (int i = 0; i < buffer.Description.NumVertexElements; ++i) {
 		XmfVertexElement& vertexElem = buffer.Description.VertexElements[i];
-		switch ( vertexElem.Usage )
-		{
+		switch (vertexElem.Usage) {
 			case D3DDECLUSAGE_POSITION:
-			if ( !pMesh->mVertices )
-			pMesh->mVertices = new aiVector3D[numVertices];
-			else
-			throw std::runtime_error( "Duplicate POSITION vertex element" );
-
+			if (!pMesh->mVertices) {
+				pMesh->mVertices = new aiVector3D[numVertices];
+			} else {
+				throw std::runtime_error(
+						"Duplicate POSITION vertex element");
+			}
 			break;
 
 			case D3DDECLUSAGE_NORMAL:
-			if ( !pMesh->mNormals )
-			pMesh->mNormals = new aiVector3D[numVertices];
-			else
-			throw std::runtime_error( "Duplicate NORMAL vertex element" );
-
+			if (!pMesh->mNormals) {
+				pMesh->mNormals = new aiVector3D[numVertices];
+			}
+			else {
+				throw std::runtime_error( "Duplicate NORMAL vertex element" );
+			}
 			break;
 
 			case D3DDECLUSAGE_TANGENT:
-			if ( vertexElem.UsageIndex == 0 )
-			{
-				if ( !pMesh->mTangents )
-				pMesh->mTangents = new aiVector3D[numVertices];
-				else
-				throw std::runtime_error( "Duplicate TANGENT vertex element with usage index 0" );
+			if (vertexElem.UsageIndex == 0) {
+				if (!pMesh->mTangents) {
+					pMesh->mTangents = new aiVector3D[numVertices];
+				} else {
+					throw std::runtime_error(
+							"Duplicate TANGENT vertex element with usage index 0");
+				}
+			} else if (vertexElem.UsageIndex == 1) {
+				if (!pMesh->mBitangents) {
+					pMesh->mBitangents = new aiVector3D[numVertices];
+				} else {
+					throw std::runtime_error(
+							"Duplicate TANGENT vertex element with usage index 1");
+				}
+			} else if (vertexElem.UsageIndex > 1) {
+				throw std::runtime_error(
+						"Invalid usage index for TANGENT vertex element");
 			}
-			else if ( vertexElem.UsageIndex == 1 )
-			{
-				if ( !pMesh->mBitangents )
-				pMesh->mBitangents = new aiVector3D[numVertices];
-				else
-				throw std::runtime_error( "Duplicate TANGENT vertex element with usage index 1" );
-			}
-			else if ( vertexElem.UsageIndex > 1 )
-			throw std::runtime_error( "Invalid usage index for TANGENT vertex element" );
-
 			break;
 
 			case D3DDECLUSAGE_TEXCOORD:
-			if ( vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_TEXTURECOORDS )
-			throw std::runtime_error( "Invalid usage index for TEXCOORD vertex element" );
-
-			if ( !pMesh->mTextureCoords[vertexElem.UsageIndex] )
-			{
-				pMesh->mTextureCoords[vertexElem.UsageIndex] = new aiVector3D[numVertices];
-				pMesh->mNumUVComponents[vertexElem.UsageIndex] = 2;
+			if (vertexElem.UsageIndex
+					>= AI_MAX_NUMBER_OF_TEXTURECOORDS) {
+			throw std::runtime_error(
+					"Invalid usage index for TEXCOORD vertex element");
 			}
-			else
-			{
-				throw std::runtime_error( "Duplicate TEXCOORD element" );
+			if (!pMesh->mTextureCoords[vertexElem.UsageIndex]) {
+				pMesh->mTextureCoords[vertexElem.UsageIndex] =
+				new aiVector3D[numVertices];
+				pMesh->mNumUVComponents[vertexElem.UsageIndex] = 2;
+			} else {
+				throw std::runtime_error(
+						"Duplicate TEXCOORD element");
 			}
 			break;
 
 			case D3DDECLUSAGE_COLOR:
-			if ( vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_COLOR_SETS )
-			throw std::runtime_error( "Invalid usage index for COLOR vertex element" );
-
-			if ( !pMesh->mColors[vertexElem.UsageIndex] )
-			pMesh->mColors[vertexElem.UsageIndex] = new aiColor4D[numVertices];
-			else
-			throw std::runtime_error( "Duplicate COLOR element" );
-		}
+			if (vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_COLOR_SETS) {
+				throw std::runtime_error(
+						"Invalid usage index for COLOR vertex element");
+			}
+			if (!pMesh->mColors[vertexElem.UsageIndex]) {
+				pMesh->mColors[vertexElem.UsageIndex] =
+				new aiColor4D[numVertices];}
+			else {
+				throw std::runtime_error("Duplicate COLOR element");
+			}}
 	}
 }
 }
 
 void XmfImporter::AllocMeshFaces(aiMesh* pMesh, XuMeshFile& meshFile,
 		int numIndices) {
-	if (numIndices <= 0)
+	if (numIndices <= 0) {
 		throw std::runtime_error("AllocMeshFaces: numIndices must be > 0");
-
-	if (numIndices % 3)
-		throw std::runtime_error("AllocMeshFaces: numIndices must be a multiple of 3");
-
+	}
+	if (numIndices % 3) {
+		throw std::runtime_error(
+				"AllocMeshFaces: numIndices must be a multiple of 3");
+	}
 	pMesh->mFaces = new aiFace[numIndices / 3];
 }
 
@@ -326,13 +334,16 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		throw std::runtime_error("Mesh file has no index buffer");
 
 	if (numIndices <= 0)
-		throw std::runtime_error("PopulateMeshVertices: numIndices must be > 0");
+		throw std::runtime_error(
+				"PopulateMeshVertices: numIndices must be > 0");
 
 	if (firstIndex < 0)
-		throw std::runtime_error("PopulateMeshVertices: firstIndex must be >= 0");
+		throw std::runtime_error(
+				"PopulateMeshVertices: firstIndex must be >= 0");
 
 	if (firstIndex + numIndices > pIndexBuffer->Description.NumItemsPerSection)
-		throw std::runtime_error("PopulateMeshVertices: numIndices is too large");
+		throw std::runtime_error(
+				"PopulateMeshVertices: numIndices is too large");
 
 	byte* pIndexes = pIndexBuffer->GetData();
 	D3DFORMAT indexFormat = pIndexBuffer->GetIndexFormat();
