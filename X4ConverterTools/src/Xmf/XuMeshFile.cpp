@@ -45,13 +45,25 @@ void XuMeshFile::AddMaterial ( int firstIndex, int numIndices, const std::string
 {
     _materials.push_back ( XmfMaterial ( firstIndex, numIndices, name ) );
 }
-
-std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile ( const std::string& filePath, IOSystem* pIOHandler )
+std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile( const std::string& filePath, Assimp::IOSystem* pIOHandler ){
+	IOStream* pStream;
+	try {
+	    pStream = pIOHandler->Open ( filePath, "rb" );
+	    auto result = XuMeshFile::ReadFromIOStream(pStream);
+	    pIOHandler->Close(pStream);
+	    return result;
+	} catch (...){
+	    pIOHandler->Close(pStream);
+		throw;
+	}
+}
+std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream ( IOStream* pStream )
 {
-    IOStream* pStream = pIOHandler->Open ( filePath );
-    if ( !pStream )
+    if ( !pStream ){
+    	// TODO exception?
+    	std::cerr << "Warning: no IOStream provided";
         return std::shared_ptr<XuMeshFile>();
-
+    }
     try
     {
         std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
@@ -62,46 +74,45 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile ( const std::string& filePa
         pMeshFile->ReadBuffers ( pStream, header );
         pMeshFile->Validate ();
 
-        pIOHandler->Close ( pStream );
         return pMeshFile;
     }
     catch (...)
     {
-        pIOHandler->Close ( pStream );
         throw;
     }
 }
 
 XmfHeader XuMeshFile::ReadHeader ( IOStream* pStream )
 {
-    if ( pStream->FileSize () < sizeof(XmfHeader) )
+    if ( pStream->FileSize () < sizeof(XmfHeader) ){
         throw std::runtime_error( ".xmf file is too small" );
-
+    }
     XmfHeader header;
     pStream->Read ( &header, sizeof(header), 1 );
 
-    if ( memcmp ( header.Magic, "XUMF\x03", 5 ) )
+    if ( memcmp ( header.Magic, "XUMF\x03", 5 ) ){
         throw std::runtime_error( "Invalid header magic" );
-
-    if ( header.BigEndian )
+    }
+    if ( header.BigEndian ){
         throw std::runtime_error( "Big endian .xmf files are not supported by this importer" );
+    }
     if (header.DataBufferDescOffset!=0x40){
     	std::cout << header.DataBufferDescOffset << std::endl;
     	throw std::runtime_error( "Offset should be 0x40");
     }
-    if ( header.DataBufferDescSize > sizeof(XmfDataBufferDesc) )
+    if ( header.DataBufferDescSize > sizeof(XmfDataBufferDesc) ){
         throw std::runtime_error( "Data buffer description size is too large" );
-
-    if ( header.MaterialSize != sizeof(XmfMaterial) )
+    }
+    if ( header.MaterialSize != sizeof(XmfMaterial) ){
         throw std::runtime_error( "Material size is invalid" );
-
-    if ( header.PrimitiveType != D3DPT_TRIANGLELIST )
+    }
+    if ( header.PrimitiveType != D3DPT_TRIANGLELIST ) {
         throw std::runtime_error( "File is using a DirectX primitive type that's not supported by this importer" );
-
+    }
     return header;
 }
 
-void XuMeshFile::ReadBufferDescs ( Assimp::IOStream* pStream, XmfHeader& header )
+void XuMeshFile::ReadBufferDescs ( IOStream* pStream, XmfHeader& header )
 {
     if ( pStream->FileSize () < header.DataBufferDescOffset + header.NumDataBuffers*header.DataBufferDescSize )
         throw std::runtime_error( ".xmf file is too small" );
@@ -195,15 +206,18 @@ void XuMeshFile::Validate ()
 void XuMeshFile::WriteToFile ( const std::string& filePath, IOSystem* pIOHandler )
 {
     IOStream* pStream = pIOHandler->Open ( filePath, "wb+" );
-    if ( !pStream )
+    if ( !pStream ) {
         throw (format("Failed to open %s for writing") % filePath).str ();
-
+    }
+    WriteToIOStream( pStream);
+    pIOHandler->Close ( pStream );
+}
+void XuMeshFile::WriteToIOStream(IOStream* pStream){
     std::map < XmfDataBuffer*, std::vector<byte> > compressedBuffers = CompressBuffers ();
     WriteHeader ( pStream );
     WriteBufferDescs ( pStream, compressedBuffers );
     WriteMaterials ( pStream );
     WriteBuffers ( pStream, compressedBuffers );
-    pIOHandler->Close ( pStream );
 }
 
 std::map < XmfDataBuffer*, std::vector<byte> > XuMeshFile::CompressBuffers ()

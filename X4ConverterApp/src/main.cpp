@@ -16,11 +16,11 @@ namespace po = boost::program_options;
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 
+
 #include <X4ConverterTools/API.h>
 
 using namespace boost::algorithm;
 using namespace boost::filesystem;
-
 // A helper function to simplify the main part.
 template<class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
@@ -133,13 +133,15 @@ int main(int ac, char* av[]) {
 	if (action == "importxmf") {
 		// .xml/.xmf -> .dae
 //gameExtsFolderPath.string().c_str(),
+		// TODO better way to do extension and path handling / generate a Config object to ease integration testing.
 		outputFilePath.replace_extension(".out.dae");
 		success = ConvertXmlToDae(gameBaseFolderPath.string().c_str(),
 				inputFilePath.string().c_str(), outputFilePath.string().c_str()
 				,szError, sizeof(szError));
 	} else if (action == "exportxmf") {
 		// .dae -> .xml/.xmf
-		outputFilePath.replace_extension(".out.xml");
+		// .out.xml not necessary because already is .out.dae & .dae is the "extension"
+		outputFilePath.replace_extension(".xml");
 		std::cout << outputFilePath << std::endl;
 		success = ConvertDaeToXml(gameBaseFolderPath.string().c_str(),
 				inputFilePath.string().c_str(), outputFilePath.string().c_str(),

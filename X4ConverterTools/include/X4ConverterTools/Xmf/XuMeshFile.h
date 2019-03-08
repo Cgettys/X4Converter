@@ -12,6 +12,7 @@
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
+#include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 
 #include "../DirectX.h"
@@ -40,8 +41,9 @@ public:
     void                                AddMaterial             ( int firstIndex, int numIndices, const std::string& name );
 
     static std::shared_ptr<XuMeshFile>  ReadFromFile            ( const std::string& filePath, Assimp::IOSystem* pIOHandler );
+    static std::shared_ptr<XuMeshFile>  ReadFromIOStream        ( Assimp::IOStream* pStream);
     void                                WriteToFile             ( const std::string& filePath, Assimp::IOSystem* pIOHandler );
-
+    void                                WriteToIOStream         ( Assimp::IOStream* pStream);
 private:
     static XmfHeader                    ReadHeader              ( Assimp::IOStream* pStream );
     void                                ReadBufferDescs         ( Assimp::IOStream* pStream, XmfHeader& header );

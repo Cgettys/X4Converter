@@ -7,9 +7,9 @@ using namespace boost::filesystem;
 
 std::shared_ptr<Component> Component::ReadFromFile(const std::string& filePath,
 		const std::string& gameBaseFolderPath, IOSystem* pIOHandler) {
-	if (!is_regular_file(filePath))
+	if (!is_regular_file(filePath)){
 		throw std::runtime_error(".xml file doesn't exist");
-
+	}
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filePath.c_str());
 	if (result.status != pugi::status_ok){
@@ -33,9 +33,9 @@ std::shared_ptr<Component> Component::ReadFromFile(const std::string& filePath,
 
 void Component::WriteToFile(const std::string& filePath,
 		const std::string& gameBaseFolderPath, Assimp::IOSystem* pIOHandler) {
-	if (!is_regular_file(filePath))
+	if (!is_regular_file(filePath)){
 		CreateDummyFile(filePath, gameBaseFolderPath);
-
+	}
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filePath.c_str());
 	if (result.status != pugi::status_ok)
@@ -129,10 +129,14 @@ void Component::ReadPart(pugi::xml_node partNode,
 
 	int lodIndex = 0;
 	while (true) {
+		// TODO what about the mysterious assets .xmfs?
+		//TODO better solution for path generation & debugging
 		path lodFilePath = geometryFolderPath
 				/ (format("%s-lod%d.xmf") % partName % lodIndex).str();
-		if (!is_regular_file(lodFilePath))
+		std::cerr << "reading normal .xmf: " << lodFilePath << std::endl;
+		if (!is_regular_file(lodFilePath)){
 			break;
+		}
 
 		std::shared_ptr<XuMeshFile> pMeshFile = XuMeshFile::ReadFromFile(
 				lodFilePath.string(), pIOHandler);
@@ -140,10 +144,13 @@ void Component::ReadPart(pugi::xml_node partNode,
 		lodIndex++;
 	}
 
+	//TODO better solution
 	path collisionFilePath = geometryFolderPath / (partName + "-collision.xmf");
-	if (is_regular_file(collisionFilePath))
+	std::cerr << "reading collison .xmf: " << collisionFilePath << std::endl;
+	if (is_regular_file(collisionFilePath)){
 		part.CollisionMesh = XuMeshFile::ReadFromFile(
 				collisionFilePath.string(), pIOHandler);
+	}
 }
 
 void Component::CreateDummyFile(const std::string& filePath,
@@ -191,8 +198,9 @@ void Component::WritePart(ComponentPart& part, pugi::xml_node connectionsNode,
 	WritePartCenter(part, partNode);
 	WritePartLods(part, partNode, geometryFolderPath, pIOHandler);
 	if (part.CollisionMesh) {
+		//TODO better solution
 		std::string xmfFileName =
-				(format("%s-collision.xmf") % part.Name).str();
+				(format("%s-collision.out.xmf") % part.Name).str();
 		std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
 		part.CollisionMesh->WriteToFile(xmfFilePath, pIOHandler);
 	}
@@ -323,7 +331,8 @@ void Component::WritePartLods(ComponentPart& part, pugi::xml_node partNode,
 	}
 
 	// Write mesh file
-	std::string xmfFileName = (format("%s-lod%d.xmf") % part.Name % lod.LodIndex).str ();
+	//TODO better solution
+	std::string xmfFileName = (format("%s-lod%d.out..xmf") % part.Name % lod.LodIndex).str ();
 	std::string xmfFilePath = (geometryFolderPath / xmfFileName).string ();
 	lod.Mesh->WriteToFile ( xmfFilePath, pIOHandler );
 }
