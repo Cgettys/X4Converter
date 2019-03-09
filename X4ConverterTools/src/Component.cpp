@@ -133,7 +133,7 @@ void Component::ReadPart(pugi::xml_node partNode,
 		//TODO better solution for path generation & debugging
 		path lodFilePath = geometryFolderPath
 				/ (format("%s-lod%d.xmf") % partName % lodIndex).str();
-		std::cerr << "reading normal .xmf: " << lodFilePath << std::endl;
+//		std::cerr << "reading normal .xmf: " << lodFilePath << std::endl;
 		if (!is_regular_file(lodFilePath)){
 			break;
 		}
@@ -146,7 +146,7 @@ void Component::ReadPart(pugi::xml_node partNode,
 
 	//TODO better solution
 	path collisionFilePath = geometryFolderPath / (partName + "-collision.xmf");
-	std::cerr << "reading collison .xmf: " << collisionFilePath << std::endl;
+//	std::cerr << "reading collison .xmf: " << collisionFilePath << std::endl;
 	if (is_regular_file(collisionFilePath)){
 		part.CollisionMesh = XuMeshFile::ReadFromFile(
 				collisionFilePath.string(), pIOHandler);

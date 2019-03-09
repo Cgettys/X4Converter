@@ -158,18 +158,18 @@ void XuMeshFile::ReadBuffers ( IOStream* pStream, XmfHeader& header )
     std::vector<byte> compressedData;
     foreach ( XmfDataBuffer& buffer, _buffers )
     {
-        if ( pStream->Tell () - baseFileOffset != buffer.Description.DataOffset )
+        if ( pStream->Tell () - baseFileOffset != buffer.Description.DataOffset ){
             throw std::runtime_error( "Mismatching buffer data offset" );
-
-        if ( pStream->FileSize () - pStream->Tell () < buffer.GetCompressedDataSize () )
+        }
+        if ( pStream->FileSize () - pStream->Tell () < buffer.GetCompressedDataSize () ){
             throw std::runtime_error( ".xmf file is too small" );
-
+        }
         buffer.AllocData ();
         if ( !buffer.IsCompressed () )
         {
-            if ( buffer.GetCompressedDataSize () != buffer.GetUncompressedDataSize () )
+            if ( buffer.GetCompressedDataSize () != buffer.GetUncompressedDataSize () ){
                 throw std::runtime_error( "Noncompressed buffer has invalid size" );
-
+            }
             pStream->Read ( buffer.GetData (), 1, buffer.GetUncompressedDataSize () );
         }
         else
@@ -179,11 +179,12 @@ void XuMeshFile::ReadBuffers ( IOStream* pStream, XmfHeader& header )
 
             unsigned long uncompressedSize = buffer.GetUncompressedDataSize ();
             int status = uncompress ( buffer.GetData (), &uncompressedSize, compressedData.data (), buffer.GetCompressedDataSize () );
-            if ( status != Z_OK )
+            if ( status != Z_OK ){
                 throw std::runtime_error( "Failed to decompress data buffer" );
-
-            if ( uncompressedSize != buffer.GetUncompressedDataSize () )
+            }
+            if ( uncompressedSize != buffer.GetUncompressedDataSize () ){
                 throw std::runtime_error( "Decompression did not return enough data" );
+            }
         }
     }
 }
@@ -230,9 +231,9 @@ std::map < XmfDataBuffer*, std::vector<byte> > XuMeshFile::CompressBuffers ()
 
         ulong compressedSize = compressedData.size ();
         int status = compress ( compressedData.data (), &compressedSize, buffer.GetData (), buffer.GetUncompressedDataSize () );
-        if ( status != Z_OK )
+        if ( status != Z_OK ){
             throw std::runtime_error( "Failed to compress XMF data buffer" );
-
+        }
         compressedData.resize ( compressedSize );
     }
     return result;

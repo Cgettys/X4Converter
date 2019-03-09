@@ -23,7 +23,6 @@
 #include <assimp/ProgressHandler.hpp>
 #include <assimp/importerdesc.h>
 #include <assimp/BaseImporter.h>
-#include "BaseProcess.h"
 #include <assimp/Exceptional.h>
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>

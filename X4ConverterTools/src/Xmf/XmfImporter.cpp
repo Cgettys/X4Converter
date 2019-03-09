@@ -82,86 +82,104 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 		partNodes[it->first] = ConvertComponentPartToAiNode(it->second,
 				context);
 	}
-
-	// Link parent nodes
-	std::vector<aiNode*> rootNodes;
-	std::map<aiNode*, std::vector<aiNode*> > nodeChildren;
-	for (auto it = component.Parts.begin(); it != component.Parts.end(); ++it) {
-		aiNode* pPartNode = partNodes[it->first];
-		if (it->second.ParentName.empty()) {
-			rootNodes.push_back(pPartNode);
-			continue;
-		}
-
-		auto parentIt = partNodes.find(it->second.ParentName);
-		if (parentIt == partNodes.end()) {
-			throw std::runtime_error(
-					str(
-							format("Node %s has invalid parent %s") % it->first
-									% it->second.ParentName));
-		}
-		nodeChildren[parentIt->second].push_back(pPartNode);
+	// TODO debug option
+	for (auto it = partNodes.cbegin(); it != partNodes.cend(); ++it) {
+		std::cout << it->first << " " << it->second << "\n";
 	}
 
-	for (auto it = nodeChildren.begin(); it != nodeChildren.end(); ++it) {
-		aiNode* pParentNode = it->first;
-		aiNode** ppNewChildren = new aiNode*[pParentNode->mNumChildren
-				+ it->second.size()];
-		if (pParentNode->mChildren) {
-			memcpy(ppNewChildren, pParentNode->mChildren,
-					sizeof(aiNode*) * pParentNode->mNumChildren);
-			delete[] pParentNode->mChildren;
-		}
-		pParentNode->mChildren = ppNewChildren;
+	// Link nodes
+	aiNode* pRootNode = new aiNode("ROOT_NODE_PLZ");
+//	std::vector<aiNode*> rootNodes;
+//	std::map<aiNode*, std::vector<aiNode*> > nodeChildren;
+	for (auto elem : component.Parts) {
+		aiNode* pPartNode = partNodes[elem.first];
+		std::string parentName = elem.second.ParentName;
+		if (parentName.empty()) {
+			pRootNode->addChildren(1, &pPartNode);
+		} else {
 
-		foreach ( aiNode* pChildNode, it->second ){
-		pParentNode->mChildren[pParentNode->mNumChildren++] = pChildNode;
-		pChildNode->mParent = pParentNode;
+			auto parentIt = partNodes.find(parentName);
+			if (parentIt == partNodes.end()) {
+				throw std::runtime_error(
+						str(
+								format("Node %s has invalid parent %s")
+										% elem.first % parentName));
+			}
+		}
+//		aiNode* pPartNode = partNodes[it->first];
+//		if (it->second.ParentName.empty()) {
+//			rootNodes.push_back(pPartNode);
+//			continue;
+//		}
+//
+//		auto parentIt = partNodes.find(it->second.ParentName);
+//		if (parentIt == partNodes.end()) {
+//			throw std::runtime_error(
+//					str(
+//							format("Node %s has invalid parent %s") % it->first
+//									% it->second.ParentName));
+//		}
+//		nodeChildren[parentIt->second].push_back(pPartNode);
 	}
-}
+
+//	for (auto it = nodeChildren.begin(); it != nodeChildren.end(); ++it) {
+//		aiNode* pParentNode = it->first;
+//		aiNode** ppNewChildren = new aiNode*[pParentNode->mNumChildren
+//				+ it->second.size()];
+//		if (pParentNode->mChildren) {
+//			memcpy(ppNewChildren, pParentNode->mChildren,
+//					sizeof(aiNode*) * pParentNode->mNumChildren);
+//			delete[] pParentNode->mChildren;
+//		}
+//		pParentNode->mChildren = ppNewChildren;
+//
+//		foreach ( aiNode* pChildNode, it->second ){
+//		pParentNode->mChildren[pParentNode->mNumChildren++] = pChildNode;
+//		pChildNode->mParent = pParentNode;
+//	}
+//}
 
 // Create component node that contains all the part nodes
-	if (rootNodes.empty())
-		throw std::runtime_error("No root parts found");
+//	if (rootNodes.empty()) {
+//		throw std::runtime_error("No root parts found");
+//	}
+//	aiNode* pComponentNode = new aiNode(component.Name);
+//	pComponentNode->addChildren(rootNodes.size(), rootNodes.data());
+//
+//	return pComponentNode;
+//	aiNode* pRealRootNode = new aiNode("ROOT_NODE_PLZ");
+//	pRealRootNode->mChildren = new aiNode*[1];
+//	pRealRootNode->mChildren[0] = pComponentNode;
+//	pRealRootNode->mNumChildren = 1;
+//	pComponentNode->mParent = pRealRootNode;
+//	return pRealRootNode;
+	return pRootNode;
 
-	aiNode* pComponentNode = new aiNode(component.Name);
-	pComponentNode->mChildren = new aiNode*[rootNodes.size()];
-
-	aiNode* pRealRootNode = new aiNode("ROOT_NODE_PLZ");
-	pRealRootNode->mChildren = new aiNode*[1];
-	pRealRootNode->mChildren[0] = pComponentNode;
-	pRealRootNode->mNumChildren = 1;
-	pComponentNode->mParent = pRealRootNode;
-	for (int i = 0; i < rootNodes.size(); i++) {
-		aiNode* pRootNode = rootNodes[i];
-		pComponentNode->mChildren[i] = pRootNode;
-		pRootNode->mParent = pComponentNode;
-		pComponentNode->mNumChildren++;
-	}
-	return pRealRootNode;
-//    return pComponentNode;
 }
 
 aiNode* XmfImporter::ConvertComponentPartToAiNode(ComponentPart& part,
 		ConversionContext& context) {
-	aiNode* pPartNode = new aiNode();
+	aiNode* pPartNode = new aiNode(part.Name);
 	try {
-		pPartNode->mName = part.Name;
 		pPartNode->mTransformation.a4 = -part.Position.x;
 		pPartNode->mTransformation.b4 = part.Position.y;
 		pPartNode->mTransformation.c4 = part.Position.z;
 
-		pPartNode->mChildren = new aiNode*[part.Lods.size()
-				+ (part.CollisionMesh ? 1 : 0)];
+		for (ComponentPartLod& lod : part.Lods) {
+			// TODO optimize
+			aiNode* child = ConvertXuMeshToAiNode(*lod.Mesh,
+					(format("%sXlod%d") % part.Name % lod.LodIndex).str(),
+					context);
+			pPartNode->addChildren(1, &child);
+		}
+		if (part.CollisionMesh) {
+			aiNode* child = ConvertXuMeshToAiNode(*part.CollisionMesh,
+					part.Name + "Xcollision", context);
+			pPartNode->addChildren(1, &child);
+		}
 
-		foreach ( ComponentPartLod& lod, part.Lods ){
-		pPartNode->mChildren[pPartNode->mNumChildren++] = ConvertXuMeshToAiNode ( *lod.Mesh, (format("%sXlod%d") % part.Name % lod.LodIndex).str(), context );
-	}
-		if (part.CollisionMesh)
-			pPartNode->mChildren[pPartNode->mNumChildren++] =
-					ConvertXuMeshToAiNode(*part.CollisionMesh,
-							part.Name + "Xcollision", context);
 	} catch (...) {
+		std::cerr << "Component part conversion failed" << std::endl;
 		delete pPartNode;
 		throw;
 	}
@@ -170,8 +188,7 @@ aiNode* XmfImporter::ConvertComponentPartToAiNode(ComponentPart& part,
 
 aiNode* XmfImporter::ConvertXuMeshToAiNode(XuMeshFile& mesh,
 		const std::string& name, ConversionContext& context) {
-	aiNode* pMeshGroupNode = new aiNode();
-	pMeshGroupNode->mName = name;
+	aiNode* pMeshGroupNode = new aiNode(name);
 	try {
 		if (mesh.GetMaterials().empty()) {
 			aiMesh* pMesh = ConvertXuMeshToAiMesh(mesh, 0, mesh.NumIndices(),
@@ -182,44 +199,42 @@ aiNode* XmfImporter::ConvertXuMeshToAiNode(XuMeshFile& mesh,
 					context.Meshes.size();
 			context.Meshes.push_back(pMesh);
 		} else {
-			pMeshGroupNode->mChildren = new aiNode*[mesh.NumMaterials()];
+//			pMeshGroupNode->mChildren = new aiNode*[mesh.NumMaterials()];
 
-			foreach ( XmfMaterial& material, mesh.GetMaterials () ){
-			aiMesh* pMesh = ConvertXuMeshToAiMesh ( mesh, material.FirstIndex, material.NumIndices, name + "X" + replace_all_copy(std::string(material.Name), ".", "X"), context );
+			for (XmfMaterial& material : mesh.GetMaterials()) {
+				std::string meshName = name + "X"
+						+ replace_all_copy(std::string(material.Name), ".", "X");
+				aiMesh* pMesh = ConvertXuMeshToAiMesh(mesh, material.FirstIndex,
+						material.NumIndices,meshName, context);
 
-			auto itMat = context.Materials.find ( material.Name );
-			if ( itMat == context.Materials.end () )
-			{
-				pMesh->mMaterialIndex = context.Materials.size ();
-				context.Materials[material.Name] = pMesh->mMaterialIndex;
+				auto itMat = context.Materials.find(material.Name);
+				if (itMat == context.Materials.end()) {
+					pMesh->mMaterialIndex = context.Materials.size();
+					context.Materials[material.Name] = pMesh->mMaterialIndex;
+				} else {
+					pMesh->mMaterialIndex = itMat->second;
+				}
+
+				aiNode* pMeshNode = new aiNode(meshName);
+				pMeshNode->mMeshes = new uint[1];
+				pMeshNode->mMeshes[pMeshNode->mNumMeshes++] =
+						context.Meshes.size();
+				context.Meshes.push_back(pMesh);
+
+				pMeshGroupNode->addChildren(1, &pMeshNode);
 			}
-			else
-			{
-				pMesh->mMaterialIndex = itMat->second;
-			}
-
-			aiNode* pMeshNode = new aiNode ();
-			pMeshNode->mName = pMesh->mName;
-			pMeshNode->mMeshes = new uint[1];
-			pMeshNode->mMeshes[pMeshNode->mNumMeshes++] = context.Meshes.size ();
-			context.Meshes.push_back ( pMesh );
-
-			pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] = pMeshNode;
 		}
+	} catch (...) {
+		delete pMeshGroupNode;
+		throw;
 	}
-}
-catch (...)
-{
-	delete pMeshGroupNode;
-	throw;
-}
 	return pMeshGroupNode;
 }
 
 aiMesh* XmfImporter::ConvertXuMeshToAiMesh(XuMeshFile& mesh, int firstIndex,
 		int numIndices, const std::string& name, ConversionContext& context) {
 	aiMesh* pMesh = new aiMesh();
-	pMesh->mName = name;
+	pMesh->mName=name;
 	try {
 		AllocMeshVertices(pMesh, mesh, numIndices);
 		AllocMeshFaces(pMesh, mesh, numIndices);
@@ -287,8 +302,8 @@ void XmfImporter::AllocMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 			case D3DDECLUSAGE_TEXCOORD:
 			if (vertexElem.UsageIndex
 					>= AI_MAX_NUMBER_OF_TEXTURECOORDS) {
-			throw std::runtime_error(
-					"Invalid usage index for TEXCOORD vertex element");
+				throw std::runtime_error(
+						"Invalid usage index for TEXCOORD vertex element");
 			}
 			if (!pMesh->mTextureCoords[vertexElem.UsageIndex]) {
 				pMesh->mTextureCoords[vertexElem.UsageIndex] =
@@ -364,9 +379,9 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		for ( int vertexIdxIdx = firstIndex; vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx )
 		{
 			int vertexIdx = (indexFormat == D3DFMT_INDEX16 ? ((ushort *)pIndexes)[vertexIdxIdx] : ((int *)pIndexes)[vertexIdxIdx] );
-			if ( vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection )
-			throw std::runtime_error( "PopulateMeshVertices: invalid index" );
-
+			if ( vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection ) {
+				throw std::runtime_error( "PopulateMeshVertices: invalid index" );
+			}
 			byte* pVertexElemData = pVertexBuffer + vertexIdx*declarationSize + elemOffset;
 			int localVertexIdx = vertexIdxIdx - firstIndex;
 			switch ( elem.Usage )
@@ -381,6 +396,7 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 
 				case D3DDECLUSAGE_NORMAL:
 				{
+					printf( "Usage: %d UsageIndex: %d\n",elem.Usage,elem.UsageIndex);
 					aiVector3D normal = DXUtil::ConvertVertexAttributeToVec3D ( pVertexElemData, elemType );
 					normal.x = -normal.x;
 					pMesh->mNormals[localVertexIdx] = normal;
@@ -389,6 +405,7 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 
 				case D3DDECLUSAGE_TANGENT:
 				{
+					printf( "Usage: %d UsageIndex: %d\n",elem.Usage,elem.UsageIndex);
 					aiVector3D* pTangents = (elem.UsageIndex == 0 ? pMesh->mTangents : pMesh->mBitangents);
 					aiVector3D tangent = DXUtil::ConvertVertexAttributeToVec3D ( pVertexElemData, elemType );
 					tangent.x = -tangent.x;
@@ -409,6 +426,10 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 					pMesh->mColors[elem.UsageIndex][localVertexIdx] = DXUtil::ConvertVertexAttributeToColorF ( pVertexElemData, elemType );
 					break;
 				}
+
+				default:
+					throw new std::runtime_error(str(format("element usage not handled: %d") %elem.Usage));
+					break;
 			}
 		}
 		elemOffset += DXUtil::GetVertexElementTypeSize ( (D3DDECLTYPE)elem.Type );

@@ -22,7 +22,8 @@ set(pugixml_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/pugixml/include)
 include(ExternalProject)
 ExternalProject_Add(assimp
 	PREFIX external
-	GIT_REPOSITORY https://github.com/assimp/assimp.git
+	#GIT_REPOSITORY https://github.com/assimp/assimp.git
+	GIT_REPOSITORY https://github.com/cgettys/assimp.git
 	#GIT_TAG v4.1.0
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp -DCMAKE_CXX_FLAGS="-fPIC")
 set(assimp_LIB ${CMAKE_BINARY_DIR}/assimp/lib/libassimp.so)
