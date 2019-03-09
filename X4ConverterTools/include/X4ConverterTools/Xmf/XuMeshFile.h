@@ -10,8 +10,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 
@@ -40,8 +38,8 @@ public:
     int                                 NumMaterials            ()  { return _materials.size(); }
     void                                AddMaterial             ( int firstIndex, int numIndices, const std::string& name );
 
-    static std::shared_ptr<XuMeshFile>  ReadFromFile            ( const std::string& filePath, Assimp::IOSystem* pIOHandler );
-    static std::shared_ptr<XuMeshFile>  ReadFromIOStream        ( Assimp::IOStream* pStream);
+    static XuMeshFile*                  ReadFromFile            ( const std::string& filePath, Assimp::IOSystem* pIOHandler );
+    static XuMeshFile*					ReadFromIOStream        ( Assimp::IOStream* pStream);
     void                                WriteToFile             ( const std::string& filePath, Assimp::IOSystem* pIOHandler );
     void                                WriteToIOStream         ( Assimp::IOStream* pStream);
 private:

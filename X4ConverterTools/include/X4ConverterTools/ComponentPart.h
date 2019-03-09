@@ -1,5 +1,5 @@
 #pragma once
-#include "ComponentPartLod.h"
+#include <X4ConverterTools/ComponentPartLod.h>
 struct ComponentPart
 {
     ComponentPartLod*                               GetLod              ( int lodIndex );
@@ -7,7 +7,7 @@ struct ComponentPart
     std::string                                     Name;
     std::string                                     ParentName;
     std::vector < ComponentPartLod >                Lods;
-    std::shared_ptr < XuMeshFile >                  CollisionMesh;
+    XuMeshFile*                                     CollisionMesh;
     aiVector3D                                      Position;
     aiVector3D                                      Center;
     aiVector3D                                      Size;

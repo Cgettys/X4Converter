@@ -1,6 +1,5 @@
-#include <X4ConverterTools/StdInc.h>
-
-ComponentPartLod::ComponentPartLod ( int lodIndex, std::shared_ptr<XuMeshFile> pMesh )
+#include <X4ConverterTools/ComponentPartLod.h>
+ComponentPartLod::ComponentPartLod ( int lodIndex, XuMeshFile* pMesh )
     : LodIndex ( lodIndex ), Mesh ( pMesh )
 {
 

@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <assimp/ai_assert.h>
 #include <assimp/IOSystem.hpp>
 #include <assimp/ProgressHandler.hpp>
@@ -18,7 +16,7 @@
 class Component
 {
 public:
-    static std::shared_ptr<Component>       ReadFromFile            ( const std::string& filePath, const std::string& gameBaseFolderPath, Assimp::IOSystem* pIOHandler );
+    static Component*                       ReadFromFile            ( const std::string& filePath, const std::string& gameBaseFolderPath, Assimp::IOSystem* pIOHandler );
     void                                    WriteToFile             ( const std::string& filePath, const std::string& gameBaseFolderPath, Assimp::IOSystem* pIOHandler );
 
     std::string                             Name;

@@ -2,8 +2,8 @@
 #include <X4ConverterTools/Xmf/XuMeshFile.h>
 struct ComponentPartLod
 {
-                                    ComponentPartLod    ( int lodIndex, std::shared_ptr<XuMeshFile> pMesh );
+                                    ComponentPartLod    ( int lodIndex, XuMeshFile* pMesh );
 
     int                             LodIndex;
-    std::shared_ptr<XuMeshFile>     Mesh;
+    XuMeshFile *Mesh;
 };

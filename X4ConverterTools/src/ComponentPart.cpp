@@ -1,8 +1,7 @@
-#include <X4ConverterTools/StdInc.h>
-
+#include <X4ConverterTools/ComponentPart.h>
 ComponentPartLod* ComponentPart::GetLod ( int lodIndex )
 {
-    foreach ( ComponentPartLod& lod, Lods )
+    for ( ComponentPartLod lod : Lods )
     {
         if ( lod.LodIndex == lodIndex )
             return &lod;

@@ -32,16 +32,16 @@ void XmfImporter::InternReadFile(const std::string& filePath, aiScene* pScene,
 		IOSystem* pIOHandler) {
 	try {
 		// Read the .xml and .xmf files
-		std::shared_ptr<Component> pComponent = Component::ReadFromFile(
+		Component &pComponent = Component::ReadFromFile(
 				filePath, _gameBaseFolderPath, pIOHandler);
 
 		// Convert to the Assimp data model
 		ConversionContext context;
-		pScene->mRootNode = ConvertComponentToAiNode(*pComponent, context);
+		pScene->mRootNode = ConvertComponentToAiNode(pComponent, context);
 
 		// Add the meshes to the scene
 		pScene->mMeshes = new aiMesh*[context.Meshes.size()];
-		foreach ( aiMesh* pMesh, context.Meshes ){
+		for ( aiMesh* pMesh : context.Meshes ){
 		AssimpUtil::MergeVertices ( pMesh );
 		pScene->mMeshes[pScene->mNumMeshes++] = pMesh;
 	}

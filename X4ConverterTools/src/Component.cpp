@@ -5,25 +5,28 @@ using namespace Assimp;
 using namespace boost;
 using namespace boost::filesystem;
 
-std::shared_ptr<Component> Component::ReadFromFile(const std::string& filePath,
+Component *Component::ReadFromFile(const std::string& filePath,
 		const std::string& gameBaseFolderPath, IOSystem* pIOHandler) {
-	if (!is_regular_file(filePath)){
+	if (!is_regular_file(filePath)) {
 		throw std::runtime_error(".xml file doesn't exist");
 	}
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filePath.c_str());
-	if (result.status != pugi::status_ok){
-		throw std::runtime_error(str(format("Failed to parse .xml file: %s") % result.description()));
+	if (result.status != pugi::status_ok) {
+		throw std::runtime_error(
+				str(
+						format("Failed to parse .xml file: %s")
+								% result.description()));
 	}
 	pugi::xml_node componentNode = GetComponentNode(doc);
 	path geometryFolderPath = GetGeometryFolderPath(componentNode,
 			gameBaseFolderPath, false);
 	pugi::xpath_node_set partNodes = componentNode.select_nodes(
 			"connections/connection/parts/part");
-	if (partNodes.empty()){
+	if (partNodes.empty()) {
 		throw std::runtime_error("File does not contain any <part> elements");
 	}
-	std::shared_ptr<Component> pComponent = std::make_shared<Component>();
+	Component* pComponent = new Component();
 	pComponent->Name = componentNode.attribute("name").value();
 	for (auto it = partNodes.begin(); it != partNodes.end(); ++it) {
 		pComponent->ReadPart(it->node(), geometryFolderPath, pIOHandler);
@@ -33,13 +36,16 @@ std::shared_ptr<Component> Component::ReadFromFile(const std::string& filePath,
 
 void Component::WriteToFile(const std::string& filePath,
 		const std::string& gameBaseFolderPath, Assimp::IOSystem* pIOHandler) {
-	if (!is_regular_file(filePath)){
+	if (!is_regular_file(filePath)) {
 		CreateDummyFile(filePath, gameBaseFolderPath);
 	}
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filePath.c_str());
 	if (result.status != pugi::status_ok)
-		throw std::runtime_error(str(format("Failed to parse %s: %s") % filePath % result.description()));
+		throw std::runtime_error(
+				str(
+						format("Failed to parse %s: %s") % filePath
+								% result.description()));
 
 	pugi::xml_node componentNode = GetComponentNode(doc);
 	path geometryFolderPath = GetGeometryFolderPath(componentNode,
@@ -87,13 +93,15 @@ path Component::GetGeometryFolderPath(pugi::xml_node componentNode,
 		throw std::runtime_error("File has no geometry source");
 	std::string windowsPath = geometryAttr.value();
 #ifdef BOOST_OS_LINUX
-	std::replace(windowsPath.begin(),windowsPath.end(), '\\', '/');
+	std::replace(windowsPath.begin(), windowsPath.end(), '\\', '/');
 #endif
 	path geometryFolderPath = path(gameBaseFolderPath) / windowsPath;
 	if (!is_directory(geometryFolderPath)) {
 		if (!createIfMissing)
-			throw std::runtime_error(str(format("Directory %s doesn't exist")
-					% geometryFolderPath));
+			throw std::runtime_error(
+					str(
+							format("Directory %s doesn't exist")
+									% geometryFolderPath));
 
 		create_directory(geometryFolderPath);
 	}
@@ -134,7 +142,7 @@ void Component::ReadPart(pugi::xml_node partNode,
 		path lodFilePath = geometryFolderPath
 				/ (format("%s-lod%d.xmf") % partName % lodIndex).str();
 //		std::cerr << "reading normal .xmf: " << lodFilePath << std::endl;
-		if (!is_regular_file(lodFilePath)){
+		if (!is_regular_file(lodFilePath)) {
 			break;
 		}
 
@@ -147,7 +155,7 @@ void Component::ReadPart(pugi::xml_node partNode,
 	//TODO better solution
 	path collisionFilePath = geometryFolderPath / (partName + "-collision.xmf");
 //	std::cerr << "reading collison .xmf: " << collisionFilePath << std::endl;
-	if (is_regular_file(collisionFilePath)){
+	if (is_regular_file(collisionFilePath)) {
 		part.CollisionMesh = XuMeshFile::ReadFromFile(
 				collisionFilePath.string(), pIOHandler);
 	}
@@ -291,49 +299,51 @@ void Component::WritePartLods(ComponentPart& part, pugi::xml_node partNode,
 	}
 
 	// Add/update remaining LOD's
-	foreach ( ComponentPartLod& lod, part.Lods ){
-	pugi::xml_node lodNode = lodsNode.select_node ( (format("lod[@index='%d']") % lod.LodIndex).str ().c_str () ).node ();
-	if ( !lodNode )
-	{
-		lodNode = lodsNode.append_child ( "lod" );
-		lodNode.append_attribute ( "index" ).set_value ( lod.LodIndex );
-	}
-
-	// Ensure material node
-	pugi::xml_node materialsNode = lodNode.select_node ( "materials" ).node ();
-	if ( !materialsNode )
-	materialsNode = lodNode.append_child ( "materials" );
-
-	// Remove materials that are no longer in the lod
-	pugi::xpath_node_set materialNodes = materialsNode.select_nodes ( "material" );
-	for ( auto it = materialNodes.begin (); it != materialNodes.end (); ++it )
-	{
-		if ( it->node ().attribute ( "id" ).as_int () > lod.Mesh->NumMaterials () )
-		materialsNode.remove_child ( it->node () );
-	}
-
-	// Add/update remaining materials
-	int materialId = 1;
-	foreach ( XmfMaterial& material, lod.Mesh->GetMaterials () )
-	{
-		pugi::xml_node materialNode = materialsNode.select_node ( (format("material[@id='%d']") % materialId).str ().c_str () ).node ();
-		if ( !materialNode )
-		{
-			materialNode = materialsNode.append_child ( "material" );
-			materialNode.append_attribute ( "id" ).set_value ( materialId );
+	for (ComponentPartLod lod : part.Lods) {
+		pugi::xml_node lodNode =
+				lodsNode.select_node(
+						(format("lod[@index='%d']") % lod.LodIndex).str().c_str()).node();
+		if (!lodNode) {
+			lodNode = lodsNode.append_child("lod");
+			lodNode.append_attribute("index").set_value(lod.LodIndex);
 		}
-		pugi::xml_attribute refAttr = materialNode.attribute ( "ref" );
-		if ( !refAttr )
-		refAttr = materialNode.append_attribute ( "ref" );
 
-		refAttr.set_value ( material.Name );
-		materialId++;
+		// Ensure material node
+		pugi::xml_node materialsNode = lodNode.select_node("materials").node();
+		if (!materialsNode)
+			materialsNode = lodNode.append_child("materials");
+
+		// Remove materials that are no longer in the lod
+		pugi::xpath_node_set materialNodes = materialsNode.select_nodes(
+				"material");
+		for (auto it = materialNodes.begin(); it != materialNodes.end(); ++it) {
+			if (it->node().attribute("id").as_int() > lod.Mesh->NumMaterials())
+				materialsNode.remove_child(it->node());
+		}
+
+		// Add/update remaining materials
+		int materialId = 1;
+		for (XmfMaterial material : lod.Mesh->GetMaterials()) {
+			pugi::xml_node materialNode =
+					materialsNode.select_node(
+							(format("material[@id='%d']") % materialId).str().c_str()).node();
+			if (!materialNode) {
+				materialNode = materialsNode.append_child("material");
+				materialNode.append_attribute("id").set_value(materialId);
+			}
+			pugi::xml_attribute refAttr = materialNode.attribute("ref");
+			if (!refAttr)
+				refAttr = materialNode.append_attribute("ref");
+
+			refAttr.set_value(material.Name);
+			materialId++;
+		}
+
+		// Write mesh file
+		//TODO better solution
+		std::string xmfFileName = (format("%s-lod%d.out..xmf") % part.Name
+				% lod.LodIndex).str();
+		std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
+		lod.Mesh->WriteToFile(xmfFilePath, pIOHandler);
 	}
-
-	// Write mesh file
-	//TODO better solution
-	std::string xmfFileName = (format("%s-lod%d.out..xmf") % part.Name % lod.LodIndex).str ();
-	std::string xmfFilePath = (geometryFolderPath / xmfFileName).string ();
-	lod.Mesh->WriteToFile ( xmfFilePath, pIOHandler );
-}
 }

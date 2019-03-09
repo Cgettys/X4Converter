@@ -31,6 +31,7 @@ private:
     void                            PopulateMeshVertices            ( aiMesh* pMesh, XuMeshFile& meshFile, int firstIndex, int numIndices );
     void                            PopulateMeshFaces               ( aiMesh* pMesh, int numIndices );
     
+
     std::string                     _gameBaseFolderPath;
     MaterialLibrary                 _materialLibrary;
 };
