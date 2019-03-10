@@ -2,8 +2,8 @@
 // TODO remove when possible
 #include <cstring>
 #include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>

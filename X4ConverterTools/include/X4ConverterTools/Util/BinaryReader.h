@@ -2,7 +2,7 @@
 #include <assimp/IOStream.hpp>
 class BinaryReader {
 public:
-	BinaryReader(Assimp::IOStream* pStream);
+	explicit BinaryReader(Assimp::IOStream* pStream);
 
 	Assimp::IOStream* GetStream() const;
 

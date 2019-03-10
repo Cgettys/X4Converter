@@ -3,11 +3,11 @@ using namespace Assimp;
 using namespace boost;
 
 XmfDataBuffer* XuMeshFile::GetIndexBuffer() {
-	for (auto it = _buffers.begin(); it != _buffers.end(); ++it) {
-		if (it->IsIndexBuffer())
-			return &(*it);
+	for (auto &_buffer : _buffers) {
+		if (_buffer.IsIndexBuffer())
+			return &_buffer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 std::vector<XmfVertexElement> XuMeshFile::GetVertexDeclaration() {
@@ -30,13 +30,13 @@ int XuMeshFile::NumVertices() {
 
 int XuMeshFile::NumIndices() {
 	XmfDataBuffer* pIndexBuffer = GetIndexBuffer();
-	return pIndexBuffer != NULL ?
+	return pIndexBuffer != nullptr ?
 			pIndexBuffer->Description.NumItemsPerSection : 0;
 }
 
 void XuMeshFile::AddMaterial(int firstIndex, int numIndices,
 		const std::string& name) {
-	_materials.push_back(XmfMaterial(firstIndex, numIndices, name));
+	_materials.emplace_back(firstIndex, numIndices, name);
 }
 std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(
 		const std::string& filePath, Assimp::IOSystem* pIOHandler) {
@@ -47,7 +47,6 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(
 		pIOHandler->Close(pStream);
 		return result;
 	} catch (...) {
-		pIOHandler->Close(pStream);
 		throw;
 	}
 }
@@ -203,7 +202,7 @@ void XuMeshFile::WriteToFile(const std::string& filePath,
 		IOSystem* pIOHandler) {
 	IOStream* pStream = pIOHandler->Open(filePath, "wb+");
 	if (!pStream) {
-		throw(format("Failed to open %1 for writing") % filePath).str();
+		throw std::runtime_error((format("Failed to open %1 for writing") % filePath.c_str()).str());
 	}
 	WriteToIOStream(pStream);
 	pIOHandler->Close(pStream);

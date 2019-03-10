@@ -36,7 +36,7 @@ int XmfDataBuffer::GetUncompressedDataSize () const
 
 byte* XmfDataBuffer::GetData ()
 {
-	byte *copiedData = new byte[_data.size()];
+	auto copiedData = new byte[_data.size()];
 	std::copy(_data.begin(), _data.end(), copiedData);
     return copiedData;
 }

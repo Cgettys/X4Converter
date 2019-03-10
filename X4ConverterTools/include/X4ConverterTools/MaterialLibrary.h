@@ -14,7 +14,7 @@ class MaterialLibrary
     friend Material;
 
 public:
-                                                    MaterialLibrary     ( const std::string& gameBaseFolderPath );
+    explicit MaterialLibrary     ( const std::string& gameBaseFolderPath );
 
     MaterialCollection*                             GetCollection       ( const std::string& name );
     Material*                                       GetMaterial         ( const std::string& dottedName );

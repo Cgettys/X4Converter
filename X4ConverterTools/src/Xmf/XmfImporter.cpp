@@ -51,20 +51,19 @@ void XmfImporter::InternReadFile(const std::string& filePath, aiScene* pScene,
 			std::string baseFolderPath = path(filePath).parent_path().string();
 			pScene->mNumMaterials = context.Materials.size();
 			pScene->mMaterials = new aiMaterial*[pScene->mNumMaterials];
-			for (auto it = context.Materials.begin();
-					it != context.Materials.end(); ++it) {
-				Material* pMaterial = _materialLibrary.GetMaterial(it->first);
+			for (auto &it : context.Materials) {
+				Material* pMaterial = _materialLibrary.GetMaterial(it.first);
 				aiMaterial* pAiMaterial;
 				if (pMaterial) {
 					pAiMaterial = pMaterial->ConvertToAiMaterial(
 							baseFolderPath);
 				} else {
-					aiString* tempString = new aiString(it->first);
+                    auto * tempString = new aiString(it.first);
 					pAiMaterial = new aiMaterial();
 					pAiMaterial->AddProperty(tempString, AI_MATKEY_NAME);
 					delete tempString;
 				}
-				pScene->mMaterials[it->second] = pAiMaterial;
+				pScene->mMaterials[it.second] = pAiMaterial;
 			}
 		}
 	} catch (std::exception &e) {
@@ -78,35 +77,35 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 	std::map<std::string, aiNode*> partNodes;
 
 	// Create nodes and meshes
-	for (auto it = component.Parts.begin(); it != component.Parts.end(); ++it) {
-		partNodes[it->first] = ConvertComponentPartToAiNode(it->second,
+	for (auto &Part : component.Parts) {
+		partNodes[Part.first] = ConvertComponentPartToAiNode(Part.second,
 				context);
 	}
 
 	// Link parent nodes
 	std::vector<aiNode*> rootNodes;
 	std::map<aiNode*, std::vector<aiNode*> > nodeChildren;
-	for (auto it = component.Parts.begin(); it != component.Parts.end(); ++it) {
-		aiNode* pPartNode = partNodes[it->first];
-		if (it->second.ParentName.empty()) {
+	for (auto &Part : component.Parts) {
+		aiNode* pPartNode = partNodes[Part.first];
+		if (Part.second.ParentName.empty()) {
 			rootNodes.push_back(pPartNode);
 			continue;
 		}
 
-		auto parentIt = partNodes.find(it->second.ParentName);
+		auto parentIt = partNodes.find(Part.second.ParentName);
 		if (parentIt == partNodes.end()) {
 			throw std::runtime_error(
 					str(
-							format("Node %1 has invalid parent %2") % it->first
-									% it->second.ParentName));
+							format("Node %1 has invalid parent %2") % (Part.first).c_str()
+									% (Part.second.ParentName).c_str()));
 		}
 		nodeChildren[parentIt->second].push_back(pPartNode);
 	}
 
-	for (auto it = nodeChildren.begin(); it != nodeChildren.end(); ++it) {
-		aiNode* pParentNode = it->first;
-		aiNode** ppNewChildren = new aiNode*[pParentNode->mNumChildren
-				+ it->second.size()];
+	for (auto &it : nodeChildren) {
+		aiNode* pParentNode = it.first;
+		auto ** ppNewChildren = new aiNode*[pParentNode->mNumChildren
+				+ it.second.size()];
 		if (pParentNode->mChildren) {
 			memcpy(ppNewChildren, pParentNode->mChildren,
 					sizeof(aiNode*) * pParentNode->mNumChildren);
@@ -114,7 +113,7 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 		}
 		pParentNode->mChildren = ppNewChildren;
 
-		for (aiNode* pChildNode : it->second) {
+		for (aiNode* pChildNode : it.second) {
 			pParentNode->mChildren[pParentNode->mNumChildren++] = pChildNode;
 			pChildNode->mParent = pParentNode;
 		}
@@ -124,7 +123,7 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 	if (rootNodes.empty())
 		throw std::runtime_error("No root parts found");
 
-	aiNode* pComponentNode = new aiNode(component.Name);
+	auto * pComponentNode = new aiNode(component.Name);
 	pComponentNode->mChildren = new aiNode*[rootNodes.size()];
 
 	aiNode* pRealRootNode = new aiNode("ROOT_NODE_PLZ");
@@ -144,7 +143,7 @@ aiNode* XmfImporter::ConvertComponentToAiNode(Component& component,
 
 aiNode* XmfImporter::ConvertComponentPartToAiNode(ComponentPart& part,
 		ConversionContext& context) {
-	aiNode* pPartNode = new aiNode();
+	auto * pPartNode = new aiNode();
 	try {
 		pPartNode->mName = part.Name;
 		pPartNode->mTransformation.a4 = -part.Position.x;
@@ -173,7 +172,7 @@ aiNode* XmfImporter::ConvertComponentPartToAiNode(ComponentPart& part,
 
 aiNode* XmfImporter::ConvertXuMeshToAiNode(XuMeshFile& mesh,
 		const std::string& name, ConversionContext& context) {
-	aiNode* pMeshGroupNode = new aiNode();
+	auto * pMeshGroupNode = new aiNode();
 	pMeshGroupNode->mName = name;
 	try {
 		if (mesh.GetMaterials().empty()) {
@@ -202,7 +201,7 @@ aiNode* XmfImporter::ConvertXuMeshToAiNode(XuMeshFile& mesh,
 					pMesh->mMaterialIndex = itMat->second;
 				}
 
-				aiNode* pMeshNode = new aiNode();
+				auto * pMeshNode = new aiNode();
 				pMeshNode->mName = pMesh->mName;
 				pMeshNode->mMeshes = new uint[1];
 				pMeshNode->mMeshes[pMeshNode->mNumMeshes++] =
@@ -222,7 +221,7 @@ aiNode* XmfImporter::ConvertXuMeshToAiNode(XuMeshFile& mesh,
 
 aiMesh* XmfImporter::ConvertXuMeshToAiMesh(XuMeshFile& mesh, int firstIndex,
 		int numIndices, const std::string& name, ConversionContext& context) {
-	aiMesh* pMesh = new aiMesh();
+	auto * pMesh = new aiMesh();
 	pMesh->mName = name;
 	try {
 		AllocMeshVertices(pMesh, mesh, numIndices);
@@ -366,7 +365,7 @@ void XmfImporter::PopulateMeshVertices(aiMesh* pMesh, XuMeshFile& meshFile,
 		for (int elemIdx = 0; elemIdx < buffer.Description.NumVertexElements;
 				++elemIdx) {
 			XmfVertexElement& elem = buffer.Description.VertexElements[elemIdx];
-			D3DDECLTYPE elemType = (D3DDECLTYPE) elem.Type;
+			auto elemType = (D3DDECLTYPE) elem.Type;
 
 			for (int vertexIdxIdx = firstIndex;
 					vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {

@@ -7,8 +7,6 @@
 #include <X4ConverterTools/API.h>
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
-namespace po = boost::program_options;
 
 #include <iostream>
 #include <fstream>
@@ -17,8 +15,8 @@ namespace po = boost::program_options;
 #include <string>
 
 
-using namespace boost::algorithm;
-using namespace boost::filesystem;
+namespace po = boost::program_options;
+namespace fs = boost::filesystem;
 // A helper function to simplify the main part.
 template<class T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
@@ -78,7 +76,7 @@ int main(int ac, char* av[]) {
 		notify(vm);
 
 		if (vm.count("config")) {
-			ifstream ifs(config_file.c_str());
+			std::ifstream ifs(config_file.c_str());
 			if (!ifs) {
 				std::cout << "can not open config file: " << config_file << "\n";
 				return 0;
@@ -102,7 +100,7 @@ int main(int ac, char* av[]) {
 
 
 
-	path gameBaseFolderPath = canonical(dat_dir).make_preferred();
+	fs::path gameBaseFolderPath = fs::canonical(dat_dir).make_preferred();
 	if (!is_directory(gameBaseFolderPath)) {
 		printf("Specified .dat file content folder does not exist.\n");
 		return 1;
@@ -119,15 +117,15 @@ int main(int ac, char* av[]) {
 //		gameExtsFolderPath = gameBaseFolderPath / "extensions";
 //	}
 
-	path inputFilePath = canonical(target).make_preferred();
+	fs::path inputFilePath = fs::canonical(target).make_preferred();
 	if (!is_regular_file(inputFilePath)) {
 		printf("Input file does not exist.\n");
 		return 1;
 	}
 
-	path outputFilePath(inputFilePath);
+	fs::path outputFilePath(inputFilePath);
 	char szError[256];
-	bool success;
+	bool success = false;
 	if (action == "importxmf") {
 		// .xml/.xmf -> .dae
 //gameExtsFolderPath.string().c_str(),

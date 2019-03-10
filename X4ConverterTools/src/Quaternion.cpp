@@ -34,5 +34,5 @@ Quaternion::Quaternion ( float x, float y, float z, float w )
 
 Quaternion::operator aiQuaternion () const
 {
-    return aiQuaternion ( W, X, Y, Z );
+    return {W, X, Y, Z};
 }

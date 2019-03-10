@@ -48,7 +48,7 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
 
 aiMaterial* Material::ConvertToAiMaterial(
 		const path& modelFolderPath) const {
-	aiMaterial* pAiMaterial = new aiMaterial();
+	auto * pAiMaterial = new aiMaterial();
 	aiString* name = new aiString(_pCollectionName + "X" + GetName());
 	pAiMaterial->AddProperty(name, AI_MATKEY_NAME);
 	delete name;

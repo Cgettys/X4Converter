@@ -21,8 +21,8 @@ public:
     aiMaterial*         ConvertToAiMaterial             ( const boost::filesystem::path& modelFolderPath ) const;
 
 private:
-    std::string         GetTextureFilePath              ( const std::string filePath, const boost::filesystem::path& modelFolderPath) const;
-    std::string         GetDecompressedTextureFilePath  ( const std::string filePath, const boost::filesystem::path& modelFolderPath) const;
+    std::string         GetTextureFilePath              (std::string filePath, const boost::filesystem::path& modelFolderPath) const;
+    std::string         GetDecompressedTextureFilePath  (std::string filePath, const boost::filesystem::path& modelFolderPath) const;
 
     std::string         _pCollectionName;
     std::string         _name;

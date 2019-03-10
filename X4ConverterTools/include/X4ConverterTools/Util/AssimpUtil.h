@@ -44,9 +44,8 @@ namespace std
             uint result = 0;
             result ^= hash < aiVector3D > () ( value.Position );
             result ^= hash < aiVector3D > () ( value.Normal );
-            for ( int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i )
-            {
-                result ^= hash < aiVector3D > () ( value.UV[i] );
+            for (auto i : value.UV) {
+                result ^= hash < aiVector3D > () (i);
             }
             return result;
         }

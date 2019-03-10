@@ -32,7 +32,7 @@ path PathUtil::GetRelativePath(const path& filePath,
 	}
 
 	if (differenceStart == 0) {
-		throw std::runtime_error(str(format("Paths do not have a common root %s %s")%filePath %relativeToFolderPath));
+		throw std::runtime_error(str(format("Paths do not have a common root %1 %2")%filePath.c_str() %relativeToFolderPath.c_str()));
 	}
 	path result;
 	for (int i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {

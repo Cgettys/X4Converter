@@ -3,7 +3,7 @@
 class BinaryWriter
 {
 public:
-                                BinaryWriter            ( Assimp::IOStream* pStream );
+    explicit BinaryWriter            ( Assimp::IOStream* pStream );
 
     Assimp::IOStream*           GetStream               () const;
 

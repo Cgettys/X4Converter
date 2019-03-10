@@ -2,10 +2,11 @@
 
 ComponentPartLod* ComponentPart::GetLod ( int lodIndex )
 {
-    foreach ( ComponentPartLod& lod, Lods )
+    for ( ComponentPartLod& lod: Lods )
     {
-        if ( lod.LodIndex == lodIndex )
+        if ( lod.LodIndex == lodIndex ) {
             return &lod;
+        }
     }
     return nullptr;
 }

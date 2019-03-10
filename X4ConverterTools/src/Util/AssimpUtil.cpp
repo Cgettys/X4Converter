@@ -36,16 +36,15 @@ void AssimpUtil::MergeVertices ( aiMesh* pMesh )
                 if ( pMesh->mBitangents )
                     pMesh->mBitangents[targetIdx] = pMesh->mBitangents[srcIdx];
 
-                for ( int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i )
-                {
-                    if ( pMesh->mColors[i] )
-                        pMesh->mColors[i][targetIdx] = pMesh->mColors[i][srcIdx];
+                for (auto &mColor : pMesh->mColors) {
+                    if (mColor) {
+                        mColor[targetIdx] = mColor[srcIdx];
+                    }
                 }
 
-                for ( int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i )
-                {
-                    if ( pMesh->mTextureCoords[i] )
-                        pMesh->mTextureCoords[i][targetIdx] = pMesh->mTextureCoords[i][srcIdx];
+                for (auto &mTextureCoord : pMesh->mTextureCoords) {
+                    if (mTextureCoord)
+                        mTextureCoord[targetIdx] = mTextureCoord[srcIdx];
                 }
             }
             targetIdx++;

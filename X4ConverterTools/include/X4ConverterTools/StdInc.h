@@ -1,8 +1,8 @@
 #pragma once
 // TODO destroy this monstrosity
-#include <assert.h>
-#include <stdio.h>
-#include <stdint.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdint>
 #include <unordered_map>
 #include <regex>
 #include <set>
