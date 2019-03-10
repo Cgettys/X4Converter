@@ -36,7 +36,9 @@ int XmfDataBuffer::GetUncompressedDataSize () const
 
 byte* XmfDataBuffer::GetData ()
 {
-    return _data.data ();
+	byte *copiedData = new byte[_data.size()];
+	std::copy(_data.begin(), _data.end(), copiedData);
+    return copiedData;
 }
 
 void XmfDataBuffer::NormalizeVertexDeclaration ()

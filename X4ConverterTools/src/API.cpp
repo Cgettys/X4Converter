@@ -1,8 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
-
-#include <cstring>
-#include <stdio.h>
-#include <stdlib.h>
+#include <X4ConverterTools/API.h>
 
 bool ConvertXmlToDae(const char* pszGameBaseFolderPath,
 		const char* pszXmlFilePath, const char* pszDaeFilePath, char* pszError,
@@ -15,9 +11,11 @@ bool ConvertXmlToDae(const char* pszGameBaseFolderPath,
 		strncpy(pszError, importer.GetErrorString(), iMaxErrorSize);
 		return false;
 	}
+	aiScene* copiedScene;
+	aiCopyScene(pScene, &copiedScene);
 
 	Assimp::Exporter exporter;
-	aiReturn result = exporter.Export(pScene, "collada", pszDaeFilePath);
+	aiReturn result = exporter.Export(copiedScene, "collada", pszDaeFilePath);
 	if (result != aiReturn_SUCCESS) {
 	       std::cerr << "Failed during export" << std::endl;
 		strncpy(pszError, exporter.GetErrorString(), iMaxErrorSize);

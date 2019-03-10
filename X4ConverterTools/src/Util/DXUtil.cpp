@@ -28,8 +28,9 @@ int DXUtil::GetVertexElementTypeSize ( D3DDECLTYPE type )
 
         case D3DDECLTYPE_FLOAT4:
             return 16;
+        default:
+            throw std::runtime_error( "Unknown vertex element type" );
     }
-    throw std::runtime_error( "Unknown vertex element type" );
 }
 
 Vec3D DXUtil::ConvertVertexAttributeToVec3D ( byte* pAttribute, D3DDECLTYPE type )

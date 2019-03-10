@@ -5,7 +5,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>
-#include <X4ConverterTools/Types.h>
 #include <X4ConverterTools/Util/PathUtil.h>
 
 class Material

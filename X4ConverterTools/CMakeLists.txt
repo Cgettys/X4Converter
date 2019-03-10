@@ -3,6 +3,7 @@ add_subdirectory(src)
 #https://rix0r.nl/blog/2015/08/13/cmake-guide/
 add_library(X4ConverterTools SHARED ${LIB_SRCS})
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem ${pugixml_LIB} ${ZLIB_LIBRARIES} ${assimp_LIB} )
+# TODO fix so that proper includes are passed onto dependent projects?
 target_include_directories(X4ConverterTools PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
@@ -12,7 +13,6 @@ target_include_directories(X4ConverterTools PUBLIC
     ${ZLIB_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${assimp_INCLUDE_DIRS})
-
 # Manual dependency for external project
 add_dependencies(X4ConverterTools pugixml assimp)
 

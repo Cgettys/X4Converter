@@ -133,7 +133,7 @@ void Component::ReadPart(pugi::xml_node partNode,
 		//TODO better solution for path generation & debugging
 		path lodFilePath = geometryFolderPath
 				/ (format("%s-lod%d.xmf") % partName % lodIndex).str();
-		std::cerr << "reading normal .xmf: " << lodFilePath << std::endl;
+		std::cerr << "reading lod .xmf: " << lodFilePath << std::endl;
 		if (!is_regular_file(lodFilePath)){
 			break;
 		}
@@ -332,7 +332,7 @@ void Component::WritePartLods(ComponentPart& part, pugi::xml_node partNode,
 
 	// Write mesh file
 	//TODO better solution
-	std::string xmfFileName = (format("%s-lod%d.out..xmf") % part.Name % lod.LodIndex).str ();
+	std::string xmfFileName = (format("%s-lod%d.out.xmf") % part.Name % lod.LodIndex).str ();
 	std::string xmfFilePath = (geometryFolderPath / xmfFileName).string ();
 	lod.Mesh->WriteToFile ( xmfFilePath, pIOHandler );
 }

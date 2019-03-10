@@ -1,4 +1,3 @@
-#include <X4ConverterTools/StdInc.h>
 #include <X4ConverterTools/Xmf/XmfExporter.h>
 using namespace boost;
 
@@ -359,6 +358,7 @@ int XmfExporter::WriteVertexElement ( aiMesh* pMesh, int vertexIdx, XmfVertexEle
 
             return DXUtil::WriteColorFToVertexAttribute ( color, type, pElemData );
         }
+        default:
+            throw std::runtime_error("Usage not recognized");
     }
-    throw std::runtime_error("Usage not recognized");
 }

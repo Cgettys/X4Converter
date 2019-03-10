@@ -1,5 +1,17 @@
 #pragma once
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
+#include <X4ConverterTools/Util/AssimpUtil.h>
+#include <X4ConverterTools/Component.h>
+#include <X4ConverterTools/ComponentPart.h>
+#include <X4ConverterTools/Material.h>
+#include <X4ConverterTools/MaterialLibrary.h>
+#include <X4ConverterTools/Xmf/XuMeshFile.h>
+#include <assimp/scene.h>
+#include <assimp/Exceptional.h>
+#include <assimp/Exporter.hpp>
 class XmfExporter
 {
 public:

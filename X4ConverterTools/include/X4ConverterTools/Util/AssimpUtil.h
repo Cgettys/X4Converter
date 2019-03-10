@@ -1,4 +1,6 @@
 #pragma once
+#include <unordered_map>
+#include <assimp/scene.h>
 
 class AssimpUtil
 {

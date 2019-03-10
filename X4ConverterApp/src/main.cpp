@@ -4,20 +4,18 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 // Modified to suit this project by Charlie Gettys in 2019
 /* Shows how to use both command line and config file. */
-
+#include <X4ConverterTools/API.h>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 namespace po = boost::program_options;
 
 #include <iostream>
 #include <fstream>
 #include <iterator>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 
-
-#include <X4ConverterTools/API.h>
 
 using namespace boost::algorithm;
 using namespace boost::filesystem;

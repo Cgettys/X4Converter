@@ -1,12 +1,12 @@
 #pragma once
-#include <X4ConverterTools/Material.h>
-#include <X4ConverterTools/MaterialCollection.h>
 #include <regex>
 #include <string>
 #include <boost/algorithm/string.hpp>
 #include <boost/range.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>
+#include <X4ConverterTools/Material.h>
+#include <X4ConverterTools/MaterialCollection.h>
 #include <X4ConverterTools/Types.h>
 #include "pugixml.hpp"
 class MaterialLibrary

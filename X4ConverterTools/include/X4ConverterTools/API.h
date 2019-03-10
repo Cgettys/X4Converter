@@ -1,4 +1,17 @@
 #pragma once
+// TODO remove when possible
+#include <cstring>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <assimp/Importer.hpp>
+#include <assimp/Exporter.hpp>
+#include <assimp/scene.h>
+#include <assimp/SceneCombiner.h>
+
+#include <X4ConverterTools/Xmf/XmfImporter.h>
+#include <X4ConverterTools/Xmf/XmfExporter.h>
 bool ConvertXmlToDae ( const char* pszGameBaseFolderPath, const char* pszXmlFilePath, const char* pszDaeFilePath, char* pszError, int iMaxErrorSize );
 bool ConvertDaeToXml ( const char* pszGameBaseFolderPath, const char* pszDaeFilePath, const char* pszXmlFilePath, char* pszError, int iMaxErrorSize );
 
