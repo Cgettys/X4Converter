@@ -1,22 +1,24 @@
 #pragma once
+
 #include <map>
 #include <boost/format.hpp>
 #include <boost/range.hpp>
 #include <X4ConverterTools/Material.h>
 #include "pugixml.hpp"
-class MaterialCollection
-{
-public:								    MaterialCollection  ();
 
-    explicit MaterialCollection  ( pugi::xml_node node );
+class MaterialCollection {
+public:
+    MaterialCollection();
 
-    Material*                           GetMaterial         ( const std::string& name );
+    explicit MaterialCollection(pugi::xml_node node);
 
-    const std::string&                  GetName             () const    { return _name; }
+    Material *GetMaterial(const std::string &name);
+
+    const std::string &GetName() const { return _name; }
 
 private:
 
-    std::string                         _name;
-    pugi::xml_node                      _node;
-    std::map < std::string, Material >  _materials;
+    std::string _name;
+    pugi::xml_node _node;
+    std::map<std::string, Material> _materials;
 };

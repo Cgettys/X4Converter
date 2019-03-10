@@ -3,15 +3,15 @@
 #pragma pack(push)
 #pragma pack(1)
 
-struct XmfVertexElement
-{
-                        XmfVertexElement            ();
-                        XmfVertexElement            ( D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex = 0 );
+struct XmfVertexElement {
+    XmfVertexElement();
 
-    dword               Type;
-    byte                Usage;
-    byte                UsageIndex;
-    byte                _pad0[2] = {0,0};
+    XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex = 0);
+
+    dword Type;
+    byte Usage;
+    byte UsageIndex;
+    byte _pad0[2] = {0, 0};
 };
 
 #pragma pack(pop)

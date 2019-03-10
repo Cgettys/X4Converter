@@ -1,15 +1,16 @@
 #pragma once
 
-struct Vec2D
-{
-                Vec2D               ();
-                Vec2D               ( const Vec2D& other );
+struct Vec2D {
+    Vec2D();
 
-    explicit Vec2D               ( const aiVector2D& other );
-                Vec2D               ( float x, float y );
+    Vec2D(const Vec2D &other);
 
-                operator aiVector2D () const;
+    explicit Vec2D(const aiVector2D &other);
 
-    float       X;
-    float       Y;
+    Vec2D(float x, float y);
+
+    operator aiVector2D() const;
+
+    float X;
+    float Y;
 };

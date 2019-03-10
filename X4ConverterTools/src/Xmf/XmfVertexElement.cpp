@@ -1,12 +1,10 @@
 #include <X4ConverterTools/StdInc.h>
 
-XmfVertexElement::XmfVertexElement ()
-{
+XmfVertexElement::XmfVertexElement() {
     Type = D3DDECLTYPE_UNUSED;
 }
 
-XmfVertexElement::XmfVertexElement ( D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex )
-{
+XmfVertexElement::XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex) {
     Type = type;
     Usage = usage;
     UsageIndex = usageIndex;

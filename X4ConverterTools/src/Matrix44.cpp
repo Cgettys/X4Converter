@@ -1,7 +1,6 @@
 #include <X4ConverterTools/StdInc.h>
 
-Matrix44::operator aiMatrix4x4 ()
-{
+Matrix44::operator aiMatrix4x4() {
     aiMatrix4x4 result;
 
     result.a1 = Axes[0].X;

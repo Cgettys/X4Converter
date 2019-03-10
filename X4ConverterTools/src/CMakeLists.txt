@@ -2,22 +2,22 @@
 add_subdirectory(Util)
 #add_subdirectory(Xac)
 add_subdirectory(Xmf)
-SET (LIB_SRCS
-${UTIL_SRCS}
-#${XAC_SRCS}
-${XMF_SRCS}
-src/API.cpp
-src/Color.cpp
-src/Color8.cpp
-src/Component.cpp
-src/ComponentPart.cpp
-src/ComponentPartLod.cpp
-src/Material.cpp
-src/MaterialCollection.cpp
-src/MaterialLibrary.cpp
-src/Matrix44.cpp
-src/Quaternion.cpp
-src/Vec2D.cpp
-src/Vec3D.cpp
-src/Vec4D.cpp
-PARENT_SCOPE)
+SET(LIB_SRCS
+        ${UTIL_SRCS}
+        #${XAC_SRCS}
+        ${XMF_SRCS}
+        src/API.cpp
+        src/Color.cpp
+        src/Color8.cpp
+        src/Component.cpp
+        src/ComponentPart.cpp
+        src/ComponentPartLod.cpp
+        src/Material.cpp
+        src/MaterialCollection.cpp
+        src/MaterialLibrary.cpp
+        src/Matrix44.cpp
+        src/Quaternion.cpp
+        src/Vec2D.cpp
+        src/Vec3D.cpp
+        src/Vec4D.cpp
+        PARENT_SCOPE)

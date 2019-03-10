@@ -1,55 +1,60 @@
 #pragma once
+
 #include <assimp/IOStream.hpp>
+
 class BinaryReader {
 public:
-	explicit BinaryReader(Assimp::IOStream* pStream);
+    explicit BinaryReader(Assimp::IOStream *pStream);
 
-	Assimp::IOStream* GetStream() const;
+    Assimp::IOStream *GetStream() const;
 
-	template<typename T>
-	T Read() {
-		if (_pStream->FileSize() - _pStream->Tell() < sizeof(T))
-			throw std::runtime_error("Attempt to read past end of stream");
+    template<typename T>
+    T Read() {
+        if (_pStream->FileSize() - _pStream->Tell() < sizeof(T))
+            throw std::runtime_error("Attempt to read past end of stream");
 
-		T result;
-		_pStream->Read(&result, sizeof(T), 1);
-		return result;
-	}
+        T result;
+        _pStream->Read(&result, sizeof(T), 1);
+        return result;
+    }
 
-	template<typename T>
-	void Read(T* pOut, int count) {
-		if (_pStream->FileSize() - _pStream->Tell() < sizeof(T) * count)
-			throw std::runtime_error("Stream is too short");
+    template<typename T>
+    void Read(T *pOut, int count) {
+        if (_pStream->FileSize() - _pStream->Tell() < sizeof(T) * count)
+            throw std::runtime_error("Stream is too short");
 
-		_pStream->Read(pOut, sizeof(T), count);
-	}
+        _pStream->Read(pOut, sizeof(T), count);
+    }
 
-	template<typename T>
-	void Read(std::vector<T>& out, int count) {
-		out.resize(count);
-		if (count > 0)
-			Read(out.data(), count);
-	}
+    template<typename T>
+    void Read(std::vector<T> &out, int count) {
+        out.resize(count);
+        if (count > 0)
+            Read(out.data(), count);
+    }
 
-	template<typename T>
-	void Skip(int count) {
-		if (_pStream->FileSize() - _pStream->Tell() < count * sizeof(T))
-			throw std::runtime_error("Attempt to skip past end of stream");
+    template<typename T>
+    void Skip(int count) {
+        if (_pStream->FileSize() - _pStream->Tell() < count * sizeof(T))
+            throw std::runtime_error("Attempt to skip past end of stream");
 
-		_pStream->Seek(count * sizeof(T), aiOrigin_CUR);
-	}
+        _pStream->Seek(count * sizeof(T), aiOrigin_CUR);
+    }
 
-	byte ReadByte();
-	short ReadInt16();
-	int ReadInt32();
+    byte ReadByte();
 
-	ushort ReadUInt16();
-	uint ReadUInt32();
+    short ReadInt16();
 
-	std::string ReadString();
+    int ReadInt32();
 
-	bool IsAtEnd();
+    ushort ReadUInt16();
+
+    uint ReadUInt32();
+
+    std::string ReadString();
+
+    bool IsAtEnd();
 
 private:
-	Assimp::IOStream* _pStream;
+    Assimp::IOStream *_pStream;
 };

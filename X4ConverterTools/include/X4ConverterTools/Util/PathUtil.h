@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <iostream>
 #include <boost/predef.h>
@@ -6,8 +7,9 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <X4ConverterTools/Types.h>
-class PathUtil
-{
+
+class PathUtil {
 public:
-    static boost::filesystem::path      GetRelativePath     ( const boost::filesystem::path& filePath, const boost::filesystem::path& relativeToFolderPath );
+    static boost::filesystem::path
+    GetRelativePath(const boost::filesystem::path &filePath, const boost::filesystem::path &relativeToFolderPath);
 };

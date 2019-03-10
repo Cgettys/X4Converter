@@ -1,4 +1,5 @@
 #pragma once
+
 #include <regex>
 #include <string>
 #include <boost/algorithm/string.hpp>
@@ -9,18 +10,19 @@
 #include <X4ConverterTools/MaterialCollection.h>
 #include <X4ConverterTools/Types.h>
 #include "pugixml.hpp"
-class MaterialLibrary
-{
+
+class MaterialLibrary {
     friend Material;
 
 public:
-    explicit MaterialLibrary     ( const std::string& gameBaseFolderPath );
+    explicit MaterialLibrary(const std::string &gameBaseFolderPath);
 
-    MaterialCollection*                             GetCollection       ( const std::string& name );
-    Material*                                       GetMaterial         ( const std::string& dottedName );
+    MaterialCollection *GetCollection(const std::string &name);
+
+    Material *GetMaterial(const std::string &dottedName);
 
 private:
-    std::string                                     _gameBaseFolderPath;
-    pugi::xml_document                              _doc;
-    std::map < std::string, MaterialCollection >    _collections;
+    std::string _gameBaseFolderPath;
+    pugi::xml_document _doc;
+    std::map<std::string, MaterialCollection> _collections;
 };

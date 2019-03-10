@@ -16,6 +16,7 @@
 
 
 #include <boost/foreach.hpp>
+
 #define foreach BOOST_FOREACH
 
 #include <assimp/ai_assert.h>

@@ -1,11 +1,11 @@
 #pragma once
-typedef unsigned char   byte;
-typedef unsigned short  word;
-typedef unsigned int    dword;
+typedef unsigned char byte;
+typedef unsigned short word;
+typedef unsigned int dword;
 
-typedef unsigned short  ushort;
-typedef unsigned int    uint;
-typedef unsigned long   ulong;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef unsigned long ulong;
 
 
 #include "Color8.h"

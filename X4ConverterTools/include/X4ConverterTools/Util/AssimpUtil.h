@@ -1,51 +1,45 @@
 #pragma once
+
 #include <unordered_map>
 #include <assimp/scene.h>
 
-class AssimpUtil
-{
+class AssimpUtil {
 public:
-    static void             MergeVertices           ( aiMesh* pMesh );
+    static void MergeVertices(aiMesh *pMesh);
 
-    struct VertexInfo
-    {
-        aiVector3D      Position;
-        aiVector3D      Normal;
-        aiVector3D      UV[AI_MAX_NUMBER_OF_TEXTURECOORDS];
+    struct VertexInfo {
+        aiVector3D Position;
+        aiVector3D Normal;
+        aiVector3D UV[AI_MAX_NUMBER_OF_TEXTURECOORDS];
 
-        bool            operator==      ( const VertexInfo& other ) const;
+        bool operator==(const VertexInfo &other) const;
     };
 };
 
-namespace std
-{
-    template <>
-    class hash<aiVector3D> : public unary_function<aiVector3D, size_t>
-    {
+namespace std {
+    template<>
+    class hash<aiVector3D> : public unary_function<aiVector3D, size_t> {
     public:
         typedef aiVector3D _Kty;
 
-        size_t operator()(const _Kty& value) const
-        {
-            return *(uint *)&value.x ^
-                   *(uint *)&value.y ^
-                   *(uint *)&value.z;
+        size_t operator()(const _Kty &value) const {
+            return *(uint *) &value.x ^
+                   *(uint *) &value.y ^
+                   *(uint *) &value.z;
         }
     };
 
     template<>
-    class hash<AssimpUtil::VertexInfo> : public unary_function<aiVector3D, size_t>
-    {
+    class hash<AssimpUtil::VertexInfo> : public unary_function<aiVector3D, size_t> {
     public:
         typedef AssimpUtil::VertexInfo _Kty;
 
-        size_t operator()(const _Kty& value) const
-        {
+        size_t operator()(const _Kty &value) const {
             uint result = 0;
-            result ^= hash < aiVector3D > () ( value.Position );
-            result ^= hash < aiVector3D > () ( value.Normal );
+            result ^= hash<aiVector3D>()(value.Position);
+            result ^= hash<aiVector3D>()(value.Normal);
             for (auto i : value.UV) {
-                result ^= hash < aiVector3D > () (i);
+                result ^= hash<aiVector3D>()(i);
             }
             return result;
         }

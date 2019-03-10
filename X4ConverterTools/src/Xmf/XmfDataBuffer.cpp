@@ -1,55 +1,46 @@
 #include <X4ConverterTools/StdInc.h>
-XmfDataBuffer::XmfDataBuffer ()
-{
-    memset ( &Description, 0, sizeof(Description) );
+
+XmfDataBuffer::XmfDataBuffer() {
+    memset(&Description, 0, sizeof(Description));
 }
 
-void XmfDataBuffer::AllocData ()
-{
-    _data.resize ( GetUncompressedDataSize () );
+void XmfDataBuffer::AllocData() {
+    _data.resize(GetUncompressedDataSize());
 }
 
-bool XmfDataBuffer::IsCompressed () const
-{
+bool XmfDataBuffer::IsCompressed() const {
     return Description.Compressed != 0;
 }
 
-bool XmfDataBuffer::IsIndexBuffer () const
-{
+bool XmfDataBuffer::IsIndexBuffer() const {
     return Description.Type == 30;
 }
 
-bool XmfDataBuffer::IsVertexBuffer () const
-{
-    return !IsIndexBuffer ();
+bool XmfDataBuffer::IsVertexBuffer() const {
+    return !IsIndexBuffer();
 }
 
-int XmfDataBuffer::GetCompressedDataSize () const
-{
+int XmfDataBuffer::GetCompressedDataSize() const {
     return Description.CompressedDataSize;
 }
 
-int XmfDataBuffer::GetUncompressedDataSize () const
-{
+int XmfDataBuffer::GetUncompressedDataSize() const {
     return Description.NumSections * Description.NumItemsPerSection * Description.ItemSize;
 }
 
-byte* XmfDataBuffer::GetData ()
-{
-	auto copiedData = new byte[_data.size()];
-	std::copy(_data.begin(), _data.end(), copiedData);
+byte *XmfDataBuffer::GetData() {
+    auto copiedData = new byte[_data.size()];
+    std::copy(_data.begin(), _data.end(), copiedData);
     return copiedData;
 }
 
-void XmfDataBuffer::NormalizeVertexDeclaration ()
-{
-    if ( !IsVertexBuffer () || Description.NumVertexElements > 0 )
+void XmfDataBuffer::NormalizeVertexDeclaration() {
+    if (!IsVertexBuffer() || Description.NumVertexElements > 0)
         return;
 
     Description.NumVertexElements = 1;
     Description.VertexElements[0].Type = Description.Format;
-    switch ( Description.Type )
-    {
+    switch (Description.Type) {
         case 0:
         case 1:
             Description.VertexElements[0].Usage = D3DDECLUSAGE_POSITION;
@@ -87,14 +78,12 @@ void XmfDataBuffer::NormalizeVertexDeclaration ()
     Description.Format = 32;
 }
 
-void XmfDataBuffer::DenormalizeVertexDeclaration ()
-{
-    if ( !IsVertexBuffer () || Description.NumVertexElements != 1 )
+void XmfDataBuffer::DenormalizeVertexDeclaration() {
+    if (!IsVertexBuffer() || Description.NumVertexElements != 1)
         return;
 
     Description.Format = Description.VertexElements[0].Type;
-    switch ( Description.VertexElements[0].Usage )
-    {
+    switch (Description.VertexElements[0].Usage) {
         case D3DDECLUSAGE_POSITION:
             Description.Type = 0;
             break;
@@ -127,19 +116,16 @@ void XmfDataBuffer::DenormalizeVertexDeclaration ()
     Description.NumVertexElements = 0;
 }
 
-int XmfDataBuffer::GetVertexDeclarationSize ()
-{
+int XmfDataBuffer::GetVertexDeclarationSize() {
     int size = 0;
-    for ( int i = 0; i < Description.NumVertexElements; ++i )
-    {
-        size += DXUtil::GetVertexElementTypeSize ( (D3DDECLTYPE)Description.VertexElements[i].Type );
+    for (int i = 0; i < Description.NumVertexElements; ++i) {
+        size += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) Description.VertexElements[i].Type);
     }
     return size;
 }
 
-D3DFORMAT XmfDataBuffer::GetIndexFormat ()
-{
-    if ( !IsIndexBuffer () )
+D3DFORMAT XmfDataBuffer::GetIndexFormat() {
+    if (!IsIndexBuffer())
         throw std::runtime_error("The data buffer is not an index buffer");
 
     return Description.Format == 30 ? D3DFMT_INDEX16 : D3DFMT_INDEX32;

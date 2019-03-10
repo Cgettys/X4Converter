@@ -1,16 +1,18 @@
 #pragma once
 
-struct Quaternion
-{
-                Quaternion                  ();
-                Quaternion                  ( const Quaternion& other);
-                Quaternion                  ( const aiQuaternion& other );
-                Quaternion                  ( float x, float y, float z, float w );
+struct Quaternion {
+    Quaternion();
 
-    explicit operator aiQuaternion       () const;
+    Quaternion(const Quaternion &other);
 
-    float       X;
-    float       Y;
-    float       Z;
-    float       W;
+    Quaternion(const aiQuaternion &other);
+
+    Quaternion(float x, float y, float z, float w);
+
+    explicit operator aiQuaternion() const;
+
+    float X;
+    float Y;
+    float Z;
+    float W;
 };
