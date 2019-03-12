@@ -83,7 +83,7 @@ void XmfExporter::ConvertLodNode(ComponentPart &part, int lodIndex, const aiScen
             throw std::runtime_error((format("Duplicate lod index %d for part %s") % lodIndex % part.Name).str());
     }
 
-    part.Lods.push_back(ComponentPartLod(lodIndex, ConvertMeshNode(pScene, pLodNode, false)));
+    part.Lods.emplace_back(lodIndex, ConvertMeshNode(pScene, pLodNode, false));
 }
 
 std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
@@ -128,7 +128,7 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
         indexBuffer.Description.NumItemsPerSection += pMesh->mNumFaces * 3;
     }
     if (isCollisionMesh) {
-        vertexDecl.push_back(XmfVertexElement(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION));
+        vertexDecl.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
     }
     ApplyVertexDeclaration(vertexDecl, vertexBuffer);
     if (vertexBuffer.Description.NumItemsPerSection <= 0xFFFF) {
@@ -215,22 +215,22 @@ void XmfExporter::CalculatePartSize(ComponentPart &part, const aiScene *pScene, 
 void XmfExporter::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
     std::vector<XmfVertexElement> meshDeclaration;
     if (pMesh->mVertices)
-        meshDeclaration.push_back(XmfVertexElement(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION));
+        meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
 
     if (pMesh->mNormals)
-        meshDeclaration.push_back(XmfVertexElement(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_NORMAL));
+        meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_NORMAL);
 
     if (pMesh->mTangents)
-        meshDeclaration.push_back(XmfVertexElement(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_TANGENT, 0));
+        meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_TANGENT, 0);
 
     for (int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
         if (pMesh->mTextureCoords[i])
-            meshDeclaration.push_back(XmfVertexElement(D3DDECLTYPE_FLOAT16_2, D3DDECLUSAGE_TEXCOORD, i));
+            meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT16_2, D3DDECLUSAGE_TEXCOORD, i);
     }
 
     for (int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i) {
         if (pMesh->mColors[i])
-            meshDeclaration.push_back(XmfVertexElement(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_COLOR, i));
+            meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_COLOR, i);
     }
 
     for (XmfVertexElement &meshElem: meshDeclaration) {
@@ -262,7 +262,7 @@ void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declarat
 }
 
 int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, byte *pElemData) {
-    D3DDECLTYPE type = (D3DDECLTYPE) elem.Type;
+    auto type = (D3DDECLTYPE) elem.Type;
     switch (elem.Usage) {
         case D3DDECLUSAGE_POSITION: {
             aiVector3D position;

@@ -22,7 +22,7 @@ MaterialCollection *MaterialLibrary::GetCollection(const std::string &name) {
     }
 
     pugi::xml_node collectionNode = _doc.select_node(
-            (format("/materiallibrary/collection[@name='%1']") % name.c_str()).str().c_str()).node();
+            (format("/materiallibrary/collection[@name='%1%']") % name.c_str()).str().c_str()).node();
     if (!collectionNode) {
         return nullptr;
     }

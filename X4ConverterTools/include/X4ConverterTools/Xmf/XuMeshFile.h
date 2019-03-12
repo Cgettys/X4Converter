@@ -31,19 +31,23 @@
 
 class XuMeshFile {
 public:
-    std::vector<XmfDataBuffer> &GetBuffers() { return _buffers; };
+    // TODO something better that takes into account writing?
+    XmfHeader GetHeader() { return header; };
+
+    std::vector<XmfDataBuffer> &GetBuffers() { return buffers; };
 
     XmfDataBuffer *GetIndexBuffer();
 
     std::vector<XmfVertexElement> GetVertexDeclaration();
 
+
     int NumVertices();
 
     int NumIndices();
 
-    std::vector<XmfMaterial> &GetMaterials() { return _materials; };
+    std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
-    int NumMaterials() { return _materials.size(); }
+    int NumMaterials() { return materials.size(); }
 
     void AddMaterial(int firstIndex, int numIndices, const std::string &name);
 
@@ -56,13 +60,13 @@ public:
     void WriteToIOStream(Assimp::IOStream *pStream);
 
 private:
-    static XmfHeader ReadHeader(Assimp::IOStream *pStream);
+    void ReadHeader(Assimp::IOStream *pStream);
 
-    void ReadBufferDescs(Assimp::IOStream *pStream, XmfHeader &header);
+    void ReadBufferDescs(Assimp::IOStream *pStream);
 
-    void ReadMaterials(Assimp::IOStream *pStream, XmfHeader &header);
+    void ReadMaterials(Assimp::IOStream *pStream);
 
-    void ReadBuffers(Assimp::IOStream *pStream, XmfHeader &header);
+    void ReadBuffers(Assimp::IOStream *pStream);
 
     void Validate();
 
@@ -76,6 +80,7 @@ private:
 
     void WriteBuffers(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<byte> > &compressedBuffers);
 
-    std::vector<XmfDataBuffer> _buffers;
-    std::vector<XmfMaterial> _materials;
+    XmfHeader header;
+    std::vector<XmfDataBuffer> buffers;
+    std::vector<XmfMaterial> materials;
 };

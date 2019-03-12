@@ -97,7 +97,7 @@ aiNode *XmfImporter::ConvertComponentToAiNode(Component &component,
         if (parentIt == partNodes.end()) {
             throw std::runtime_error(
                     str(
-                            format("Node %1 has invalid parent %2") % (Part.first).c_str()
+                            format("Node %1% has invalid parent %2%") % (Part.first).c_str()
                             % (Part.second.ParentName).c_str()));
         }
         nodeChildren[parentIt->second].push_back(pPartNode);
@@ -315,7 +315,7 @@ void XmfImporter::AllocMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile,
                     break;
 
                 default:
-                    throw std::runtime_error(str(format("Unexpected Usage: %1") % vertexElem.Usage));
+                    throw std::runtime_error(str(format("Unexpected Usage: %1%") % vertexElem.Usage));
             }
         }
     }
@@ -427,7 +427,7 @@ void XmfImporter::PopulateMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile,
                     }
 
                     default:
-                        throw std::runtime_error(str(format("Unexpected Usage: %1") % elem.Usage));
+                        throw std::runtime_error(str(format("Unexpected Usage: %1%") % elem.Usage));
                 }
             }
             elemOffset += DXUtil::GetVertexElementTypeSize(
