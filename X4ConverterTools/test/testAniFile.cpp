@@ -15,10 +15,10 @@
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
-BOOST_AUTO_TEST_SUITE(test_suite1)
+BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 
 
-    BOOST_AUTO_TEST_CASE(test_ani_read_basic) {
+    BOOST_AUTO_TEST_CASE(test_ani_read_basic) { // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
         const std::string aniFile =
@@ -26,42 +26,38 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
-        AniFile *file = AniFile::ReadFromIOStream(sourceStream);
-        std::cout << file->validate();
+        AniFile file = AniFile(sourceStream);
+        std::cout << file.validate();
         io->Close(sourceStream);
         delete io;
-        delete file;
     }
 
 
 
     // TODO test suite for this?
-    BOOST_AUTO_TEST_CASE(test_ani_struct_correctness) {
+    BOOST_AUTO_TEST_CASE(test_ani_struct_correctness) { // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
         const fs::path basePath = fs::path("/home/cg/Desktop/X4/unpacked/");
         fs::recursive_directory_iterator iter(basePath);
         IOSystem *io = new DefaultIOSystem();
-        for (auto x : iter) {
-            const fs::path filePath = x.path();
+        for (const auto &x : iter) {
+            const fs::path &filePath = x.path();
             if (filePath.has_extension() && filePath.extension() == ".ANI") {
 //                std::cout << filePath << std::endl;
 
-                IOStream *sourceStream = io->Open(filePath.c_str(), "rb");
+                auto sourceStream = io->Open(filePath.c_str(), "rb");
                 try {
-                    AniFile *file = AniFile::ReadFromIOStream(sourceStream);
-                    file->validate();
-                    if (file->getHeader()->usedUnknown1!=1){
+                    AniFile file(sourceStream);
+                    file.validate();
+                    if (file.getHeader().getUsedUnknown1()!=1){
                         BOOST_REQUIRE_MESSAGE(false, filePath.c_str());
                     }
-                    delete file;
-                } catch (std::runtime_error e) {
+                } catch (std::runtime_error& e) {
                     std::string error = str(format("Filepath: %1% Exception:\n %2%\n")% filePath.c_str() % e.what());
                     // Change to BOOST_CHECK_MESSAGE if you want all the files violating the structure
                     BOOST_REQUIRE_MESSAGE(false, error);
                 }
-                io->Close(sourceStream);
-
             }
         }
         // To make a confusing warning go away
@@ -70,4 +66,4 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
     }
 
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
