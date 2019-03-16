@@ -13,5 +13,11 @@ AniItemDesc::AniItemDesc(StreamReader<>& reader) {
 
 
 std::string AniItemDesc::validate() {
-    return std::__cxx11::string();
+    std::string ret;
+    auto fmt = format("%1$#04x");
+    for (unsigned char &i : padding0) {
+        ret.append(str(fmt % i));
+    }
+
+    return ret;
 }

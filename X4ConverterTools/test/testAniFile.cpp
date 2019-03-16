@@ -10,6 +10,7 @@
 #include <X4ConverterTools/Ani/AniFile.h>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
 #include <stdexcept>
 
 namespace fs = boost::filesystem;
@@ -28,7 +29,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
         AniFile file = AniFile(sourceStream);
         std::cout << file.validate();
-        io->Close(sourceStream);
         delete io;
     }
 
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         IOSystem *io = new DefaultIOSystem();
         for (const auto &x : iter) {
             const fs::path &filePath = x.path();
-            if (filePath.has_extension() && filePath.extension() == ".ANI") {
+            if (filePath.has_extension() && iequals(filePath.extension().generic_string(), ".ANI")) {
 //                std::cout << filePath << std::endl;
 
                 auto sourceStream = io->Open(filePath.c_str(), "rb");

@@ -89,6 +89,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         io->Close(sourceStream);
         io->Close(outStream);
         io->Close(resultStream);
+        delete io;
 //        BOOST_TEST(expected == actual);
     }
 
