@@ -11,10 +11,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
-#include <boost/foreach.hpp>
-
-#define foreach BOOST_FOREACH
-
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 

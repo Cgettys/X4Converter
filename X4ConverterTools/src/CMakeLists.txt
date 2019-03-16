@@ -1,8 +1,9 @@
-
+add_subdirectory(Ani)
 add_subdirectory(Util)
 #add_subdirectory(Xac)
 add_subdirectory(Xmf)
 SET(LIB_SRCS
+        ${ANI_SRCS}
         ${UTIL_SRCS}
         #${XAC_SRCS}
         ${XMF_SRCS}
