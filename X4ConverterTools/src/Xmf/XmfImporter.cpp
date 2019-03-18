@@ -293,6 +293,7 @@ void XmfImporter::AllocMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile,
                                 "Invalid usage index for TEXCOORD vertex element");
                     }
                     if (!pMesh->mTextureCoords[vertexElem.UsageIndex]) {
+
                         pMesh->mTextureCoords[vertexElem.UsageIndex] =
                                 new aiVector3D[numVertices];
                         pMesh->mNumUVComponents[vertexElem.UsageIndex] = 2;
@@ -334,7 +335,7 @@ void XmfImporter::AllocMeshFaces(aiMesh *pMesh, XuMeshFile &meshFile,
 }
 
 void XmfImporter::PopulateMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile,
-                                       int firstIndex, int numIndices) {
+                                       int firstIndex, unsigned int numIndices) {
     XmfDataBuffer *pIndexBuffer = meshFile.GetIndexBuffer();
     if (!pIndexBuffer) {
         throw std::runtime_error("Mesh file has no index buffer");

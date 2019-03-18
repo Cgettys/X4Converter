@@ -20,8 +20,9 @@ class AniFile {
 public:
 
     explicit AniFile(Assimp::IOStream* pStream);
+    ~AniFile();
     // TODO explicitly delete constructor nonsense?
-    std::string validate(); // Debug method
+    std::string validate(); // Debug method, callee frees
     AniHeader getHeader() const;
     void setHeader(AniHeader header);
 protected:

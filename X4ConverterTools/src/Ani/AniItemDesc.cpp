@@ -5,19 +5,41 @@ using namespace Assimp;
 
 // TODO copy constructors?
 AniItemDesc::AniItemDesc(StreamReader<>& reader) {
+    char wordBuf0[64];
+    char wordBuf1[64];
+    for (char &c : wordBuf0){
+        reader >> c;
+    }
+
+
+    for (char &c : wordBuf1){
+        reader >> c;
+    }
     for (unsigned char &i : padding0) {
         reader >> i;
     }
+
 }
 
 
 
 std::string AniItemDesc::validate() {
-    std::string ret;
-    auto fmt = format("%1$#04x");
+    bool valid = true;
+    std::string ret = "Item Desc: \n";
+
+
+    ret.append("Buffer: ");
+    // TODO words
+    auto fmt = format("%1$02x ");
     for (unsigned char &i : padding0) {
-        ret.append(str(fmt % i));
+        std::string part = str(fmt % (int) i);
+        ret.append(part);
     }
 
+    ret.append("\n");
+
+    if(!valid) {
+        throw std::runtime_error(ret);
+    }
     return ret;
 }

@@ -49,6 +49,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
                 auto sourceStream = io->Open(filePath.c_str(), "rb");
                 try {
                     AniFile file(sourceStream);
+                    std::cout << filePath.c_str() << std::endl;
                     file.validate();
                     if (file.getHeader().getUsedUnknown1()!=1){
                         BOOST_REQUIRE_MESSAGE(false, filePath.c_str());

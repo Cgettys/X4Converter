@@ -14,15 +14,24 @@ AniFile::AniFile(IOStream *pStream) {
     header = AniHeader(pStreamReader);
     descs = std::vector<AniItemDesc>();
     for (int i = 0; i < header.getNumStates(); i++) {
-        AniItemDesc desc(pStreamReader);
-        descs.emplace_back(desc);
+        descs.emplace_back(pStreamReader);
     }
     if (pStreamReader.GetCurrentPos() != header.getStateDataOffset()) {
         std::string err = str(format("AniFile: current position (%1%) does not align with the data offset (%2%)") %
                               pStreamReader.GetCurrentPos() % header.getStateDataOffset());
         throw std::runtime_error(err);
     }
+//    if (pStreamReader.GetRemainingSize()!= 576 * header.getNumStates()){
+//
+//        std::string err = str(format("AniFile: remaining file length (%1%) does not align with the number of states (%2%)") %
+//                                      pStreamReader.GetRemainingSize() % header.getNumStates());
+//        throw std::runtime_error(err);
+//    }
+    std::cout << pStreamReader.GetRemainingSize() << "|" << header.getNumStates() << "/"<<pStreamReader.GetRemainingSize()/32 << std::endl;
     validate();
+}
+AniFile::~AniFile(){
+
 }
 AniHeader AniFile::getHeader() const {
     return header;
@@ -36,11 +45,11 @@ void AniFile::setHeader(AniHeader header) {
 std::string AniFile::validate(){
     std::string s;
     s.append(header.validate());
-    for (auto desc : descs){
-        s.append(desc.validate());
+    for (int i = 0; i < descs.size(); i++){
+        auto desc = descs[i];
+        std::string ret = desc.validate();
+        s.append(ret);
     }
-
-
 
     return s;
 }

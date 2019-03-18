@@ -29,7 +29,6 @@ public:
 
     virtual bool CanRead(const std::string &filePath, Assimp::IOSystem *pIOHandler, bool checkSig) const;
 
-protected:
     virtual void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler);
 
 private:
@@ -52,7 +51,7 @@ private:
 
     void AllocMeshFaces(aiMesh *pMesh, XuMeshFile &meshFile, int numIndices);
 
-    void PopulateMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile, int firstIndex, int numIndices);
+    void PopulateMeshVertices(aiMesh *pMesh, XuMeshFile &meshFile, int firstIndex, unsigned int numIndices);
 
     void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 

@@ -20,10 +20,11 @@ public:
 
     static std::string GameBaseFolderPath;
 
-private:
+
     static void Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
                        const Assimp::ExportProperties *props);
 
+protected:
     static void
     ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene, aiNode *pPartNode);
 
