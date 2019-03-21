@@ -51,9 +51,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
                     AniFile file(sourceStream);
                     std::cout << filePath.c_str() << std::endl;
                     file.validate();
-                    if (file.getHeader().getUsedUnknown1()!=1){
-                        BOOST_REQUIRE_MESSAGE(false, filePath.c_str());
-                    }
                 } catch (std::runtime_error& e) {
                     std::string error = str(format("Filepath: %1% Exception:\n %2%\n")% filePath.c_str() % e.what());
                     // Change to BOOST_CHECK_MESSAGE if you want all the files violating the structure

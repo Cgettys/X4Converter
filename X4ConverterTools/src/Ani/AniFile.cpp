@@ -12,22 +12,15 @@ AniFile::AniFile(IOStream *pStream) {
     // TODO pass this in instead of pstream?
     auto pStreamReader = StreamReader<>(pStream, false);
     header = AniHeader(pStreamReader);
-    descs = std::vector<AniItemDesc>();
-    for (int i = 0; i < header.getNumStates(); i++) {
+    descs = std::vector<AniKeyFrameDesc>();
+    for (int i = 0; i < header.getNumAnims(); i++) {
         descs.emplace_back(pStreamReader);
     }
-    if (pStreamReader.GetCurrentPos() != header.getStateDataOffset()) {
+    if (pStreamReader.GetCurrentPos() != header.getKeyOffsetBytes()) {
         std::string err = str(format("AniFile: current position (%1%) does not align with the data offset (%2%)") %
-                              pStreamReader.GetCurrentPos() % header.getStateDataOffset());
+                              pStreamReader.GetCurrentPos() % header.getKeyOffsetBytes());
         throw std::runtime_error(err);
     }
-//    if (pStreamReader.GetRemainingSize()!= 576 * header.getNumStates()){
-//
-//        std::string err = str(format("AniFile: remaining file length (%1%) does not align with the number of states (%2%)") %
-//                                      pStreamReader.GetRemainingSize() % header.getNumStates());
-//        throw std::runtime_error(err);
-//    }
-    std::cout << pStreamReader.GetRemainingSize() << "|" << header.getNumStates() << "/"<<pStreamReader.GetRemainingSize()/32 << std::endl;
     validate();
 }
 AniFile::~AniFile(){
