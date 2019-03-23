@@ -145,6 +145,13 @@ std::string AniAnimDesc::validate() {
             valid = false;
         }
     }
+    if (NumPreScaleKeys || NumPostScaleKeys){
+        ret.append("WARNING: Pre/Post scale keyframes are not yet supported by this converter");
+    }
+    if (NumPreScaleKeys != NumPostScaleKeys){
+        ret.append("NumPreScaleKeys Must equal NumPostScaleKeys (Don't ask me why - the game says so)");
+        valid=false;
+    }
     if (!valid) {
         throw std::runtime_error(ret);
     }

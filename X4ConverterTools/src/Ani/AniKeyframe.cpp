@@ -53,6 +53,7 @@ std::string AniKeyframe::validate() {
         ret.append("\t\t New Interpolation type!");
         valid = false;
     }
+
     ret.append(str(format("\t\tTime: %1%\n") % Time));
 
     ret.append(str(format("\t\tCPX1: (%1%, %2%)\n") % CPX1x % CPX1y));
@@ -75,6 +76,26 @@ std::string AniKeyframe::validate() {
     ret.append(str(format("\t\tDerivOut: (%1%, %2%, %3%)\n") % DerivOutX % DerivOutY % DerivOutZ));
 
     ret.append(str(format("\t\tAngleKey: %1%\n") % AngleKey));
+// // Wrong
+//    if (InterpolationX == 2) {
+//        if (CPX1x != 0 || CPX1y != 0 || CPX2x != 0 || CPX2y != 0) {
+//            ret.append("Interpolation Type for X was 1 or 2, but CP were not!\n");
+//            valid = false;
+//        }
+//    }
+//    if (InterpolationY == 2) {
+//        if (CPY1x != 0 || CPY1y != 0 || CPY2x != 0 || CPY2y != 0) {
+//            ret.append("Interpolation Type for Y was 1 or 2, but CP were not!\n");
+//            valid = false;
+//        }
+//    }
+//    if (InterpolationZ == 2) {
+//        if (CPZ1x != 0 || CPZ1y != 0 || CPZ2x != 0 || CPZ2y != 0) {
+//            ret.append("Interpolation Type for Z was 1 or 2, but CP were not!\n");
+//            valid = false;
+//        }
+//    }
+
 
     if (Tens != 0) {
         ret.append("Unsupported parameter: Tens");
