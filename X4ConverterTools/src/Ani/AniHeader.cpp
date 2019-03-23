@@ -22,12 +22,12 @@ std::string AniHeader::validate() {
     result.append("Header data:\n");
 
     // Gotta love format strings
-    result.append(str(format("NumAnims:  %1$d (%1$#04x)\n") % NumAnims));
+    result.append(str(format("\tNumAnims:  %1$d (%1$#04x)\n") % NumAnims));
 
-    result.append(str(format("KeyOffsetBytes: %1$d (%1$#06x)\n") % KeyOffsetBytes));
+    result.append(str(format("\tKeyOffsetBytes: %1$d (%1$#06x)\n") % KeyOffsetBytes));
 
-    result.append(str(format("Version: %1$d (%1$#06x)\n") %  Version));
-    result.append(str(format("Padding: %1$d (%1$#06x)\n") %  Padding));
+    result.append(str(format("\tVersion: %1$d (%1$#06x)\n") %  Version));
+    result.append(str(format("\tPadding: %1$d (%1$#06x)\n") %  Padding));
     if (Version != 1) {
         result.append(
                 "Ani file format has been updated!\n");

@@ -1,4 +1,5 @@
 #include <X4ConverterTools/Xmf/XmfImporter.h>
+#include <X4ConverterTools/Ani/AniFile.h>
 
 using namespace boost;
 using namespace boost::algorithm;
@@ -46,6 +47,15 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
             AssimpUtil::MergeVertices(pMesh);
             pScene->mMeshes[pScene->mNumMeshes++] = pMesh;
         }
+
+        // ANI file stuff
+        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
+        to_upper(shortName);
+        std::string aniPath = (path(filePath).parent_path() / shortName).string();
+        IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
+        AniFile aniFile(pAniStream);
+        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
+        
 
         // Add the materials to the scene
         if (!context.Materials.empty()) {

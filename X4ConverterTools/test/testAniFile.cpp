@@ -23,7 +23,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
         const std::string aniFile =
-                "/home/cg/Desktop/X4/unpacked/assets/units/size_s/DOOR_ARG_S_SCOUT_01_DATA.ANI";
+                "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+//        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);

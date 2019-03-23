@@ -11,7 +11,7 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include "AniHeader.h"
-#include "AniKeyFrameDesc.h"
+#include "AniAnimDesc.h"
 
 // TODO classes for the structs?
 // TODO superclass for XMF/ANI?
@@ -27,5 +27,5 @@ public:
     void setHeader(AniHeader header);
 protected:
     AniHeader header;
-    std::vector<AniKeyFrameDesc> descs;
+    std::vector<AniAnimDesc> descs;
 };

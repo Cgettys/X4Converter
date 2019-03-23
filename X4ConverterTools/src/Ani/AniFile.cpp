@@ -12,7 +12,7 @@ AniFile::AniFile(IOStream *pStream) {
     // TODO pass this in instead of pstream?
     auto pStreamReader = StreamReader<>(pStream, false);
     header = AniHeader(pStreamReader);
-    descs = std::vector<AniKeyFrameDesc>();
+    descs = std::vector<AniAnimDesc>();
     for (int i = 0; i < header.getNumAnims(); i++) {
         descs.emplace_back(pStreamReader);
     }
@@ -20,6 +20,9 @@ AniFile::AniFile(IOStream *pStream) {
         std::string err = str(format("AniFile: current position (%1%) does not align with the data offset (%2%)") %
                               pStreamReader.GetCurrentPos() % header.getKeyOffsetBytes());
         throw std::runtime_error(err);
+    }
+    for (int i = 0; i < header.getNumAnims(); i++) {
+        descs[i].read_frames(pStreamReader);
     }
     validate();
 }
@@ -39,9 +42,15 @@ std::string AniFile::validate(){
     std::string s;
     s.append(header.validate());
     for (int i = 0; i < descs.size(); i++){
-        auto desc = descs[i];
-        std::string ret = desc.validate();
-        s.append(ret);
+        try {
+            auto desc = descs[i];
+            std::string ret = desc.validate();
+            s.append(ret);
+        }
+        catch (std::exception &e){
+            s.append(e.what());
+            throw std::runtime_error(s);
+        }
     }
 
     return s;
