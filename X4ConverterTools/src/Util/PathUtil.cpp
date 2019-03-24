@@ -3,26 +3,43 @@
 using namespace boost;
 using namespace boost::filesystem;
 
+std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
+    std::string result(filePath);
+
+    std::string preferredSep;
+    preferredSep.append(1,path::preferred_separator);
+    //TODO check for C://?
+    algorithm::replace_all(result,"\\",preferredSep);
+    algorithm::replace_all(result,"/",preferredSep);
+    return result;
+}
+
+std::string PathUtil::MakeGameSafe(const std::string &filePath) {
+    std::string result(filePath);
+    algorithm::replace_all(result,"//","\\");
+    return result;
+}
+path PathUtil::MakePlatformSafe(const path& filePath){
+    return path(MakePlatformSafe(filePath.string()));
+}
+path PathUtil::MakeGameSafe(const path& filePath){
+    return  path(MakeGameSafe(filePath.string()));
+}
 path PathUtil::GetRelativePath(const path &filePath,
                                const path &relativeToFolderPath) {
-    if (filePath.is_relative())
+    if (filePath.is_relative()) {
         throw std::runtime_error("filePath is already relative");
-
-    if (!relativeToFolderPath.is_absolute())
+    }
+    if (!relativeToFolderPath.is_absolute()) {
         throw std::runtime_error("relativeToPath is not absolute");
-
+    }
     std::vector<std::string> filePathParts;
 
-#ifdef BOOST_OS_LINUX
-    const char sep = '/';
-#else
-    const char sep = '\\';
-#endif
-    split(filePathParts, filePath.string(), [](char c) { return c == sep; });
+    split(filePathParts, filePath.string(), [](char c) { return c == '/' || c == '\\'; });
 
     std::vector<std::string> relativeToFolderPathParts;
     split(relativeToFolderPathParts, relativeToFolderPath.string(),
-          [](char c) { return c == sep; });
+          [](char c) { return c == '/' || c == '\\'; });
 
     int differenceStart = 0;
     while (differenceStart < filePathParts.size() - 1
@@ -33,6 +50,7 @@ path PathUtil::GetRelativePath(const path &filePath,
     }
 
     if (differenceStart == 0) {
+        std::cerr << "Paths lack common root" << std::endl;
         throw std::runtime_error(
                 str(format("Paths do not have a common root %1% %2%") % filePath.c_str() % relativeToFolderPath.c_str()));
     }
@@ -46,5 +64,7 @@ path PathUtil::GetRelativePath(const path &filePath,
     }
 
     result /= filePath.filename();
+    std::cout << "Umm..." << filePath << " " << relativeToFolderPath << " "<<  result.string() << std::endl;
     return result;
 }
+

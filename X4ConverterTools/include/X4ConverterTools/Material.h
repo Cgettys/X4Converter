@@ -26,6 +26,14 @@ private:
     std::string
     GetDecompressedTextureFilePath(std::string filePath, const boost::filesystem::path &modelFolderPath) const;
 
+    void populateDiffuseLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+
+    void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+
+    void populateNormalLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+
+    void populateEnvironmentLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+
     std::string _pCollectionName;
     std::string _name;
 

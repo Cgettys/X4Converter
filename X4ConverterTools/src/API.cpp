@@ -26,11 +26,11 @@ bool ConvertXmlToDae(const char *pszGameBaseFolderPath,
         std::cerr << "Failed during export" << std::endl;
         strncpy(pszError, exporter->GetErrorString(), iMaxErrorSize);
 //        delete importer;
-        delete exporter;
+//        delete exporter;
         return false;
     }
     delete io;
-    delete exporter;
+//    delete exporter;
 //    delete pScene;
     return true;
 }

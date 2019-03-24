@@ -48,14 +48,15 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
             pScene->mMeshes[pScene->mNumMeshes++] = pMesh;
         }
 
-        // ANI file stuff
-        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
-        to_upper(shortName);
-        std::string aniPath = (path(filePath).parent_path() / shortName).string();
-        IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
-        AniFile aniFile(pAniStream);
-        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
-        
+        // TODO
+//        // ANI file stuff
+//        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
+//        to_upper(shortName);
+//        std::string aniPath = (path(filePath).parent_path() / shortName).string();
+//        IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
+//        AniFile aniFile(pAniStream);
+//        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
+//
 
         // Add the materials to the scene
         if (!context.Materials.empty()) {
@@ -67,8 +68,9 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
                 aiMaterial *pAiMaterial;
                 if (pMaterial) {
                     pAiMaterial = pMaterial->ConvertToAiMaterial(
-                            baseFolderPath);
+                            _gameBaseFolderPath);// TODO fixme
                 } else {
+                    std::cerr << "Warning, weird case" << std::endl;
                     auto *tempString = new aiString(it.first);
                     pAiMaterial = new aiMaterial();
                     pAiMaterial->AddProperty(tempString, AI_MATKEY_NAME);
