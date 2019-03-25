@@ -103,7 +103,7 @@ std::string AniKeyframe::validate() {
             valid = false;
         }
     }
-    if ( InterpolationZ == 1) {
+    if ( InterpolationZ == 2) {
         if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
             ret.append("Interpolation Type for Z was 2, but CP were not!\n");
             valid = false;

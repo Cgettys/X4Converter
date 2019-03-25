@@ -1,12 +1,9 @@
 #pragma once
 
-#pragma once
-
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include <boost/format.hpp>
 #include <iostream>
-
 
 #include "XmfMaterial.h"
 #include "XmfDataBufferDesc.h"
@@ -32,5 +29,7 @@ public:
     byte MaterialSize;
     byte _pad1[10];
     dword PrimitiveType;
+    const static byte BUFFER_OFFSET = 0x40;// If it's not 0x40 we have an issue
+    byte _pad2[BUFFER_OFFSET-0x1A];
 };
 

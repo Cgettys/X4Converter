@@ -3,10 +3,12 @@
 #include <assimp/types.h>
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
+#include <assimp/StreamReader.h>
 #include <assimp/DefaultIOSystem.h>
 
 #include <X4ConverterTools/API.h>
 #include <X4ConverterTools/Types.h>
+#include <X4ConverterTools/Xmf/XmfHeader.h>
 #include <X4ConverterTools/Xmf/XuMeshFile.h>
 
 using namespace Assimp;
@@ -51,6 +53,26 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         }
     };
 
+// TODO extract some permanent test files
+// TODO extract into own file
+    BOOST_AUTO_TEST_CASE(test_header) {
+        // TODO mock reading & writing to memory - would be faster & good form
+        // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
+
+        const std::string testFile =  "/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision.xmf";
+        DefaultIOSystem io = DefaultIOSystem();
+        IOStream *sourceStream = io.Open(testFile.c_str(), "rb");
+        BOOST_TEST_CHECKPOINT("Setup complete");
+
+        StreamReader<> pStreamReader(sourceStream, false);
+        XmfHeader header(pStreamReader);
+        BOOST_TEST_CHECKPOINT("Read complete");
+        BOOST_TEST_MESSAGE(header.validate());
+        BOOST_TEST(pStreamReader.GetCurrentPos() == 0x40);
+
+
+//        BOOST_TEST(expected == actual);
+    }
     BOOST_AUTO_TEST_CASE(test_xmf) {
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h

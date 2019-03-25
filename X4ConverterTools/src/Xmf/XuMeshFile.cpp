@@ -68,13 +68,21 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
 
         auto pStreamReader = StreamReader<>(pStream, false);
         pMeshFile->header = XmfHeader(pStreamReader);
+
+        // Read in Buffer descs
         if (pStream->FileSize()
             < pMeshFile->header.DataBufferDescOffset
               + pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {
             throw std::runtime_error(".xmf file is too small");
         }
         pMeshFile->ReadBufferDescs(pStreamReader);
-        pMeshFile->ReadMaterials(pStreamReader);
+
+        // Materials
+        for (int i = 0; i < pMeshFile->header.NumMaterials; i ++){
+            pMeshFile->materials.emplace_back(pStreamReader);
+        }
+
+        // Buffers
         pMeshFile->ReadBuffers(pStreamReader);
         pMeshFile->Validate();
 
@@ -89,7 +97,7 @@ void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
 
     buffers.resize(header.NumDataBuffers);
 
-    pStreamReader.SetCurrentPos(header.DataBufferDescOffset);
+//    pStreamReader.SetCurrentPos(header.DataBufferDescOffset);
     for (XmfDataBuffer &buffer : buffers) {
         memset(&buffer.Description, 0, sizeof(buffer.Description));
 
@@ -115,13 +123,6 @@ void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
                         "Item size for index buffer is incorrect");
             }
         }
-    }
-}
-
-void XuMeshFile::ReadMaterials(StreamReader<> & pStreamReader) {
-    materials.resize(header.NumMaterials);
-    for (int i = 0; i < header.NumMaterials; i ++){
-        pStreamReader.CopyAndAdvance(materials.data(), sizeof(XmfMaterial));
     }
 }
 
@@ -199,7 +200,10 @@ void XuMeshFile::WriteToIOStream(IOStream *pStream) {
     pStreamWriter.Flush();
 
     WriteBufferDescs(pStream, compressedBuffers);
-    WriteMaterials(pStream);
+    for (XmfMaterial &material: materials) {
+        material.Write(pStreamWriter);
+    }
+    pStreamWriter.Flush();
     WriteBuffers(pStream, compressedBuffers);
 }
 
@@ -231,12 +235,6 @@ void XuMeshFile::WriteBufferDescs(Assimp::IOStream *pStream,
                 compressedBuffers[&buffer].size();
         pStream->Write(&buffer.Description, sizeof(buffer.Description), 1);
         dataOffset += buffer.Description.CompressedDataSize;
-    }
-}
-
-void XuMeshFile::WriteMaterials(Assimp::IOStream *pStream) {
-    for (XmfMaterial &material: materials) {
-        pStream->Write(&material, sizeof(material), 1);
     }
 }
 

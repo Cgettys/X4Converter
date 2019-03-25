@@ -4,8 +4,8 @@ using namespace Assimp;
 using namespace boost;
 
 XmfHeader::XmfHeader(Assimp::StreamReader<> &reader) {
-    for (int i = 0; i < 4; i++) {
-        reader >> Magic[i];
+    for (byte& c : Magic) {
+        reader >> c;
     }
     reader >> Version >> BigEndian;
     reader >> DataBufferDescOffset;
@@ -15,11 +15,13 @@ XmfHeader::XmfHeader(Assimp::StreamReader<> &reader) {
     reader >> NumMaterials;
     reader >> MaterialSize;
 
-    for (int i = 0; i < 10; i++) {
-        reader >> _pad1[i];
+    for (byte& c : _pad1) {
+        reader >> c;
     }
     reader >> PrimitiveType;
-    validate();
+    for (byte& c : _pad2) {
+        reader >> c;
+    }
 }
 
 std::string XmfHeader::validate() const {
@@ -36,7 +38,7 @@ std::string XmfHeader::validate() const {
     if (_pad0 != 0) {
         throw std::runtime_error(str(format("padding0 should be 0, was %1%") % _pad0));
     }
-    if (DataBufferDescOffset != 0x40) {
+    if (DataBufferDescOffset != XmfHeader::BUFFER_OFFSET) {
         std::cout << DataBufferDescOffset << std::endl;
         throw std::runtime_error("Offset should be 0x40");
     }
@@ -46,22 +48,24 @@ std::string XmfHeader::validate() const {
     if (MaterialSize != sizeof(XmfMaterial)) {
         throw std::runtime_error("Material size is invalid");
     }
-    if (PrimitiveType != D3DPT_TRIANGLELIST) {
-        throw std::runtime_error(
-                "File is using a DirectX primitive type that's not supported by this importer");
-    }
+
+    // TODO  this and pad 2
 //    for (int i = 0; i < 10; ++i) {
 //        if (_pad1[i] != 0){
 //            throw std::runtime_error("padding should be 0!");
 //        }
 //    }
+    if (PrimitiveType != D3DPT_TRIANGLELIST) {
+        throw std::runtime_error(
+                "File is using a DirectX primitive type that's not supported by this importer");
+    }
     return ret;
 }
 
 void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
 
-    for (int i = 0; i < 4; i++) {
-        writer << Magic[i];
+    for (byte& c : Magic) {
+        writer << c;
     }
     writer << Version << BigEndian;
     writer << DataBufferDescOffset;
@@ -71,10 +75,14 @@ void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
     writer << NumMaterials;
     writer << MaterialSize;
 
-    for (int i = 0; i < 10; i++) {
-        writer << _pad1[i];
+    for (byte& c : _pad1) {
+        writer << c;
     }
     writer << PrimitiveType;
+
+    for (byte& c : _pad2) {
+        writer << c;
+    }
 }
 
 
@@ -92,8 +100,12 @@ XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
     DataBufferDescSize = sizeof(XmfDataBufferDesc);
     NumMaterials = numMaterials;
     MaterialSize = sizeof(XmfMaterial);
-    PrimitiveType = D3DPT_TRIANGLELIST;
-    for (int i = 0; i < 10; i++) {
-        _pad1[i] = 0x00;
+    for (byte& c : _pad1) {
+        c = 0x00;
     }
+    PrimitiveType = D3DPT_TRIANGLELIST;
+    for (byte& c : _pad2) {
+        c = 0x00;
+    }
+
 }

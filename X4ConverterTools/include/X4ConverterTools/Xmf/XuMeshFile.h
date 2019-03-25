@@ -61,8 +61,6 @@ private:
 
     void ReadBufferDescs(Assimp::StreamReader<> &pStreamReader);
 
-    void ReadMaterials(Assimp::StreamReader<> &pStream);
-
     void ReadBuffers(Assimp::StreamReader<> &pStream);
 
     void Validate();
@@ -70,8 +68,6 @@ private:
     std::map<XmfDataBuffer *, std::vector<byte> > CompressBuffers();
 
     void WriteBufferDescs(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<byte> > &compressedBuffers);
-
-    void WriteMaterials(Assimp::IOStream *pStream);
 
     void WriteBuffers(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<byte> > &compressedBuffers);
 
