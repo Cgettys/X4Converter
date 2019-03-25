@@ -33,12 +33,12 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
             BOOST_TEST(lhs.Version == rhs.Version);
             BOOST_TEST(lhs.BigEndian == rhs.BigEndian);
             BOOST_TEST(lhs.DataBufferDescOffset == rhs.DataBufferDescOffset);
-            BOOST_WARN_MESSAGE(lhs._pad0 == rhs._pad0, "Padding byte _pad0 differs");
+            BOOST_WARN_MESSAGE(lhs._pad0 == rhs._pad0, "Padding byte _pad0 may differ");
             BOOST_TEST(lhs.NumDataBuffers == rhs.NumDataBuffers);
             BOOST_TEST(lhs.DataBufferDescSize == rhs.DataBufferDescSize);
             BOOST_TEST(lhs.NumMaterials == rhs.NumMaterials);
             BOOST_TEST(lhs.MaterialSize == rhs.MaterialSize);
-            BOOST_WARN_MESSAGE(lhs._pad1 == rhs._pad1, "Padding byte[] _pad1 differs");
+            BOOST_WARN_MESSAGE(lhs._pad1 == rhs._pad1, "Padding byte[] _pad1  may differ");
             BOOST_TEST(lhs.PrimitiveType == rhs.PrimitiveType);
 
         }
@@ -61,14 +61,14 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(testFile, "rb");
         IOStream *outStream = io->Open(resultsFile, "wb");
-        IOStream *resultStream = io->Open(resultsFile, "rb");
         std::shared_ptr<XuMeshFile> meshFile = XuMeshFile::ReadFromIOStream(sourceStream);
         meshFile->WriteToIOStream(outStream);
 
 
-        // Reset both streams to the start
-        sourceStream->Seek(0,aiOrigin_SET);
-        outStream->Seek(0,aiOrigin_SET);
+        io->Close(outStream);
+        // Reset stream to start
+        IOStream *resultStream = io->Open(resultsFile, "rb");
+        sourceStream = io->Open(testFile, "rb");
 
         size_t sourceLen = sourceStream->FileSize();
         size_t resultLen = resultStream->FileSize();
@@ -87,7 +87,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
 //	actualStream->Seek(0,aiOrigin_SET);
         io->Close(sourceStream);
-        io->Close(outStream);
         io->Close(resultStream);
         delete io;
 //        BOOST_TEST(expected == actual);

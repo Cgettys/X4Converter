@@ -1,6 +1,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include <assimp/types.h>
+#include <assimp/Importer.hpp>
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
@@ -12,6 +13,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <stdexcept>
+#include <assimp/scene.h>
 
 namespace fs = boost::filesystem;
 using namespace boost;
@@ -24,6 +26,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
         const std::string aniFile =
                 "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+//const std::string aniFile = "/home/cg/Desktop/X4/test_files/struct_bt_ut_omicron_superyard_data.ani";
 //        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
@@ -33,7 +36,12 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         delete io;
     }
 
-
+    BOOST_AUTO_TEST_CASE(test_ani_playground) { // NOLINT(cert-err58-cpp)
+        Assimp::Importer* importer = new Assimp::Importer();
+        const aiScene *pScene = importer->ReadFile("/home/cg/Desktop/X4/untitled.dae", 0);
+        BOOST_TEST(pScene);
+        BOOST_TEST(pScene->HasAnimations());
+ }
 
     // TODO test suite for this?
     BOOST_AUTO_TEST_CASE(test_ani_struct_correctness) { // NOLINT(cert-err58-cpp)
