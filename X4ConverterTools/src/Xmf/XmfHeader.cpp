@@ -4,22 +4,35 @@ using namespace Assimp;
 using namespace boost;
 
 XmfHeader::XmfHeader(Assimp::StreamReader<> &reader) {
-    for (byte& c : Magic) {
+    for (byte &c : Magic) {
         reader >> c;
     }
-    reader >> Version >> BigEndian;
-    reader >> DataBufferDescOffset;
-    reader >> _pad0;
+
+    reader >> Version;
+    reader >> IsBigEndian;
+    reader >> SizeOfHeader;
+    reader >> reserved0;
     reader >> NumDataBuffers;
     reader >> DataBufferDescSize;
     reader >> NumMaterials;
     reader >> MaterialSize;
 
-    for (byte& c : _pad1) {
-        reader >> c;
-    }
+    reader >> Culling_CW;
+    reader >> RightHand;
+    reader >> NumVertices;
+    reader >> NumIndices;
     reader >> PrimitiveType;
-    for (byte& c : _pad2) {
+    reader >> MeshOptimization;
+
+    for (float &f: BoundingBoxCenter) {
+        reader >> f;
+    }
+
+    for (float &f: BoundingBoxSize) {
+        reader >> f;
+    }
+
+    for (byte &c : pad) {
         reader >> c;
     }
 }
@@ -31,15 +44,15 @@ std::string XmfHeader::validate() const {
     if (memcmp(Magic, "XUMF\x03", 5) != 0) {
         throw std::runtime_error("Invalid header magic");
     }
-    if (BigEndian) {
+    if (IsBigEndian) {
         throw std::runtime_error(
                 "Big endian .xmf files are not supported by this importer");
     }
-    if (_pad0 != 0) {
-        throw std::runtime_error(str(format("padding0 should be 0, was %1%") % _pad0));
+    if (reserved0 != 0) {
+        throw std::runtime_error(str(format("padding0 should be 0, was %1%") % reserved0));
     }
-    if (DataBufferDescOffset != XmfHeader::BUFFER_OFFSET) {
-        std::cout << DataBufferDescOffset << std::endl;
+    if (SizeOfHeader != XmfHeader::EXPECTED_HEADER_SIZE) {
+        std::cout << SizeOfHeader << std::endl;
         throw std::runtime_error("Offset should be 0x40");
     }
     if (DataBufferDescSize > sizeof(XmfDataBufferDesc)) {
@@ -63,24 +76,29 @@ std::string XmfHeader::validate() const {
 }
 
 void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
-
-    for (byte& c : Magic) {
+    for (byte &c : Magic) {
         writer << c;
     }
-    writer << Version << BigEndian;
-    writer << DataBufferDescOffset;
-    writer << _pad0;
-    writer << NumDataBuffers;
-    writer << DataBufferDescSize;
-    writer << NumMaterials;
-    writer << MaterialSize;
+    writer << Version << IsBigEndian;
+    writer << SizeOfHeader;
+    writer << reserved0;
+    writer << NumDataBuffers << DataBufferDescSize;
+    writer << NumMaterials << MaterialSize;
 
-    for (byte& c : _pad1) {
-        writer << c;
+    writer << Culling_CW << RightHand;
+    writer << NumVertices << NumIndices;
+
+    writer << MeshOptimization << PrimitiveType;
+
+    for (float &f: BoundingBoxCenter) {
+        writer << f;
     }
-    writer << PrimitiveType;
 
-    for (byte& c : _pad2) {
+    for (float &f: BoundingBoxSize) {
+        writer << f;
+    }
+
+    for (byte &c : pad) {
         writer << c;
     }
 }
@@ -93,18 +111,15 @@ XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
     Magic[2] = 'M';
     Magic[3] = 'F';
     Version = 3;
-    BigEndian = false;
-    DataBufferDescOffset = 0x40;
-    _pad0 = 0x00;
+    IsBigEndian = (byte) false;
+    SizeOfHeader = 0x40;
+    reserved0 = 0x00;
     NumDataBuffers = numDataBuffers;
     DataBufferDescSize = sizeof(XmfDataBufferDesc);
     NumMaterials = numMaterials;
     MaterialSize = sizeof(XmfMaterial);
-    for (byte& c : _pad1) {
-        c = 0x00;
-    }
     PrimitiveType = D3DPT_TRIANGLELIST;
-    for (byte& c : _pad2) {
+    for (byte &c : pad) {
         c = 0x00;
     }
 

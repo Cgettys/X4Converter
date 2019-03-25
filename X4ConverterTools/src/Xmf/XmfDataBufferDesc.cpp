@@ -4,7 +4,39 @@
 #include <X4ConverterTools/Xmf/XmfDataBufferDesc.h>
 
 XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
-    //TODO
+    reader >> Type;
+    reader >> UsageIndex;
+    reader >> DataOffset;
+    reader >> Compressed;
+    for (byte &b : _pad0) {
+        reader >> b;
+    }
+    reader >> Format;
+    reader >> CompressedDataSize;
+    reader >> NumItemsPerSection;
+    reader >> ItemSize;
+    reader >> NumSections;
+    for (byte &b : _pad1) {
+        reader >> b;
+    }
+    reader >> NumVertexElements;
+    for (XmfVertexElement& e : VertexElements){
+        e = XmfVertexElement(reader);
+    }
+    //TODO make this validation code?
+
+//    for (byte &b : _pad0) {
+//        if (b != 0) {
+//            throw std::runtime_error("Non-zero pad byte in _pad0");
+//        }
+//    }
+//
+//    for (byte &b : _pad1) {
+//        if (b != 0) {
+//            std::cout << (int) b << std::endl;
+//            throw std::runtime_error("Non-zero pad byte in _pad1");
+//        }
+//    }
     if (NumSections != 1) {
         throw std::runtime_error("Unexpected number of sections (must be 1)");
     }
@@ -19,6 +51,7 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
     }
     NormalizeVertexDeclaration();
 }
+
 bool XmfDataBufferDesc::IsVertexBuffer() const {
     return !IsIndexBuffer();
 }

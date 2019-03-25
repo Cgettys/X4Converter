@@ -24,25 +24,26 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
             XmfHeader rhs = rFile.GetHeader();
             //        byte Magic[4];
             //        byte Version;
-            //        bool BigEndian;
-            //        byte DataBufferDescOffset;
-            //        byte _pad0 = 0;
+            //        bool IsBigEndian;
+            //        byte SizeOfHeader;
+            //        byte reserved0 = 0;
             //        byte NumDataBuffers;
             //        byte DataBufferDescSize;
             //        byte NumMaterials;
             //        byte MaterialSize;
-            //        byte _pad1[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            //        byte padding[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
             //        dword PrimitiveType;
             BOOST_TEST(lhs.Magic == rhs.Magic);
             BOOST_TEST(lhs.Version == rhs.Version);
-            BOOST_TEST(lhs.BigEndian == rhs.BigEndian);
-            BOOST_TEST(lhs.DataBufferDescOffset == rhs.DataBufferDescOffset);
-            BOOST_WARN_MESSAGE(lhs._pad0 == rhs._pad0, "Padding byte _pad0 may differ");
+            BOOST_TEST(lhs.IsBigEndian == rhs.IsBigEndian);
+            BOOST_TEST(lhs.SizeOfHeader == rhs.SizeOfHeader);
+            BOOST_WARN_MESSAGE(lhs.reserved0 == rhs.reserved0, "Padding byte reserved0 may differ");
             BOOST_TEST(lhs.NumDataBuffers == rhs.NumDataBuffers);
             BOOST_TEST(lhs.DataBufferDescSize == rhs.DataBufferDescSize);
+            // TODO check additional fields
             BOOST_TEST(lhs.NumMaterials == rhs.NumMaterials);
             BOOST_TEST(lhs.MaterialSize == rhs.MaterialSize);
-            BOOST_WARN_MESSAGE(lhs._pad1 == rhs._pad1, "Padding byte[] _pad1  may differ");
+            BOOST_TEST(lhs.pad == rhs.pad);
             BOOST_TEST(lhs.PrimitiveType == rhs.PrimitiveType);
 
         }
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         // TODO does sizeof(bytes) == 64?
-        IOStream* pStream= new MemoryIOStream(bytes, 64, false);
+        IOStream *pStream = new MemoryIOStream(bytes, 64, false);
         BOOST_TEST_CHECKPOINT("Setup complete");
 
         StreamReader<> pStreamReader(pStream, false);

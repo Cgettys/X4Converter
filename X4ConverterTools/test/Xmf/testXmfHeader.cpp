@@ -28,8 +28,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         StreamReader<> pStreamReader(pStream, false);
         XmfHeader header(pStreamReader);
         BOOST_TEST_CHECKPOINT("Read complete");
-        BOOST_TEST_MESSAGE(header.validate());
         BOOST_TEST(pStreamReader.GetCurrentPos() == 0x40);
+        BOOST_TEST_MESSAGE(header.validate());
         // pStream is "helpfully" cleaned up by pStreamReader
     }
 

@@ -6,6 +6,16 @@
 #include <exception>
 #include <cmath>
 #include <limits.h>
+enum InterpolationType {
+    INTERPOLATION_UNKNOWN,				/**< Unknown interpolation. */
+    INTERPOLATION_STEP,					/**< No interpolation. */
+    INTERPOLATION_LINEAR,				/**< Linear interpolation.*/
+    INTERPOLATION_QUADRATIC,
+    INTERPOLATION_CUBIC,
+    INTERPOLATION_BEZIER,				/**< Bezier interpolation with interpolated time. */
+    INTERPOLATION_BEZIER_LINEARTIME,	/**< Bezier interpolation with linear time. */
+    INTERPOLATION_TCB					/**< TCB interpolation (using tension, continuity and bias generated hermite tangents). */
+};
 class AniKeyframe {
 public:
     AniKeyframe() = default;
@@ -15,10 +25,10 @@ public:
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
 protected:
     // Note that these add up to exactly 128 bytes
-    float ValueX, ValueY, ValueZ;                        /**< The key's actual value (position, rotation, etc.). 12*/
-    int InterpolationX;                                    /**< The type of interpolation for the x part of the key. 20*/
-    int InterpolationY;                                    /**< The type of interpolation for the y part of the key. 24*/
-    int InterpolationZ;                                    /**< The type of interpolation for the z part of the key. 28*/
+    float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/
+    InterpolationType InterpolationX;                      /**< The type of interpolation for the x part of the key. 20*/
+    InterpolationType InterpolationY;                      /**< The type of interpolation for the y part of the key. 24*/
+    InterpolationType InterpolationZ;                      /**< The type of interpolation for the z part of the key. 28*/
     float Time;                                            /**< 32 Time in s of the key frame - based on the start of the complete animation. - This value is also used as a unique identifier for the key meaning that two keys with the same time are considered the same! - We use a float rather than an XTIME to safe memory, because floating point precision is good enough for key times. */
 
     float CPX1x, CPX1y;                                    /**< First control point for the x value. 8*/
@@ -37,5 +47,8 @@ protected:
     float DerivInX, DerivInY, DerivInZ;                    /**< 12 Derivative In value. Is mutable to allow it being altered in the CalculateDerivatives() method. */
     float DerivOutX, DerivOutY, DerivOutZ;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
     unsigned int AngleKey;                                        /** 28		// this will be set to non null if there is a key */
+    static std::string getInterpolationTypeName(InterpolationType type);
+    static bool checkInterpolationType(InterpolationType type);
 
+private:
 };

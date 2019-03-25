@@ -47,24 +47,27 @@ std::string AniKeyframe::validate() {
 
     ret.append(str(format("\t\tValue: (%1%, %2%, %3%)\n") % ValueX % ValueY % ValueZ));
 
+    ret.append(str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") %
+                   InterpolationX % InterpolationY % InterpolationZ));
+
+
+    if (!checkInterpolationType(InterpolationX)) {
+        valid = false;
+        ret.append("\t\tInterpolationX is not handled by the converter at present\n");
+    }
+    if (!checkInterpolationType(InterpolationY)) {
+        valid = false;
+        ret.append("\t\tInterpolationY is not handled by the converter at present\n");
+    }
+    if (!checkInterpolationType(InterpolationZ)) {
+        valid = false;
+        ret.append("\t\tInterpolationX is not handled by the converter at present\n");
+    }
     ret.append(
-            str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") % InterpolationX % InterpolationY %
-                InterpolationZ));
-
-
-    // TODO something better
-    if (InterpolationX != 1 && InterpolationX != 2 && InterpolationX != 5 && InterpolationY != 7) {
-        ret.append("\t\t New Interpolation type!");
-        valid = false;
-    }
-    if (InterpolationY != 1 && InterpolationY != 2 && InterpolationY != 5 && InterpolationY != 7) {
-        ret.append("\t\t New Interpolation type!");
-        valid = false;
-    }
-    if (InterpolationZ != 1 && InterpolationZ != 2 && InterpolationZ != 5 && InterpolationZ != 7) {
-        ret.append("\t\t New Interpolation type!");
-        valid = false;
-    }
+            str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
+                getInterpolationTypeName(InterpolationX) %
+                getInterpolationTypeName(InterpolationY) %
+                getInterpolationTypeName(InterpolationZ)));
 
 
     ret.append(str(format("\t\tTime: %1%\n") % Time));
@@ -97,13 +100,13 @@ std::string AniKeyframe::validate() {
             valid = false;
         }
     }
-    if ( InterpolationY == 2) {
+    if (InterpolationY == 2) {
         if (std::abs(CPY1x) > comp || std::abs(CPY1y) > comp || std::abs(CPY2x) > comp || std::abs(CPY2y) > comp) {
             ret.append("Interpolation Type for Y was  2, but CP were not!\n");
             valid = false;
         }
     }
-    if ( InterpolationZ == 2) {
+    if (InterpolationZ == 2) {
         if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
             ret.append("Interpolation Type for Z was 2, but CP were not!\n");
             valid = false;
@@ -146,4 +149,24 @@ std::string AniKeyframe::validate() {
         throw std::runtime_error(ret);
     }
     return ret;
+}
+
+bool AniKeyframe::checkInterpolationType(InterpolationType type) {
+
+    if (type == INTERPOLATION_TCB) {
+
+        std::cerr << "Warning, TCB Interpolation is not handled, but is valid for convenience." << std::endl;
+        return true;
+    }
+    return (type == INTERPOLATION_STEP || type == INTERPOLATION_BEZIER || type == INTERPOLATION_LINEAR);
+}
+
+std::string AniKeyframe::getInterpolationTypeName(InterpolationType type) {
+    if (type > INTERPOLATION_TCB) {
+        throw std::runtime_error("Type name not in enumeration");
+    } else {
+        const std::string InterpolationTypeName[] = {"UNKNOWN", "STEP", "LINEAR", "QUADRATIC", "CUBIC", "BEZIER",
+                                                     "BEZIER_LINEARTIME", "TCB"};
+        return InterpolationTypeName[type];
+    }
 }

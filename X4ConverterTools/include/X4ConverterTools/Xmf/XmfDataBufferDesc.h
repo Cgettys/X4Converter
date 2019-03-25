@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include "XmfVertexElement.h"
