@@ -62,16 +62,20 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     try {
         std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
 
-        std::cout << pStream->FileSize()<<std::endl;
         if (pStream->FileSize() < 16) {
             throw std::runtime_error(".xmf file is too small (< 16 bytes)");
         }
 
         auto pStreamReader = StreamReader<>(pStream, false);
         pMeshFile->header = XmfHeader(pStreamReader);
-        pMeshFile->ReadBufferDescs(pStream);
-        pMeshFile->ReadMaterials(pStream);
-        pMeshFile->ReadBuffers(pStream);
+        if (pStream->FileSize()
+            < pMeshFile->header.DataBufferDescOffset
+              + pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {
+            throw std::runtime_error(".xmf file is too small");
+        }
+        pMeshFile->ReadBufferDescs(pStreamReader);
+        pMeshFile->ReadMaterials(pStreamReader);
+        pMeshFile->ReadBuffers(pStreamReader);
         pMeshFile->Validate();
 
         return pMeshFile;
@@ -80,25 +84,22 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     }
 }
 
-void XuMeshFile::ReadBufferDescs(IOStream *pStream) {
-    if (pStream->FileSize()
-        < header.DataBufferDescOffset
-          + header.NumDataBuffers * header.DataBufferDescSize) {
-        throw std::runtime_error(".xmf file is too small");
-    }
+void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
+
 
     buffers.resize(header.NumDataBuffers);
 
-    pStream->Seek(header.DataBufferDescOffset, aiOrigin_SET);
+    pStreamReader.SetCurrentPos(header.DataBufferDescOffset);
     for (XmfDataBuffer &buffer : buffers) {
         memset(&buffer.Description, 0, sizeof(buffer.Description));
-        pStream->Read(&buffer.Description, header.DataBufferDescSize, 1);
+
+        pStreamReader.CopyAndAdvance(&buffer.Description,header.DataBufferDescSize);
         buffer.NormalizeVertexDeclaration();
 
-        if (buffer.Description.NumSections != 1)
+        if (buffer.Description.NumSections != 1) {
             throw std::runtime_error(
                     "Unexpected number of sections (must be 1)");
-
+        }
         if (buffer.IsVertexBuffer()
             && buffer.Description.ItemSize
                != buffer.GetVertexDeclarationSize()) {
@@ -117,25 +118,25 @@ void XuMeshFile::ReadBufferDescs(IOStream *pStream) {
     }
 }
 
-void XuMeshFile::ReadMaterials(IOStream *pStream) {
+void XuMeshFile::ReadMaterials(StreamReader<> & pStreamReader) {
     materials.resize(header.NumMaterials);
-    if (header.NumMaterials > 0) {
-        pStream->Read(materials.data(), sizeof(XmfMaterial),
-                      header.NumMaterials);
+    for (int i = 0; i < header.NumMaterials; i ++){
+        pStreamReader.CopyAndAdvance(materials.data(), sizeof(XmfMaterial));
     }
 }
 
-void XuMeshFile::ReadBuffers(IOStream *pStream) {
-    int baseFileOffset = pStream->Tell();
+void XuMeshFile::ReadBuffers(StreamReader<> & pStreamReader) {
+    int baseFileOffset = pStreamReader.GetCurrentPos();
     std::vector<byte> compressedData;
     for (XmfDataBuffer &buffer : buffers) {
-        if (pStream->Tell() - baseFileOffset != buffer.Description.DataOffset) {
+        if (pStreamReader.GetCurrentPos()- baseFileOffset != buffer.Description.DataOffset) {
             throw std::runtime_error("Mismatching buffer data offset");
         }
-        if (pStream->FileSize() - pStream->Tell()
-            < buffer.GetCompressedDataSize()) {
-            throw std::runtime_error(".xmf file is too small");
-        }
+        // TODO fixme
+//        if (pStreamReader. - pStreamReader.GetCurrentPos()
+//            < buffer.GetCompressedDataSize()) {
+//            throw std::runtime_error(".xmf file is too small");
+//        }
         buffer.AllocData();
         if (!buffer.IsCompressed()) {
             if (buffer.GetCompressedDataSize()
@@ -143,12 +144,10 @@ void XuMeshFile::ReadBuffers(IOStream *pStream) {
                 throw std::runtime_error(
                         "Noncompressed buffer has invalid size");
             }
-            pStream->Read(buffer.GetData(), 1,
-                          buffer.GetUncompressedDataSize());
+            pStreamReader.CopyAndAdvance(buffer.GetData(), buffer.GetUncompressedDataSize());
         } else {
             compressedData.reserve(buffer.GetCompressedDataSize());
-            pStream->Read(compressedData.data(), 1,
-                          buffer.GetCompressedDataSize());
+            pStreamReader.CopyAndAdvance(buffer.GetData(), buffer.GetCompressedDataSize());
 
             unsigned long uncompressedSize = buffer.GetUncompressedDataSize();
             int status = uncompress(buffer.GetData(), &uncompressedSize,
@@ -193,7 +192,12 @@ void XuMeshFile::WriteToFile(const std::string &filePath,
 void XuMeshFile::WriteToIOStream(IOStream *pStream) {
     std::map<XmfDataBuffer *, std::vector<byte> > compressedBuffers =
             CompressBuffers();
-    WriteHeader(pStream);
+
+    header= XmfHeader(buffers.size(),materials.size());
+    auto pStreamWriter = StreamWriter<>(pStream, false);
+    header.Write(pStreamWriter);
+    pStreamWriter.Flush();
+
     WriteBufferDescs(pStream, compressedBuffers);
     WriteMaterials(pStream);
     WriteBuffers(pStream, compressedBuffers);
@@ -216,25 +220,6 @@ std::map<XmfDataBuffer *, std::vector<byte> > XuMeshFile::CompressBuffers() {
     return result;
 }
 
-void XuMeshFile::WriteHeader(Assimp::IOStream *pStream) {
-    // Note that this ignores any header read into this mesh file since we can't guarantee the old header is accurate
-    XmfHeader header;
-    memcpy(header.Magic, "XUMF", 4);
-    header.Version = 3;
-    header.BigEndian = false;
-    header.DataBufferDescOffset = 0x40;
-    header.NumDataBuffers = buffers.size();
-    header.DataBufferDescSize = sizeof(XmfDataBufferDesc);
-    header.NumMaterials = materials.size();
-    header.MaterialSize = sizeof(XmfMaterial);
-    header.PrimitiveType = D3DPT_TRIANGLELIST;
-    pStream->Write(&header, sizeof(header), 1);
-
-    for (int i = sizeof(header); i < 0x40; ++i) {
-        byte pad = 0;
-        pStream->Write(&pad, 1, 1);
-    }
-}
 
 void XuMeshFile::WriteBufferDescs(Assimp::IOStream *pStream,
                                   std::map<XmfDataBuffer *, std::vector<byte> > &compressedBuffers) {

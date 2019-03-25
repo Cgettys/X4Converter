@@ -63,9 +63,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         IOStream *outStream = io->Open(resultsFile, "wb");
         std::shared_ptr<XuMeshFile> meshFile = XuMeshFile::ReadFromIOStream(sourceStream);
         meshFile->WriteToIOStream(outStream);
+        BOOST_TEST_CHECKPOINT("Read/Write complete");
 
-
-        io->Close(outStream);
         // Reset stream to start
         IOStream *resultStream = io->Open(resultsFile, "rb");
         sourceStream = io->Open(testFile, "rb");

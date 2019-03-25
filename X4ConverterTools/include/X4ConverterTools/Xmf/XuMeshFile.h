@@ -13,6 +13,8 @@
 
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
+#include <assimp/StreamReader.h>
+#include <assimp/StreamWriter.h>
 
 #include "../DirectX.h"
 #include "../Util/DXUtil.h"
@@ -56,19 +58,16 @@ public:
     void WriteToIOStream(Assimp::IOStream *pStream);
 
 private:
-    void ReadHeader(Assimp::IOStream *pStream);
 
-    void ReadBufferDescs(Assimp::IOStream *pStream);
+    void ReadBufferDescs(Assimp::StreamReader<> &pStreamReader);
 
-    void ReadMaterials(Assimp::IOStream *pStream);
+    void ReadMaterials(Assimp::StreamReader<> &pStream);
 
-    void ReadBuffers(Assimp::IOStream *pStream);
+    void ReadBuffers(Assimp::StreamReader<> &pStream);
 
     void Validate();
 
     std::map<XmfDataBuffer *, std::vector<byte> > CompressBuffers();
-
-    void WriteHeader(Assimp::IOStream *pStream);
 
     void WriteBufferDescs(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<byte> > &compressedBuffers);
 

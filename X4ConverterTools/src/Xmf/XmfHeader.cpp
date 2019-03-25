@@ -57,3 +57,43 @@ std::string XmfHeader::validate() const {
 //    }
     return ret;
 }
+
+void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
+
+    for (int i = 0; i < 4; i++) {
+        writer << Magic[i];
+    }
+    writer << Version << BigEndian;
+    writer << DataBufferDescOffset;
+    writer << _pad0;
+    writer << NumDataBuffers;
+    writer << DataBufferDescSize;
+    writer << NumMaterials;
+    writer << MaterialSize;
+
+    for (int i = 0; i < 10; i++) {
+        writer << _pad1[i];
+    }
+    writer << PrimitiveType;
+}
+
+
+XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
+// Note that this ignores any header read into this mesh file since we can't guarantee the old header is accurate
+    Magic[0] = 'X';
+    Magic[1] = 'U';
+    Magic[2] = 'M';
+    Magic[3] = 'F';
+    Version = 3;
+    BigEndian = false;
+    DataBufferDescOffset = 0x40;
+    _pad0 = 0x00;
+    NumDataBuffers = numDataBuffers;
+    DataBufferDescSize = sizeof(XmfDataBufferDesc);
+    NumMaterials = numMaterials;
+    MaterialSize = sizeof(XmfMaterial);
+    PrimitiveType = D3DPT_TRIANGLELIST;
+    for (int i = 0; i < 10; i++) {
+        _pad1[i] = 0x00;
+    }
+}
