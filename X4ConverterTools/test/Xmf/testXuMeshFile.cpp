@@ -5,17 +5,19 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/DefaultIOSystem.h>
-
+#include <assimp/MemoryIOWrapper.h>
 #include <X4ConverterTools/API.h>
 #include <X4ConverterTools/Types.h>
 #include <X4ConverterTools/Xmf/XmfHeader.h>
 #include <X4ConverterTools/Xmf/XuMeshFile.h>
+
 
 using namespace Assimp;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 
     class testHelper {
     public:
+        //TODO seperate test suite for validating current files
 // TODO refactor out of test file?
         static void checkXmfHeaderEquality(XuMeshFile &lFile, XuMeshFile &rFile) {
             XmfHeader lhs = lFile.GetHeader();
@@ -53,29 +55,31 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         }
     };
 
-// TODO extract some permanent test files
-// TODO extract into own file
-    BOOST_AUTO_TEST_CASE(test_header) {
-        // TODO mock reading & writing to memory - would be faster & good form
-        // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-        const std::string testFile =  "/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision.xmf";
-        DefaultIOSystem io = DefaultIOSystem();
-        IOStream *sourceStream = io.Open(testFile.c_str(), "rb");
+    BOOST_AUTO_TEST_CASE(test_xmf_material) {
+        // assets/units/size_s/ship_gen_s_fighter_01_data/fx_licence-collision.xmf v2.20 or so
+        uint8_t bytes[] = {
+                0x58, 0x55, 0x4d, 0x46, 0x03, 0x00, 0x40, 0x00, 0x02, 0xbc, 0x00, 0x88, 0x00, 0x00, 0x6a, 0x00,
+                0x00, 0x00, 0x2c, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        // TODO does sizeof(bytes) == 64?
+        IOStream* pStream= new MemoryIOStream(bytes, 64, false);
         BOOST_TEST_CHECKPOINT("Setup complete");
 
-        StreamReader<> pStreamReader(sourceStream, false);
+        StreamReader<> pStreamReader(pStream, false);
         XmfHeader header(pStreamReader);
         BOOST_TEST_CHECKPOINT("Read complete");
         BOOST_TEST_MESSAGE(header.validate());
         BOOST_TEST(pStreamReader.GetCurrentPos() == 0x40);
-
-
-//        BOOST_TEST(expected == actual);
+        // pStream is "helpfully" cleaned up by pStreamReader
     }
+
     BOOST_AUTO_TEST_CASE(test_xmf) {
+
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
+
         const std::string basePath =
                 "/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
         const std::string testFile = basePath + ".xmf";
@@ -112,6 +116,5 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         delete io;
 //        BOOST_TEST(expected == actual);
     }
-
 
 BOOST_AUTO_TEST_SUITE_END()

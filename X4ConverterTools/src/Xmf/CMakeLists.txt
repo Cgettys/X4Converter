@@ -1,5 +1,6 @@
 set(XMF_SRCS
         src/Xmf/XmfDataBuffer.cpp
+        src/Xmf/XmfDataBufferDesc.cpp
         src/Xmf/XmfExporter.cpp
         src/Xmf/XmfImporter.cpp
         src/Xmf/XmfMaterial.cpp

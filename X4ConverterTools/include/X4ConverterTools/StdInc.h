@@ -27,7 +27,6 @@
 #include <assimp/Exporter.hpp>
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
-#include "zlib.h"
 
 #include "../Vendor/half/half.hpp"
 #include "Types.h"

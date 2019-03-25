@@ -1,10 +1,20 @@
 #pragma once
 
+#include <assimp/StreamReader.h>
+#include <assimp/StreamWriter.h>
 #include "XmfVertexElement.h"
-#pragma pack(push)
-#pragma pack(1)
 
-struct XmfDataBufferDesc {
+#include "../DirectX.h"
+#include "../Util/DXUtil.h"
+
+class XmfDataBufferDesc {
+public:
+    XmfDataBufferDesc() = default;
+
+    explicit XmfDataBufferDesc(Assimp::StreamReader<> &reader);
+
+    void Write(Assimp::StreamWriter<> &writer);
+
     dword Type;
     dword UsageIndex;
     dword DataOffset;
@@ -18,6 +28,19 @@ struct XmfDataBufferDesc {
     byte _pad1[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     dword NumVertexElements;
     XmfVertexElement VertexElements[16];
-};
 
-#pragma pack(pop)
+    bool IsVertexBuffer() const;
+
+    bool IsIndexBuffer() const;
+
+
+    int GetVertexDeclarationSize();
+
+    D3DFORMAT GetIndexFormat();
+
+    void DenormalizeVertexDeclaration();
+
+protected:
+    void NormalizeVertexDeclaration();
+
+};

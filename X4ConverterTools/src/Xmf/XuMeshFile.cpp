@@ -95,72 +95,15 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
 void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
 
 
-    buffers.resize(header.NumDataBuffers);
-
 //    pStreamReader.SetCurrentPos(header.DataBufferDescOffset);
-    for (XmfDataBuffer &buffer : buffers) {
-        memset(&buffer.Description, 0, sizeof(buffer.Description));
-
-        pStreamReader.CopyAndAdvance(&buffer.Description,header.DataBufferDescSize);
-        buffer.NormalizeVertexDeclaration();
-
-        if (buffer.Description.NumSections != 1) {
-            throw std::runtime_error(
-                    "Unexpected number of sections (must be 1)");
-        }
-        if (buffer.IsVertexBuffer()
-            && buffer.Description.ItemSize
-               != buffer.GetVertexDeclarationSize()) {
-            throw std::runtime_error(
-                    "Item size for vertex buffer is incorrect");
-        } else if (buffer.IsIndexBuffer()) {
-            D3DFORMAT format = buffer.GetIndexFormat();
-            if ((format == D3DFMT_INDEX16
-                 && buffer.Description.ItemSize != sizeof(ushort))
-                || (format == D3DFMT_INDEX32
-                    && buffer.Description.ItemSize != sizeof(uint))) {
-                throw std::runtime_error(
-                        "Item size for index buffer is incorrect");
-            }
-        }
+    for (int x = 0; x < header.NumDataBuffers; x++) {
+        buffers.emplace_back(pStreamReader);
     }
 }
 
 void XuMeshFile::ReadBuffers(StreamReader<> & pStreamReader) {
-    int baseFileOffset = pStreamReader.GetCurrentPos();
-    std::vector<byte> compressedData;
     for (XmfDataBuffer &buffer : buffers) {
-        if (pStreamReader.GetCurrentPos()- baseFileOffset != buffer.Description.DataOffset) {
-            throw std::runtime_error("Mismatching buffer data offset");
-        }
-        // TODO fixme
-//        if (pStreamReader. - pStreamReader.GetCurrentPos()
-//            < buffer.GetCompressedDataSize()) {
-//            throw std::runtime_error(".xmf file is too small");
-//        }
-        buffer.AllocData();
-        if (!buffer.IsCompressed()) {
-            if (buffer.GetCompressedDataSize()
-                != buffer.GetUncompressedDataSize()) {
-                throw std::runtime_error(
-                        "Noncompressed buffer has invalid size");
-            }
-            pStreamReader.CopyAndAdvance(buffer.GetData(), buffer.GetUncompressedDataSize());
-        } else {
-            compressedData.reserve(buffer.GetCompressedDataSize());
-            pStreamReader.CopyAndAdvance(buffer.GetData(), buffer.GetCompressedDataSize());
-
-            unsigned long uncompressedSize = buffer.GetUncompressedDataSize();
-            int status = uncompress(buffer.GetData(), &uncompressedSize,
-                                    compressedData.data(), buffer.GetCompressedDataSize());
-            if (status != Z_OK) {
-                throw std::runtime_error("Failed to decompress data buffer");
-            }
-            if (uncompressedSize != buffer.GetUncompressedDataSize()) {
-                throw std::runtime_error(
-                        "Decompression did not return enough data");
-            }
-        }
+        buffer.Read(pStreamReader);
     }
 }
 

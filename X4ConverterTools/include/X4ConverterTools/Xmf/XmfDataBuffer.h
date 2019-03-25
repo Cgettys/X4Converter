@@ -1,12 +1,19 @@
 #pragma once
 
+#include <assimp/StreamReader.h>
+#include <assimp/StreamWriter.h>
+#include <X4ConverterTools/Types.h>
+#include <X4ConverterTools/Xmf/XmfDataBufferDesc.h>
+#include "zlib.h"
 class XmfDataBuffer {
 public:
     XmfDataBuffer();
 
     XmfDataBufferDesc Description;
+    explicit XmfDataBuffer(Assimp::StreamReader<> &descReader);
 
-    void AllocData();
+    void Read(Assimp::StreamReader<> &reader); // Used to read in the binary data
+    void Write(Assimp::StreamWriter<> &writer);
 
     bool IsCompressed() const;
 
@@ -20,14 +27,10 @@ public:
 
     byte *GetData();
 
-    void NormalizeVertexDeclaration();
-
-    void DenormalizeVertexDeclaration();
-
-    int GetVertexDeclarationSize();
 
     D3DFORMAT GetIndexFormat();
 
+    void AllocData();
 private:
     std::vector<byte> _data;
 };

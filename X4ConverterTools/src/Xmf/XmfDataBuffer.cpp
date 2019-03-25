@@ -1,7 +1,52 @@
-#include <X4ConverterTools/StdInc.h>
+
+#include <X4ConverterTools/Xmf/XmfDataBuffer.h>
+
 
 XmfDataBuffer::XmfDataBuffer() {
-    memset(&Description, 0, sizeof(Description));
+}
+
+XmfDataBuffer::XmfDataBuffer(Assimp::StreamReader<> &reader) :
+        Description(reader) {
+
+    AllocData();
+}
+void XmfDataBuffer::Read(Assimp::StreamReader<> & reader){
+    std::vector<byte> compressedData;
+    // TODO fixme
+//    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
+//        throw std::runtime_error("Mismatching buffer data offset");
+//    }
+    // TODO fixme
+//        if (pStreamReader. - pStreamReader.GetCurrentPos()
+//            < GetCompressedDataSize()) {
+//            throw std::runtime_error(".xmf file is too small");
+//        }
+
+    if (!IsCompressed()) {
+        if (GetCompressedDataSize()
+            != GetUncompressedDataSize()) {
+            throw std::runtime_error(
+                    "Noncompressed buffer has invalid size");
+        }
+        reader.CopyAndAdvance(GetData(), GetUncompressedDataSize());
+    } else {
+        compressedData.reserve(GetCompressedDataSize());
+        reader.CopyAndAdvance(GetData(), GetCompressedDataSize());
+
+        unsigned long uncompressedSize = GetUncompressedDataSize();
+        int status = uncompress(GetData(), &uncompressedSize,
+                                compressedData.data(), GetCompressedDataSize());
+        if (status != Z_OK) {
+            throw std::runtime_error("Failed to decompress data buffer");
+        }
+        if (uncompressedSize != GetUncompressedDataSize()) {
+            throw std::runtime_error(
+                    "Decompression did not return enough data");
+        }
+    }
+}
+void XmfDataBuffer::Write(Assimp::StreamWriter<> &writer) {
+// TODO
 }
 
 void XmfDataBuffer::AllocData() {
@@ -13,11 +58,11 @@ bool XmfDataBuffer::IsCompressed() const {
 }
 
 bool XmfDataBuffer::IsIndexBuffer() const {
-    return Description.Type == 30;
+    return Description.IsIndexBuffer();
 }
 
 bool XmfDataBuffer::IsVertexBuffer() const {
-    return !IsIndexBuffer();
+    return Description.IsVertexBuffer();
 }
 
 int XmfDataBuffer::GetCompressedDataSize() const {
@@ -32,102 +77,12 @@ byte *XmfDataBuffer::GetData() {
 //    auto copiedData = new byte[_data.size()];
 //    std::copy(_data.begin(), _data.end(), copiedData);
 //    return copiedData;
-      return _data.data();
-}
-
-void XmfDataBuffer::NormalizeVertexDeclaration() {
-    if (!IsVertexBuffer() || Description.NumVertexElements > 0)
-        return;
-
-    Description.NumVertexElements = 1;
-    Description.VertexElements[0].Type = Description.Format;
-    switch (Description.Type) {
-        case 0:
-        case 1:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_POSITION;
-            break;
-
-        case 2:
-        case 3:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_NORMAL;
-            break;
-
-        case 4:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_TANGENT;
-            break;
-
-        case 5:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_BINORMAL;
-            break;
-
-        case 8:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_COLOR;
-            break;
-
-        case 20:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_PSIZE;
-            break;
-
-        default:
-            Description.VertexElements[0].Usage = D3DDECLUSAGE_TEXCOORD;
-            break;
-    }
-    Description.VertexElements[0].UsageIndex = Description.UsageIndex;
-
-    Description.Type = 0;
-    Description.UsageIndex = 0;
-    Description.Format = 32;
-}
-
-void XmfDataBuffer::DenormalizeVertexDeclaration() {
-    if (!IsVertexBuffer() || Description.NumVertexElements != 1)
-        return;
-
-    Description.Format = Description.VertexElements[0].Type;
-    switch (Description.VertexElements[0].Usage) {
-        case D3DDECLUSAGE_POSITION:
-            Description.Type = 0;
-            break;
-
-        case D3DDECLUSAGE_NORMAL:
-            Description.Type = 2;
-            break;
-
-        case D3DDECLUSAGE_TANGENT:
-            Description.Type = 4;
-            break;
-
-        case D3DDECLUSAGE_BINORMAL:
-            Description.Type = 5;
-            break;
-
-        case D3DDECLUSAGE_COLOR:
-            Description.Type = 8;
-            break;
-
-        case D3DDECLUSAGE_PSIZE:
-            Description.Type = 20;
-            break;
-
-        default:
-            Description.Type = 31;
-            break;
-    }
-    Description.UsageIndex = Description.VertexElements[0].UsageIndex;
-    Description.NumVertexElements = 0;
-}
-
-int XmfDataBuffer::GetVertexDeclarationSize() {
-    int size = 0;
-    for (int i = 0; i < Description.NumVertexElements; ++i) {
-        size += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) Description.VertexElements[i].Type);
-    }
-    return size;
+    return _data.data();
 }
 
 D3DFORMAT XmfDataBuffer::GetIndexFormat() {
-    if (!IsIndexBuffer())
-        throw std::runtime_error("The data buffer is not an index buffer");
-
-    return Description.Format == 30 ? D3DFMT_INDEX16 : D3DFMT_INDEX32;
+    return Description.GetIndexFormat();
 }
+
+
+

@@ -157,19 +157,19 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
             aiFace *pFace = &pMesh->mFaces[i];
             for (int j = 0; j < 3; ++j) {
                 int index = vertexOffset + pFace->mIndices[j];
-                if (indexBuffer.Description.ItemSize == sizeof(ushort))
+                if (indexBuffer.Description.ItemSize == sizeof(ushort)) {
                     *(ushort *) pIndex = (ushort) index;
-                else
+                } else {
                     *(int *) pIndex = index;
-
+                }
                 pIndex += indexBuffer.Description.ItemSize;
             }
         }
 
         std::cmatch match;
-        if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?X\w+?X(\w+?)X(\w+?))")))
+        if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?X\w+?X(\w+?)X(\w+?))"))) {
             pMeshFile->AddMaterial(indexOffset, pMesh->mNumFaces * 3, match[1].str() + "." + match[2].str());
-
+        }
         vertexOffset += pMesh->mNumVertices;
         indexOffset += pMesh->mNumFaces * 3;
     }
@@ -247,9 +247,9 @@ void XmfExporter::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexEl
 }
 
 void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
-    if (declaration.size() > sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0]))
+    if (declaration.size() > sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
         throw std::runtime_error("Too many vertex elements in vertex declaration");
-
+    }
     int declarationSize = 0;
 
     buffer.Description.NumVertexElements = declaration.size();
@@ -258,7 +258,7 @@ void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declarat
         declarationSize += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) declaration[i].Type);
     }
     buffer.Description.ItemSize = declarationSize;
-    buffer.DenormalizeVertexDeclaration();
+    buffer.Description.DenormalizeVertexDeclaration();
 }
 
 int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, byte *pElemData) {
