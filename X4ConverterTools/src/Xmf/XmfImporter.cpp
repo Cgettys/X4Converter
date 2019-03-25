@@ -50,11 +50,11 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
 
         // TODO
 //        // ANI file stuff
-//        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
-//        to_upper(shortName);
-//        std::string aniPath = (path(filePath).parent_path() / shortName).string();
-//        IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
-//        AniFile aniFile(pAniStream);
+        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
+        to_upper(shortName);
+        std::string aniPath = (path(filePath).parent_path() / shortName).string();
+        IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
+        AniFile aniFile(pAniStream);
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //
 

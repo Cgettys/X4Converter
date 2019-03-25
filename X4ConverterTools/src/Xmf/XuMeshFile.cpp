@@ -62,7 +62,13 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     try {
         std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
 
-        pMeshFile->ReadHeader(pStream);
+        std::cout << pStream->FileSize()<<std::endl;
+        if (pStream->FileSize() < 16) {
+            throw std::runtime_error(".xmf file is too small (< 16 bytes)");
+        }
+
+        auto pStreamReader = StreamReader<>(pStream, false);
+        pMeshFile->header = XmfHeader(pStreamReader);
         pMeshFile->ReadBufferDescs(pStream);
         pMeshFile->ReadMaterials(pStream);
         pMeshFile->ReadBuffers(pStream);
@@ -74,42 +80,12 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     }
 }
 
-void XuMeshFile::ReadHeader(IOStream *pStream) {
-    if (pStream->FileSize() < sizeof(XmfHeader)) {
-        throw std::runtime_error(".xmf file is too small");
-    }
-    XmfHeader loadedHeader;
-    pStream->Read(&loadedHeader, sizeof(loadedHeader), 1);
-
-    if (memcmp(loadedHeader.Magic, "XUMF\x03", 5)) {
-        throw std::runtime_error("Invalid header magic");
-    }
-    if (loadedHeader.BigEndian) {
-        throw std::runtime_error(
-                "Big endian .xmf files are not supported by this importer");
-    }
-    if (loadedHeader.DataBufferDescOffset != 0x40) {
-        std::cout << loadedHeader.DataBufferDescOffset << std::endl;
-        throw std::runtime_error("Offset should be 0x40");
-    }
-    if (loadedHeader.DataBufferDescSize > sizeof(XmfDataBufferDesc)) {
-        throw std::runtime_error("Data buffer description size is too large");
-    }
-    if (loadedHeader.MaterialSize != sizeof(XmfMaterial)) {
-        throw std::runtime_error("Material size is invalid");
-    }
-    if (loadedHeader.PrimitiveType != D3DPT_TRIANGLELIST) {
-        throw std::runtime_error(
-                "File is using a DirectX primitive type that's not supported by this importer");
-    }
-    header = loadedHeader;
-}
-
 void XuMeshFile::ReadBufferDescs(IOStream *pStream) {
     if (pStream->FileSize()
         < header.DataBufferDescOffset
-          + header.NumDataBuffers * header.DataBufferDescSize)
+          + header.NumDataBuffers * header.DataBufferDescSize) {
         throw std::runtime_error(".xmf file is too small");
+    }
 
     buffers.resize(header.NumDataBuffers);
 
@@ -153,17 +129,17 @@ void XuMeshFile::ReadBuffers(IOStream *pStream) {
     int baseFileOffset = pStream->Tell();
     std::vector<byte> compressedData;
     for (XmfDataBuffer &buffer : buffers) {
-        if (pStream->Tell() - baseFileOffset != buffer.Description.DataOffset){
+        if (pStream->Tell() - baseFileOffset != buffer.Description.DataOffset) {
             throw std::runtime_error("Mismatching buffer data offset");
         }
         if (pStream->FileSize() - pStream->Tell()
-            < buffer.GetCompressedDataSize()){
+            < buffer.GetCompressedDataSize()) {
             throw std::runtime_error(".xmf file is too small");
         }
         buffer.AllocData();
         if (!buffer.IsCompressed()) {
             if (buffer.GetCompressedDataSize()
-                != buffer.GetUncompressedDataSize()){
+                != buffer.GetUncompressedDataSize()) {
                 throw std::runtime_error(
                         "Noncompressed buffer has invalid size");
             }
@@ -177,7 +153,7 @@ void XuMeshFile::ReadBuffers(IOStream *pStream) {
             unsigned long uncompressedSize = buffer.GetUncompressedDataSize();
             int status = uncompress(buffer.GetData(), &uncompressedSize,
                                     compressedData.data(), buffer.GetCompressedDataSize());
-            if (status != Z_OK){
+            if (status != Z_OK) {
                 throw std::runtime_error("Failed to decompress data buffer");
             }
             if (uncompressedSize != buffer.GetUncompressedDataSize()) {
@@ -189,6 +165,7 @@ void XuMeshFile::ReadBuffers(IOStream *pStream) {
 }
 
 void XuMeshFile::Validate() {
+    header.validate();
     int numVertices = -1;
     for (XmfDataBuffer &buffer : buffers) {
         if (!buffer.IsVertexBuffer()) {

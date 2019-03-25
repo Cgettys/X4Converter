@@ -1,9 +1,23 @@
 #pragma once
 
-#pragma pack(push)
-#pragma pack(1)
+#pragma once
 
-struct XmfHeader {
+#include <assimp/StreamReader.h>
+#include <boost/format.hpp>
+#include <iostream>
+
+
+#include "XmfMaterial.h"
+#include "XmfDataBufferDesc.h"
+#include "../DirectX.h"
+
+class XmfHeader {
+public:
+    XmfHeader() = default;
+
+    explicit XmfHeader(Assimp::StreamReader<> &reader);
+
+    std::string validate() const;// Debug method - throws exception if invalid, else returns human readable string
     byte Magic[4];
     byte Version;
     bool BigEndian;
@@ -17,4 +31,3 @@ struct XmfHeader {
     dword PrimitiveType;
 };
 
-#pragma pack(pop)

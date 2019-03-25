@@ -1,5 +1,7 @@
 #pragma once
 
+#include <X4ConverterTools/Types.h>
+#include "../DirectX.h"
 #pragma pack(push)
 #pragma pack(1)
 

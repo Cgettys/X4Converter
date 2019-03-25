@@ -3,6 +3,18 @@
 using namespace boost;
 using namespace Assimp;
 
+/**
+ * Interpolation types
+ * https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/3DSMax-Animation/files/GUID-3A32AF50-18F8-4461-8B6C-AD36D5F668FF-htm.html
+ * https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/3DSMax-Animation/files/GUID-863F4C77-A476-41FF-908B-33C0095E21CB-htm.html
+ * Ticks:
+ * https://knowledge.autodesk.com/support/3ds-max/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/3DSMax-Animation/files/GUID-9E3D02C0-DAA9-4629-8558-6F6C070A0C70-htm.html
+ * Length: https://help.autodesk.com/view/3DSMAX/2016/ENU/?guid=__files_GUID_76F76CB2_1026_447E_8DEE_23A57FB29C25_htm
+ *
+ * 3ds max - tangent/slope? + proportion relative to other keyframe
+ *  blender - value (can calculate slope from this) + frame (x coordinate)
+*/
+
 AniKeyframe::AniKeyframe(StreamReader<> &reader) {
     reader >> ValueX >> ValueY >> ValueZ;
     reader >> InterpolationX >> InterpolationY >> InterpolationZ;
@@ -54,6 +66,7 @@ std::string AniKeyframe::validate() {
         valid = false;
     }
 
+
     ret.append(str(format("\t\tTime: %1%\n") % Time));
 
     ret.append(str(format("\t\tCPX1: (%1%, %2%)\n") % CPX1x % CPX1y));
@@ -76,25 +89,26 @@ std::string AniKeyframe::validate() {
     ret.append(str(format("\t\tDerivOut: (%1%, %2%, %3%)\n") % DerivOutX % DerivOutY % DerivOutZ));
 
     ret.append(str(format("\t\tAngleKey: %1%\n") % AngleKey));
-// // Wrong
-//    if (InterpolationX == 2) {
-//        if (CPX1x != 0 || CPX1y != 0 || CPX2x != 0 || CPX2y != 0) {
-//            ret.append("Interpolation Type for X was 1 or 2, but CP were not!\n");
-//            valid = false;
-//        }
-//    }
-//    if (InterpolationY == 2) {
-//        if (CPY1x != 0 || CPY1y != 0 || CPY2x != 0 || CPY2y != 0) {
-//            ret.append("Interpolation Type for Y was 1 or 2, but CP were not!\n");
-//            valid = false;
-//        }
-//    }
-//    if (InterpolationZ == 2) {
-//        if (CPZ1x != 0 || CPZ1y != 0 || CPZ2x != 0 || CPZ2y != 0) {
-//            ret.append("Interpolation Type for Z was 1 or 2, but CP were not!\n");
-//            valid = false;
-//        }
-//    }
+    // Wrong
+    float comp = std::numeric_limits<float>::min();
+    if (InterpolationX == 2) {
+        if (std::abs(CPX1x) > comp || std::abs(CPX1y) > comp | std::abs(CPX2x) > comp || std::abs(CPX2y) > comp) {
+            ret.append("Interpolation Type for X was 2, but CP were not!\n");
+            valid = false;
+        }
+    }
+    if ( InterpolationY == 2) {
+        if (std::abs(CPY1x) > comp || std::abs(CPY1y) > comp || std::abs(CPY2x) > comp || std::abs(CPY2y) > comp) {
+            ret.append("Interpolation Type for Y was  2, but CP were not!\n");
+            valid = false;
+        }
+    }
+    if ( InterpolationZ == 1) {
+        if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
+            ret.append("Interpolation Type for Z was 2, but CP were not!\n");
+            valid = false;
+        }
+    }
 
 
     if (Tens != 0) {

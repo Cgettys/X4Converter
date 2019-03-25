@@ -4,12 +4,13 @@
 #include <boost/format.hpp>
 #include <iostream>
 #include <exception>
+#include <cmath>
+#include <limits.h>
 class AniKeyframe {
 public:
     AniKeyframe() = default;
 
     explicit AniKeyframe(Assimp::StreamReader<> &reader);
-
 
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
 protected:

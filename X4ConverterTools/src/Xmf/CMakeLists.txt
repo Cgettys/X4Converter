@@ -5,4 +5,5 @@ set(XMF_SRCS
         src/Xmf/XmfMaterial.cpp
         src/Xmf/XmfVertexElement.cpp
         src/Xmf/XuMeshFile.cpp
+        src/Xmf/XmfHeader.cpp
         PARENT_SCOPE)
