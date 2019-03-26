@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         std::vector<byte> resultByte(resultLen);
         // First layer of checks - Read the result in again - is it equal to what it just wrote out
         std::shared_ptr<XuMeshFile> reloadedFile = XuMeshFile::ReadFromIOStream(resultStream);
-        resultStream->Seek(0, aiOrigin_SET);
+
         testHelper::checkXuMeshFileEquality(*meshFile, *reloadedFile);
         //	 Directly read the data into the vector & make sure we got it one go)
         // TODO eventually would be better if we got exact same contents
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
 //	actualStream->Seek(0,aiOrigin_SET);
         io->Close(sourceStream);
-        io->Close(resultStream);
+//        io->Close(resultStream);
         delete io;
 //        BOOST_TEST(expected == actual);
     }

@@ -55,6 +55,7 @@ std::string XmfHeader::validate() const {
         std::cout << SizeOfHeader << std::endl;
         throw std::runtime_error("Offset should be 0x40");
     }
+    // TODO fix these
     if (DataBufferDescSize > sizeof(XmfDataBufferDesc)) {
         throw std::runtime_error("Data buffer description size is too large");
     }
@@ -88,7 +89,7 @@ void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
     writer << Culling_CW << RightHand;
     writer << NumVertices << NumIndices;
 
-    writer << MeshOptimization << PrimitiveType;
+    writer << PrimitiveType<<MeshOptimization ;
 
     for (float &f: BoundingBoxCenter) {
         writer << f;

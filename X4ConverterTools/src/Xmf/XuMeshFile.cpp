@@ -46,7 +46,7 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(
     try {
         pStream = pIOHandler->Open(filePath, "rb");
         auto result = XuMeshFile::ReadFromIOStream(pStream);
-        pIOHandler->Close(pStream);
+//        pIOHandler->Close(pStream);
         return result;
     } catch (...) {
         throw;
@@ -68,7 +68,7 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
 
         auto pStreamReader = StreamReaderLE(pStream, false);
         pMeshFile->header = XmfHeader(pStreamReader);
-
+        std::cout << (pMeshFile->header).validate() << std::endl;
         // Read in Buffer descs
         if (pStream->FileSize() < pMeshFile->header.SizeOfHeader
               + pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {

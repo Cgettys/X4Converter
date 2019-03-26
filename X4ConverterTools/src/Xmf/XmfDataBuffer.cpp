@@ -5,9 +5,9 @@
 XmfDataBuffer::XmfDataBuffer() {
 }
 
-XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) :
-        Description(reader) {
-
+XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) {
+    Description = XmfDataBufferDesc(reader);
+    std::cout << Description.validate();
     AllocData();
 }
 
@@ -20,7 +20,6 @@ void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
         < GetCompressedDataSize()) {
         throw std::runtime_error(".xmf file is too small, not enough data left");
     }
-    reader.SetCurrentPos(440);
     if (!IsCompressed()) {
         if (GetCompressedDataSize()
             != GetUncompressedDataSize()) {

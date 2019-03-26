@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <boost/format.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include "XmfVertexElement.h"
@@ -16,6 +17,7 @@ public:
 
     void Write(Assimp::StreamWriter<> &writer);
 
+    std::string validate();
     dword Type;
     dword UsageIndex;
     dword DataOffset;

@@ -3,7 +3,10 @@
 //
 #include <X4ConverterTools/Xmf/XmfDataBufferDesc.h>
 
-XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReaderLE &reader) {
+using namespace Assimp;
+using namespace boost;
+
+XmfDataBufferDesc::XmfDataBufferDesc(StreamReaderLE &reader) {
     reader >> Type;
     reader >> UsageIndex;
     reader >> DataOffset;
@@ -20,7 +23,7 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReaderLE &reader) {
         reader >> b;
     }
     reader >> NumVertexElements;
-    for (XmfVertexElement& e : VertexElements){
+    for (XmfVertexElement &e : VertexElements) {
         e = XmfVertexElement(reader);
     }
     //TODO make this validation code?
@@ -37,18 +40,7 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReaderLE &reader) {
 //        }
 //    }
     NormalizeVertexDeclaration();
-    if (NumSections != 1) {
-        throw std::runtime_error("Unexpected number of sections (must be 1)");
-    }
-    if (IsVertexBuffer() && ItemSize != GetVertexDeclarationSize()) {
-        throw std::runtime_error("Item size for vertex buffer is incorrect");
-    } else if (IsIndexBuffer()) {
-        D3DFORMAT format = GetIndexFormat();
-        if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(ushort)) ||
-            (format == D3DFMT_INDEX32 && ItemSize != sizeof(uint))) {
-            throw std::runtime_error("Item size for index buffer is incorrect");
-        }
-    }
+    validate();
 }
 
 bool XmfDataBufferDesc::IsVertexBuffer() const {
@@ -158,4 +150,42 @@ D3DFORMAT XmfDataBufferDesc::GetIndexFormat() {
 
 void XmfDataBufferDesc::Write(Assimp::StreamWriter<> &writer) {
 
+}
+
+std::string XmfDataBufferDesc::validate() {
+    std::string ret;
+    bool valid = true;
+
+    ret.append(str(format("Type: %1%\n") % Type));
+    ret.append(str(format("UsageIndex: %1%\n") % UsageIndex));
+    ret.append(str(format("DataOffset: %1%\n") % DataOffset));
+    ret.append(str(format("Compressed: %1%\n") % Compressed));
+    //TODO ret.append(str(format("(w*): %1%\n")%Pad));
+    ret.append(str(format("Format: %1%\n") % Format));
+    ret.append(str(format("CompressedDataSize: %1%\n") % CompressedDataSize));
+    ret.append(str(format("NumItemsPerSection: %1%\n") % NumItemsPerSection));
+    ret.append(str(format("ItemSize: %1%\n") % ItemSize));
+    ret.append(str(format("NumSections: %1%\n") % NumSections));
+    // TODO more padding
+    ret.append(str(format("NumVertexElements: %1%\n") % NumVertexElements));
+    // TODO Vertex elements
+    if (NumSections != 1) {
+        ret.append("Unexpected number of sections (must be 1)");
+        valid = false;
+    }
+    if (IsVertexBuffer() && ItemSize != GetVertexDeclarationSize()) {
+        ret.append("Item size for vertex buffer is incorrect");
+        valid = false;
+    } else if (IsIndexBuffer()) {
+        D3DFORMAT format = GetIndexFormat();
+        if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(ushort)) ||
+            (format == D3DFMT_INDEX32 && ItemSize != sizeof(uint))) {
+            ret.append("Item size for index buffer is incorrect");
+            valid = false;
+        }
+    }
+    if (!valid) {
+        throw std::runtime_error(ret);
+    }
+    return ret;
 }
