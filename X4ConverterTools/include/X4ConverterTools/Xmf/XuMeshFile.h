@@ -59,9 +59,9 @@ public:
 
 private:
 
-    void ReadBufferDescs(Assimp::StreamReader<> &pStreamReader);
+    void ReadBufferDescs(Assimp::StreamReaderLE &pStreamReader);
 
-    void ReadBuffers(Assimp::StreamReader<> &pStream);
+    void ReadBuffers(Assimp::StreamReaderLE &pStream);
 
     void Validate();
 

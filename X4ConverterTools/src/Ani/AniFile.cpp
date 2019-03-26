@@ -10,7 +10,7 @@ using namespace Assimp;
 AniFile::AniFile(IOStream *pStream) {
     // TODO endian handling??
     // TODO pass this in instead of pstream?
-    auto pStreamReader = StreamReader<>(pStream, false);
+    auto pStreamReader = StreamReaderLE(pStream, false);
     header = AniHeader(pStreamReader);
     descs = std::vector<AniAnimDesc>();
     for (int i = 0; i < header.getNumAnims(); i++) {

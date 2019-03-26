@@ -11,8 +11,8 @@ class AniAnimDesc {
 public:
     AniAnimDesc() = default;
 
-    explicit AniAnimDesc(Assimp::StreamReader<> &reader);
-    void read_frames(Assimp::StreamReader<> &reader);
+    explicit AniAnimDesc(Assimp::StreamReaderLE &reader);
+    void read_frames(Assimp::StreamReaderLE &reader);
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
 protected:
     char Name[64];

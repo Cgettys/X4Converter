@@ -15,7 +15,7 @@ public:
 
     XmfHeader(byte NumDataBuffer, byte NumMaterials);
 
-    explicit XmfHeader(Assimp::StreamReader<> &reader);
+    explicit XmfHeader(Assimp::StreamReaderLE &reader);
 
     void Write(Assimp::StreamWriter<> &writer);
 

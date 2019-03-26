@@ -3,7 +3,7 @@
 using namespace Assimp;
 using namespace boost;
 
-XmfHeader::XmfHeader(Assimp::StreamReader<> &reader) {
+XmfHeader::XmfHeader(Assimp::StreamReaderLE &reader) {
     for (byte &c : Magic) {
         reader >> c;
     }

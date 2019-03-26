@@ -12,7 +12,7 @@ class XmfDataBufferDesc {
 public:
     XmfDataBufferDesc() = default;
 
-    explicit XmfDataBufferDesc(Assimp::StreamReader<> &reader);
+    explicit XmfDataBufferDesc(Assimp::StreamReaderLE &reader);
 
     void Write(Assimp::StreamWriter<> &writer);
 

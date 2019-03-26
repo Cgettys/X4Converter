@@ -12,7 +12,7 @@ public:
 
     XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex = 0);
 
-    explicit XmfVertexElement(Assimp::StreamReader<> &reader);
+    explicit XmfVertexElement(Assimp::StreamReaderLE &reader);
 
     void Write(Assimp::StreamWriter<> &writer);
 

@@ -4,7 +4,7 @@ using namespace boost;
 using namespace Assimp;
 
 // TODO copy constructors?
-AniAnimDesc::AniAnimDesc(StreamReader<> &reader) {
+AniAnimDesc::AniAnimDesc(StreamReaderLE &reader) {
     for (char &c : Name) {
         reader >> c;
 
@@ -54,7 +54,7 @@ AniAnimDesc::AniAnimDesc(StreamReader<> &reader) {
 
 }
 
-void AniAnimDesc::read_frames(StreamReader<> &reader) {
+void AniAnimDesc::read_frames(StreamReaderLE &reader) {
     for (int i = 0; i < NumPosKeys; i++) {
         posKeys.emplace_back(reader);
     }

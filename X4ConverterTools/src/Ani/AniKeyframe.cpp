@@ -15,7 +15,7 @@ using namespace Assimp;
  *  blender - value (can calculate slope from this) + frame (x coordinate)
 */
 
-AniKeyframe::AniKeyframe(StreamReader<> &reader) {
+AniKeyframe::AniKeyframe(StreamReaderLE &reader) {
     reader >> ValueX >> ValueY >> ValueZ;
     reader >> InterpolationX >> InterpolationY >> InterpolationZ;
     reader >> Time;

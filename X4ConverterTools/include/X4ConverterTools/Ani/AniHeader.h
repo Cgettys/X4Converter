@@ -12,7 +12,7 @@
 class AniHeader {
 public:
     AniHeader();
-    explicit AniHeader(Assimp::StreamReader<>& reader);
+    explicit AniHeader(Assimp::StreamReaderLE& reader);
 
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
 protected:

@@ -3,7 +3,7 @@
 //
 #include <X4ConverterTools/Xmf/XmfDataBufferDesc.h>
 
-XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
+XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReaderLE &reader) {
     reader >> Type;
     reader >> UsageIndex;
     reader >> DataOffset;

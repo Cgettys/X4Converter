@@ -20,7 +20,7 @@ XmfMaterial::XmfMaterial(int firstIndex, int numIndices, const std::string &name
     memcpy(Name, name.c_str(), name.size());
 }
 
-XmfMaterial::XmfMaterial(Assimp::StreamReader<> &reader) {
+XmfMaterial::XmfMaterial(Assimp::StreamReaderLE &reader) {
     reader >> FirstIndex;
     reader >> NumIndices;
     for (char &c : Name) {

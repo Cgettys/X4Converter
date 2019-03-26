@@ -5,23 +5,22 @@
 XmfDataBuffer::XmfDataBuffer() {
 }
 
-XmfDataBuffer::XmfDataBuffer(Assimp::StreamReader<> &reader) :
+XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) :
         Description(reader) {
 
     AllocData();
 }
-void XmfDataBuffer::Read(Assimp::StreamReader<> & reader){
+
+void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
     std::vector<byte> compressedData;
-    // TODO fixme
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
 //        throw std::runtime_error("Mismatching buffer data offset");
 //    }
-    // TODO fixme
-//        if (pStreamReader. - pStreamReader.GetCurrentPos()
-//            < GetCompressedDataSize()) {
-//            throw std::runtime_error(".xmf file is too small");
-//        }
-
+    if (reader.GetRemainingSize()
+        < GetCompressedDataSize()) {
+        throw std::runtime_error(".xmf file is too small, not enough data left");
+    }
+    reader.SetCurrentPos(440);
     if (!IsCompressed()) {
         if (GetCompressedDataSize()
             != GetUncompressedDataSize()) {
@@ -30,21 +29,32 @@ void XmfDataBuffer::Read(Assimp::StreamReader<> & reader){
         }
         reader.CopyAndAdvance(GetData(), GetUncompressedDataSize());
     } else {
-        compressedData.reserve(GetCompressedDataSize());
-        reader.CopyAndAdvance(GetData(), GetCompressedDataSize());
+
+        byte *d = compressedData.data();
+        std::cout << reader.GetCurrentPos();
+        byte b;
+        unsigned long compressedDataSize = GetCompressedDataSize();
+        for (int i = 0; i < compressedDataSize; i++) {
+            reader >> b;
+            compressedData.emplace_back(b);
+        }
 
         unsigned long uncompressedSize = GetUncompressedDataSize();
+        _data.reserve(GetUncompressedDataSize());
         int status = uncompress(GetData(), &uncompressedSize,
-                                compressedData.data(), GetCompressedDataSize());
+                                compressedData.data(), compressedDataSize);
+
         if (status != Z_OK) {
             throw std::runtime_error("Failed to decompress data buffer");
         }
+        // Note that the second parameter of uncompress is both Input and output
         if (uncompressedSize != GetUncompressedDataSize()) {
             throw std::runtime_error(
                     "Decompression did not return enough data");
         }
     }
 }
+
 void XmfDataBuffer::Write(Assimp::StreamWriter<> &writer) {
 // TODO
 }

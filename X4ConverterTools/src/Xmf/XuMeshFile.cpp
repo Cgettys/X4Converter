@@ -66,17 +66,19 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
             throw std::runtime_error(".xmf file is too small (< 16 bytes)");
         }
 
-        auto pStreamReader = StreamReader<>(pStream, false);
+        auto pStreamReader = StreamReaderLE(pStream, false);
         pMeshFile->header = XmfHeader(pStreamReader);
 
         // Read in Buffer descs
-        if (pStream->FileSize()
-            < pMeshFile->header.SizeOfHeader
+        if (pStream->FileSize() < pMeshFile->header.SizeOfHeader
               + pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {
             throw std::runtime_error(".xmf file is too small based on header");
         }
+        std::cout << pStreamReader.GetCurrentPos() << std::endl;
         pMeshFile->ReadBufferDescs(pStreamReader);
 
+        std::cout << (int) pMeshFile->header.NumMaterials<<std::endl;
+        std::cout << pStreamReader.GetCurrentPos() << std::endl;
         // Materials
         for (int i = 0; i < pMeshFile->header.NumMaterials; i ++){
             pMeshFile->materials.emplace_back(pStreamReader);
@@ -93,7 +95,7 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     }
 }
 
-void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
+void XuMeshFile::ReadBufferDescs(StreamReaderLE& pStreamReader) {
 
 
 //    pStreamReader.SetCurrentPos(header.SizeOfHeader);
@@ -102,7 +104,7 @@ void XuMeshFile::ReadBufferDescs(StreamReader<>& pStreamReader) {
     }
 }
 
-void XuMeshFile::ReadBuffers(StreamReader<> & pStreamReader) {
+void XuMeshFile::ReadBuffers(StreamReaderLE & pStreamReader) {
     for (XmfDataBuffer &buffer : buffers) {
         buffer.Read(pStreamReader);
     }

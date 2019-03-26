@@ -20,7 +20,7 @@ class AniKeyframe {
 public:
     AniKeyframe() = default;
 
-    explicit AniKeyframe(Assimp::StreamReader<> &reader);
+    explicit AniKeyframe(Assimp::StreamReaderLE &reader);
 
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
 protected:

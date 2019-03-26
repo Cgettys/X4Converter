@@ -10,7 +10,7 @@ XmfVertexElement::XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, byte us
     UsageIndex = usageIndex;
 }
 
-XmfVertexElement::XmfVertexElement(Assimp::StreamReader<> &reader) {
+XmfVertexElement::XmfVertexElement(Assimp::StreamReaderLE &reader) {
     reader >> Type;
     reader >> Usage;
     reader >> UsageIndex;

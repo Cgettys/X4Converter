@@ -9,7 +9,7 @@ public:
 
     XmfMaterial(int firstIndex, int numIndices, const std::string &name);
 
-    explicit XmfMaterial(Assimp::StreamReader<> &reader);
+    XmfMaterial(Assimp::StreamReaderLE &reader);
 
     void Write(Assimp::StreamWriter<> &writer);
 

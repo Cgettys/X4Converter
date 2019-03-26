@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         IOStream *pStream = new MemoryIOStream(bytes, 64, false);
         BOOST_TEST_CHECKPOINT("Setup complete");
 
-        StreamReader<> pStreamReader(pStream, false);
+        StreamReaderLE pStreamReader(pStream, false);
         XmfHeader header(pStreamReader);
         BOOST_TEST_CHECKPOINT("Read complete");
         BOOST_TEST_MESSAGE(header.validate());

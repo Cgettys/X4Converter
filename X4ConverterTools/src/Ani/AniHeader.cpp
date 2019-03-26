@@ -6,7 +6,7 @@ using namespace Assimp;
 // TODO copy constructors?
 AniHeader::AniHeader() = default;
 
-AniHeader::AniHeader(Assimp::StreamReader<> &reader) {
+AniHeader::AniHeader(Assimp::StreamReaderLE &reader) {
     reader >> NumAnims;
 
     reader >> KeyOffsetBytes;
