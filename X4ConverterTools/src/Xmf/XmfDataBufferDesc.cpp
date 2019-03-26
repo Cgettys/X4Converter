@@ -153,34 +153,34 @@ void XmfDataBufferDesc::Write(Assimp::StreamWriter<> &writer) {
 }
 
 std::string XmfDataBufferDesc::validate() {
-    std::string ret;
+    std::string ret = "DataBufferDesc:\n";
     bool valid = true;
 
-    ret.append(str(format("Type: %1%\n") % Type));
-    ret.append(str(format("UsageIndex: %1%\n") % UsageIndex));
-    ret.append(str(format("DataOffset: %1%\n") % DataOffset));
-    ret.append(str(format("Compressed: %1%\n") % Compressed));
+    ret.append(str(format("\tType: %1%\n") % Type));
+    ret.append(str(format("\tUsageIndex: %1%\n") % UsageIndex));
+    ret.append(str(format("\tDataOffset: %1%\n") % DataOffset));
+    ret.append(str(format("\tCompressed: %1%\n") % Compressed));
     //TODO ret.append(str(format("(w*): %1%\n")%Pad));
-    ret.append(str(format("Format: %1%\n") % Format));
-    ret.append(str(format("CompressedDataSize: %1%\n") % CompressedDataSize));
-    ret.append(str(format("NumItemsPerSection: %1%\n") % NumItemsPerSection));
-    ret.append(str(format("ItemSize: %1%\n") % ItemSize));
-    ret.append(str(format("NumSections: %1%\n") % NumSections));
+    ret.append(str(format("\tFormat: %1%\n") % Format));
+    ret.append(str(format("\tCompressedDataSize: %1%\n") % CompressedDataSize));
+    ret.append(str(format("\tNumItemsPerSection: %1%\n") % NumItemsPerSection));
+    ret.append(str(format("\tItemSize: %1%\n") % ItemSize));
+    ret.append(str(format("\tNumSections: %1%\n") % NumSections));
     // TODO more padding
-    ret.append(str(format("NumVertexElements: %1%\n") % NumVertexElements));
+    ret.append(str(format("\tNumVertexElements: %1%\n") % NumVertexElements));
     // TODO Vertex elements
     if (NumSections != 1) {
-        ret.append("Unexpected number of sections (must be 1)");
+        ret.append("\tERROR: Unexpected number of sections (must be 1)");
         valid = false;
     }
     if (IsVertexBuffer() && ItemSize != GetVertexDeclarationSize()) {
-        ret.append("Item size for vertex buffer is incorrect");
+        ret.append("\tERROR: Item size for vertex buffer is incorrect");
         valid = false;
     } else if (IsIndexBuffer()) {
         D3DFORMAT format = GetIndexFormat();
         if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(ushort)) ||
             (format == D3DFMT_INDEX32 && ItemSize != sizeof(uint))) {
-            ret.append("Item size for index buffer is incorrect");
+            ret.append("\tERROR: Item size for index buffer is incorrect");
             valid = false;
         }
     }

@@ -13,6 +13,7 @@ XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) {
 
 void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
     std::vector<byte> compressedData;
+    // TODO
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
 //        throw std::runtime_error("Mismatching buffer data offset");
 //    }
