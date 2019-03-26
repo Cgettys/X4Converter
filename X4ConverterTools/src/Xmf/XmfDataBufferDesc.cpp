@@ -24,7 +24,6 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
         e = XmfVertexElement(reader);
     }
     //TODO make this validation code?
-
 //    for (byte &b : _pad0) {
 //        if (b != 0) {
 //            throw std::runtime_error("Non-zero pad byte in _pad0");
@@ -37,6 +36,7 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
 //            throw std::runtime_error("Non-zero pad byte in _pad1");
 //        }
 //    }
+    NormalizeVertexDeclaration();
     if (NumSections != 1) {
         throw std::runtime_error("Unexpected number of sections (must be 1)");
     }
@@ -49,7 +49,6 @@ XmfDataBufferDesc::XmfDataBufferDesc(Assimp::StreamReader<> &reader) {
             throw std::runtime_error("Item size for index buffer is incorrect");
         }
     }
-    NormalizeVertexDeclaration();
 }
 
 bool XmfDataBufferDesc::IsVertexBuffer() const {

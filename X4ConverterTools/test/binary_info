@@ -12,11 +12,14 @@ byte pad[10]                        // 0x0C - 0x15 [Not actually padding]
 int32 primitiveType       = 4       // D3DPRIMITIVETYPE; determines how the index buffer is used to draw polygons. 4 = triangle list 0x16
 
 byte pad[dataBufferDescOffset-0x1A] // 0x17 - 0x40
-colidx     0 1  2 3  4 5  6 7  8 9  A B  C D  E F
+col_idx    0 1  2 3  4 5  6 7  8 9  A B  C D  E F
 00000000: 5855 4d46 0300 4000 02bc 0088 0000 6a00  XUMF..@.......j.
 00000010: 0000 2c01 0000 0400 0000 0000 0000 0000  ..,.............
 00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+
+
 DataBufferDesc[numDataBuffers]      // describes a DirectX 9 vertex or index buffer
 
     int32 type                      // 0x1E -> index buffer, otherwise vertex buffer
