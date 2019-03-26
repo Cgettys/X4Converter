@@ -41,7 +41,6 @@ public:
 
     void DenormalizeVertexDeclaration();
 
-protected:
     void NormalizeVertexDeclaration();
 
 };
