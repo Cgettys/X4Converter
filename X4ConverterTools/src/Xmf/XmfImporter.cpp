@@ -50,11 +50,17 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
 
         // TODO
 //        // ANI file stuff
-        std::string shortName = path(filePath).filename().replace_extension("ANI").string();
+        // TODO more robust
+        std::string shortName = path(filePath).filename().replace_extension("").string() + "_data.ani";
         to_upper(shortName);
         std::string aniPath = (path(filePath).parent_path() / shortName).string();
         IOStream* pAniStream = pIOHandler->Open(aniPath,"r");
-        AniFile aniFile(pAniStream);
+        if (pAniStream == nullptr){
+            std::cerr << "No ANI file fond at path: "<<aniPath <<". This likely indicates an error." << std::endl;
+        }
+        else {
+            AniFile aniFile(pAniStream);
+        }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //
 

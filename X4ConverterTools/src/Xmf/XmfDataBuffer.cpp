@@ -27,11 +27,13 @@ void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
             throw std::runtime_error(
                     "Noncompressed buffer has invalid size");
         }
-        reader.CopyAndAdvance(GetData(), GetUncompressedDataSize());
+        byte b;
+        for (int i = 0; i < GetUncompressedDataSize(); i++) {
+            reader >> b;
+            compressedData.emplace_back(b);
+        }
     } else {
 
-        byte *d = compressedData.data();
-        std::cout << reader.GetCurrentPos();
         byte b;
         unsigned long compressedDataSize = GetCompressedDataSize();
         for (int i = 0; i < compressedDataSize; i++) {
@@ -39,8 +41,8 @@ void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
             compressedData.emplace_back(b);
         }
 
-        unsigned long uncompressedSize = GetUncompressedDataSize();
-        _data.reserve(GetUncompressedDataSize());
+        unsigned long uncompressedSize =  GetUncompressedDataSize();
+        _data.reserve(uncompressedSize);
         int status = uncompress(GetData(), &uncompressedSize,
                                 compressedData.data(), compressedDataSize);
 
