@@ -58,7 +58,12 @@ std::string AniFile::validate(){
 
 void AniFile::WriteAnims(pugi::xml_node tgtNode) const {
     for (const AniAnimDesc &desc : descs){
-        desc.WriteAnim(tgtNode);
+        if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"),"landinggears_activating")==0){
+            desc.WriteAnim(tgtNode);
+        }
+        else {
+            std::cout << desc.SafeSubName << std::endl;
+        }
     }
 
 }

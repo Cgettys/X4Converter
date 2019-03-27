@@ -21,11 +21,11 @@ public:
 
     void WriteChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const;
 
+    std::string SafeSubName;
 protected:
     char Name[64];
     char SubName[64];
     std::string SafeName;
-    std::string SafeSubName;
     int NumPosKeys;
     int NumRotKeys;
     int NumScaleKeys;
@@ -45,14 +45,16 @@ protected:
                            std::string &axis) const;
 
     void WriteOutputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames,
-                            std::string &axis) const;
+                                std::string &axis, std::string &keyType) const;
 
     void WriteInterpolationElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames,
                                    std::string &axis) const;
 
-    void WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames) const;
+    void WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames,
+                                   std::string &axis) const;
 
-    void WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames) const;
+    void WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<AniKeyframe> &frames,
+                                    std::string &axis) const;
 
     void WriteSamplerElement(std::string &animKey, pugi::xml_node &animRoot) const;
 };

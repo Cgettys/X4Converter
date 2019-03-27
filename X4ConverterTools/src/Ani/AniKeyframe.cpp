@@ -221,3 +221,7 @@ std::pair<float, float> AniKeyframe::getControlPoint(std::string axis, bool in) 
         }
     }
 }
+
+float AniKeyframe::getTime() const {
+    return Time;
+}

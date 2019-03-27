@@ -15,6 +15,9 @@
 #include <stdexcept>
 #include <assimp/scene.h>
 #include "pugixml.hpp"
+#include <cstdio>
+#include <cmath>
+
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
@@ -37,11 +40,15 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     }
 
     BOOST_AUTO_TEST_CASE(test_ani_playground) { // NOLINT(cert-err58-cpp)
-        Assimp::Importer* importer = new Assimp::Importer();
+        Assimp::Importer *importer = new Assimp::Importer();
         const aiScene *pScene = importer->ReadFile("/home/cg/Desktop/X4/untitled.dae", 0);
         BOOST_TEST(pScene);
 //        BOOST_TEST(pScene->HasAnimations());
- }
+    }
+
+    bool matrixPred(pugi::xml_node node) {
+    return strncmp(node.name(), "matrix",6)== 0;
+}
     BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
         const std::string aniFile =
                 "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
@@ -54,8 +61,81 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         std::cout << file.validate();
 
         pugi::xml_document doc;
-        file.WriteAnims(doc.root());
-        doc.save(std::cout);
+        doc.load_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.dae");
+        pugi::xml_node tgt = doc.root().child("COLLADA").child("library_animations");
+        if (tgt.empty()) {
+            std::cout << "appending child" << std::endl;
+            tgt = doc.root().child("COLLADA").append_child("library_animations");
+        }
+        //Hackity hack hack hack...
+        // Attempt to transform matrices exported by assimp into posrotloc required by blender animations
+//        struct simple_walker : pugi::xml_tree_walker {
+//            virtual bool for_each(pugi::xml_node &node) {
+//                if (strncmp(node.name(),"matrix",6)==0) {
+//                    float m[16];
+//                    sscanf(node.text().get(), "%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f",
+//                           m + 0, m + 1, m + 2, m + 3, m + 4, m + 5, m + 6, m + 7,
+//                           m + 8, m + 9, m + 10, m + 11, m + 12, m + 13, m + 14, m + 15);
+//
+//                    pugi::xml_node parent = node.parent();
+//                    auto translateNode = parent.insert_child_before("translate",node);
+//                    translateNode.append_attribute("sid").set_value("location");
+//                    translateNode.append_child(pugi::node_pcdata).set_value(
+//                            str(format("%1% %2% %3%") % m[3] % m[7] % m[11]).c_str());
+//                    m[3] = 0;
+//                    m[7] = 0;
+//                    m[11] = 0;
+//
+//                    float scale[3];
+//                    scale[0] = sqrt(m[0] * m[0] + m[4] * m[4] + m[8] * m[8]);
+//                    scale[1] = sqrt(m[1] * m[1] + m[5] * m[5] + m[9] * m[9]);
+//                    scale[2] = sqrt(m[2] * m[2] + m[6] * m[6] + m[10] * m[10]);
+//
+//                    for (int x = 0; x < 3; x ++){
+//                        for (int y = 0; y < 3; y++){
+//                            m[x+y*4] /= scale[x]; // TODO checkme
+//                        }
+//                    }
+//
+//                    auto rotZNode = parent.insert_child_before("rotate",node);
+//                    rotZNode.append_attribute("sid").set_value("rotationX");
+//                    rotZNode.append_child(pugi::node_pcdata).set_value(
+//                            str(format("%1% %2% %3% %4%") % m[0] % m[1] % m[2] %m[3]).c_str());
+//
+//                    auto rotYNode = parent.insert_child_before("rotate",node);
+//                    rotYNode.append_attribute("sid").set_value("rotationY");
+//                    rotYNode.append_child(pugi::node_pcdata).set_value(
+//                            str(format("%1% %2% %3% %4%") % m[4] % m[5] % m[6] %m[7]).c_str());
+//
+//
+//                    auto rotXNode = parent.insert_child_before("rotate",node);
+//                    rotXNode.append_attribute("sid").set_value("rotationZ");
+//                    rotXNode.append_child(pugi::node_pcdata).set_value(
+//                            str(format("%1% %2% %3% %4%") % m[8] % m[9] % m[10] %m[11]).c_str());
+//
+//
+//                    auto scaleNode = parent.insert_child_before("scale",node);
+//                    scaleNode.append_attribute("sid").set_value("scale");
+//                    scaleNode.append_child(pugi::node_pcdata).set_value(
+//                            str(format("%1% %2% %3%") % scale[0] % scale[1] % scale[2]).c_str());
+//
+//                }
+//                return true; // continue traversal
+//            }
+//
+//        };
+
+        file.WriteAnims(tgt);
+
+//        simple_walker walker;
+//        doc.traverse(walker);
+//        pugi::xml_node n = doc.find_node(matrixPred);
+//        while (n){
+//            n.parent().remove_child(n);
+//            n = doc.find_node(matrixPred);
+//        }
+
+        doc.save_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.2.dae");
 
         delete io;
     }
@@ -76,15 +156,15 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
                     AniFile file(sourceStream);
                     std::cout << filePath.c_str() << std::endl;
                     file.validate();
-                } catch (std::runtime_error& e) {
-                    std::string error = str(format("Filepath: %1% Exception:\n %2%\n")% filePath.c_str() % e.what());
+                } catch (std::runtime_error &e) {
+                    std::string error = str(format("Filepath: %1% Exception:\n %2%\n") % filePath.c_str() % e.what());
                     // Change to BOOST_CHECK_MESSAGE if you want all the files violating the structure
                     BOOST_REQUIRE_MESSAGE(false, error);
                 }
             }
         }
         // To make a confusing warning go away
-        BOOST_REQUIRE_MESSAGE(true,"No files should have errors");
+        BOOST_REQUIRE_MESSAGE(true, "No files should have errors");
         delete io;
     }
 

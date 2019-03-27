@@ -31,13 +31,16 @@ public:
     static std::string getInterpolationTypeName(InterpolationType type);
     static bool checkInterpolationType(InterpolationType type);
 
+    float getTime() const;
 protected:
     // Note that these add up to exactly 128 bytes
     float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/
     InterpolationType InterpolationX;                      /**< The type of interpolation for the x part of the key. 20*/
     InterpolationType InterpolationY;                      /**< The type of interpolation for the y part of the key. 24*/
     InterpolationType InterpolationZ;                      /**< The type of interpolation for the z part of the key. 28*/
-    float Time;                                            /**< 32 Time in s of the key frame - based on the start of the complete animation. - This value is also used as a unique identifier for the key meaning that two keys with the same time are considered the same! - We use a float rather than an XTIME to safe memory, because floating point precision is good enough for key times. */
+    float Time;
+
+    /**< 32 Time in s of the key frame - based on the start of the complete animation. - This value is also used as a unique identifier for the key meaning that two keys with the same time are considered the same! - We use a float rather than an XTIME to safe memory, because floating point precision is good enough for key times. */
 
     float CPX1x, CPX1y;                                    /**< First control point for the x value. 8*/
     float CPX2x, CPX2y;                                    /**< Second control point for the x value. 16*/
