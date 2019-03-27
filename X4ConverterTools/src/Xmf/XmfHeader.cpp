@@ -3,6 +3,37 @@
 using namespace Assimp;
 using namespace boost;
 
+XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
+// Note that this ignores any header read into this mesh file since we can't guarantee the old header is accurate
+    Magic[0] = 'X';
+    Magic[1] = 'U';
+    Magic[2] = 'M';
+    Magic[3] = 'F';
+    Version = 3;
+    IsBigEndian = (byte) false;
+    SizeOfHeader = 0x40;
+    reserved0 = 0x00;
+    NumDataBuffers = numDataBuffers;
+    DataBufferDescSize = sizeof(XmfDataBufferDesc);
+    NumMaterials = numMaterials;
+    MaterialSize = sizeof(XmfMaterial);
+    // TODO
+
+    Culling_CW;
+    RightHand;
+    NumVertices;
+    NumIndices;
+
+
+    PrimitiveType = D3DPT_TRIANGLELIST;
+    for (byte &c : pad) {
+        c = 0x00;
+    }
+    // TODO verify this
+    MeshOptimization = 0;
+
+}
+
 XmfHeader::XmfHeader(Assimp::StreamReaderLE &reader) {
     for (byte &c : Magic) {
         reader >> c;
@@ -37,44 +68,6 @@ XmfHeader::XmfHeader(Assimp::StreamReaderLE &reader) {
     }
 }
 
-std::string XmfHeader::validate() const {
-    std::string ret;
-
-
-    if (memcmp(Magic, "XUMF\x03", 5) != 0) {
-        throw std::runtime_error("Invalid header magic");
-    }
-    if (IsBigEndian) {
-        throw std::runtime_error(
-                "Big endian .xmf files are not supported by this importer");
-    }
-    if (reserved0 != 0) {
-        throw std::runtime_error(str(format("padding0 should be 0, was %1%") % reserved0));
-    }
-    if (SizeOfHeader != XmfHeader::EXPECTED_HEADER_SIZE) {
-        std::cout << SizeOfHeader << std::endl;
-        throw std::runtime_error("Offset should be 0x40");
-    }
-    // TODO fix these
-    if (DataBufferDescSize > sizeof(XmfDataBufferDesc)) {
-        throw std::runtime_error("Data buffer description size is too large");
-    }
-    if (MaterialSize != sizeof(XmfMaterial)) {
-        throw std::runtime_error("Material size is invalid");
-    }
-
-    // TODO  this and pad 2
-//    for (int i = 0; i < 10; ++i) {
-//        if (_pad1[i] != 0){
-//            throw std::runtime_error("padding should be 0!");
-//        }
-//    }
-    if (PrimitiveType != D3DPT_TRIANGLELIST) {
-        throw std::runtime_error(
-                "File is using a DirectX primitive type that's not supported by this importer");
-    }
-    return ret;
-}
 
 void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
     for (byte &c : Magic) {
@@ -89,7 +82,7 @@ void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
     writer << Culling_CW << RightHand;
     writer << NumVertices << NumIndices;
 
-    writer << PrimitiveType<<MeshOptimization ;
+    writer << PrimitiveType << MeshOptimization;
 
     for (float &f: BoundingBoxCenter) {
         writer << f;
@@ -105,23 +98,70 @@ void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
 }
 
 
-XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
-// Note that this ignores any header read into this mesh file since we can't guarantee the old header is accurate
-    Magic[0] = 'X';
-    Magic[1] = 'U';
-    Magic[2] = 'M';
-    Magic[3] = 'F';
-    Version = 3;
-    IsBigEndian = (byte) false;
-    SizeOfHeader = 0x40;
-    reserved0 = 0x00;
-    NumDataBuffers = numDataBuffers;
-    DataBufferDescSize = sizeof(XmfDataBufferDesc);
-    NumMaterials = numMaterials;
-    MaterialSize = sizeof(XmfMaterial);
-    PrimitiveType = D3DPT_TRIANGLELIST;
-    for (byte &c : pad) {
-        c = 0x00;
-    }
+std::string XmfHeader::validate() const {
+    std::string ret;
+    bool valid = true;
 
+    // TODO prettyprinter
+
+    if (memcmp(Magic, "XUMF\x03", 5) != 0) {
+        ret.append("\tERROR: Invalid Header Magic or Version\n");
+        valid = false;
+    }
+    if (IsBigEndian) {
+        ret.append("\tERROR: Big endian .xmf files are not supported by this importer\n");
+        valid = false;
+    }
+    if (reserved0 != 0) {
+        ret.append(str(format("\tERROR: reserved should be 0, was %1%\n") % reserved0));
+        valid = false;
+    }
+    if (SizeOfHeader != XmfHeader::EXPECTED_HEADER_SIZE) {
+        ret.append("\tERROR: Header is not 64 bytes long!\n");
+        valid = false;
+    }
+    // TODO fix these
+//    if (DataBufferDescSize > sizeof(XmfDataBufferDesc)) {
+//        throw std::runtime_error("Data buffer description size is too large");
+//    }
+//    if (MaterialSize != sizeof(XmfMaterial)) {
+//        throw std::runtime_error("Material size is invalid");
+//    }
+
+    if (Culling_CW != 0) {
+        ret.append("\tWARNING: Culling_CW should be 0, was not 0\n");
+    }
+    if (RightHand != 0) {
+        ret.append("\tWARNING: RightHand != 0 (0 = D3D)\n");
+    }
+    ret.append(str(format("\tNumVertices: %1%\n") % NumVertices));
+    ret.append(str(format("\tNumIndices: %1%\n") % NumIndices));
+
+    ret.append(str(format("\tPrimitiveType: %1% (4 = TRIANGLELIST)\n")%PrimitiveType));
+    ret.append(str(format("\tMeshOptimization: %1%\n")%MeshOptimization));
+    if (MeshOptimization != 0){
+        ret.append("\tWARNING: Field poorly understood");
+    }
+    ret.append(str(format("\tBoundingBoxCenter: (%1%,%2%,%3%)\n") % BoundingBoxCenter[0] % BoundingBoxCenter[1] %
+                   BoundingBoxCenter[2]));
+
+    ret.append(str(format("\tBoundingBoxSize: (%1%,%2%,%3%)\n") % BoundingBoxSize[0] % BoundingBoxSize[1] %
+                   BoundingBoxSize[2]));
+
+
+    if (PrimitiveType != D3DPT_TRIANGLELIST) {
+        ret.append("\tERROR: File is using a DirectX primitive type that's not supported by this importer\n");
+        valid = false;
+    }
+    for (const byte &b : pad) {
+        if (b != 0) {
+            ret.append("\tERROR: Padding must be 0!\n");
+            valid = false;
+            break;
+        }
+    }
+    if (!valid) {
+        throw std::runtime_error(ret);
+    }
+    return ret;
 }

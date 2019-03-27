@@ -3,6 +3,7 @@
 
 
 XmfDataBuffer::XmfDataBuffer() {
+    Description= XmfDataBufferDesc();
 }
 
 XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) {

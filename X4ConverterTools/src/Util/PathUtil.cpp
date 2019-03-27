@@ -79,7 +79,7 @@ path PathUtil::GetRelativePath(const path &filePath,
     }
 
     result /= filePath.filename();
-    std::cout << "Umm..." << filePath << " " << relativeToFolderPath << " "<<  result.string() << std::endl;
+//    std::cout << "Returned path:"<< filePath << " " << relativeToFolderPath << " "<<  result.string() << std::endl;
     return result;
 }
 

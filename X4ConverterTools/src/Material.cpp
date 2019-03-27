@@ -178,7 +178,9 @@ const std::string Material::GetTextureFilePath(const std::string tgtFilePath, co
     }
     path textureFilePath(baseFolderPath);
     textureFilePath /= filePath;
-    std::cerr << textureFilePath << std::endl;
+
+    // TODO debug flag   std::cerr << textureFilePath << std::endl;
+
     if (is_regular_file(textureFilePath)) {
         return textureFilePath.string();
     }

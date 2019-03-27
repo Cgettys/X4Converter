@@ -164,8 +164,7 @@ void Component::CreateDummyFile(const std::string &filePath,
     pugi::xml_node sourceNode = componentNode.append_child("source");
     path dataPath = path(filePath).parent_path() / (Name + "_data");
     dataPath = PathUtil::GetRelativePath(dataPath, gameBaseFolderPath);
-    sourceNode.append_attribute("geometry").set_value(
-            dataPath.string().c_str());
+    sourceNode.append_attribute("geometry").set_value(dataPath.string().c_str());
 
     pugi::xml_node connectionsNode = componentNode.append_child("connections");
 

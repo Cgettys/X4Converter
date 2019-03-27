@@ -22,29 +22,40 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         static void checkXmfHeaderEquality(XuMeshFile &lFile, XuMeshFile &rFile) {
             XmfHeader lhs = lFile.GetHeader();
             XmfHeader rhs = rFile.GetHeader();
-            //        byte Magic[4];
-            //        byte Version;
-            //        bool IsBigEndian;
-            //        byte SizeOfHeader;
-            //        byte reserved0 = 0;
-            //        byte NumDataBuffers;
-            //        byte DataBufferDescSize;
-            //        byte NumMaterials;
-            //        byte MaterialSize;
-            //        byte padding[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-            //        dword PrimitiveType;
+
+            //    byte Culling_CW;                    // byte       12; false == CCW, other is CW TODO validate
+            //    byte RightHand;                     // byte       13; 0 == lefthand D3D convention, other is righthand openGL format todo validate
+            //    dword NumVertices;                  // bytes 14 - 17; TODO use for validation
+            //    dword NumIndices;                   // bytes 18 - 21; TODO use for validation
+            //
+            //    dword PrimitiveType;                // bytes 22 - 25;
+            //    dword MeshOptimization;	            // bytes 26 - 29; MeshOptimizationType - enum MeshOptimizationType applied
+            //    float BoundingBoxCenter[3];		    // bytes 30 - 41; virtual center of the mesh TODO calculate
+            //    float BoundingBoxSize[3];		    // bytes 42 - 53; max absolute extents from the center (aligned coords) TODO calculate
+            //    byte pad[10];                       // bytes 54 - 63
             BOOST_TEST(lhs.Magic == rhs.Magic);
             BOOST_TEST(lhs.Version == rhs.Version);
             BOOST_TEST(lhs.IsBigEndian == rhs.IsBigEndian);
             BOOST_TEST(lhs.SizeOfHeader == rhs.SizeOfHeader);
-            BOOST_WARN_MESSAGE(lhs.reserved0 == rhs.reserved0, "Padding byte reserved0 may differ");
+            BOOST_TEST(lhs.reserved0 == rhs.reserved0);
+
             BOOST_TEST(lhs.NumDataBuffers == rhs.NumDataBuffers);
             BOOST_TEST(lhs.DataBufferDescSize == rhs.DataBufferDescSize);
-            // TODO check additional fields
             BOOST_TEST(lhs.NumMaterials == rhs.NumMaterials);
             BOOST_TEST(lhs.MaterialSize == rhs.MaterialSize);
-            BOOST_TEST(lhs.pad == rhs.pad);
+
+
+            BOOST_TEST(lhs.Culling_CW == rhs.Culling_CW);
+            BOOST_TEST(lhs.RightHand == rhs.RightHand);
+            BOOST_WARN(lhs.NumVertices == rhs.NumVertices);  // TODO turn these into tests
+            BOOST_WARN(lhs.NumIndices == rhs.NumIndices);
             BOOST_TEST(lhs.PrimitiveType == rhs.PrimitiveType);
+
+            BOOST_WARN(lhs.MeshOptimization == rhs.MeshOptimization); // TODO turn these into tests
+            BOOST_WARN(lhs.BoundingBoxCenter == rhs.BoundingBoxCenter);
+            BOOST_WARN(lhs.BoundingBoxSize == rhs.BoundingBoxSize);
+
+            BOOST_TEST(lhs.pad == rhs.pad);
 
         }
 
@@ -58,22 +69,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
 
     BOOST_AUTO_TEST_CASE(test_xmf_material) {
-        // assets/units/size_s/ship_gen_s_fighter_01_data/fx_licence-collision.xmf v2.20 or so
-        uint8_t bytes[] = {
-                0x58, 0x55, 0x4d, 0x46, 0x03, 0x00, 0x40, 0x00, 0x02, 0xbc, 0x00, 0x88, 0x00, 0x00, 0x6a, 0x00,
-                0x00, 0x00, 0x2c, 0x01, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        // TODO does sizeof(bytes) == 64?
-        IOStream *pStream = new MemoryIOStream(bytes, 64, false);
-        BOOST_TEST_CHECKPOINT("Setup complete");
-
-        StreamReaderLE pStreamReader(pStream, false);
-        XmfHeader header(pStreamReader);
-        BOOST_TEST_CHECKPOINT("Read complete");
-        BOOST_TEST_MESSAGE(header.validate());
-        BOOST_TEST(pStreamReader.GetCurrentPos() == 0x40);
-        // pStream is "helpfully" cleaned up by pStreamReader
+        // TODO writeme
     }
 
     BOOST_AUTO_TEST_CASE(test_xmf) {
@@ -111,11 +107,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //        BOOST_TEST(
 //                actualLen == resultStream->Read(&actual[0], sizeof(byte), actualLen));
 
-//	actualStream->Seek(0,aiOrigin_SET);
         io->Close(sourceStream);
-//        io->Close(resultStream);
         delete io;
-//        BOOST_TEST(expected == actual);
     }
 
 BOOST_AUTO_TEST_SUITE_END()
