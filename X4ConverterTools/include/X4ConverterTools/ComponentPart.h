@@ -1,6 +1,14 @@
 #pragma once
 
-#include "ComponentPartLod.h"
+#include "pugixml.hpp"
+#include <map>
+#include <stdexcept>
+#include <boost/format.hpp>
+#include <boost/filesystem.hpp>
+
+#include <assimp/IOSystem.hpp>
+#include <X4ConverterTools/Util/PathUtil.h>
+#include <X4ConverterTools/ComponentPartLod.h>
 
 class ComponentPart {
 public:

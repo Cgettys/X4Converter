@@ -5,9 +5,6 @@
 #include <stdexcept>
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
-
-#define foreach BOOST_FOREACH
 
 #include <assimp/IOSystem.hpp>
 #include <assimp/ProgressHandler.hpp>

@@ -19,8 +19,7 @@ std::shared_ptr<Component> Component::ReadFromFile(const std::string &filePath,
     pugi::xml_node componentNode = GetComponentNode(doc);
     path geometryFolderPath = GetGeometryFolderPath(componentNode,
                                                     gameBaseFolderPath, false);
-    pugi::xpath_node_set partNodes = componentNode.select_nodes(
-            "connections/connection/parts/part");
+    pugi::xpath_node_set partNodes = componentNode.select_nodes("connections/connection/parts/part");
     if (partNodes.empty()) {
         throw std::runtime_error("File does not contain any <part> elements");
     }
