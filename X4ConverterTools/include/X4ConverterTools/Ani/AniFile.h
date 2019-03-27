@@ -13,7 +13,6 @@
 #include "AniHeader.h"
 #include "AniAnimDesc.h"
 
-// TODO classes for the structs?
 // TODO superclass for XMF/ANI?
 
 class AniFile {
@@ -21,8 +20,8 @@ public:
 
     explicit AniFile(Assimp::IOStream* pStream);
     ~AniFile();
-    // TODO explicitly delete constructor nonsense?
-    std::string validate(); // Debug method, callee frees
+
+    std::string validate(); // Debug method
     AniHeader getHeader() const;
     void setHeader(AniHeader header);
 protected:

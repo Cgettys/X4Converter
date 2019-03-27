@@ -63,18 +63,25 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //
+        AddMaterials(filePath, pScene, context);
 
-        // Add the materials to the scene
-        if (!context.Materials.empty()) {
-            std::string baseFolderPath = path(filePath).parent_path().string();
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        throw DeadlyImportError(e.what());
+    }
+}
+
+void XmfImporter::AddMaterials(const std::string &filePath, aiScene *pScene, const XmfImporter::ConversionContext &context) {
+    // Add the materials to the scene
+    if (!context.Materials.empty()) {
+            std::string modelFolderPath = path(filePath).parent_path().string();
             pScene->mNumMaterials = context.Materials.size();
             pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
             for (auto &it : context.Materials) {
                 Material *pMaterial = _materialLibrary.GetMaterial(it.first);
                 aiMaterial *pAiMaterial;
                 if (pMaterial) {
-                    pAiMaterial = pMaterial->ConvertToAiMaterial(
-                            _gameBaseFolderPath);// TODO fixme
+                    pAiMaterial = pMaterial->ConvertToAiMaterial(modelFolderPath, _gameBaseFolderPath);
                 } else {
                     std::cerr << "Warning, weird case" << std::endl;
                     auto *tempString = new aiString(it.first);
@@ -85,10 +92,6 @@ void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
                 pScene->mMaterials[it.second] = pAiMaterial;
             }
         }
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        throw DeadlyImportError(e.what());
-    }
 }
 
 aiNode *XmfImporter::ConvertComponentToAiNode(Component &component,

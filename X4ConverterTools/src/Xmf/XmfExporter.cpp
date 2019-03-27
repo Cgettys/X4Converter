@@ -9,13 +9,13 @@ std::string XmfExporter::GameBaseFolderPath;
 void XmfExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
                          const Assimp::ExportProperties *props) {
     try {
-        if (GameBaseFolderPath.empty())
+        if (GameBaseFolderPath.empty()) {
             throw std::runtime_error("GameBaseFolderPath not set");
-
-        if (!pScene->mRootNode || pScene->mRootNode->mNumChildren != 1)
+        }
+        if (!pScene->mRootNode || pScene->mRootNode->mNumChildren != 1) {
             throw std::runtime_error(
                     "Scene must have exactly one root node (make sure to remove any lights and cameras)");
-
+        }
         for (int i = 0; i < pScene->mNumMeshes; ++i) {
             AssimpUtil::MergeVertices(pScene->mMeshes[i]);
         }

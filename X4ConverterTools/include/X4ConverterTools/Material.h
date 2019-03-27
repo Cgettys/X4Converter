@@ -13,26 +13,28 @@ public:
 
     Material(std::string pCollectionName, pugi::xml_node node);
 
-    std::string GetCollectionName() const { return _pCollectionName; }
+    const std::string GetCollectionName() { return _pCollectionName; }
 
-    const std::string &GetName() const { return _name; }
+    const std::string &GetName() { return _name; }
 
 
-    aiMaterial *ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath) const;
+    aiMaterial *
+    ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
 
 private:
-    std::string GetTextureFilePath(std::string filePath, const boost::filesystem::path &modelFolderPath) const;
+    const std::string GetTextureFilePath (std::string filePath, const boost::filesystem::path &baseFolderPath) const;
 
+    const
     std::string
-    GetDecompressedTextureFilePath(std::string filePath, const boost::filesystem::path &modelFolderPath) const;
+    GetDecompressedTextureFilePath(const std::string filePath, const boost::filesystem::path &baseFolderPath) const;
 
-    void populateDiffuseLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+    void populateDiffuseLayer (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPat, const boost::filesystem::path &baseFolderPat);
 
-    void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+    void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
 
-    void populateNormalLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+    void populateNormalLayer  (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPat);
 
-    void populateEnvironmentLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath) const;
+    void populateEnvironmentLayer (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
 
     std::string _pCollectionName;
     std::string _name;

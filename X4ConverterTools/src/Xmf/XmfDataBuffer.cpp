@@ -57,7 +57,7 @@ void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
     }
 }
 
-void XmfDataBuffer::Write(Assimp::StreamWriter<> &writer) {
+void XmfDataBuffer::Write(Assimp::StreamWriterLE &writer) {
 // TODO
 }
 

@@ -13,7 +13,7 @@ public:
     explicit XmfDataBuffer(Assimp::StreamReaderLE &descReader);
 
     void Read(Assimp::StreamReaderLE &reader); // Used to read in the binary data
-    void Write(Assimp::StreamWriter<> &writer);
+    void Write(Assimp::StreamWriterLE &writer);
 
     bool IsCompressed() const;
 

@@ -47,19 +47,19 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
     }
 }
 
-aiMaterial *Material::ConvertToAiMaterial(
-        const path &modelFolderPath) const {
-    aiMaterial *pAiMaterial = new aiMaterial();
+aiMaterial *Material::ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath,
+                                          const boost::filesystem::path &baseFolderPath) {
+    auto pAiMaterial = new aiMaterial();
     std::string nameStr = _pCollectionName + "X" + GetName();
 //    aiString *name = new aiString(nameStr);
     aiString name(nameStr);
     // Explicit constructor new aiString is broken
     pAiMaterial->AddProperty(&name, AI_MATKEY_NAME);
 //    delete name;
-    populateDiffuseLayer(pAiMaterial,modelFolderPath);
-    populateSpecularLayer(pAiMaterial,modelFolderPath);
-    populateNormalLayer(pAiMaterial,modelFolderPath);
-    populateEnvironmentLayer(pAiMaterial,modelFolderPath);
+    populateDiffuseLayer(pAiMaterial, modelFolderPath, baseFolderPath);
+    populateSpecularLayer(pAiMaterial, modelFolderPath, baseFolderPath);
+    populateNormalLayer(pAiMaterial, modelFolderPath, baseFolderPath);
+    populateEnvironmentLayer(pAiMaterial, modelFolderPath, baseFolderPath);
 
 //    if (textureFilePath.size() < 1){
 //        std::cerr << "Warning, empty textureFilePath for material"<<std::endl;
@@ -74,87 +74,60 @@ aiMaterial *Material::ConvertToAiMaterial(
     return pAiMaterial;
 }
 
-void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFolderPath) const {
+void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_diffuseMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath, modelFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath,baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
-        }
-        else {
+        } else {
             throw std::runtime_error("Could not find Diffuse Texture for Material!");
         }
     }
 }
 
-void Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelFolderPath) const {
+void Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_specularMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath, modelFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath,baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
-        } else{
+        } else {
             throw std::runtime_error("Could not find Specular Texture for Material!");
         }
     }
 }
 
-void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFolderPath) const {
+void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_normalMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, modelFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath,baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(
                     PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
-        }else{
+        } else {
             throw std::runtime_error("Could not find Normal Texture for Material!");
         }
     }
 }
 
-void Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFolderPath) const {
+void
+Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_environmentMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath, modelFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath,baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_REFLECTION(0));
-        }else{
+        } else {
             throw std::runtime_error("Could not find Environment Texture for Material!");
         }
     }
 }
 
-std::string Material::GetTextureFilePath(const std::string tgtFilePath, const path &modelFolderPath) const {
-    static const char *ppszAllowedExtensions[] = {"gz", "dds", "tga", "jpg"};
-    std::string filePath = PathUtil::MakePlatformSafe(tgtFilePath);
-    if (filePath.empty()) {
-        return std::string();
-    }
-    path textureFilePath(modelFolderPath);
-    textureFilePath /= filePath;
-    std::cerr << textureFilePath << std::endl;
-    if (is_regular_file(textureFilePath)) {
-        return textureFilePath.string();
-    }
-    if (textureFilePath.has_extension()) {
-        std::cerr << "Warning textureFilePath has extension" << std::endl;
-        return std::string();
-    }
-    for (int i = 0;
-         i < sizeof(ppszAllowedExtensions) / sizeof(ppszAllowedExtensions[0]);
-         ++i) {
-        textureFilePath.replace_extension(ppszAllowedExtensions[i]);
-        if (is_regular_file(textureFilePath)) {
-            return textureFilePath.string();
-        }
-    }
-    std::cerr << "Warning returned empty string" << std::endl;
-    return std::string();
-}
-
+const
 std::string
-Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, const path &modelFolderPath) const {
-    std::string filePath = GetTextureFilePath(compressedFilePath, modelFolderPath);
+Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, const path &baseFolderPath) const {
+    std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
     filePath = PathUtil::MakePlatformSafe(filePath);
     if (filePath.empty()) {
         throw std::runtime_error("Empty path");
@@ -194,3 +167,33 @@ Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, c
     return uncompressedPath.string();
 }
 
+
+const std::string Material::GetTextureFilePath(const std::string tgtFilePath, const path &baseFolderPath) const {
+    static const char *ppszAllowedExtensions[] = {"gz", "dds", "tga", "jpg"};
+
+    std::string filePath = PathUtil::MakePlatformSafe(tgtFilePath);
+
+    if (filePath.empty()) {
+        throw std::runtime_error("Received empty filepath");
+    }
+    path textureFilePath(baseFolderPath);
+    textureFilePath /= filePath;
+    std::cerr << textureFilePath << std::endl;
+    if (is_regular_file(textureFilePath)) {
+        return textureFilePath.string();
+    }
+    if (textureFilePath.has_extension()) {
+        std::cerr << "Warning textureFilePath has extension" << std::endl;
+        return std::string();
+    }
+    for (int i = 0;
+         i < sizeof(ppszAllowedExtensions) / sizeof(ppszAllowedExtensions[0]);
+         ++i) {
+        textureFilePath.replace_extension(ppszAllowedExtensions[i]);
+        if (is_regular_file(textureFilePath)) {
+            return textureFilePath.string();
+        }
+    }
+    std::cerr << "Warning returned empty string" << std::endl;
+    return std::string();
+}

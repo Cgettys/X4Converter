@@ -58,4 +58,6 @@ private:
 
     std::string _gameBaseFolderPath;
     MaterialLibrary _materialLibrary;
+
+    void AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context);
 };

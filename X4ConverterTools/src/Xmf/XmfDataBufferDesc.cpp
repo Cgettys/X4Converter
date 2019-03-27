@@ -148,7 +148,7 @@ D3DFORMAT XmfDataBufferDesc::GetIndexFormat() {
     return Format == 30 ? D3DFMT_INDEX16 : D3DFMT_INDEX32;
 }
 
-void XmfDataBufferDesc::Write(Assimp::StreamWriter<> &writer) {
+void XmfDataBufferDesc::Write(Assimp::StreamWriterLE &writer) {
 
 }
 

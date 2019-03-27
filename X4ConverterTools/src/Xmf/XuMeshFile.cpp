@@ -55,9 +55,7 @@ std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(
 
 std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
     if (!pStream) {
-        // TODO exception?
-        std::cerr << "Warning: no IOStream provided";
-        return std::shared_ptr<XuMeshFile>();
+        throw std::runtime_error("pStream may not be null!");
     }
     try {
         std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
@@ -129,7 +127,7 @@ void XuMeshFile::WriteToFile(const std::string &filePath,
         throw std::runtime_error((format("Failed to open %1% for writing") % filePath.c_str()).str());
     }
     WriteToIOStream(pStream);
-    pIOHandler->Close(pStream);
+    // pStream is "Helpfully" closed by Assimp's StreamWriter
 }
 
 void XuMeshFile::WriteToIOStream(IOStream *pStream) {
@@ -137,7 +135,7 @@ void XuMeshFile::WriteToIOStream(IOStream *pStream) {
             CompressBuffers();
 
     header= XmfHeader(buffers.size(),materials.size());
-    auto pStreamWriter = StreamWriter<>(pStream, false);
+    auto pStreamWriter = StreamWriterLE(pStream, false);
     header.Write(pStreamWriter);
     pStreamWriter.Flush();
 

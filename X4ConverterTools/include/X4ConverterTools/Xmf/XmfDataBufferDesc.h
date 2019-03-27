@@ -15,7 +15,7 @@ public:
 
     explicit XmfDataBufferDesc(Assimp::StreamReaderLE &reader);
 
-    void Write(Assimp::StreamWriter<> &writer);
+    void Write(Assimp::StreamWriterLE &writer);
 
     std::string validate();
     dword Type;

@@ -6,7 +6,6 @@
 #include <X4ConverterTools/Ani/AniKeyframe.h>
 #include <vector>
 #include <iostream>
-// TODO better name
 class AniAnimDesc {
 public:
     AniAnimDesc() = default;

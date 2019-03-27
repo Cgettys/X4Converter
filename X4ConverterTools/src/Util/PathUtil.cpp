@@ -37,10 +37,25 @@ path PathUtil::GetRelativePath(const path &filePath,
 
     split(filePathParts, filePath.string(), [](char c) { return c == '/' || c == '\\'; });
 
+
     std::vector<std::string> relativeToFolderPathParts;
     split(relativeToFolderPathParts, relativeToFolderPath.string(),
           [](char c) { return c == '/' || c == '\\'; });
 
+    //https://stackoverflow.com/a/17270869
+    filePathParts.erase(std::remove(filePathParts.begin(), filePathParts.end(), ""),filePathParts.end());
+
+    relativeToFolderPathParts.erase(std::remove(relativeToFolderPathParts.begin(), relativeToFolderPathParts.end(), ""),relativeToFolderPathParts.end());
+// TODO debug flag to control this
+    //    for (auto s : filePathParts){
+//        std::cout << s<<",";
+//    }
+//    std::cout <<std::endl;
+//
+//    for (auto s : relativeToFolderPathParts){
+//        std::cout << s<< ",";
+//    }
+//    std::cout <<std::endl;
     int differenceStart = 0;
     while (differenceStart < filePathParts.size() - 1
            && differenceStart < relativeToFolderPathParts.size()

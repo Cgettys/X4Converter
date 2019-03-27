@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 #include <assimp/types.h>
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
@@ -13,9 +14,9 @@
 #include <X4ConverterTools/Types.h>
 #include <X4ConverterTools/Xmf/XuMeshFile.h>
 
+namespace fs = boost::filesystem;
 using namespace Assimp;
 BOOST_AUTO_TEST_SUITE(test_suite1)
-
 
 
     BOOST_AUTO_TEST_CASE(test_xml) {
@@ -38,6 +39,11 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         const std::string outputXMLPath =
                 gameBaseFolderPath
                 + "assets/units/size_s/ship_gen_s_fighter_01.out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+
         BOOST_TEST_CHECKPOINT("Begin test");
         char szError[256];
         bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(),
@@ -89,18 +95,17 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
                               expectedWalk.paths.begin(), expectedWalk.paths.end(),
                               std::inserter(intersection, intersection.begin()));
         BOOST_TEST(expectedMinusActual.size() == 0);
-//	for (auto&& x : expectedMinusActual){
-//		printf("Output was missing path: %s\n",x.c_str());
-//	}
+        for (auto &&x : expectedMinusActual) {
+            printf("Output was missing path: %s\n", x.c_str());
+        }
         BOOST_TEST(actualMinusExpected.size() == 0);
-        BOOST_TEST_CHECKPOINT("Cleanup");
-//	for (auto&& x : actualMinusExpected){
-//		printf("Output has extra path: %s\n",x.c_str());
-//	}
+        for (auto &&x : actualMinusExpected) {
+            printf("Output has extra path: %s\n", x.c_str());
+        }
+        // TODO more validation
 
-//	for (auto&& x : intersection){
-//
-//	}
+
+            BOOST_TEST_CHECKPOINT("Cleanup");
 
 
     }

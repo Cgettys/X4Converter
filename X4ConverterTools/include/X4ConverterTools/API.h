@@ -1,5 +1,4 @@
 #pragma once
-// TODO remove when possible
 #include <cstring>
 #include <iostream>
 #include <cstdio>

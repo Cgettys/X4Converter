@@ -38,9 +38,9 @@ void Component::WriteToFile(const std::string &filePath,
     }
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(filePath.c_str());
-    if (result.status != pugi::status_ok)
+    if (result.status != pugi::status_ok) {
         throw std::runtime_error(str(format("Failed to parse %s: %s") % filePath % result.description()));
-
+    }
     pugi::xml_node componentNode = GetComponentNode(doc);
     path geometryFolderPath = GetGeometryFolderPath(componentNode,
                                                     gameBaseFolderPath, true);
@@ -50,9 +50,9 @@ void Component::WriteToFile(const std::string &filePath,
             "connections/connection/parts/part");
     for (auto it = partNodes.begin(); it != partNodes.end(); ++it) {
         std::string partName = it->node().attribute("name").value();
-        if (Parts.find(partName) != Parts.end())
+        if (Parts.find(partName) != Parts.end()) {
             continue;
-
+        }
         pugi::xml_node connectionNode = it->node().parent().parent();
         connectionNode.parent().remove_child(connectionNode);
     }
@@ -60,8 +60,9 @@ void Component::WriteToFile(const std::string &filePath,
     // Add/update component parts
     pugi::xml_node connectionsNode =
             componentNode.select_node("connections").node();
-    if (!connectionsNode)
+    if (!connectionsNode) {
         connectionsNode = componentNode.append_child("connections");
+    }
 
     for (auto it = Parts.begin(); it != Parts.end(); ++it) {
         WritePart(it->second, connectionsNode, geometryFolderPath, pIOHandler);
@@ -73,9 +74,9 @@ void Component::WriteToFile(const std::string &filePath,
 pugi::xml_node Component::GetComponentNode(pugi::xml_document &doc) {
     pugi::xml_node componentNode =
             doc.select_node("/components/component").node();
-    if (!componentNode)
+    if (!componentNode) {
         throw std::runtime_error("File has no <component> element");
-
+    }
     return componentNode;
 }
 
@@ -83,18 +84,17 @@ path Component::GetGeometryFolderPath(pugi::xml_node componentNode,
                                       const std::string &gameBaseFolderPath, bool createIfMissing) {
     pugi::xml_attribute geometryAttr = componentNode.select_node(
             "source/@geometry").attribute();
-    if (!geometryAttr)
+    if (!geometryAttr) {
         throw std::runtime_error("File has no geometry source");
-    std::string windowsPath = geometryAttr.value();
-#ifdef BOOST_OS_LINUX
-    std::replace(windowsPath.begin(), windowsPath.end(), '\\', '/');
-#endif
-    path geometryFolderPath = path(gameBaseFolderPath) / windowsPath;
+    }
+    std::string pathStr = geometryAttr.value();
+    pathStr = PathUtil::MakePlatformSafe(pathStr);
+    path geometryFolderPath = path(gameBaseFolderPath) / pathStr;
     if (!is_directory(geometryFolderPath)) {
-        if (!createIfMissing)
+        if (!createIfMissing) {
             throw std::runtime_error(str(format("Directory %s doesn't exist")
                                          % geometryFolderPath));
-
+        }
         create_directory(geometryFolderPath);
     }
 

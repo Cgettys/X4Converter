@@ -29,7 +29,7 @@ XmfMaterial::XmfMaterial(Assimp::StreamReaderLE &reader) {
 
 }
 
-void XmfMaterial::Write(Assimp::StreamWriter<> &writer) {
+void XmfMaterial::Write(Assimp::StreamWriterLE &writer) {
     writer << FirstIndex;
     writer << NumIndices;
     for (char &c : Name) {

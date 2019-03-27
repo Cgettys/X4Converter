@@ -11,7 +11,7 @@ public:
 
     XmfMaterial(Assimp::StreamReaderLE &reader);
 
-    void Write(Assimp::StreamWriter<> &writer);
+    void Write(Assimp::StreamWriterLE &writer);
 
     int FirstIndex;
     int NumIndices;

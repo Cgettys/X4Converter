@@ -22,7 +22,7 @@ XmfVertexElement::XmfVertexElement(Assimp::StreamReaderLE &reader) {
 //    }
 }
 
-void XmfVertexElement::Write(Assimp::StreamWriter<> &writer) {
+void XmfVertexElement::Write(Assimp::StreamWriterLE &writer) {
     // TODO
 }
 

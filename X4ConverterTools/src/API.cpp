@@ -9,8 +9,8 @@ bool ConvertXmlToDae(const char *pszGameBaseFolderPath,
 //    Assimp::Importer* importer = new Assimp::Importer();
 //    importer->RegisterLoader(new XmfImporter(pszGameBaseFolderPath));
     XmfImporter importer(pszGameBaseFolderPath);
-    aiScene pScene;
-    importer.InternReadFile(pszXmlFilePath, &pScene, io);
+    aiScene* pScene = new aiScene();// cleaned up by the exporter when it's deleted...
+    importer.InternReadFile(pszXmlFilePath, pScene, io);
 //    const aiScene *pScene = importer->ReadFile(pszXmlFilePath, 0);
 //    if (!pScene) {
 //        std::cerr << "Failed during import" << std::endl;
@@ -20,17 +20,15 @@ bool ConvertXmlToDae(const char *pszGameBaseFolderPath,
 //    }
 
 
-    Assimp::Exporter* exporter = new Assimp::Exporter();
-    aiReturn result = exporter->Export(&pScene, "collada", pszDaeFilePath);
+    Assimp::Exporter exporter;
+    aiReturn result = exporter.Export(pScene, "collada", pszDaeFilePath);
     if (result != aiReturn_SUCCESS) {
         std::cerr << "Failed during export" << std::endl;
-        strncpy(pszError, exporter->GetErrorString(), iMaxErrorSize);
+        strncpy(pszError, exporter.GetErrorString(), iMaxErrorSize);
 //        delete importer;
-//        delete exporter;
         return false;
     }
     delete io;
-//    delete exporter;
 //    delete pScene;
     return true;
 }

@@ -8,7 +8,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
 find_package(ZLIB REQUIRED )
 find_package(Boost COMPONENTS filesystem unit_test_framework program_options REQUIRED)
 
-#TODO refactor
 include(ExternalProject)
 ExternalProject_Add(pugixml
         PREFIX external
@@ -22,6 +21,7 @@ include(ExternalProject)
 ExternalProject_Add(assimp
         PREFIX external
         GIT_REPOSITORY https://github.com/cgettys/assimp.git
+        #GIT_TAG fix-SceneCombiner-DeepCopy
         #GIT_TAG v4.1.0
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp -DCMAKE_CXX_FLAGS="-fPIC")
 set(assimp_LIB ${CMAKE_BINARY_DIR}/assimp/lib/libassimp.so)

@@ -17,7 +17,7 @@ public:
 
     explicit XmfHeader(Assimp::StreamReaderLE &reader);
 
-    void Write(Assimp::StreamWriter<> &writer);
+    void Write(Assimp::StreamWriterLE &writer);
 
     std::string validate() const;// Debug method - throws exception if invalid, else returns human readable string
     byte Magic[4];                      // bytes   0 - 3; identifies the file

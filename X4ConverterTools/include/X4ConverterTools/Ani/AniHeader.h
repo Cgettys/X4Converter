@@ -6,8 +6,6 @@
 #include <iostream>
 
 // TODO proper namespacing
-// TODO destroy constructor
-// TODO is there a better way than this?
 // TODO check/warn on used unknowns
 class AniHeader {
 public:

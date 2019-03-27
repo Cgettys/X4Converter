@@ -14,7 +14,7 @@ public:
 
     explicit XmfVertexElement(Assimp::StreamReaderLE &reader);
 
-    void Write(Assimp::StreamWriter<> &writer);
+    void Write(Assimp::StreamWriterLE &writer);
 
     dword Type;
     byte Usage;

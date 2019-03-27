@@ -76,7 +76,7 @@ std::string XmfHeader::validate() const {
     return ret;
 }
 
-void XmfHeader::Write(Assimp::StreamWriter<> &writer) {
+void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
     for (byte &c : Magic) {
         writer << c;
     }
