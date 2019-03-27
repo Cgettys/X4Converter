@@ -55,3 +55,10 @@ std::string AniFile::validate(){
 
     return s;
 }
+
+void AniFile::WriteAnims(pugi::xml_node tgtNode) const {
+    for (const AniAnimDesc &desc : descs){
+        desc.WriteAnim(tgtNode);
+    }
+
+}

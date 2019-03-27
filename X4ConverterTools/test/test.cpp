@@ -20,22 +20,6 @@ namespace fs = boost::filesystem;
 using namespace Assimp;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 
-    BOOST_AUTO_TEST_CASE(test_blend_import) {
-
-            Importer* importer = new Assimp::Importer();
-            const aiScene *pScene = importer->ReadFile("/home/cg/Desktop/X4/unpacked/assets/units/size_s/NodanTest.dae", 0);
-            BOOST_TEST(pScene->HasAnimations());
-            for(int i = 0; i < pScene->mNumAnimations; j++){
-               auto anim = pScene->mAnimations[i];
-               for(int j; j < anim->mNumChannels; j++){
-                    auto chan =   anim->mChannels[j];
-                    for (int k = 0; k < chan->mNumPositionKeys; k++){
-
-                        std::cout << chan->mPositionKeys[k].mValue. <<std::endl;
-                    }
-               }
-            }
-    }
     BOOST_AUTO_TEST_CASE(test_xml) {
         // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";

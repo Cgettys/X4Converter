@@ -6,6 +6,7 @@
 #include <exception>
 #include <cmath>
 #include <limits.h>
+#include <utility>
 enum InterpolationType {
     INTERPOLATION_UNKNOWN,				/**< Unknown interpolation. */
     INTERPOLATION_STEP,					/**< No interpolation. */
@@ -22,7 +23,14 @@ public:
 
     explicit AniKeyframe(Assimp::StreamReaderLE &reader);
 
+    // TODO tuple everything?
+    float getValueByAxis(std::string axis);
+    InterpolationType getInterpByAxis(std::string axis);
+    std::pair<float, float> getControlPoint(std::string axis,bool in);
     std::string validate();// Debug method - throws exception if invalid, else returns human readable string
+    static std::string getInterpolationTypeName(InterpolationType type);
+    static bool checkInterpolationType(InterpolationType type);
+
 protected:
     // Note that these add up to exactly 128 bytes
     float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/
@@ -47,8 +55,6 @@ protected:
     float DerivInX, DerivInY, DerivInZ;                    /**< 12 Derivative In value. Is mutable to allow it being altered in the CalculateDerivatives() method. */
     float DerivOutX, DerivOutY, DerivOutZ;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
     unsigned int AngleKey;                                        /** 28		// this will be set to non null if there is a key */
-    static std::string getInterpolationTypeName(InterpolationType type);
-    static bool checkInterpolationType(InterpolationType type);
 
 private:
 };

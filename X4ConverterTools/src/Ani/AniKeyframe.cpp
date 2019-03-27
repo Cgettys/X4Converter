@@ -170,3 +170,54 @@ std::string AniKeyframe::getInterpolationTypeName(InterpolationType type) {
         return InterpolationTypeName[type];
     }
 }
+
+float AniKeyframe::getValueByAxis(std::string axis) {
+    if (axis == "X") {
+        return ValueX;
+    } else if (axis == "Y") {
+        return ValueY;
+    } else if (axis == "Z") {
+        return ValueZ;
+    } else {
+        throw std::runtime_error("Invalid axis!");
+    }
+
+}
+
+InterpolationType AniKeyframe::getInterpByAxis(std::string axis) {
+    if (axis == "X") {
+        return InterpolationX;
+    } else if (axis == "Y") {
+        return InterpolationY;
+    } else if (axis == "Z") {
+        return InterpolationZ;
+    } else {
+        throw std::runtime_error("Invalid axis!");
+    }
+
+}
+
+std::pair<float, float> AniKeyframe::getControlPoint(std::string axis, bool in) {
+
+    if (in) {
+        if (axis == "X") {
+            return std::make_pair(CPX1x, CPX1y);
+        } else if (axis == "Y") {
+            return std::make_pair(CPY1x, CPY1y);
+        } else if (axis == "Z") {
+            return std::make_pair(CPZ1x, CPZ1y);
+        } else {
+            throw std::runtime_error("Invalid axis!");
+        }
+    } else {
+        if (axis == "X") {
+            return std::make_pair(CPX2x, CPX2y);
+        } else if (axis == "Y") {
+            return std::make_pair(CPY2x, CPY2y);
+        } else if (axis == "Z") {
+            return std::make_pair(CPZ2x, CPZ2y);
+        } else {
+            throw std::runtime_error("Invalid axis!");
+        }
+    }
+}

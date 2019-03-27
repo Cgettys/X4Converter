@@ -14,7 +14,7 @@
 #include <boost/algorithm/string.hpp>
 #include <stdexcept>
 #include <assimp/scene.h>
-
+#include "pugixml.hpp"
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
@@ -42,7 +42,23 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         BOOST_TEST(pScene);
 //        BOOST_TEST(pScene->HasAnimations());
  }
+    BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
+        const std::string aniFile =
+                "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+//const std::string aniFile = "/home/cg/Desktop/X4/test_files/struct_bt_ut_omicron_superyard_data.ani";
+//        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
+        IOSystem *io = new DefaultIOSystem();
+        IOStream *sourceStream = io->Open(aniFile, "rb");
+        BOOST_TEST_REQUIRE(sourceStream != nullptr);
+        AniFile file = AniFile(sourceStream);
+        std::cout << file.validate();
 
+        pugi::xml_document doc;
+        file.WriteAnims(doc.root());
+        doc.save(std::cout);
+
+        delete io;
+    }
     // TODO test suite for this?
     BOOST_AUTO_TEST_CASE(test_ani_struct_correctness) { // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
