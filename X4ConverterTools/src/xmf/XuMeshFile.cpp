@@ -238,7 +238,7 @@ namespace xmf {
         try {
             AllocMeshVertices(pMesh, numIndices);
             AllocMeshFaces(pMesh, numIndices);
-            PopulateMeshVertices(pMesh, firstIndex, numIndices);
+            PopulateMeshVertices(pMesh, firstIndex, numeric_cast<uint32_t>(numIndices));
             PopulateMeshFaces(pMesh, numIndices);
         } catch (...) {
             delete pMesh;
@@ -439,7 +439,7 @@ namespace xmf {
             aiFace &face = pMesh->mFaces[pMesh->mNumFaces++];
             face.mIndices = new uint32_t[3];
             while (face.mNumIndices < 3) {
-                face.mIndices[face.mNumIndices++] = index++;
+                face.mIndices[face.mNumIndices++] = numeric_cast<unsigned int>(index++);
             }
         }
     }

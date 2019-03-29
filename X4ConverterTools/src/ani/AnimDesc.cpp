@@ -16,7 +16,7 @@ namespace ani {
             reader >> c;
         }
 
-        for (auto i = 0; i < 64; i++) {
+        for (unsigned long i = 0; i < 64; i++) {
             char c = Name[i];
             if (c == ' ') {
                 throw std::runtime_error("Did not expect spaces in names");
@@ -28,7 +28,7 @@ namespace ani {
         }
         algorithm::trim_right(SafeName);
 
-        for (auto i = 0; i < 64; i++) {
+        for (unsigned long i = 0; i < 64; i++) {
             char c = SubName[i];
             if (c == ' ') {
                 throw std::runtime_error("Did not expect spaces in names");
