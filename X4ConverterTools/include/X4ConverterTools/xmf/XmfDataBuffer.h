@@ -24,9 +24,9 @@ namespace xmf {
 
         bool IsVertexBuffer() const;
 
-        int GetCompressedDataSize() const;
+        uint64_t GetCompressedDataSize() const;
 
-        int GetUncompressedDataSize() const;
+        uint64_t GetUncompressedDataSize() const;
 
         uint8_t *GetData();
 

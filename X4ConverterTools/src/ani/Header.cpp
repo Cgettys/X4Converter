@@ -5,7 +5,6 @@ using namespace Assimp;
 
 // TODO copy constructors?
 namespace ani {
-    Header::Header() = default;
 
     Header::Header(Assimp::StreamReaderLE &reader) {
         reader >> NumAnims;
@@ -32,6 +31,11 @@ namespace ani {
         if (Version != 1) {
             result.append(
                     "Ani file format has been updated!\n");
+            valid = false;
+        }if (KeyOffsetBytes < 16) {
+
+            result.append(
+                    "Ani file either is corrupted or the field is actually unsigned\n");
             valid = false;
         }
 

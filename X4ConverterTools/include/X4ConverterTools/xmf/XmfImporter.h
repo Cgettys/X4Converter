@@ -1,5 +1,4 @@
 #pragma once
-// TODO can we cut this down a bit?
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
@@ -26,13 +25,13 @@
 namespace xmf {
     class XmfImporter : public Assimp::BaseImporter {
     public:
-        XmfImporter(const std::string &gameBaseFolderPath);
+        explicit XmfImporter(const std::string &gameBaseFolderPath);
 
-        virtual const aiImporterDesc *GetInfo() const;
+        const aiImporterDesc *GetInfo() const override;
 
-        virtual bool CanRead(const std::string &filePath, Assimp::IOSystem *pIOHandler, bool checkSig) const;
+        bool CanRead(const std::string &filePath, Assimp::IOSystem *pIOHandler, bool checkSig) const override;
 
-        virtual void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler);
+        void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler) override;
 
     private:
 

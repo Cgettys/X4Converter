@@ -9,7 +9,7 @@
 namespace ani {
     class Header {
     public:
-        Header();
+        Header() = default;
 
         explicit Header(Assimp::StreamReaderLE &reader);
 
@@ -33,10 +33,10 @@ namespace ani {
         void setPadding(int Padding);
 
     protected:
-        int NumAnims;
-        int KeyOffsetBytes;
-        int Version;
-        int Padding;
+        int NumAnims = 0;
+        int KeyOffsetBytes = 16;
+        int Version = 1;
+        int Padding = 0;
 
 
     };

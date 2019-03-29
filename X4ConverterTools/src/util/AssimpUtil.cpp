@@ -1,5 +1,6 @@
 #include <X4ConverterTools/util/AssimpUtil.h>
 
+using boost::numeric_cast;
 void AssimpUtil::MergeVertices(aiMesh *pMesh) {
     std::unordered_map<VertexInfo, int> firstVertexIdxByPos;
     std::unordered_map<int, int> indexToFirstIndex;
@@ -47,25 +48,17 @@ void AssimpUtil::MergeVertices(aiMesh *pMesh) {
             indexToFirstIndex[srcIdx] = it->second;
         }
     }
-    pMesh->mNumVertices = targetIdx;
+    pMesh->mNumVertices = numeric_cast<uint32_t>(targetIdx);
 
     for (int faceIdx = 0; faceIdx < pMesh->mNumFaces; ++faceIdx) {
         aiFace *pFace = &pMesh->mFaces[faceIdx];
         for (int i = 0; i < pFace->mNumIndices; ++i) {
             auto it = indexToFirstIndex.find(pFace->mIndices[i]);
             if (it != indexToFirstIndex.end())
-                pFace->mIndices[i] = it->second;
+                pFace->mIndices[i] = numeric_cast<uint32_t>(it->second);
         }
     }
-
-    for (int boneIdx = 0; boneIdx < pMesh->mNumBones; ++boneIdx) {
-        aiBone *pBone = pMesh->mBones[boneIdx];
-        for (int i = 0; i < pBone->mNumWeights; ++i) {
-            auto it = indexToFirstIndex.find(pBone->mWeights[i].mVertexId);
-            if (it != indexToFirstIndex.end())
-                pBone->mWeights[i].mVertexId = it->second;
-        }
-    }
+    // TODO can we get rid of this function or not?
 }
 
 bool AssimpUtil::VertexInfo::operator==(const VertexInfo &other) const {

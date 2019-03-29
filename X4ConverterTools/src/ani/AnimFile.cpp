@@ -28,9 +28,7 @@ namespace ani {
         validate();
     }
 
-    AnimFile::~AnimFile() {
-
-    }
+    AnimFile::~AnimFile() = default;
 
     Header AnimFile::getHeader() const {
         return header;
@@ -44,9 +42,8 @@ namespace ani {
     std::string AnimFile::validate() {
         std::string s;
         s.append(header.validate());
-        for (int i = 0; i < descs.size(); i++) {
+        for (auto desc : descs) {
             try {
-                auto desc = descs[i];
                 std::string ret = desc.validate();
                 s.append(ret);
             }

@@ -3,6 +3,7 @@
 
 using namespace Assimp;
 using namespace boost;
+using util::DXUtil;
 namespace xmf {
     XmfDataBuffer *XuMeshFile::GetIndexBuffer() {
         for (auto &_buffer : buffers) {
@@ -135,7 +136,7 @@ namespace xmf {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers =
                 CompressBuffers();
 
-        header = XmfHeader(buffers.size(), materials.size());
+        header = XmfHeader(numeric_cast<uint8_t>(buffers.size()), numeric_cast<uint8_t>(materials.size()));
         auto pStreamWriter = StreamWriterLE(pStream, false);
         header.Write(pStreamWriter);
         pStreamWriter.Flush();
@@ -168,12 +169,11 @@ namespace xmf {
 
     void XuMeshFile::WriteBufferDescs(Assimp::IOStream *pStream,
                                       std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
-        int dataOffset = 0;
+        uint32_t dataOffset = 0;
         for (XmfDataBuffer &buffer: buffers) {
             buffer.Description.DataOffset = dataOffset;
             buffer.Description.Compressed = 1;
-            buffer.Description.CompressedDataSize =
-                    compressedBuffers[&buffer].size();
+            buffer.Description.CompressedDataSize = numeric_cast<uint32_t>(compressedBuffers[&buffer].size());
             pStream->Write(&buffer.Description, sizeof(buffer.Description), 1);
             dataOffset += buffer.Description.CompressedDataSize;
         }
@@ -187,32 +187,29 @@ namespace xmf {
         }
     }
 
-    aiNode *XuMeshFile::ConvertXuMeshToAiNode(
+    aiNode *XuMeshFile::ConvertToAiNode(
             const std::string &name, ConversionContext &context) {
         auto *pMeshGroupNode = new aiNode();
         pMeshGroupNode->mName = name;
         try {
             if (GetMaterials().empty()) {
-                aiMesh *pMesh = ConvertXuMeshToAiMesh(0, NumIndices(),
-                                                      name, context);
+                aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, context);
 
                 pMeshGroupNode->mMeshes = new uint32_t[1];
-                pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] =
-                        context.Meshes.size();
+                pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] = numeric_cast<unsigned int>(
+                        context.Meshes.size());
                 context.Meshes.push_back(pMesh);
             } else {
                 pMeshGroupNode->mChildren = new aiNode *[NumMaterials()];
 
                 for (XmfMaterial &material : GetMaterials()) {
-                    aiMesh *pMesh = ConvertXuMeshToAiMesh(material.FirstIndex,
-                                                          material.NumIndices,
-                                                          name + "X"
-                                                          + replace_all_copy(std::string(material.Name),
-                                                                             ".", "X"), context);
+                    aiMesh *pMesh = ConvertToAiMesh(material.FirstIndex, material.NumIndices,
+                                                    name + "X" + replace_all_copy(std::string(material.Name), ".", "X"),
+                                                    context);
 
                     auto itMat = context.Materials.find(material.Name);
                     if (itMat == context.Materials.end()) {
-                        pMesh->mMaterialIndex = context.Materials.size();
+                        pMesh->mMaterialIndex = numeric_cast<unsigned int>(context.Materials.size());
                         context.Materials[material.Name] = pMesh->mMaterialIndex;
                     } else {
                         pMesh->mMaterialIndex = itMat->second;
@@ -221,12 +218,10 @@ namespace xmf {
                     auto *pMeshNode = new aiNode();
                     pMeshNode->mName = pMesh->mName;
                     pMeshNode->mMeshes = new uint32_t[1];
-                    pMeshNode->mMeshes[pMeshNode->mNumMeshes++] =
-                            context.Meshes.size();
+                    pMeshNode->mMeshes[pMeshNode->mNumMeshes++] = numeric_cast<unsigned int>(context.Meshes.size());
                     context.Meshes.push_back(pMesh);
 
-                    pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] =
-                            pMeshNode;
+                    pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] = pMeshNode;
                 }
             }
         } catch (...) {
@@ -236,8 +231,8 @@ namespace xmf {
         return pMeshGroupNode;
     }
 
-    aiMesh *XuMeshFile::ConvertXuMeshToAiMesh(int firstIndex,
-                                              int numIndices, const std::string &name, ConversionContext &context) {
+    aiMesh *XuMeshFile::ConvertToAiMesh(int firstIndex,
+                                        int numIndices, const std::string &name, ConversionContext &context) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
         try {
@@ -371,44 +366,36 @@ namespace xmf {
         D3DFORMAT indexFormat = pIndexBuffer->GetIndexFormat();
 
         for (XmfDataBuffer &buffer : GetBuffers()) {
-            if (!buffer.IsVertexBuffer())
+            if (!buffer.IsVertexBuffer()) {
                 continue;
+            }
 
             uint8_t *pVertexBuffer = buffer.GetData();
             int elemOffset = 0;
             int declarationSize = buffer.Description.ItemSize;
 
-            for (int elemIdx = 0; elemIdx < buffer.Description.NumVertexElements;
-                 ++elemIdx) {
+            for (int elemIdx = 0; elemIdx < buffer.Description.NumVertexElements; ++elemIdx) {
                 XmfVertexElement &elem = buffer.Description.VertexElements[elemIdx];
                 auto elemType = (D3DDECLTYPE) elem.Type;
 
-                for (int vertexIdxIdx = firstIndex;
-                     vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {
-                    int vertexIdx = (
-                            indexFormat == D3DFMT_INDEX16 ?
-                            ((uint16_t *) pIndexes)[vertexIdxIdx] :
-                            ((int *) pIndexes)[vertexIdxIdx]);
-                    if (vertexIdx < 0
-                        || vertexIdx >= buffer.Description.NumItemsPerSection)
-                        throw std::runtime_error(
-                                "PopulateMeshVertices: invalid index");
+                for (int vertexIdxIdx = firstIndex; vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {
+                    int vertexIdx = (indexFormat == D3DFMT_INDEX16 ? ((uint16_t *) pIndexes)[vertexIdxIdx]
+                                                                   : ((int *) pIndexes)[vertexIdxIdx]);
+                    if (vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection)
+                        throw std::runtime_error("PopulateMeshVertices: invalid index");
 
-                    uint8_t *pVertexElemData = pVertexBuffer
-                                            + vertexIdx * declarationSize + elemOffset;
+                    uint8_t *pVertexElemData = pVertexBuffer + vertexIdx * declarationSize + elemOffset;
                     int localVertexIdx = vertexIdxIdx - firstIndex;
                     switch (elem.Usage) {
                         case D3DDECLUSAGE_POSITION: {
-                            aiVector3D position = util::DXUtil::ConvertVertexAttributeToVec3D(
-                                    pVertexElemData, elemType);
+                            aiVector3D position = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);
                             position.x = -position.x;
                             pMesh->mVertices[localVertexIdx] = position;
                             break;
                         }
 
                         case D3DDECLUSAGE_NORMAL: {
-                            aiVector3D normal = util::DXUtil::ConvertVertexAttributeToVec3D(
-                                    pVertexElemData, elemType);
+                            aiVector3D normal = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);
                             normal.x = -normal.x;
                             pMesh->mNormals[localVertexIdx] = normal;
                             break;
@@ -418,26 +405,21 @@ namespace xmf {
                             aiVector3D *pTangents = (
                                     elem.UsageIndex == 0 ?
                                     pMesh->mTangents : pMesh->mBitangents);
-                            aiVector3D tangent = util::DXUtil::ConvertVertexAttributeToVec3D(
-                                    pVertexElemData, elemType);
+                            aiVector3D tangent = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);
                             tangent.x = -tangent.x;
                             pTangents[localVertexIdx] = tangent;
                             break;
                         }
 
                         case D3DDECLUSAGE_TEXCOORD: {
-                            aiVector3D texcoord = util::DXUtil::ConvertVertexAttributeToVec3D(
-                                    pVertexElemData, elemType);
+                            aiVector3D texcoord = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);
                             texcoord.y = 1.0f - texcoord.y;
-                            pMesh->mTextureCoords[elem.UsageIndex][localVertexIdx] =
-                                    texcoord;
+                            pMesh->mTextureCoords[elem.UsageIndex][localVertexIdx] = texcoord;
                             break;
                         }
 
                         case D3DDECLUSAGE_COLOR: {
-                            pMesh->mColors[elem.UsageIndex][localVertexIdx] =
-                                    util::DXUtil::ConvertVertexAttributeToColorF(
-                                            pVertexElemData, elemType);
+                            pMesh->mColors[elem.UsageIndex][localVertexIdx] = DXUtil::ConvertVertexAttributeToColorF(pVertexElemData, elemType);
                             break;
                         }
 
@@ -445,8 +427,7 @@ namespace xmf {
                             throw std::runtime_error(str(format("Unexpected Usage: %1%") % elem.Usage));
                     }
                 }
-                elemOffset += util::DXUtil::GetVertexElementTypeSize(
-                        (D3DDECLTYPE) elem.Type);
+                elemOffset += util::DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) elem.Type);
             }
         }
         pMesh->mNumVertices = numIndices;

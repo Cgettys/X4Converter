@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <assimp/scene.h>
 
+#include <boost/numeric/conversion/cast.hpp>
+
 class AssimpUtil {
 public:
     static void MergeVertices(aiMesh *pMesh);
@@ -45,4 +47,4 @@ namespace std {
             return result;
         }
     };
-};
+}

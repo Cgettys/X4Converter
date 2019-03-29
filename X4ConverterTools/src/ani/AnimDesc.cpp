@@ -181,7 +181,7 @@ namespace ani {
             std::cerr << "YOU FOOL!" << std::endl;
         }
 
-        if (!frames.size()) {
+        if (frames.empty()) {
             return;
         }
         //TODO refactor plz

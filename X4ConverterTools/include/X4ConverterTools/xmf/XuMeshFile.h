@@ -2,7 +2,7 @@
 
 #include <map>
 #include "zlib.h"
-#include "../Vendor/half/half.hpp"
+#include "../Vendor/half/include/half.hpp"
 #include "X4ConverterTools/types.h"
 #include <string>
 #include <vector>
@@ -45,7 +45,7 @@ namespace xmf {
 
         std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
-        int NumMaterials() { return materials.size(); }
+        int NumMaterials() { return boost::numeric_cast<int>(materials.size()); }
 
         void AddMaterial(int firstIndex, int numIndices, const std::string &name);
 
@@ -57,10 +57,10 @@ namespace xmf {
 
         void WriteToIOStream(Assimp::IOStream *pStream);
 
-        aiNode *ConvertXuMeshToAiNode(const std::string &name, ConversionContext &context);
+        aiNode *ConvertToAiNode(const std::string &name, ConversionContext &context);
 
-        aiMesh *ConvertXuMeshToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                      ConversionContext &context);
+        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
+                                ConversionContext &context);
 
         //void                            AllocSceneMaterials             ( aiScene* pScene);
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);

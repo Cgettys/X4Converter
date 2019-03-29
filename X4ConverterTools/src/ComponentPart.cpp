@@ -50,7 +50,7 @@ ComponentPart::ComponentPart(pugi::xml_node partNode,
 
         std::shared_ptr<XuMeshFile> pMeshFile = XuMeshFile::ReadFromFile(
                 lodFilePath.string(), pIOHandler);
-        Lods.push_back(ComponentPartLod(lodIndex, pMeshFile));
+        Lods.emplace_back(lodIndex, pMeshFile);
         lodIndex++;
     }
 
@@ -172,10 +172,10 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode,
 
     // Remove LOD's that are no longer in the part
     pugi::xpath_node_set lodNodes = lodsNode.select_nodes("lod");
-    for (auto it = lodNodes.begin(); it != lodNodes.end(); ++it) {
-        int lodIndex = it->node().attribute("index").as_int();
+    for (auto lodNode : lodNodes) {
+        int lodIndex = lodNode.node().attribute("index").as_int();
         if (!GetLod(lodIndex))
-            lodsNode.remove_child(it->node());
+            lodsNode.remove_child(lodNode.node());
     }
 
     // Add/update remaining LOD's
@@ -194,9 +194,9 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode,
 
         // Remove materials that are no longer in the lod
         pugi::xpath_node_set materialNodes = materialsNode.select_nodes("material");
-        for (auto it = materialNodes.begin(); it != materialNodes.end(); ++it) {
-            if (it->node().attribute("id").as_int() > lod.Mesh->NumMaterials())
-                materialsNode.remove_child(it->node());
+        for (auto materialNode : materialNodes) {
+            if (materialNode.node().attribute("id").as_int() > lod.Mesh->NumMaterials())
+                materialsNode.remove_child(materialNode.node());
         }
 
         // Add/update remaining materials

@@ -27,7 +27,7 @@ namespace xmf {
         uint32_t Format;
         uint32_t CompressedDataSize;
         uint32_t NumItemsPerSection;
-        uint32_t ItemSize;
+        int ItemSize;
         uint32_t NumSections;
         uint8_t _pad1[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         uint32_t NumVertexElements;

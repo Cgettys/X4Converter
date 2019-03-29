@@ -22,19 +22,23 @@ public:
     ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
 
 private:
-    const std::string GetTextureFilePath (std::string filePath, const boost::filesystem::path &baseFolderPath) const;
+    const std::string
+    GetTextureFilePath(const std::string &filePath, const boost::filesystem::path &baseFolderPath) const;
 
-    const
-    std::string
-    GetDecompressedTextureFilePath(const std::string filePath, const boost::filesystem::path &baseFolderPath) const;
+    const std::string
+    GetDecompressedTextureFilePath(const std::string &filePath, const boost::filesystem::path &baseFolderPath) const;
 
-    void populateDiffuseLayer (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPat, const boost::filesystem::path &baseFolderPat);
+    void populateDiffuseLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
+                              const boost::filesystem::path &baseFolderPat);
 
-    void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
+    void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
+                               const boost::filesystem::path &baseFolderPath);
 
-    void populateNormalLayer  (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPat);
+    void populateNormalLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
+                             const boost::filesystem::path &baseFolderPath);
 
-    void populateEnvironmentLayer (aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);
+    void populateEnvironmentLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
+                                  const boost::filesystem::path &baseFolderPath);
 
     std::string _pCollectionName;
     std::string _name;

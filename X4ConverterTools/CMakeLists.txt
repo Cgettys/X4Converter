@@ -13,9 +13,6 @@ set("LIB_SRCS"
         src/ani/Header.cpp
         src/ani/AnimDesc.cpp
         src/ani/Keyframe.cpp
-        src/types/Color.cpp
-        src/types/Vec3D.cpp
-        src/types/Vec4D.cpp
         src/util/AssimpUtil.cpp
         src/util/DXUtil.cpp
         src/util/PathUtil.cpp

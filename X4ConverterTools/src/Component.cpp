@@ -24,8 +24,8 @@ std::shared_ptr<Component> Component::ReadFromFile(const std::string &filePath,
     }
     std::shared_ptr<Component> pComponent = std::make_shared<Component>();
     pComponent->Name = componentNode.attribute("name").value();
-    for (auto it = partNodes.begin(); it != partNodes.end(); ++it) {
-        ComponentPart part(it->node(), geometryFolderPath, pIOHandler);
+    for (auto partNode : partNodes) {
+        ComponentPart part(partNode.node(), geometryFolderPath, pIOHandler);
         pComponent->Parts[part.Name]=part;
     }
     return pComponent;
@@ -48,12 +48,12 @@ void Component::WriteToFile(const std::string &filePath,
     // Remove parts that no longer exist
     pugi::xpath_node_set partNodes = componentNode.select_nodes(
             "connections/connection/parts/part");
-    for (auto it = partNodes.begin(); it != partNodes.end(); ++it) {
-        std::string partName = it->node().attribute("name").value();
+    for (auto partNode : partNodes) {
+        std::string partName = partNode.node().attribute("name").value();
         if (Parts.find(partName) != Parts.end()) {
             continue;
         }
-        pugi::xml_node connectionNode = it->node().parent().parent();
+        pugi::xml_node connectionNode = partNode.node().parent().parent();
         connectionNode.parent().remove_child(connectionNode);
     }
 
@@ -64,8 +64,8 @@ void Component::WriteToFile(const std::string &filePath,
         connectionsNode = componentNode.append_child("connections");
     }
 
-    for (auto it = Parts.begin(); it != Parts.end(); ++it) {
-        it->second.WritePart(connectionsNode, geometryFolderPath, pIOHandler);
+    for (auto & Part : Parts) {
+        Part.second.WritePart(connectionsNode, geometryFolderPath, pIOHandler);
     }
 
     doc.save_file(filePath.c_str());

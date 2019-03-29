@@ -142,10 +142,10 @@ namespace xmf {
             }
         }
 
-// Create component node that contains all the part nodes
-        if (rootNodes.empty())
+        // Create component node that contains all the part nodes
+        if (rootNodes.empty()) {
             throw std::runtime_error("No root parts found");
-
+        }
         auto *pComponentNode = new aiNode(component.Name);
         pComponentNode->mChildren = new aiNode *[rootNodes.size()];
 
@@ -173,16 +173,16 @@ namespace xmf {
             pPartNode->mTransformation.b4 = part.Position.y;
             pPartNode->mTransformation.c4 = part.Position.z;
 
-            pPartNode->mChildren = new aiNode *[part.Lods.size()
-                                                + (part.CollisionMesh ? 1 : 0)];
+            pPartNode->mChildren = new aiNode *[part.Lods.size() + (part.CollisionMesh ? 1 : 0)];
 
             for (ComponentPartLod &lod : part.Lods) {
-                pPartNode->mChildren[pPartNode->mNumChildren++] = lod.Mesh->ConvertXuMeshToAiNode(
-                        (format("%sXlod%d") % part.Name % lod.LodIndex).str(), context);
+                const std::string name = (format("%sXlod%d") % part.Name % lod.LodIndex).str();
+                pPartNode->mChildren[pPartNode->mNumChildren++] = lod.Mesh->ConvertToAiNode(name, context);
             }
-            if (part.CollisionMesh)
-                pPartNode->mChildren[pPartNode->mNumChildren++] = part.CollisionMesh->ConvertXuMeshToAiNode(
-                        part.Name + "Xcollision", context);
+            if (part.CollisionMesh) {
+                std::string name = part.Name + "Xcollision";
+                pPartNode->mChildren[pPartNode->mNumChildren++] = part.CollisionMesh->ConvertToAiNode(name, context);
+            }
         } catch (...) {
             // TODO real exception handling
             delete pPartNode;

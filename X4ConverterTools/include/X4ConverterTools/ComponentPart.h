@@ -13,12 +13,9 @@
 class ComponentPart {
 public:
     ComponentPart() = default;
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     explicit ComponentPart(pugi::xml_node partNode,
             const boost::filesystem::path &geometryFolderPath,
             Assimp::IOSystem *pIOHandler);
-#pragma clang diagnostic pop
 
     ComponentPartLod *GetLod(int lodIndex);
 

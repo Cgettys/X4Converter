@@ -1,6 +1,7 @@
 
 #include <X4ConverterTools/xmf/XmfDataBuffer.h>
 
+using boost::numeric_cast;
 namespace xmf {
 
     XmfDataBuffer::XmfDataBuffer() {
@@ -29,21 +30,21 @@ namespace xmf {
                 throw std::runtime_error(
                         "Noncompressed buffer has invalid size");
             }
-            uint8_t b;
+            uint8_t b = 0;
             for (int i = 0; i < GetUncompressedDataSize(); i++) {
                 reader >> b;
                 compressedData.emplace_back(b);
             }
         } else {
 
-            uint8_t b;
-            unsigned long compressedDataSize = GetCompressedDataSize();
+            uint8_t b = 0;
+            unsigned long compressedDataSize = numeric_cast<unsigned long>(GetCompressedDataSize());
             for (int i = 0; i < compressedDataSize; i++) {
                 reader >> b;
                 compressedData.emplace_back(b);
             }
 
-            unsigned long uncompressedSize = GetUncompressedDataSize();
+            unsigned long uncompressedSize = numeric_cast<unsigned long>(GetUncompressedDataSize());
             _data.reserve(uncompressedSize);
             int status = uncompress(GetData(), &uncompressedSize,
                                     compressedData.data(), compressedDataSize);
@@ -79,11 +80,11 @@ namespace xmf {
         return Description.IsVertexBuffer();
     }
 
-    int XmfDataBuffer::GetCompressedDataSize() const {
+    uint64_t XmfDataBuffer::GetCompressedDataSize() const {
         return Description.CompressedDataSize;
     }
 
-    int XmfDataBuffer::GetUncompressedDataSize() const {
+    uint64_t XmfDataBuffer::GetUncompressedDataSize() const {
         return Description.NumSections * Description.NumItemsPerSection * Description.ItemSize;
     }
 

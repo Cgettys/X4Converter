@@ -1,4 +1,5 @@
 #include <X4ConverterTools/Material.h>
+#include <boost/numeric/conversion/cast.hpp>
 
 using namespace boost;
 using namespace boost::algorithm;
@@ -19,10 +20,10 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
     _name = node.attribute("name").value();
 
     pugi::xpath_node_set properties = node.select_nodes("properties/property");
-    for (auto it = properties.begin(); it != properties.end(); ++it) {
-        std::string type = it->node().attribute("type").value();
-        std::string name = it->node().attribute("name").value();
-        std::string value = it->node().attribute("value").value();
+    for (auto propertie : properties) {
+        std::string type = propertie.node().attribute("type").value();
+        std::string name = propertie.node().attribute("name").value();
+        std::string value = propertie.node().attribute("value").value();
 
         if (type == "BitMap") {
             if (name == "diffuse_map")
@@ -34,7 +35,7 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
             else if (name == "environment_map")
                 _environmentMapFilePath = value;
         } else if (type == "Float") {
-            float fValue = atof(value.c_str());
+            float fValue = numeric_cast<float>(stof(value));
             if (name == "diffuseStr")
                 _diffuseStrength = fValue;
             else if (name == "normalStr")
@@ -47,8 +48,7 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
     }
 }
 
-aiMaterial *Material::ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath,
-                                          const boost::filesystem::path &baseFolderPath) {
+aiMaterial *Material::ConvertToAiMaterial(const path &modelFolderPath, const path &baseFolderPath) {
     auto pAiMaterial = new aiMaterial();
     std::string nameStr = _pCollectionName + "X" + GetName();
 //    aiString *name = new aiString(nameStr);
@@ -76,7 +76,7 @@ aiMaterial *Material::ConvertToAiMaterial(const boost::filesystem::path &modelFo
 
 void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_diffuseMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath,baseFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath, baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
@@ -88,7 +88,7 @@ void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFo
 
 void Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_specularMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath,baseFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath, baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
@@ -100,7 +100,7 @@ void Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelF
 
 void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_normalMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath,baseFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(
                     PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
@@ -114,7 +114,7 @@ void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFol
 void
 Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
     if (!_environmentMapFilePath.empty()) {
-        std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath,baseFolderPath);
+        std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath, baseFolderPath);
         if (!textureFilePath.empty()) {
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_REFLECTION(0));
@@ -126,7 +126,7 @@ Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFol
 
 const
 std::string
-Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, const path &baseFolderPath) const {
+Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
     std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
     filePath = PathUtil::MakePlatformSafe(filePath);
     if (filePath.empty()) {
@@ -153,11 +153,11 @@ Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, c
     }
 
     uint8_t buffer[0x400];
-    int uint8_tsRead;
+    size_t bytesRead;
     do {
-        uint8_tsRead = gzread(pGzFile, buffer, sizeof(buffer));
-        fwrite(buffer, 1, uint8_tsRead, pDdsFile);
-    } while (uint8_tsRead == sizeof(buffer));
+        bytesRead = gzread(pGzFile, buffer, sizeof(buffer));
+        fwrite(buffer, 1, bytesRead, pDdsFile);
+    } while (bytesRead == sizeof(buffer));
 
     fclose(pDdsFile);
     gzclose(pGzFile);
@@ -168,8 +168,8 @@ Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, c
 }
 
 
-const std::string Material::GetTextureFilePath(const std::string tgtFilePath, const path &baseFolderPath) const {
-    static const char *ppszAllowedExtensions[] = {"gz", "dds", "tga", "jpg"};
+const std::string Material::GetTextureFilePath(const std::string &tgtFilePath, const path &baseFolderPath) const {
+    static const char *allowedExtensions[] = {"gz", "dds", "tga", "jpg"};
 
     std::string filePath = PathUtil::MakePlatformSafe(tgtFilePath);
 
@@ -188,10 +188,8 @@ const std::string Material::GetTextureFilePath(const std::string tgtFilePath, co
         std::cerr << "Warning textureFilePath has extension" << std::endl;
         return std::string();
     }
-    for (int i = 0;
-         i < sizeof(ppszAllowedExtensions) / sizeof(ppszAllowedExtensions[0]);
-         ++i) {
-        textureFilePath.replace_extension(ppszAllowedExtensions[i]);
+    for (auto &allowedExtension : allowedExtensions) {
+        textureFilePath.replace_extension(allowedExtension);
         if (is_regular_file(textureFilePath)) {
             return textureFilePath.string();
         }

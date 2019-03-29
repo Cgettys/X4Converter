@@ -10,7 +10,7 @@ namespace xmf {
 
         XmfMaterial(int firstIndex, int numIndices, const std::string &name);
 
-        XmfMaterial(Assimp::StreamReaderLE &reader);
+        explicit XmfMaterial(Assimp::StreamReaderLE &reader);
 
         void Write(Assimp::StreamWriterLE &writer);
 
