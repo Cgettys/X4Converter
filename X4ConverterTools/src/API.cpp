@@ -1,16 +1,15 @@
 #include <X4ConverterTools/API.h>
 #include <assimp/DefaultIOSystem.h>
+
 using namespace xmf;
 
-bool ConvertXmlToDae(const char *pszGameBaseFolderPath,
-                     const char *pszXmlFilePath, const char *pszDaeFilePath, char *pszError,
-                     int iMaxErrorSize) {
+bool ConvertXmlToDae(const char *pszGameBaseFolderPath, const char *pszXmlFilePath, const char *pszDaeFilePath) {
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
 //    Assimp::Importer* importer = new Assimp::Importer();
 //    importer->RegisterLoader(new XmfImporter(pszGameBaseFolderPath));
     XmfImporter importer(pszGameBaseFolderPath);
-    aiScene* pScene = new aiScene();// cleaned up by the exporter when it's deleted...
+    aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     importer.InternReadFile(pszXmlFilePath, pScene, io);
 //    const aiScene *pScene = importer->ReadFile(pszXmlFilePath, 0);
 //    if (!pScene) {
@@ -25,25 +24,19 @@ bool ConvertXmlToDae(const char *pszGameBaseFolderPath,
     aiReturn result = exporter.Export(pScene, "collada", pszDaeFilePath);
     if (result != aiReturn_SUCCESS) {
         std::cerr << "Failed during export" << std::endl;
-        strncpy(pszError, exporter.GetErrorString(), iMaxErrorSize);
-//        delete importer;
-        return false;
+        throw std::runtime_error(exporter.GetErrorString());
     }
     delete io;
-//    delete pScene;
+    // pScene is cleaned up by the exporter at the moment for better or for worse
     return true;
 }
 
-bool ConvertDaeToXml(const char *pszGameBaseFolderPath,
-                     const char *pszDaeFilePath, const char *pszXmfFilePath, char *pszError,
-                     int iMaxErrorSize) {
-    Assimp::Importer* importer = new Assimp::Importer();
+bool ConvertDaeToXml(const char *pszGameBaseFolderPath, const char *pszDaeFilePath, const char *pszXmfFilePath) {
+    Assimp::Importer *importer = new Assimp::Importer();
     const aiScene *pScene = importer->ReadFile(pszDaeFilePath, 0);
     if (!pScene) {
         std::cerr << "Failed during import" << std::endl;
-        strncpy(pszError, importer->GetErrorString(), iMaxErrorSize);
-        delete importer;
-        return false;
+        throw std::runtime_error(importer->GetErrorString());
     }
 
 

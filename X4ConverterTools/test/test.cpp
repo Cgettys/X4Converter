@@ -16,6 +16,7 @@
 
 #include <assimp/anim.h>
 #include <assimp/Importer.hpp>
+
 namespace fs = boost::filesystem;
 using namespace Assimp;
 BOOST_AUTO_TEST_SUITE(test_suite1)
@@ -47,12 +48,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
         BOOST_TEST_CHECKPOINT("Begin test");
         char szError[256];
-        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(),
-                                              inputXMLPath.c_str(), daePath.c_str(), szError, sizeof(szError));
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), inputXMLPath.c_str(), daePath.c_str());
         BOOST_TEST(forwardSuccess);
         BOOST_TEST_CHECKPOINT("Forward parsing");
-        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(),
-                                               daePath.c_str(), outputXMLPath.c_str(), szError, sizeof(szError));
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
         BOOST_TEST(backwardSuccess);
 
         BOOST_TEST_CHECKPOINT("Backward parsing");
@@ -106,7 +105,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         // TODO more validation
 
 
-            BOOST_TEST_CHECKPOINT("Cleanup");
+        BOOST_TEST_CHECKPOINT("Cleanup");
 
 
     }
