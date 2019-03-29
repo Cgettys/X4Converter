@@ -1,4 +1,3 @@
-
 #include <X4ConverterTools/xmf/XmfMaterial.h>
 
 

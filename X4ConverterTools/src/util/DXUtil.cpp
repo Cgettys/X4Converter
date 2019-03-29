@@ -57,8 +57,7 @@ namespace util {
 
             case D3DDECLTYPE_SHORT2N:
                 return aiVector3D((float) ((short *) pAttribute)[0] / 32767.0f,
-                                  (float) ((short *) pAttribute)[1] / 32767.0f,
-                                  0.0f);
+                                  (float) ((short *) pAttribute)[1] / 32767.0f, 0.0f);
 
             case D3DDECLTYPE_SHORT4N:
                 return aiVector3D((float) ((short *) pAttribute)[0] / 32767.0f,
@@ -67,8 +66,7 @@ namespace util {
 
             case D3DDECLTYPE_USHORT2N:
                 return aiVector3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
-                                  (float) ((uint16_t *) pAttribute)[1] / 65535.0f,
-                                  0.0f);
+                                  (float) ((uint16_t *) pAttribute)[1] / 65535.0f, 0.0f);
 
             case D3DDECLTYPE_USHORT4N:
                 return aiVector3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
@@ -90,28 +88,19 @@ namespace util {
     aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYPE type) {
         switch (type) {
             case D3DDECLTYPE_FLOAT3:
-                return aiColor4D(((float *) pAttribute)[0],
-                                 ((float *) pAttribute)[1],
-                                 ((float *) pAttribute)[2],
-                                 1.0f);
+                return aiColor4D(((float *) pAttribute)[0], ((float *) pAttribute)[1], ((float *) pAttribute)[2], 1.0f);
 
             case D3DDECLTYPE_FLOAT4:
-                return aiColor4D(((float *) pAttribute)[0],
-                                 ((float *) pAttribute)[1],
-                                 ((float *) pAttribute)[2],
+                return aiColor4D(((float *) pAttribute)[0], ((float *) pAttribute)[1], ((float *) pAttribute)[2],
                                  ((float *) pAttribute)[3]);
 
             case D3DDECLTYPE_FLOAT16_4:
-                return aiColor4D(((half_float::half *) pAttribute)[0],
-                                 ((half_float::half *) pAttribute)[1],
-                                 ((half_float::half *) pAttribute)[2],
-                                 ((half_float::half *) pAttribute)[3]);
+                return aiColor4D(((half_float::half *) pAttribute)[0], ((half_float::half *) pAttribute)[1],
+                                 ((half_float::half *) pAttribute)[2], ((half_float::half *) pAttribute)[3]);
 
             case D3DDECLTYPE_D3DCOLOR:
-                return aiColor4D((float) pAttribute[2] / 255.0f,
-                                 (float) pAttribute[1] / 255.0f,
-                                 (float) pAttribute[0] / 255.0f,
-                                 (float) pAttribute[3] / 255.0f);
+                return aiColor4D((float) pAttribute[2] / 255.0f, (float) pAttribute[1] / 255.0f,
+                                 (float) pAttribute[0] / 255.0f, (float) pAttribute[3] / 255.0f);
 
             default:
                 throw std::runtime_error("Unsupported vertex element type for colors");

@@ -14,8 +14,7 @@ class ComponentPart {
 public:
     ComponentPart() = default;
 
-    explicit ComponentPart(pugi::xml_node partNode,
-                           const boost::filesystem::path &geometryFolderPath,
+    explicit ComponentPart(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                            Assimp::IOSystem *pIOHandler);
 
     ComponentPartLod *GetLod(int lodIndex);
@@ -28,9 +27,8 @@ public:
     aiVector3D Center;
     aiVector3D Size;
 
-    void
-    WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
-              Assimp::IOSystem *pIOHandler);
+    void WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
+                   Assimp::IOSystem *pIOHandler);
 
 protected:
     void WritePartParent(pugi::xml_node partNode);

@@ -12,29 +12,24 @@ ComponentPartLod *ComponentPart::GetLod(int lodIndex) {
     return nullptr;
 }
 
-ComponentPart::ComponentPart(pugi::xml_node partNode,
-                             const boost::filesystem::path &geometryFolderPath,
+ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                              Assimp::IOSystem *pIOHandler) {
 
     Name = partNode.attribute("name").value();
 
-    pugi::xml_attribute parentAttr = partNode.parent().parent().attribute(
-            "parent");
+    pugi::xml_attribute parentAttr = partNode.parent().parent().attribute("parent");
     if (parentAttr)
         ParentName = parentAttr.value();
 
-    pugi::xml_node posNode =
-            partNode.select_node("../../offset/position").node();
+    pugi::xml_node posNode = partNode.select_node("../../offset/position").node();
     if (posNode) {
-        Position = aiVector3D(posNode.attribute("x").as_float(),
-                              posNode.attribute("y").as_float(),
+        Position = aiVector3D(posNode.attribute("x").as_float(), posNode.attribute("y").as_float(),
                               posNode.attribute("z").as_float());
     }
 
     pugi::xml_node sizeNode = partNode.select_node("size/max").node();
     if (sizeNode) {
-        Size = aiVector3D(sizeNode.attribute("x").as_float(),
-                          sizeNode.attribute("y").as_float(),
+        Size = aiVector3D(sizeNode.attribute("x").as_float(), sizeNode.attribute("y").as_float(),
                           sizeNode.attribute("z").as_float());
     }
 
@@ -42,15 +37,13 @@ ComponentPart::ComponentPart(pugi::xml_node partNode,
     while (true) {
         // TODO what about the mysterious assets .xmfs?
         //TODO better solution for path generation & debugging
-        boost::filesystem::path lodFilePath = geometryFolderPath
-                                              / (format("%s-lod%d.xmf") % Name % lodIndex).str();
+        boost::filesystem::path lodFilePath = geometryFolderPath / (format("%s-lod%d.xmf") % Name % lodIndex).str();
         std::cout << "reading lod .xmf: " << lodFilePath << std::endl;
         if (!is_regular_file(lodFilePath)) {
             break;
         }
 
-        std::shared_ptr<XuMeshFile> pMeshFile = XuMeshFile::ReadFromFile(
-                lodFilePath.string(), pIOHandler);
+        std::shared_ptr<XuMeshFile> pMeshFile = XuMeshFile::ReadFromFile(lodFilePath.string(), pIOHandler);
         Lods.emplace_back(lodIndex, pMeshFile);
         lodIndex++;
     }
@@ -59,23 +52,20 @@ ComponentPart::ComponentPart(pugi::xml_node partNode,
     boost::filesystem::path collisionFilePath = geometryFolderPath / (Name + "-collision.xmf");
     std::cout << "reading collison .xmf: " << collisionFilePath << std::endl;
     if (is_regular_file(collisionFilePath)) {
-        CollisionMesh = XuMeshFile::ReadFromFile(
-                collisionFilePath.string(), pIOHandler);
+        CollisionMesh = XuMeshFile::ReadFromFile(collisionFilePath.string(), pIOHandler);
     }
 }
 
-void ComponentPart::WritePart(pugi::xml_node connectionsNode,
-                              const boost::filesystem::path &geometryFolderPath, Assimp::IOSystem *pIOHandler) {
+void ComponentPart::WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
+                              Assimp::IOSystem *pIOHandler) {
     pugi::xml_node connectionNode;
-    pugi::xml_node partNode =
-            connectionsNode.select_node(
-                    (format("connection/parts/part[@name='%s']") % Name).str().c_str()).node();
+    pugi::xml_node partNode = connectionsNode.select_node(
+            (format("connection/parts/part[@name='%s']") % Name).str().c_str()).node();
     if (!partNode) {
         connectionNode = connectionsNode.append_child("connection");
         size_t numConnections = connectionsNode.select_nodes("connection").size();
         // Note that this appends the connection (e.g. Connection(current-index)
-        connectionNode.append_attribute("name").set_value(
-                (format("Connection%02d") % numConnections).str().c_str());
+        connectionNode.append_attribute("name").set_value((format("Connection%02d") % numConnections).str().c_str());
         connectionNode.append_attribute("tags").set_value("part");
 
         pugi::xml_node partsNode = connectionNode.append_child("parts");
@@ -99,8 +89,7 @@ void ComponentPart::WritePart(pugi::xml_node connectionsNode,
     WritePartLods(partNode, geometryFolderPath, pIOHandler);
     if (CollisionMesh) {
         //TODO better solution
-        std::string xmfFileName =
-                (format("%s-collision.out.xmf") % Name).str();
+        std::string xmfFileName = (format("%s-collision.out.xmf") % Name).str();
         std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
         CollisionMesh->WriteToFile(xmfFilePath, pIOHandler);
     }
@@ -165,8 +154,8 @@ void ComponentPart::WritePartCenter(pugi::xml_node sizeNode) {
     centerNode.attribute("z").set_value(Center.z);
 }
 
-void ComponentPart::WritePartLods(pugi::xml_node partNode,
-                                  const boost::filesystem::path &geometryFolderPath, Assimp::IOSystem *pIOHandler) {
+void ComponentPart::WritePartLods(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
+                                  Assimp::IOSystem *pIOHandler) {
     pugi::xml_node lodsNode = partNode.select_node("lods").node();
     if (!lodsNode)
         lodsNode = partNode.append_child("lods");
@@ -181,8 +170,7 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode,
 
     // Add/update remaining LOD's
     for (ComponentPartLod &lod: Lods) {
-        pugi::xml_node lodNode = lodsNode.select_node(
-                (format("lod[@index='%d']") % lod.LodIndex).str().c_str()).node();
+        pugi::xml_node lodNode = lodsNode.select_node((format("lod[@index='%d']") % lod.LodIndex).str().c_str()).node();
         if (!lodNode) {
             lodNode = lodsNode.append_child("lod");
             lodNode.append_attribute("index").set_value(lod.LodIndex);

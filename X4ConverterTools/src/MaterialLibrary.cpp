@@ -3,8 +3,7 @@
 using namespace boost;
 using namespace boost::filesystem;
 
-MaterialLibrary::MaterialLibrary(const std::string &gameBaseFolderPath)
-        : _gameBaseFolderPath(gameBaseFolderPath) {
+MaterialLibrary::MaterialLibrary(const std::string &gameBaseFolderPath) : _gameBaseFolderPath(gameBaseFolderPath) {
     std::string filePath = (path(gameBaseFolderPath) / "libraries" / "material_library.xml").string();
     if (!is_regular_file(filePath)) {
         throw std::runtime_error(str(format("Failed to load material library: %s does not exist") % filePath));

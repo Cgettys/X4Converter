@@ -31,8 +31,7 @@ namespace xmf {
             }
 
             component.WriteToFile(pFilePath, GameBaseFolderPath, pIOHandler);
-        }
-        catch (std::exception &e) {
+        } catch (std::exception &e) {
             throw DeadlyExportError(e.what());
         }
     }
@@ -50,11 +49,8 @@ namespace xmf {
         ComponentPart &part = component.Parts[partName];
         part.Name = partName;
         part.ParentName = parentPartName;
-        part.Position = aiVector3D(
-                -pPartNode->mTransformation.a4,
-                pPartNode->mTransformation.b4,
-                pPartNode->mTransformation.c4
-        );
+        part.Position = aiVector3D(-pPartNode->mTransformation.a4, pPartNode->mTransformation.b4,
+                                   pPartNode->mTransformation.c4);
 
         for (int i = 0; i < pPartNode->mNumChildren; ++i) {
             aiNode *pChildNode = pPartNode->mChildren[i];
@@ -113,8 +109,7 @@ namespace xmf {
         std::vector<XmfVertexElement> vertexDecl;
         for (aiNode *pMeshNode: meshNodes) {
             if (pMeshNode->mNumMeshes == 0) {
-                throw std::runtime_error(
-                        str(format("Node %s has no mesh attached") % pMeshNode->mName.C_Str()));
+                throw std::runtime_error(str(format("Node %s has no mesh attached") % pMeshNode->mName.C_Str()));
             }
             if (pMeshNode->mNumMeshes > 1) {
                 throw std::runtime_error(
@@ -204,16 +199,9 @@ namespace xmf {
             }
         }
 
-        part.Size = aiVector3D(
-                (upperBound.x - lowerBound.x) / 2.0f,
-                (upperBound.y - lowerBound.y) / 2.0f,
-                (upperBound.z - lowerBound.z) / 2.0f
-        );
-        part.Center = aiVector3D(
-                lowerBound.x + part.Size.x,
-                lowerBound.y + part.Size.y,
-                lowerBound.z + part.Size.z
-        );
+        part.Size = aiVector3D((upperBound.x - lowerBound.x) / 2.0f, (upperBound.y - lowerBound.y) / 2.0f,
+                               (upperBound.z - lowerBound.z) / 2.0f);
+        part.Center = aiVector3D(lowerBound.x + part.Size.x, lowerBound.y + part.Size.y, lowerBound.z + part.Size.z);
     }
 
     void XmfExporter::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {

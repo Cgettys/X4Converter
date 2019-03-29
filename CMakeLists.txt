@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
-project (X4Converter CXX C)
+project(X4Converter CXX C)
 include(CTest)
 include(GNUInstallDirs)
 set(CMAKE_C_STANDARD 14)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
-find_package(ZLIB REQUIRED )
+find_package(ZLIB REQUIRED)
 find_package(Boost COMPONENTS filesystem unit_test_framework program_options REQUIRED)
 
 include(ExternalProject)

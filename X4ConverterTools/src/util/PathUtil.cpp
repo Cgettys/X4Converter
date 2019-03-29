@@ -28,8 +28,7 @@ path PathUtil::MakeGameSafe(const path &filePath) {
     return path(MakeGameSafe(filePath.string()));
 }
 
-path PathUtil::GetRelativePath(const path &filePath,
-                               const path &relativeToFolderPath) {
+path PathUtil::GetRelativePath(const path &filePath, const path &relativeToFolderPath) {
     if (filePath.is_relative()) {
         throw std::runtime_error("filePath is already relative");
     }
@@ -42,8 +41,7 @@ path PathUtil::GetRelativePath(const path &filePath,
 
 
     std::vector<std::string> relativeToFolderPathParts;
-    split(relativeToFolderPathParts, relativeToFolderPath.string(),
-          [](char c) { return c == '/' || c == '\\'; });
+    split(relativeToFolderPathParts, relativeToFolderPath.string(), [](char c) { return c == '/' || c == '\\'; });
 
     //https://stackoverflow.com/a/17270869
     filePathParts.erase(std::remove(filePathParts.begin(), filePathParts.end(), ""), filePathParts.end());
@@ -61,18 +59,15 @@ path PathUtil::GetRelativePath(const path &filePath,
 //    }
 //    std::cout <<std::endl;
     int differenceStart = 0;
-    while (differenceStart < filePathParts.size() - 1
-           && differenceStart < relativeToFolderPathParts.size()
-           && iequals(filePathParts[differenceStart],
-                      relativeToFolderPathParts[differenceStart])) {
+    while (differenceStart < filePathParts.size() - 1 && differenceStart < relativeToFolderPathParts.size() &&
+           iequals(filePathParts[differenceStart], relativeToFolderPathParts[differenceStart])) {
         differenceStart++;
     }
 
     if (differenceStart == 0) {
         std::cerr << "Paths lack common root" << std::endl;
-        throw std::runtime_error(
-                str(format("Paths do not have a common root %1% %2%") % filePath.c_str() %
-                    relativeToFolderPath.c_str()));
+        throw std::runtime_error(str(format("Paths do not have a common root %1% %2%") % filePath.c_str() %
+                                     relativeToFolderPath.c_str()));
     }
     path result;
     for (int i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {

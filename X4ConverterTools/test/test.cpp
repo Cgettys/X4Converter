@@ -33,14 +33,9 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
-        const std::string inputXMLPath = gameBaseFolderPath
-                                         + "assets/units/size_s/ship_gen_s_fighter_01.xml";
-        const std::string daePath =
-                gameBaseFolderPath
-                + "assets/units/size_s/ship_gen_s_fighter_01.out.dae";
-        const std::string outputXMLPath =
-                gameBaseFolderPath
-                + "assets/units/size_s/ship_gen_s_fighter_01.out.xml";
+        const std::string inputXMLPath = gameBaseFolderPath + "assets/units/size_s/ship_gen_s_fighter_01.xml";
+        const std::string daePath = gameBaseFolderPath + "assets/units/size_s/ship_gen_s_fighter_01.out.dae";
+        const std::string outputXMLPath = gameBaseFolderPath + "assets/units/size_s/ship_gen_s_fighter_01.out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(daePath);
         // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
@@ -56,12 +51,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
         BOOST_TEST_CHECKPOINT("Backward parsing");
         pugi::xml_document expectedDoc;
-        pugi::xml_parse_result expectedResult = expectedDoc.load_file(
-                inputXMLPath.c_str());
+        pugi::xml_parse_result expectedResult = expectedDoc.load_file(inputXMLPath.c_str());
 
         pugi::xml_document actualDoc;
-        pugi::xml_parse_result actualResult = actualDoc.load_file(
-                outputXMLPath.c_str());
+        pugi::xml_parse_result actualResult = actualDoc.load_file(outputXMLPath.c_str());
         //https://pugixml.org/docs/manual.html#access.walker
         // See also: https://stackoverflow.com/a/29599648
         struct my_walker : pugi::xml_tree_walker {
@@ -81,19 +74,16 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         my_walker actualWalk;
         actualDoc.traverse(actualWalk);
         std::set<std::string> expectedMinusActual;
-        std::set_difference(expectedWalk.paths.begin(), expectedWalk.paths.end(),
-                            actualWalk.paths.begin(), actualWalk.paths.end(),
-                            std::inserter(expectedMinusActual, expectedMinusActual.begin()));
+        std::set_difference(expectedWalk.paths.begin(), expectedWalk.paths.end(), actualWalk.paths.begin(),
+                            actualWalk.paths.end(), std::inserter(expectedMinusActual, expectedMinusActual.begin()));
 
         std::set<std::string> actualMinusExpected;
-        std::set_difference(actualWalk.paths.begin(), actualWalk.paths.end(),
-                            expectedWalk.paths.begin(), expectedWalk.paths.end(),
-                            std::inserter(actualMinusExpected, actualMinusExpected.begin()));
+        std::set_difference(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(),
+                            expectedWalk.paths.end(), std::inserter(actualMinusExpected, actualMinusExpected.begin()));
 
         std::set<std::string> intersection;
-        std::set_intersection(actualWalk.paths.begin(), actualWalk.paths.end(),
-                              expectedWalk.paths.begin(), expectedWalk.paths.end(),
-                              std::inserter(intersection, intersection.begin()));
+        std::set_intersection(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(),
+                              expectedWalk.paths.end(), std::inserter(intersection, intersection.begin()));
         BOOST_TEST(expectedMinusActual.size() == 0);
         for (auto &&x : expectedMinusActual) {
             printf("Output was missing path: %s\n", x.c_str());

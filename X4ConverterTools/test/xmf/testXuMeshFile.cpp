@@ -1,4 +1,3 @@
-
 #include <boost/test/unit_test.hpp>
 #include <assimp/types.h>
 #include <assimp/IOStream.hpp>
@@ -78,8 +77,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-        const std::string basePath =
-                "/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
+        const std::string basePath = "/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
         const std::string testFile = basePath + ".xmf";
         const std::string resultsFile = basePath + ".out.xmf";
         IOSystem *io = new DefaultIOSystem();

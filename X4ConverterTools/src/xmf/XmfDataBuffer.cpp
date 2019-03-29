@@ -1,4 +1,3 @@
-
 #include <X4ConverterTools/xmf/XmfDataBuffer.h>
 
 using boost::numeric_cast;
@@ -20,15 +19,12 @@ namespace xmf {
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
 //        throw std::runtime_error("Mismatching buffer data offset");
 //    }
-        if (reader.GetRemainingSize()
-            < GetCompressedDataSize()) {
+        if (reader.GetRemainingSize() < GetCompressedDataSize()) {
             throw std::runtime_error(".xmf file is too small, not enough data left");
         }
         if (!IsCompressed()) {
-            if (GetCompressedDataSize()
-                != GetUncompressedDataSize()) {
-                throw std::runtime_error(
-                        "Noncompressed buffer has invalid size");
+            if (GetCompressedDataSize() != GetUncompressedDataSize()) {
+                throw std::runtime_error("Noncompressed buffer has invalid size");
             }
             uint8_t b = 0;
             for (int i = 0; i < GetUncompressedDataSize(); i++) {
@@ -46,16 +42,14 @@ namespace xmf {
 
             unsigned long uncompressedSize = numeric_cast<unsigned long>(GetUncompressedDataSize());
             _data.reserve(uncompressedSize);
-            int status = uncompress(GetData(), &uncompressedSize,
-                                    compressedData.data(), compressedDataSize);
+            int status = uncompress(GetData(), &uncompressedSize, compressedData.data(), compressedDataSize);
 
             if (status != Z_OK) {
                 throw std::runtime_error("Failed to decompress data buffer");
             }
             // Note that the second parameter of uncompress is both Input and output
             if (uncompressedSize != GetUncompressedDataSize()) {
-                throw std::runtime_error(
-                        "Decompression did not return enough data");
+                throw std::runtime_error("Decompression did not return enough data");
             }
         }
     }

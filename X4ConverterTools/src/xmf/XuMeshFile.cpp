@@ -1,4 +1,3 @@
-
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 
 using namespace Assimp;
@@ -33,17 +32,14 @@ namespace xmf {
 
     int XuMeshFile::NumIndices() {
         XmfDataBuffer *pIndexBuffer = GetIndexBuffer();
-        return pIndexBuffer != nullptr ?
-               pIndexBuffer->Description.NumItemsPerSection : 0;
+        return pIndexBuffer != nullptr ? pIndexBuffer->Description.NumItemsPerSection : 0;
     }
 
-    void XuMeshFile::AddMaterial(int firstIndex, int numIndices,
-                                 const std::string &name) {
+    void XuMeshFile::AddMaterial(int firstIndex, int numIndices, const std::string &name) {
         materials.emplace_back(firstIndex, numIndices, name);
     }
 
-    std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(
-            const std::string &filePath, Assimp::IOSystem *pIOHandler) {
+    std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler) {
         IOStream *pStream;
         try {
             pStream = pIOHandler->Open(filePath, "rb");
@@ -70,8 +66,8 @@ namespace xmf {
             pMeshFile->header = XmfHeader(pStreamReader);
 
             // Read in Buffer descs
-            if (pStream->FileSize() < pMeshFile->header.SizeOfHeader
-                                      + pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {
+            if (pStream->FileSize() < pMeshFile->header.SizeOfHeader +
+                                      pMeshFile->header.NumDataBuffers * pMeshFile->header.DataBufferDescSize) {
                 throw std::runtime_error(".xmf file is too small based on header");
             }
 
@@ -116,14 +112,12 @@ namespace xmf {
             if (numVertices == -1) {
                 numVertices = buffer.Description.NumItemsPerSection;
             } else if (buffer.Description.NumItemsPerSection != numVertices) {
-                throw std::runtime_error(
-                        "Inconsistent vertex count across vertex buffers");
+                throw std::runtime_error("Inconsistent vertex count across vertex buffers");
             }
         }
     }
 
-    void XuMeshFile::WriteToFile(const std::string &filePath,
-                                 IOSystem *pIOHandler) {
+    void XuMeshFile::WriteToFile(const std::string &filePath, IOSystem *pIOHandler) {
         IOStream *pStream = pIOHandler->Open(filePath, "wb+");
         if (!pStream) {
             throw std::runtime_error((format("Failed to open %1% for writing") % filePath.c_str()).str());
@@ -133,8 +127,7 @@ namespace xmf {
     }
 
     void XuMeshFile::WriteToIOStream(IOStream *pStream) {
-        std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers =
-                CompressBuffers();
+        std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers = CompressBuffers();
 
         header = XmfHeader(numeric_cast<uint8_t>(buffers.size()), numeric_cast<uint8_t>(materials.size()));
         auto pStreamWriter = StreamWriterLE(pStream, false);
@@ -156,8 +149,8 @@ namespace xmf {
             compressedData.resize(compressBound(buffer.GetUncompressedDataSize()));
 
             unsigned long int compressedSize = compressedData.size();
-            int status = compress(compressedData.data(), &compressedSize,
-                                  buffer.GetData(), buffer.GetUncompressedDataSize());
+            int status = compress(compressedData.data(), &compressedSize, buffer.GetData(),
+                                  buffer.GetUncompressedDataSize());
             if (status != Z_OK)
                 throw std::runtime_error("Failed to compress XMF data buffer");
 
@@ -187,8 +180,7 @@ namespace xmf {
         }
     }
 
-    aiNode *XuMeshFile::ConvertToAiNode(
-            const std::string &name, ConversionContext &context) {
+    aiNode *XuMeshFile::ConvertToAiNode(const std::string &name, ConversionContext &context) {
         auto *pMeshGroupNode = new aiNode();
         pMeshGroupNode->mName = name;
         try {
@@ -231,8 +223,8 @@ namespace xmf {
         return pMeshGroupNode;
     }
 
-    aiMesh *XuMeshFile::ConvertToAiMesh(int firstIndex,
-                                        int numIndices, const std::string &name, ConversionContext &context) {
+    aiMesh *
+    XuMeshFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
         try {
@@ -247,8 +239,7 @@ namespace xmf {
         return pMesh;
     }
 
-    void XuMeshFile::AllocMeshVertices(aiMesh *pMesh,
-                                       int numVertices) {
+    void XuMeshFile::AllocMeshVertices(aiMesh *pMesh, int numVertices) {
         if (numVertices <= 0) {
             throw std::runtime_error("AllocMeshVertices: numVertices must be > 0");
         }
@@ -264,8 +255,7 @@ namespace xmf {
                         if (!pMesh->mVertices) {
                             pMesh->mVertices = new aiVector3D[numVertices];
                         } else {
-                            throw std::runtime_error(
-                                    "Duplicate POSITION vertex element");
+                            throw std::runtime_error("Duplicate POSITION vertex element");
                         }
                         break;
 
@@ -282,31 +272,26 @@ namespace xmf {
                             if (!pMesh->mTangents) {
                                 pMesh->mTangents = new aiVector3D[numVertices];
                             } else {
-                                throw std::runtime_error(
-                                        "Duplicate TANGENT vertex element with usage index 0");
+                                throw std::runtime_error("Duplicate TANGENT vertex element with usage index 0");
                             }
                         } else if (vertexElem.UsageIndex == 1) {
                             if (!pMesh->mBitangents) {
                                 pMesh->mBitangents = new aiVector3D[numVertices];
                             } else {
-                                throw std::runtime_error(
-                                        "Duplicate TANGENT vertex element with usage index 1");
+                                throw std::runtime_error("Duplicate TANGENT vertex element with usage index 1");
                             }
                         } else if (vertexElem.UsageIndex > 1) {
-                            throw std::runtime_error(
-                                    "Invalid usage index for TANGENT vertex element");
+                            throw std::runtime_error("Invalid usage index for TANGENT vertex element");
                         }
                         break;
 
                     case D3DDECLUSAGE_TEXCOORD:
                         if (vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_TEXTURECOORDS) {
-                            throw std::runtime_error(
-                                    "Invalid usage index for TEXCOORD vertex element");
+                            throw std::runtime_error("Invalid usage index for TEXCOORD vertex element");
                         }
                         if (!pMesh->mTextureCoords[vertexElem.UsageIndex]) {
 
-                            pMesh->mTextureCoords[vertexElem.UsageIndex] =
-                                    new aiVector3D[numVertices];
+                            pMesh->mTextureCoords[vertexElem.UsageIndex] = new aiVector3D[numVertices];
                             pMesh->mNumUVComponents[vertexElem.UsageIndex] = 2;
                         } else {
                             throw std::runtime_error("Duplicate TEXCOORD element");
@@ -315,12 +300,10 @@ namespace xmf {
 
                     case D3DDECLUSAGE_COLOR:
                         if (vertexElem.UsageIndex >= AI_MAX_NUMBER_OF_COLOR_SETS) {
-                            throw std::runtime_error(
-                                    "Invalid usage index for COLOR vertex element");
+                            throw std::runtime_error("Invalid usage index for COLOR vertex element");
                         }
                         if (!pMesh->mColors[vertexElem.UsageIndex]) {
-                            pMesh->mColors[vertexElem.UsageIndex] =
-                                    new aiColor4D[numVertices];
+                            pMesh->mColors[vertexElem.UsageIndex] = new aiColor4D[numVertices];
                         } else {
                             throw std::runtime_error("Duplicate COLOR element");
                         }
@@ -338,8 +321,7 @@ namespace xmf {
             throw std::runtime_error("AllocMeshFaces: numIndices must be > 0");
         }
         if (numIndices % 3) {
-            throw std::runtime_error(
-                    "AllocMeshFaces: numIndices must be a multiple of 3");
+            throw std::runtime_error("AllocMeshFaces: numIndices must be a multiple of 3");
         }
         pMesh->mFaces = new aiFace[numIndices / 3];
     }
@@ -350,17 +332,13 @@ namespace xmf {
             throw std::runtime_error("Mesh file has no index buffer");
         }
         if (numIndices <= 0) {
-            throw std::runtime_error(
-                    "PopulateMeshVertices: numIndices must be > 0");
+            throw std::runtime_error("PopulateMeshVertices: numIndices must be > 0");
         }
         if (firstIndex < 0) {
-            throw std::runtime_error(
-                    "PopulateMeshVertices: firstIndex must be >= 0");
+            throw std::runtime_error("PopulateMeshVertices: firstIndex must be >= 0");
         }
-        if (firstIndex + numIndices
-            > pIndexBuffer->Description.NumItemsPerSection) {
-            throw std::runtime_error(
-                    "PopulateMeshVertices: numIndices is too large");
+        if (firstIndex + numIndices > pIndexBuffer->Description.NumItemsPerSection) {
+            throw std::runtime_error("PopulateMeshVertices: numIndices is too large");
         }
         uint8_t *pIndexes = pIndexBuffer->GetData();
         D3DFORMAT indexFormat = pIndexBuffer->GetIndexFormat();
@@ -402,9 +380,7 @@ namespace xmf {
                         }
 
                         case D3DDECLUSAGE_TANGENT: {
-                            aiVector3D *pTangents = (
-                                    elem.UsageIndex == 0 ?
-                                    pMesh->mTangents : pMesh->mBitangents);
+                            aiVector3D *pTangents = (elem.UsageIndex == 0 ? pMesh->mTangents : pMesh->mBitangents);
                             aiVector3D tangent = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);
                             tangent.x = -tangent.x;
                             pTangents[localVertexIdx] = tangent;

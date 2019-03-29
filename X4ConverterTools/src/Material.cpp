@@ -102,8 +102,7 @@ void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFol
     if (!_normalMapFilePath.empty()) {
         std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, baseFolderPath);
         if (!textureFilePath.empty()) {
-            aiString temp(
-                    PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
+            aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
         } else {
             throw std::runtime_error("Could not find Normal Texture for Material!");
@@ -124,8 +123,7 @@ Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFol
     }
 }
 
-const
-std::string
+const std::string
 Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
     std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
     filePath = PathUtil::MakePlatformSafe(filePath);

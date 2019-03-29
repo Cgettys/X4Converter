@@ -48,8 +48,8 @@ namespace ani {
 
         ret.append(str(format("\t\tValue: (%1%, %2%, %3%)\n") % ValueX % ValueY % ValueZ));
 
-        ret.append(str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") %
-                       InterpolationX % InterpolationY % InterpolationZ));
+        ret.append(str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") % InterpolationX % InterpolationY %
+                       InterpolationZ));
 
 
         if (!checkInterpolationType(InterpolationX)) {
@@ -64,11 +64,9 @@ namespace ani {
             valid = false;
             ret.append("\t\tInterpolationX is not handled by the converter at present\n");
         }
-        ret.append(
-                str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
-                    getInterpolationTypeName(InterpolationX) %
-                    getInterpolationTypeName(InterpolationY) %
-                    getInterpolationTypeName(InterpolationZ)));
+        ret.append(str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
+                       getInterpolationTypeName(InterpolationX) % getInterpolationTypeName(InterpolationY) %
+                       getInterpolationTypeName(InterpolationZ)));
 
 
         ret.append(str(format("\t\tTime: %1%\n") % Time));

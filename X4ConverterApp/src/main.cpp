@@ -27,9 +27,7 @@ int main(int ac, char *av[]) {
         std::string config_file;
         // allowed only on command line
         po::options_description generic("Generic options");
-        generic.add_options()
-                ("version,v", "print version string")
-                ("help", "produce help message");
+        generic.add_options()("version,v", "print version string")("help", "produce help message");
 
         const char *action_string = "action to perform:\n"
                                     "\timportxac: convert .xac to .dae\n"
@@ -40,11 +38,13 @@ int main(int ac, char *av[]) {
         // allowed both on command line and in
         // config file
         po::options_description config("Configuration");
-        config.add_options()
-                ("action", po::value<std::string>(&action), action_string)
-                ("datdir", po::value<std::string>(&dat_dir), "path where unpacked catalog files can be found")
-                ("target", po::value<std::string>(&target), "target .xml/.xac/.dae file")
-                ("config", po::value<std::string>(&config_file), "path to config file");
+        config.add_options()("action", po::value<std::string>(&action), action_string)("datdir",
+                                                                                       po::value<std::string>(&dat_dir),
+                                                                                       "path where unpacked catalog files can be found")(
+                "target", po::value<std::string>(&target), "target .xml/.xac/.dae file")("config",
+                                                                                         po::value<std::string>(
+                                                                                                 &config_file),
+                                                                                         "path to config file");
 //		("extdir", po::value<std::string>(&ext_dir), "path to folder where extensions are stored")
         po::options_description cmdline_options;
         cmdline_options.add(generic).add(config);
@@ -62,9 +62,7 @@ int main(int ac, char *av[]) {
         p.add("extdir", 1);
         po::variables_map vm;
         // Store command line options first. Boost prefers options that were stored first, so commandline wins over config file
-        store(
-                po::command_line_parser(ac, av).options(cmdline_options).positional(
-                        p).run(), vm);
+        store(po::command_line_parser(ac, av).options(cmdline_options).positional(p).run(), vm);
         notify(vm);
 
         if (vm.count("config")) {
@@ -79,8 +77,7 @@ int main(int ac, char *av[]) {
         }
 
         if (vm.count("help")) {
-            printf(
-                    "Usage: X4ConvertersMain <action> <folder with .dat file contents> <.xml/.xac/.dae file> <extensions folder (optional)>\n");
+            printf("Usage: X4ConvertersMain <action> <folder with .dat file contents> <.xml/.xac/.dae file> <extensions folder (optional)>\n");
             std::cout << visible << "\n";
             return 0;
         }
@@ -119,8 +116,7 @@ int main(int ac, char *av[]) {
             // .xml/.xmf -> .dae
             // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
             outFile.replace_extension(".out.dae");
-            ConvertXmlToDae(gameBaseFolderPath.string().c_str(), inFile.string().c_str(), outFile.string().c_str()
-            );
+            ConvertXmlToDae(gameBaseFolderPath.string().c_str(), inFile.string().c_str(), outFile.string().c_str());
         } else if (action == "exportxmf") {
             // .dae -> .xml/.xmf
             // .out.xml not necessary because already is .out.dae & .dae is the "extension"

@@ -7,8 +7,7 @@ using namespace Assimp;
 
 
 namespace xmf {
-    XmfImporter::XmfImporter(const std::string &gameBaseFolderPath) :
-            _materialLibrary(gameBaseFolderPath) {
+    XmfImporter::XmfImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
         _gameBaseFolderPath = gameBaseFolderPath;
     }
 
@@ -26,17 +25,14 @@ namespace xmf {
         return &info;
     }
 
-    bool XmfImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler,
-                              bool checkSig) const {
+    bool XmfImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler, bool checkSig) const {
         return iends_with(filePath, ".xml");
     }
 
-    void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
-                                     IOSystem *pIOHandler) {
+    void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene, IOSystem *pIOHandler) {
         try {
             // Read the .xml and .xmf files
-            std::shared_ptr<Component> pComponent = Component::ReadFromFile(
-                    filePath, _gameBaseFolderPath, pIOHandler);
+            std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, _gameBaseFolderPath, pIOHandler);
 
             // Convert to the Assimp data model
             ConversionContext context;
@@ -95,14 +91,12 @@ namespace xmf {
         }
     }
 
-    aiNode *XmfImporter::ConvertComponentToAiNode(Component &component,
-                                                  ConversionContext &context) {
+    aiNode *XmfImporter::ConvertComponentToAiNode(Component &component, ConversionContext &context) {
         std::map<std::string, aiNode *> partNodes;
 
         // Create nodes and meshes
         for (auto &Part : component.Parts) {
-            partNodes[Part.first] = ConvertComponentPartToAiNode(Part.second,
-                                                                 context);
+            partNodes[Part.first] = ConvertComponentPartToAiNode(Part.second, context);
         }
 
         // Link parent nodes
@@ -117,21 +111,17 @@ namespace xmf {
 
             auto parentIt = partNodes.find(Part.second.ParentName);
             if (parentIt == partNodes.end()) {
-                throw std::runtime_error(
-                        str(
-                                format("Node %1% has invalid parent %2%") % (Part.first).c_str()
-                                % (Part.second.ParentName).c_str()));
+                throw std::runtime_error(str(format("Node %1% has invalid parent %2%") % (Part.first).c_str() %
+                                             (Part.second.ParentName).c_str()));
             }
             nodeChildren[parentIt->second].push_back(pPartNode);
         }
 
         for (auto &it : nodeChildren) {
             aiNode *pParentNode = it.first;
-            auto **ppNewChildren = new aiNode *[pParentNode->mNumChildren
-                                                + it.second.size()];
+            auto **ppNewChildren = new aiNode *[pParentNode->mNumChildren + it.second.size()];
             if (pParentNode->mChildren) {
-                memcpy(ppNewChildren, pParentNode->mChildren,
-                       sizeof(aiNode *) * pParentNode->mNumChildren);
+                memcpy(ppNewChildren, pParentNode->mChildren, sizeof(aiNode *) * pParentNode->mNumChildren);
                 delete[] pParentNode->mChildren;
             }
             pParentNode->mChildren = ppNewChildren;
@@ -164,8 +154,7 @@ namespace xmf {
 //    return pComponentNode;
     }
 
-    aiNode *XmfImporter::ConvertComponentPartToAiNode(ComponentPart &part,
-                                                      ConversionContext &context) {
+    aiNode *XmfImporter::ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context) {
         auto *pPartNode = new aiNode();
         try {
             pPartNode->mName = part.Name;

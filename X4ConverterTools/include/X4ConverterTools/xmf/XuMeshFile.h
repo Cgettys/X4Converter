@@ -59,8 +59,7 @@ namespace xmf {
 
         aiNode *ConvertToAiNode(const std::string &name, ConversionContext &context);
 
-        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                ConversionContext &context);
+        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context);
 
         //void                            AllocSceneMaterials             ( aiScene* pScene);
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);
@@ -81,9 +80,8 @@ namespace xmf {
 
         std::map<XmfDataBuffer *, std::vector<uint8_t> > CompressBuffers();
 
-        void
-        WriteBufferDescs(Assimp::IOStream *pStream,
-                         std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
+        void WriteBufferDescs(Assimp::IOStream *pStream,
+                              std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
 
         void
         WriteBuffers(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);

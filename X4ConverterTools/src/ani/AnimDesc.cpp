@@ -94,8 +94,7 @@ namespace ani {
         for (int i = 0; i < NumPosKeys; i++) {
             try {
                 ret.append(posKeys[i].validate());
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 ret.append(e.what());
                 valid = false;
             }
@@ -105,8 +104,7 @@ namespace ani {
         for (int i = 0; i < NumRotKeys; i++) {
             try {
                 ret.append(rotKeys[i].validate());
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 ret.append(e.what());
                 valid = false;
             }
@@ -116,8 +114,7 @@ namespace ani {
         for (int i = 0; i < NumScaleKeys; i++) {
             try {
                 ret.append(scaleKeys[i].validate());
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 ret.append(e.what());
                 valid = false;
             }
@@ -127,8 +124,7 @@ namespace ani {
         for (int i = 0; i < NumPreScaleKeys; i++) {
             try {
                 ret.append(preScaleKeys[i].validate());
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 ret.append(e.what());
                 valid = false;
             }
@@ -138,8 +134,7 @@ namespace ani {
         for (int i = 0; i < NumPostScaleKeys; i++) {
             try {
                 ret.append(postScaleKeys[i].validate());
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 ret.append(e.what());
                 valid = false;
             }
@@ -212,9 +207,8 @@ namespace ani {
     }
 
 
-    void
-    AnimDesc::WriteInputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                std::string &axis) const {
+    void AnimDesc::WriteInputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
+                                     std::string &axis) const {
         pugi::xml_node inputNode = animRoot.append_child("source");
         inputNode.append_attribute("id").set_value((animKey + "-input").c_str());
         auto inputArrayKey = (animKey + "-input-array");
@@ -241,9 +235,8 @@ namespace ani {
     }
 
 
-    void
-    AnimDesc::WriteOutputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                 std::string &axis, std::string &keyType) const {
+    void AnimDesc::WriteOutputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
+                                      std::string &axis, std::string &keyType) const {
         pugi::xml_node outputNode = animRoot.append_child("source");
         outputNode.append_attribute("id").set_value((animKey + "-output").c_str());
         auto outputArrayKey = (animKey + "-output-array");
@@ -273,16 +266,13 @@ namespace ani {
     }
 
     void
-    AnimDesc::WriteInterpolationElement(std::string &animKey, pugi::xml_node &animRoot,
-                                        std::vector<Keyframe> &frames,
+    AnimDesc::WriteInterpolationElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
                                         std::string &axis) const {
         pugi::xml_node interpolationNode = animRoot.append_child("source");
-        interpolationNode.append_attribute("id").set_value(
-                (animKey + "-interpolation").c_str());
+        interpolationNode.append_attribute("id").set_value((animKey + "-interpolation").c_str());
         auto interpolationArrayKey = (animKey + "-interpolation-array");
         pugi::xml_node interpolationArrayNode = interpolationNode.append_child("Name_array");
-        interpolationArrayNode.append_attribute("id").set_value(
-                interpolationArrayKey.c_str());
+        interpolationArrayNode.append_attribute("id").set_value(interpolationArrayKey.c_str());
         interpolationArrayNode.append_attribute("count").set_value(frames.size());
 
         std::string value;
@@ -311,21 +301,18 @@ namespace ani {
     }
 
 
-    void
-    AnimDesc::WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                    std::string &axis) const {
+    void AnimDesc::WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
+                                         std::string &axis) const {
         // TODO refactor to combine wiht OutTangent
         pugi::xml_node inTangentNode = animRoot.append_child("source");
         inTangentNode.append_attribute("id").set_value((animKey + "-intangent").c_str());
         auto inTangentArrayKey = (animKey + "-intangent-array");
         pugi::xml_node inTangentArrayNode = inTangentNode.append_child("float_array");
-        inTangentArrayNode.append_attribute("id").set_value(
-                inTangentArrayKey.c_str());
+        inTangentArrayNode.append_attribute("id").set_value(inTangentArrayKey.c_str());
         inTangentArrayNode.append_attribute("count").set_value(2 * frames.size());
         std::string value;
         for (auto f : frames) {
-            std::pair<float, float>
-                    p = f.getControlPoint(axis, true);
+            std::pair<float, float> p = f.getControlPoint(axis, true);
             // TODO scale if necessary
             value += str(format("%1% %2% ") % p.first % p.second);
         }
@@ -346,22 +333,18 @@ namespace ani {
     }
 
 
-    void
-    AnimDesc::WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot,
-                                     std::vector<Keyframe> &frames,
-                                     std::string &axis) const {
+    void AnimDesc::WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
+                                          std::string &axis) const {
         pugi::xml_node outTangentNode = animRoot.append_child("source");
         outTangentNode.append_attribute("id").set_value((animKey + "-outtangent").c_str());
         auto outTangentArrayKey = (animKey + "-outtangent-array");
         pugi::xml_node outTangentArrayNode = outTangentNode.append_child("float_array");
-        outTangentArrayNode.append_attribute("id").set_value(
-                outTangentArrayKey.c_str());
+        outTangentArrayNode.append_attribute("id").set_value(outTangentArrayKey.c_str());
         outTangentArrayNode.append_attribute("count").set_value(2 * frames.size());
 
         std::string value;
         for (auto f : frames) {
-            std::pair<float, float>
-                    p = f.getControlPoint(axis, false);
+            std::pair<float, float> p = f.getControlPoint(axis, false);
             // TODO scale if necessary
             value += str(format("%1% %2% ") % p.first % p.second);
         }

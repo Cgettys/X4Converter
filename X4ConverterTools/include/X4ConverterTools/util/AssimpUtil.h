@@ -26,9 +26,7 @@ namespace std {
         typedef aiVector3D _Kty;
 
         size_t operator()(const _Kty &value) const {
-            return *(uint32_t *) &value.x ^
-                   *(uint32_t *) &value.y ^
-                   *(uint32_t *) &value.z;
+            return *(uint32_t *) &value.x ^ *(uint32_t *) &value.y ^ *(uint32_t *) &value.z;
         }
     };
 

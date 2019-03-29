@@ -46,8 +46,7 @@ namespace ani {
             try {
                 std::string ret = desc.validate();
                 s.append(ret);
-            }
-            catch (std::exception &e) {
+            } catch (std::exception &e) {
                 s.append(e.what());
                 throw std::runtime_error(s);
             }

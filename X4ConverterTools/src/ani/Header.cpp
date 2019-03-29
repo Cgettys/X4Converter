@@ -29,14 +29,12 @@ namespace ani {
         result.append(str(format("\tVersion: %1$d (%1$#06x)\n") % Version));
         result.append(str(format("\tPadding: %1$d (%1$#06x)\n") % Padding));
         if (Version != 1) {
-            result.append(
-                    "Ani file format has been updated!\n");
+            result.append("Ani file format has been updated!\n");
             valid = false;
         }
         if (KeyOffsetBytes < 16) {
 
-            result.append(
-                    "Ani file either is corrupted or the field is actually unsigned\n");
+            result.append("Ani file either is corrupted or the field is actually unsigned\n");
             valid = false;
         }
 
@@ -49,13 +47,10 @@ namespace ani {
 
         if (!valid) {
             std::string finalError = "Error, invalid ANI file:\n";
-            finalError.
-                    append(result);
-            throw
-                    std::runtime_error(finalError);
+            finalError.append(result);
+            throw std::runtime_error(finalError);
         }
-        return
-                result;
+        return result;
     }
 
     int Header::getNumAnims() const {
