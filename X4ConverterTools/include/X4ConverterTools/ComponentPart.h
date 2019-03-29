@@ -7,7 +7,7 @@
 #include <boost/filesystem.hpp>
 
 #include <assimp/IOSystem.hpp>
-#include <X4ConverterTools/Util/PathUtil.h>
+#include <X4ConverterTools/util/PathUtil.h>
 #include <X4ConverterTools/ComponentPartLod.h>
 
 class ComponentPart {
@@ -25,7 +25,7 @@ public:
     std::string Name;
     std::string ParentName;
     std::vector<ComponentPartLod> Lods;
-    std::shared_ptr<XuMeshFile> CollisionMesh;
+    std::shared_ptr<xmf::XuMeshFile> CollisionMesh;
     aiVector3D Position;
     aiVector3D Center;
     aiVector3D Size;

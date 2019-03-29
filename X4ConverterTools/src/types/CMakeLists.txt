@@ -1,0 +1,9 @@
+set(TYPES_SRCS
+        src/types/Color.cpp
+        src/types/Color8.cpp
+        src/types/Matrix44.cpp
+        src/types/Quaternion.cpp
+        src/types/Vec2D.cpp
+        src/types/Vec3D.cpp
+        src/types/Vec4D.cpp
+        PARENT_SCOPE)

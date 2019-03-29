@@ -10,7 +10,7 @@
 #include <assimp/ProgressHandler.hpp>
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
-#include <X4ConverterTools/Util/PathUtil.h>
+#include <X4ConverterTools/util/PathUtil.h>
 #include <X4ConverterTools/ComponentPart.h>
 #include <X4ConverterTools/ComponentPartLod.h>
 

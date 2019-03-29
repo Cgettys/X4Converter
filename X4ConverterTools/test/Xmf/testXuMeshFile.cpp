@@ -7,12 +7,13 @@
 #include <assimp/DefaultIOSystem.h>
 #include <assimp/MemoryIOWrapper.h>
 #include <X4ConverterTools/API.h>
-#include <X4ConverterTools/Types.h>
-#include <X4ConverterTools/Xmf/XmfHeader.h>
-#include <X4ConverterTools/Xmf/XuMeshFile.h>
+#include <X4ConverterTools/types.h>
+#include <X4ConverterTools/xmf/XmfHeader.h>
+#include <X4ConverterTools/xmf/XuMeshFile.h>
 
 
 using namespace Assimp;
+using namespace xmf;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 
     class testHelper {

@@ -5,7 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>
-#include <X4ConverterTools/Util/PathUtil.h>
+#include <X4ConverterTools/util/PathUtil.h>
 
 class Material {
 public:

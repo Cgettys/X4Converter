@@ -17,8 +17,6 @@
 
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 #include <assimp/ai_assert.h>
 #include <assimp/IOSystem.hpp>
 #include <assimp/ProgressHandler.hpp>
@@ -29,30 +27,16 @@
 #include <assimp/SceneCombiner.h>
 
 #include "../Vendor/half/half.hpp"
-#include "Types.h"
-
-#include "DirectX.h"
-#include "Util/DXUtil.h"
-#include "Util/BinaryReader.h"
-#include "Util/BinaryWriter.h"
-#include "Util/AssimpUtil.h"
+#include "types.h"
 
 #include "Material.h"
 #include "MaterialCollection.h"
 #include "MaterialLibrary.h"
 
-#include "Xmf/XmfHeader.h"
-#include "Xmf/XmfVertexElement.h"
-#include "Xmf/XmfMaterial.h"
-#include "Xmf/XmfDataBufferDesc.h"
-#include "Xmf/XmfDataBuffer.h"
-#include "Xmf/XuMeshFile.h"
 #include "ComponentPartLod.h"
 #include "ComponentPart.h"
 #include "Component.h"
 
-#include "Xmf/XmfImporter.h"
-#include "Xmf/XmfExporter.h"
 
 //#include "EmotionFX.h"
 //#include "Xac/XacHeader.h"

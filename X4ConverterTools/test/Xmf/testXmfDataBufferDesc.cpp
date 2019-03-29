@@ -7,9 +7,10 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/MemoryIOWrapper.h>
-#include <X4ConverterTools/Xmf/XmfHeader.h>
+#include <X4ConverterTools/xmf/XmfHeader.h>
 
 using namespace Assimp;
+using namespace xmf;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 // TODO extract some permanent test files
     BOOST_AUTO_TEST_CASE(test_xmf_data_buffer_desc) {

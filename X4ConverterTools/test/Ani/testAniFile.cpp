@@ -7,8 +7,8 @@
 #include <assimp/DefaultIOSystem.h>
 
 //#include <X4ConverterTools/API.h>
-//#include <X4ConverterTools/Types.h>
-#include <X4ConverterTools/Ani/AniFile.h>
+//#include <X4ConverterTools/types.h>
+#include <X4ConverterTools/ani/AniFile.h>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>

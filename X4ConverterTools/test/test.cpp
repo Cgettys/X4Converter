@@ -11,8 +11,8 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
 #include <X4ConverterTools/API.h>
-#include <X4ConverterTools/Types.h>
-#include <X4ConverterTools/Xmf/XuMeshFile.h>
+#include <X4ConverterTools/types.h>
+#include <X4ConverterTools/xmf/XuMeshFile.h>
 
 #include <assimp/anim.h>
 #include <assimp/Importer.hpp>
