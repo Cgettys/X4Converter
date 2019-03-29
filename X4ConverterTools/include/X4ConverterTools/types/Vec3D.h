@@ -1,6 +1,9 @@
 #pragma once
 
-struct Vec3D {
+#include <assimp/vector3.h>
+
+class Vec3D {
+public:
     Vec3D();
 
     Vec3D(const Vec3D &other);

@@ -1,4 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
+
 #include <X4ConverterTools/xmf/XmfMaterial.h>
 
 

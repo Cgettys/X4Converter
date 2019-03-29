@@ -1,4 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
+#include <X4ConverterTools/types/Vec3D.h>
 
 Vec3D::Vec3D() {
     X = 0.0f;

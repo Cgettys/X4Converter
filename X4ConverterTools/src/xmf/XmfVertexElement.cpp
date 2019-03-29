@@ -1,6 +1,4 @@
-#include <X4ConverterTools/StdInc.h>
-
-using namespace boost;
+#include <X4ConverterTools/xmf/XmfVertexElement.h>
 namespace xmf {
     XmfVertexElement::XmfVertexElement() {
         Type = D3DDECLTYPE_UNUSED;

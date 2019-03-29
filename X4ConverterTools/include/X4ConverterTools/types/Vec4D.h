@@ -1,9 +1,12 @@
 #pragma once
 
-struct Vec4D {
+#include <X4ConverterTools/types/Vec3D.h>
+
+class Vec4D {
+public:
     Vec4D();
 
-    Vec4D(const Vec3D &other);
+    explicit Vec4D(const Vec3D &other);
 
     Vec4D(const Vec4D &other);
 
@@ -11,7 +14,7 @@ struct Vec4D {
 
     Vec4D(float x, float y, float z, float w);
 
-    operator aiVector3D();
+    explicit operator aiVector3D();
 
     float X;
     float Y;
