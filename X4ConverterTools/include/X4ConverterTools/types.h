@@ -1,7 +1,4 @@
 #pragma once
-typedef unsigned char byte;
-typedef unsigned short word;
-typedef unsigned int dword;
 
 #include "X4ConverterTools/types/Color.h"
 #include "X4ConverterTools/types/ConversionContext.h"

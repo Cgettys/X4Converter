@@ -32,7 +32,7 @@ namespace util {
         }
     }
 
-    Vec3D DXUtil::ConvertVertexAttributeToVec3D(byte *pAttribute, D3DDECLTYPE type) {
+    Vec3D DXUtil::ConvertVertexAttributeToVec3D(uint8_t *pAttribute, D3DDECLTYPE type) {
         switch (type) {
             case D3DDECLTYPE_FLOAT1:
                 return Vec3D(((float *) pAttribute)[0], 0.0f, 0.0f);
@@ -64,14 +64,14 @@ namespace util {
                              (float) ((short *) pAttribute)[2] / 32767.0f);
 
             case D3DDECLTYPE_USHORT2N:
-                return Vec3D((float) ((word *) pAttribute)[0] / 65535.0f,
-                             (float) ((word *) pAttribute)[1] / 65535.0f,
+                return Vec3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
+                             (float) ((uint16_t *) pAttribute)[1] / 65535.0f,
                              0.0f);
 
             case D3DDECLTYPE_USHORT4N:
-                return Vec3D((float) ((word *) pAttribute)[0] / 65535.0f,
-                             (float) ((word *) pAttribute)[1] / 65535.0f,
-                             (float) ((word *) pAttribute)[2] / 65535.0f);
+                return Vec3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
+                             (float) ((uint16_t *) pAttribute)[1] / 65535.0f,
+                             (float) ((uint16_t *) pAttribute)[2] / 65535.0f);
 
             case D3DDECLTYPE_FLOAT16_2:
                 return Vec3D(((half_float::half *) pAttribute)[0], ((half_float::half *) pAttribute)[1], 0.0f);
@@ -85,7 +85,7 @@ namespace util {
         }
     }
 
-    aiColor4D DXUtil::ConvertVertexAttributeToColorF(byte *pAttribute, D3DDECLTYPE type) {
+    aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYPE type) {
         switch (type) {
             case D3DDECLTYPE_FLOAT3:
                 return (aiColor4D) Color(((float *) pAttribute)[0], ((float *) pAttribute)[1],
@@ -110,7 +110,7 @@ namespace util {
         }
     }
 
-    int DXUtil::WriteVec3DToVertexAttribute(aiVector3D vec, D3DDECLTYPE type, byte *pAttribute) {
+    int DXUtil::WriteVec3DToVertexAttribute(aiVector3D vec, D3DDECLTYPE type, uint8_t *pAttribute) {
         const Vec3D vector = (Vec3D) vec;
         switch (type) {
             case D3DDECLTYPE_FLOAT1:
@@ -136,9 +136,9 @@ namespace util {
                 break;
 
             case D3DDECLTYPE_D3DCOLOR:
-                pAttribute[2] = (byte) ((vector.X + 1.0f) / 2.0f * 255.0f);
-                pAttribute[1] = (byte) ((vector.Y + 1.0f) / 2.0f * 255.0f);
-                pAttribute[0] = (byte) ((vector.Z + 1.0f) / 2.0f * 255.0f);
+                pAttribute[2] = (uint8_t) ((vector.X + 1.0f) / 2.0f * 255.0f);
+                pAttribute[1] = (uint8_t) ((vector.Y + 1.0f) / 2.0f * 255.0f);
+                pAttribute[0] = (uint8_t) ((vector.Z + 1.0f) / 2.0f * 255.0f);
                 pAttribute[3] = 0;
                 break;
 
@@ -167,15 +167,15 @@ namespace util {
                 break;
 
             case D3DDECLTYPE_USHORT2N:
-                ((word *) pAttribute)[0] = (word) (vector.X * 65535.0f);
-                ((word *) pAttribute)[1] = (word) (vector.Y * 65535.0f);
+                ((uint16_t *) pAttribute)[0] = (uint16_t) (vector.X * 65535.0f);
+                ((uint16_t *) pAttribute)[1] = (uint16_t) (vector.Y * 65535.0f);
                 break;
 
             case D3DDECLTYPE_USHORT4N:
-                ((word *) pAttribute)[0] = (word) (vector.X * 65535.0f);
-                ((word *) pAttribute)[1] = (word) (vector.Y * 65535.0f);
-                ((word *) pAttribute)[2] = (word) (vector.Z * 65535.0f);
-                ((word *) pAttribute)[3] = 0;
+                ((uint16_t *) pAttribute)[0] = (uint16_t) (vector.X * 65535.0f);
+                ((uint16_t *) pAttribute)[1] = (uint16_t) (vector.Y * 65535.0f);
+                ((uint16_t *) pAttribute)[2] = (uint16_t) (vector.Z * 65535.0f);
+                ((uint16_t *) pAttribute)[3] = 0;
                 break;
 
             case D3DDECLTYPE_FLOAT16_2:
@@ -196,7 +196,7 @@ namespace util {
         return GetVertexElementTypeSize(type);
     }
 
-    int DXUtil::WriteColorFToVertexAttribute(const aiColor4D &aiColor, D3DDECLTYPE type, byte *pAttribute) {
+    int DXUtil::WriteColorFToVertexAttribute(const aiColor4D &aiColor, D3DDECLTYPE type, uint8_t *pAttribute) {
         const Color color = (Color) aiColor;
         switch (type) {
             case D3DDECLTYPE_FLOAT3:
@@ -220,10 +220,10 @@ namespace util {
                 break;
 
             case D3DDECLTYPE_D3DCOLOR:
-                pAttribute[2] = (byte) (color.R * 255.0f);
-                pAttribute[1] = (byte) (color.G * 255.0f);
-                pAttribute[0] = (byte) (color.B * 255.0f);
-                pAttribute[3] = (byte) (color.A * 255.0f);
+                pAttribute[2] = (uint8_t) (color.R * 255.0f);
+                pAttribute[1] = (uint8_t) (color.G * 255.0f);
+                pAttribute[0] = (uint8_t) (color.B * 255.0f);
+                pAttribute[3] = (uint8_t) (color.A * 255.0f);
                 break;
 
             default:

@@ -28,7 +28,7 @@ namespace xmf {
 
         int GetUncompressedDataSize() const;
 
-        byte *GetData();
+        uint8_t *GetData();
 
 
         D3DFORMAT GetIndexFormat();
@@ -36,6 +36,6 @@ namespace xmf {
         void AllocData();
 
     private:
-        std::vector<byte> _data;
+        std::vector<uint8_t> _data;
     };
 }

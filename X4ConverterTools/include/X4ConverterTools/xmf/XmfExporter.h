@@ -3,6 +3,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 
 #include <X4ConverterTools/util/AssimpUtil.h>
 #include <X4ConverterTools/Component.h>
@@ -43,6 +44,6 @@ namespace xmf {
 
         static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
 
-        static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, byte *pElemData);
+        static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, uint8_t *pElemData);
     };
 }

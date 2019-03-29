@@ -1,7 +1,7 @@
 #include <X4ConverterTools/xmf/XmfExporter.h>
 
 using namespace boost;
-
+using boost::numeric_cast;
 Assimp::Exporter::ExportFormatEntry xmf::XmfExporter::Format("xmf", "EgoSoft XuMeshFile exporter", ".xml",
                                                         XmfExporter::Export);
 namespace xmf{
@@ -133,7 +133,7 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
     }
     ApplyVertexDeclaration(vertexDecl, vertexBuffer);
     if (vertexBuffer.Description.NumItemsPerSection <= 0xFFFF) {
-        indexBuffer.Description.ItemSize = sizeof(word);
+        indexBuffer.Description.ItemSize = sizeof(uint16_t);
         indexBuffer.Description.Format = 30;
     } else {
         indexBuffer.Description.ItemSize = sizeof(int);
@@ -142,8 +142,8 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
 
     vertexBuffer.AllocData();
     indexBuffer.AllocData();
-    byte *pVertex = vertexBuffer.GetData();
-    byte *pIndex = indexBuffer.GetData();
+    uint8_t *pVertex = vertexBuffer.GetData();
+    uint8_t *pIndex = indexBuffer.GetData();
     int vertexOffset = 0;
     int indexOffset = 0;
     for (aiNode *pMeshNode: meshNodes) {
@@ -158,8 +158,8 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
             aiFace *pFace = &pMesh->mFaces[i];
             for (int j = 0; j < 3; ++j) {
                 int index = vertexOffset + pFace->mIndices[j];
-                if (indexBuffer.Description.ItemSize == sizeof(word)) {
-                    *(word *) pIndex = (word) index;
+                if (indexBuffer.Description.ItemSize == sizeof(uint16_t)) {
+                    *(uint16_t *) pIndex = (uint16_t) index;
                 } else {
                     *(int *) pIndex = index;
                 }
@@ -253,7 +253,7 @@ void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declarat
     }
     int declarationSize = 0;
 
-    buffer.Description.NumVertexElements = declaration.size();
+    buffer.Description.NumVertexElements = numeric_cast<uint32_t>(declaration.size());
     for (int i = 0; i < declaration.size(); ++i) {
         buffer.Description.VertexElements[i] = declaration[i];
         declarationSize += util::DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) declaration[i].Type);
@@ -262,7 +262,7 @@ void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declarat
     buffer.Description.DenormalizeVertexDeclaration();
 }
 
-int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, byte *pElemData) {
+int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, uint8_t *pElemData) {
     auto type = (D3DDECLTYPE) elem.Type;
     switch (elem.Usage) {
         case D3DDECLUSAGE_POSITION: {

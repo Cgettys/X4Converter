@@ -4,14 +4,14 @@ using namespace Assimp;
 using namespace boost;
 
 namespace xmf {
-    XmfHeader::XmfHeader(byte numDataBuffers, byte numMaterials) {
+    XmfHeader::XmfHeader(uint8_t numDataBuffers, uint8_t numMaterials) {
 // Note that this ignores any header read into this mesh file since we can't guarantee the old header is accurate
         Magic[0] = 'X';
         Magic[1] = 'U';
         Magic[2] = 'M';
         Magic[3] = 'F';
         Version = 3;
-        IsBigEndian = (byte) false;
+        IsBigEndian = (uint8_t) false;
         SizeOfHeader = 0x40;
         reserved0 = 0x00;
         NumDataBuffers = numDataBuffers;
@@ -27,7 +27,7 @@ namespace xmf {
 
 
         PrimitiveType = D3DPT_TRIANGLELIST;
-        for (byte &c : pad) {
+        for (uint8_t &c : pad) {
             c = 0x00;
         }
         // TODO verify this
@@ -36,7 +36,7 @@ namespace xmf {
     }
 
     XmfHeader::XmfHeader(Assimp::StreamReaderLE &reader) {
-        for (byte &c : Magic) {
+        for (uint8_t &c : Magic) {
             reader >> c;
         }
 
@@ -64,14 +64,14 @@ namespace xmf {
             reader >> f;
         }
 
-        for (byte &c : pad) {
+        for (uint8_t &c : pad) {
             reader >> c;
         }
     }
 
 
     void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
-        for (byte &c : Magic) {
+        for (uint8_t &c : Magic) {
             writer << c;
         }
         writer << Version << IsBigEndian;
@@ -93,7 +93,7 @@ namespace xmf {
             writer << f;
         }
 
-        for (byte &c : pad) {
+        for (uint8_t &c : pad) {
             writer << c;
         }
     }
@@ -158,7 +158,7 @@ namespace xmf {
             ret.append("\tERROR: File is using a DirectX primitive type that's not supported by this importer\n");
             valid = false;
         }
-        for (const byte &b : pad) {
+        for (const uint8_t &b : pad) {
             if (b != 0) {
                 ret.append("\tERROR: Padding must be 0!\n");
                 valid = false;

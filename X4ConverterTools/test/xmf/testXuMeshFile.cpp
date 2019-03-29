@@ -26,11 +26,11 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
             //    byte Culling_CW;                    // byte       12; false == CCW, other is CW TODO validate
             //    byte RightHand;                     // byte       13; 0 == lefthand D3D convention, other is righthand openGL format todo validate
-            //    dword NumVertices;                  // bytes 14 - 17; TODO use for validation
-            //    dword NumIndices;                   // bytes 18 - 21; TODO use for validation
+            //    uint32_t NumVertices;                  // bytes 14 - 17; TODO use for validation
+            //    uint32_t NumIndices;                   // bytes 18 - 21; TODO use for validation
             //
-            //    dword PrimitiveType;                // bytes 22 - 25;
-            //    dword MeshOptimization;	            // bytes 26 - 29; MeshOptimizationType - enum MeshOptimizationType applied
+            //    uint32_t PrimitiveType;                // bytes 22 - 25;
+            //    uint32_t MeshOptimization;	            // bytes 26 - 29; MeshOptimizationType - enum MeshOptimizationType applied
             //    float BoundingBoxCenter[3];		    // bytes 30 - 41; virtual center of the mesh TODO calculate
             //    float BoundingBoxSize[3];		    // bytes 42 - 53; max absolute extents from the center (aligned coords) TODO calculate
             //    byte pad[10];                       // bytes 54 - 63
@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
         size_t sourceLen = sourceStream->FileSize();
         size_t resultLen = resultStream->FileSize();
-        std::vector<byte> sourceBytes(sourceLen);
-        std::vector<byte> resultByte(resultLen);
+        std::vector<uint8_t> sourceBytes(sourceLen);
+        std::vector<uint8_t> resultByte(resultLen);
         // First layer of checks - Read the result in again - is it equal to what it just wrote out
         std::shared_ptr<XuMeshFile> reloadedFile = XuMeshFile::ReadFromIOStream(resultStream);
 

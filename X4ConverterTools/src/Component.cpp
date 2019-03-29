@@ -1,5 +1,4 @@
 #include <X4ConverterTools/Component.h>
-#include <X4ConverterTools/ComponentPart.h>
 
 using namespace Assimp;
 

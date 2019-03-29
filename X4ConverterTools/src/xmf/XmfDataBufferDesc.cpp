@@ -5,14 +5,14 @@
 
 using namespace Assimp;
 using namespace boost;
-
+using boost::numeric_cast;
 namespace xmf {
     XmfDataBufferDesc::XmfDataBufferDesc(StreamReaderLE &reader) {
         reader >> Type;
         reader >> UsageIndex;
         reader >> DataOffset;
         reader >> Compressed;
-        for (byte &b : _pad0) {
+        for (uint8_t &b : _pad0) {
             reader >> b;
         }
         reader >> Format;
@@ -20,7 +20,7 @@ namespace xmf {
         reader >> NumItemsPerSection;
         reader >> ItemSize;
         reader >> NumSections;
-        for (byte &b : _pad1) {
+        for (uint8_t &b : _pad1) {
             reader >> b;
         }
         reader >> NumVertexElements;
@@ -89,7 +89,7 @@ namespace xmf {
                 VertexElements[0].Usage = D3DDECLUSAGE_TEXCOORD;
                 break;
         }
-        VertexElements[0].UsageIndex = UsageIndex;
+        VertexElements[0].UsageIndex = numeric_cast<uint8_t>(UsageIndex);
 
         Type = 0;
         UsageIndex = 0;
@@ -179,8 +179,8 @@ namespace xmf {
             valid = false;
         } else if (IsIndexBuffer()) {
             D3DFORMAT format = GetIndexFormat();
-            if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(word)) ||
-                (format == D3DFMT_INDEX32 && ItemSize != sizeof(dword))) {
+            if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(uint16_t)) ||
+                (format == D3DFMT_INDEX32 && ItemSize != sizeof(uint32_t))) {
                 ret.append("\tERROR: Item size for index buffer is incorrect");
                 valid = false;
             }

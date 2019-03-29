@@ -64,7 +64,7 @@ namespace ani {
         int Deriv;                                            /**< 24 Indicates whether derivatives have been calculated already. Is mutable to allow it being altered in the CalculateDerivatives() method. */
         float DerivInX, DerivInY, DerivInZ;                    /**< 12 Derivative In value. Is mutable to allow it being altered in the CalculateDerivatives() method. */
         float DerivOutX, DerivOutY, DerivOutZ;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
-        unsigned int AngleKey;                                        /** 28		// this will be set to non null if there is a key */
+        uint32_t AngleKey;                                        /** 28		// this will be set to non null if there is a key */
 
     private:
     };

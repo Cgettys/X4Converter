@@ -24,9 +24,9 @@ namespace std {
         typedef aiVector3D _Kty;
 
         size_t operator()(const _Kty &value) const {
-            return *(dword *) &value.x ^
-                   *(dword *) &value.y ^
-                   *(dword *) &value.z;
+            return *(uint32_t *) &value.x ^
+                   *(uint32_t *) &value.y ^
+                   *(uint32_t *) &value.z;
         }
     };
 
@@ -36,7 +36,7 @@ namespace std {
         typedef AssimpUtil::VertexInfo _Kty;
 
         size_t operator()(const _Kty &value) const {
-            dword result = 0;
+            uint32_t result = 0;
             result ^= hash<aiVector3D>()(value.Position);
             result ^= hash<aiVector3D>()(value.Normal);
             for (auto i : value.UV) {

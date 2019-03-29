@@ -14,7 +14,7 @@ namespace xmf {
     }
 
     void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
-        std::vector<byte> compressedData;
+        std::vector<uint8_t> compressedData;
         // TODO
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
 //        throw std::runtime_error("Mismatching buffer data offset");
@@ -29,14 +29,14 @@ namespace xmf {
                 throw std::runtime_error(
                         "Noncompressed buffer has invalid size");
             }
-            byte b;
+            uint8_t b;
             for (int i = 0; i < GetUncompressedDataSize(); i++) {
                 reader >> b;
                 compressedData.emplace_back(b);
             }
         } else {
 
-            byte b;
+            uint8_t b;
             unsigned long compressedDataSize = GetCompressedDataSize();
             for (int i = 0; i < compressedDataSize; i++) {
                 reader >> b;
@@ -87,7 +87,7 @@ namespace xmf {
         return Description.NumSections * Description.NumItemsPerSection * Description.ItemSize;
     }
 
-    byte *XmfDataBuffer::GetData() {
+    uint8_t *XmfDataBuffer::GetData() {
 //    auto copiedData = new byte[_data.size()];
 //    std::copy(_data.begin(), _data.end(), copiedData);
 //    return copiedData;

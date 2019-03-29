@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include <X4ConverterTools/xmf/XmfVertexElement.h>
@@ -18,18 +19,18 @@ namespace xmf {
 
         std::string validate();
 
-        dword Type;
-        dword UsageIndex;
-        dword DataOffset;
-        dword Compressed;
-        byte _pad0[4] = {0, 0, 0, 0};
-        dword Format;
-        dword CompressedDataSize;
-        dword NumItemsPerSection;
-        dword ItemSize;
-        dword NumSections;
-        byte _pad1[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        dword NumVertexElements;
+        uint32_t Type;
+        uint32_t UsageIndex;
+        uint32_t DataOffset;
+        uint32_t Compressed;
+        uint8_t _pad0[4] = {0, 0, 0, 0};
+        uint32_t Format;
+        uint32_t CompressedDataSize;
+        uint32_t NumItemsPerSection;
+        uint32_t ItemSize;
+        uint32_t NumSections;
+        uint8_t _pad1[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        uint32_t NumVertexElements;
         XmfVertexElement VertexElements[16];
 
         bool IsVertexBuffer() const;

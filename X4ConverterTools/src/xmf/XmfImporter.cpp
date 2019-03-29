@@ -76,7 +76,7 @@ namespace xmf {
         // Add the materials to the scene
         if (!context.Materials.empty()) {
             std::string modelFolderPath = path(filePath).parent_path().string();
-            pScene->mNumMaterials = context.Materials.size();
+            pScene->mNumMaterials = numeric_cast<uint>(context.Materials.size());
             pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
             for (auto &it : context.Materials) {
                 Material *pMaterial = _materialLibrary.GetMaterial(it.first);

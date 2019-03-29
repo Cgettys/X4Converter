@@ -71,7 +71,8 @@ void ComponentPart::WritePart(pugi::xml_node connectionsNode,
                     (format("connection/parts/part[@name='%s']") % Name).str().c_str()).node();
     if (!partNode) {
         connectionNode = connectionsNode.append_child("connection");
-        int numConnections = connectionsNode.select_nodes("connection").size();
+        size_t numConnections = connectionsNode.select_nodes("connection").size();
+        // Note that this appends the connection (e.g. Connection(current-index)
         connectionNode.append_attribute("name").set_value(
                 (format("Connection%02d") % numConnections).str().c_str());
         connectionNode.append_attribute("tags").set_value("part");
@@ -84,6 +85,7 @@ void ComponentPart::WritePart(pugi::xml_node connectionsNode,
     WritePartPosition(partNode);
 
     // special case - ref parts don't have a size or center or lods
+    // TODO blender tag?
     if (partNode.attribute("ref")) {
         return;
     }

@@ -10,15 +10,15 @@ namespace xmf {
     public:
         XmfVertexElement();
 
-        XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, byte usageIndex = 0);
+        XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, uint8_t usageIndex = 0);
 
         explicit XmfVertexElement(Assimp::StreamReaderLE &reader);
 
         void Write(Assimp::StreamWriterLE &writer);
 
-        dword Type;
-        byte Usage;
-        byte UsageIndex;
-        byte _pad0[2] = {0, 0};
+        uint32_t Type;
+        uint8_t Usage;
+        uint8_t UsageIndex;
+        uint8_t _pad0[2] = {0, 0};
     };
 }

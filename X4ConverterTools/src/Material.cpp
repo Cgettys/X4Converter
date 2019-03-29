@@ -152,12 +152,12 @@ Material::GetDecompressedTextureFilePath(const std::string compressedFilePath, c
         return textureFilePath.string();
     }
 
-    byte buffer[0x400];
-    int bytesRead;
+    uint8_t buffer[0x400];
+    int uint8_tsRead;
     do {
-        bytesRead = gzread(pGzFile, buffer, sizeof(buffer));
-        fwrite(buffer, 1, bytesRead, pDdsFile);
-    } while (bytesRead == sizeof(buffer));
+        uint8_tsRead = gzread(pGzFile, buffer, sizeof(buffer));
+        fwrite(buffer, 1, uint8_tsRead, pDdsFile);
+    } while (uint8_tsRead == sizeof(buffer));
 
     fclose(pDdsFile);
     gzclose(pGzFile);
