@@ -49,6 +49,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         BOOST_TEST_CHECKPOINT("Read complete");
         BOOST_TEST(pStreamReader.GetCurrentPos() == 188);
         // TODO real validation?
-}
+    }
 
 BOOST_AUTO_TEST_SUITE_END()

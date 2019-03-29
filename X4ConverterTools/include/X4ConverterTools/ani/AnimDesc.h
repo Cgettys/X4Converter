@@ -1,4 +1,5 @@
 #pragma once
+
 #include <assimp/StreamReader.h>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>

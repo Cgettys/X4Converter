@@ -2,6 +2,7 @@
 
 using namespace boost;
 using namespace xmf;
+
 ComponentPartLod *ComponentPart::GetLod(int lodIndex) {
     for (ComponentPartLod &lod: Lods) {
         if (lod.LodIndex == lodIndex) {

@@ -16,18 +16,22 @@
 #include "../pugixml.hpp"
 
 namespace ani {
-class AnimFile {
-public:
+    class AnimFile {
+    public:
 
-    explicit AnimFile(Assimp::IOStream* pStream);
-    ~AnimFile();
+        explicit AnimFile(Assimp::IOStream *pStream);
 
-    std::string validate(); // Debug method
-    Header getHeader() const;
-    void setHeader(Header header);
-    void WriteAnims(pugi::xml_node tgtNode) const;
-protected:
-    Header header;
-    std::vector<AnimDesc> descs;
-};
+        ~AnimFile();
+
+        std::string validate(); // Debug method
+        Header getHeader() const;
+
+        void setHeader(Header header);
+
+        void WriteAnims(pugi::xml_node tgtNode) const;
+
+    protected:
+        Header header;
+        std::vector<AnimDesc> descs;
+    };
 }

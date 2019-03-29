@@ -26,7 +26,7 @@ std::shared_ptr<Component> Component::ReadFromFile(const std::string &filePath,
     pComponent->Name = componentNode.attribute("name").value();
     for (auto partNode : partNodes) {
         ComponentPart part(partNode.node(), geometryFolderPath, pIOHandler);
-        pComponent->Parts[part.Name]=part;
+        pComponent->Parts[part.Name] = part;
     }
     return pComponent;
 }
@@ -64,7 +64,7 @@ void Component::WriteToFile(const std::string &filePath,
         connectionsNode = componentNode.append_child("connections");
     }
 
-    for (auto & Part : Parts) {
+    for (auto &Part : Parts) {
         Part.second.WritePart(connectionsNode, geometryFolderPath, pIOHandler);
     }
 

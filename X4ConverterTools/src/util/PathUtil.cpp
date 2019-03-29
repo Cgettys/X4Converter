@@ -7,24 +7,27 @@ std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
     std::string result(filePath);
 
     std::string preferredSep;
-    preferredSep.append(1,path::preferred_separator);
+    preferredSep.append(1, path::preferred_separator);
     //TODO check for C://?
-    algorithm::replace_all(result,"\\",preferredSep);
-    algorithm::replace_all(result,"/",preferredSep);
+    algorithm::replace_all(result, "\\", preferredSep);
+    algorithm::replace_all(result, "/", preferredSep);
     return result;
 }
 
 std::string PathUtil::MakeGameSafe(const std::string &filePath) {
     std::string result(filePath);
-    algorithm::replace_all(result,"//","\\");
+    algorithm::replace_all(result, "//", "\\");
     return result;
 }
-path PathUtil::MakePlatformSafe(const path& filePath){
+
+path PathUtil::MakePlatformSafe(const path &filePath) {
     return path(MakePlatformSafe(filePath.string()));
 }
-path PathUtil::MakeGameSafe(const path& filePath){
-    return  path(MakeGameSafe(filePath.string()));
+
+path PathUtil::MakeGameSafe(const path &filePath) {
+    return path(MakeGameSafe(filePath.string()));
 }
+
 path PathUtil::GetRelativePath(const path &filePath,
                                const path &relativeToFolderPath) {
     if (filePath.is_relative()) {
@@ -43,9 +46,10 @@ path PathUtil::GetRelativePath(const path &filePath,
           [](char c) { return c == '/' || c == '\\'; });
 
     //https://stackoverflow.com/a/17270869
-    filePathParts.erase(std::remove(filePathParts.begin(), filePathParts.end(), ""),filePathParts.end());
+    filePathParts.erase(std::remove(filePathParts.begin(), filePathParts.end(), ""), filePathParts.end());
 
-    relativeToFolderPathParts.erase(std::remove(relativeToFolderPathParts.begin(), relativeToFolderPathParts.end(), ""),relativeToFolderPathParts.end());
+    relativeToFolderPathParts.erase(std::remove(relativeToFolderPathParts.begin(), relativeToFolderPathParts.end(), ""),
+                                    relativeToFolderPathParts.end());
 // TODO debug flag to control this
     //    for (auto s : filePathParts){
 //        std::cout << s<<",";
@@ -67,7 +71,8 @@ path PathUtil::GetRelativePath(const path &filePath,
     if (differenceStart == 0) {
         std::cerr << "Paths lack common root" << std::endl;
         throw std::runtime_error(
-                str(format("Paths do not have a common root %1% %2%") % filePath.c_str() % relativeToFolderPath.c_str()));
+                str(format("Paths do not have a common root %1% %2%") % filePath.c_str() %
+                    relativeToFolderPath.c_str()));
     }
     path result;
     for (int i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <climits>
 #include <utility>
+
 namespace ani {
     enum InterpolationType {
         INTERPOLATION_UNKNOWN,                /**< Unknown interpolation. */
@@ -26,11 +27,11 @@ namespace ani {
         explicit Keyframe(Assimp::StreamReaderLE &reader);
 
         // TODO tuple everything?
-        float getValueByAxis(const std::string& axis);
+        float getValueByAxis(const std::string &axis);
 
-        InterpolationType getInterpByAxis(const std::string& axis);
+        InterpolationType getInterpByAxis(const std::string &axis);
 
-        std::pair<float, float> getControlPoint(const std::string& axis, bool in);
+        std::pair<float, float> getControlPoint(const std::string &axis, bool in);
 
         std::string validate();// Debug method - throws exception if invalid, else returns human readable string
         static std::string getInterpolationTypeName(InterpolationType type);

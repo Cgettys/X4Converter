@@ -29,8 +29,8 @@ private:
 
     static boost::filesystem::path
     GetGeometryFolderPath(pugi::xml_node componentNode, const std::string &gameBaseFolderPath, bool createIfMissing);
-    void CreateDummyFile(const std::string &filePath, const std::string &gameBaseFolderPath);
 
+    void CreateDummyFile(const std::string &filePath, const std::string &gameBaseFolderPath);
 
 
 };

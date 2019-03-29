@@ -4,6 +4,7 @@
 #include <assimp/StreamWriter.h>
 #include <X4ConverterTools/types.h>
 #include "X4ConverterTools/types/DirectX.h"
+
 namespace xmf {
     class XmfVertexElement {
 

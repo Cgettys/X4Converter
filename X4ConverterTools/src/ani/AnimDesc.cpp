@@ -214,7 +214,7 @@ namespace ani {
 
     void
     AnimDesc::WriteInputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                   std::string &axis) const {
+                                std::string &axis) const {
         pugi::xml_node inputNode = animRoot.append_child("source");
         inputNode.append_attribute("id").set_value((animKey + "-input").c_str());
         auto inputArrayKey = (animKey + "-input-array");
@@ -243,7 +243,7 @@ namespace ani {
 
     void
     AnimDesc::WriteOutputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                    std::string &axis, std::string &keyType) const {
+                                 std::string &axis, std::string &keyType) const {
         pugi::xml_node outputNode = animRoot.append_child("source");
         outputNode.append_attribute("id").set_value((animKey + "-output").c_str());
         auto outputArrayKey = (animKey + "-output-array");
@@ -274,8 +274,8 @@ namespace ani {
 
     void
     AnimDesc::WriteInterpolationElement(std::string &animKey, pugi::xml_node &animRoot,
-                                           std::vector<Keyframe> &frames,
-                                           std::string &axis) const {
+                                        std::vector<Keyframe> &frames,
+                                        std::string &axis) const {
         pugi::xml_node interpolationNode = animRoot.append_child("source");
         interpolationNode.append_attribute("id").set_value(
                 (animKey + "-interpolation").c_str());
@@ -313,7 +313,7 @@ namespace ani {
 
     void
     AnimDesc::WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                       std::string &axis) const {
+                                    std::string &axis) const {
         // TODO refactor to combine wiht OutTangent
         pugi::xml_node inTangentNode = animRoot.append_child("source");
         inTangentNode.append_attribute("id").set_value((animKey + "-intangent").c_str());
@@ -348,8 +348,8 @@ namespace ani {
 
     void
     AnimDesc::WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot,
-                                        std::vector<Keyframe> &frames,
-                                        std::string &axis) const {
+                                     std::vector<Keyframe> &frames,
+                                     std::string &axis) const {
         pugi::xml_node outTangentNode = animRoot.append_child("source");
         outTangentNode.append_attribute("id").set_value((animKey + "-outtangent").c_str());
         auto outTangentArrayKey = (animKey + "-outtangent-array");

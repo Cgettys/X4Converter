@@ -46,8 +46,9 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     }
 
     bool matrixPred(pugi::xml_node node) {
-    return strncmp(node.name(), "matrix",6)== 0;
-}
+        return strncmp(node.name(), "matrix", 6) == 0;
+    }
+
     BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
         const std::string aniFile =
                 "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";

@@ -1,6 +1,7 @@
 #include <X4ConverterTools/util/AssimpUtil.h>
 
 using boost::numeric_cast;
+
 void AssimpUtil::MergeVertices(aiMesh *pMesh) {
     std::unordered_map<VertexInfo, int> firstVertexIdxByPos;
     std::unordered_map<int, int> indexToFirstIndex;

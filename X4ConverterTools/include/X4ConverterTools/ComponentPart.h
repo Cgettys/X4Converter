@@ -13,9 +13,10 @@
 class ComponentPart {
 public:
     ComponentPart() = default;
+
     explicit ComponentPart(pugi::xml_node partNode,
-            const boost::filesystem::path &geometryFolderPath,
-            Assimp::IOSystem *pIOHandler);
+                           const boost::filesystem::path &geometryFolderPath,
+                           Assimp::IOSystem *pIOHandler);
 
     ComponentPartLod *GetLod(int lodIndex);
 

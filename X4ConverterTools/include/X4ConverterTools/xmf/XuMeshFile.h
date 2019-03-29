@@ -82,9 +82,11 @@ namespace xmf {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > CompressBuffers();
 
         void
-        WriteBufferDescs(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
+        WriteBufferDescs(Assimp::IOStream *pStream,
+                         std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
 
-        void WriteBuffers(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
+        void
+        WriteBuffers(Assimp::IOStream *pStream, std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
 
         XmfHeader header;
         std::vector<XmfDataBuffer> buffers;

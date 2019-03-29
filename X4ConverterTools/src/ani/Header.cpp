@@ -32,7 +32,8 @@ namespace ani {
             result.append(
                     "Ani file format has been updated!\n");
             valid = false;
-        }if (KeyOffsetBytes < 16) {
+        }
+        if (KeyOffsetBytes < 16) {
 
             result.append(
                     "Ani file either is corrupted or the field is actually unsigned\n");

@@ -172,7 +172,7 @@ namespace ani {
         }
     }
 
-    float Keyframe::getValueByAxis(const std::string& axis) {
+    float Keyframe::getValueByAxis(const std::string &axis) {
         if (axis == "X") {
             return ValueX;
         } else if (axis == "Y") {
@@ -185,7 +185,7 @@ namespace ani {
 
     }
 
-    InterpolationType Keyframe::getInterpByAxis(const std::string& axis) {
+    InterpolationType Keyframe::getInterpByAxis(const std::string &axis) {
         if (axis == "X") {
             return InterpolationX;
         } else if (axis == "Y") {
@@ -198,7 +198,7 @@ namespace ani {
 
     }
 
-    std::pair<float, float> Keyframe::getControlPoint(const std::string& axis, bool in) {
+    std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool in) {
 
         if (in) {
             if (axis == "X") {

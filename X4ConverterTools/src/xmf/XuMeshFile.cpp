@@ -419,7 +419,8 @@ namespace xmf {
                         }
 
                         case D3DDECLUSAGE_COLOR: {
-                            pMesh->mColors[elem.UsageIndex][localVertexIdx] = DXUtil::ConvertVertexAttributeToColorF(pVertexElemData, elemType);
+                            pMesh->mColors[elem.UsageIndex][localVertexIdx] = DXUtil::ConvertVertexAttributeToColorF(
+                                    pVertexElemData, elemType);
                             break;
                         }
 

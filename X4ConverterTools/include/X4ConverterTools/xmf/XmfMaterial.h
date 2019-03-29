@@ -3,6 +3,7 @@
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include <boost/format.hpp>
+
 namespace xmf {
     class XmfMaterial {
     public:

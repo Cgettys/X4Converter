@@ -2,6 +2,7 @@
 
 #include <X4ConverterTools/types.h>
 #include "../Vendor/half/include/half.hpp"
+
 namespace util {
     class DXUtil {
     public:
@@ -12,6 +13,7 @@ namespace util {
         static aiColor4D ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYPE type);
 
         static int WriteAiVector3DToVertexAttribute(aiVector3D vector, D3DDECLTYPE type, uint8_t *pAttribute);
+
         static int WriteColorFToVertexAttribute(const aiColor4D &color, D3DDECLTYPE type, uint8_t *pAttribute);
     };
 }

@@ -1,4 +1,5 @@
 #include <X4ConverterTools/xmf/XmfVertexElement.h>
+
 namespace xmf {
     XmfVertexElement::XmfVertexElement() {
         Type = D3DDECLTYPE_UNUSED;
