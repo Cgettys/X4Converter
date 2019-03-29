@@ -1,5 +1,36 @@
-add_subdirectory(src)
-#https://rix0r.nl/blog/2015/08/13/cmake-guide/
+
+
+
+set("LIB_SRCS"
+        src/API.cpp
+        src/Component.cpp
+        src/ComponentPart.cpp
+        src/ComponentPartLod.cpp
+        src/Material.cpp
+        src/MaterialCollection.cpp
+        src/MaterialLibrary.cpp
+        src/ani/AniFile.cpp
+        src/ani/AniHeader.cpp
+        src/ani/AniAnimDesc.cpp
+        src/ani/AniKeyframe.cpp
+        src/types/Color.cpp
+        src/types/Color8.cpp
+        src/types/Matrix44.cpp
+        src/types/Quaternion.cpp
+        src/types/Vec2D.cpp
+        src/types/Vec3D.cpp
+        src/types/Vec4D.cpp
+        src/util/AssimpUtil.cpp
+        src/util/DXUtil.cpp
+        src/util/PathUtil.cpp
+        src/xmf/XmfDataBuffer.cpp
+        src/xmf/XmfDataBufferDesc.cpp
+        src/xmf/XmfExporter.cpp
+        src/xmf/XmfImporter.cpp
+        src/xmf/XmfMaterial.cpp
+        src/xmf/XmfVertexElement.cpp
+        src/xmf/XuMeshFile.cpp
+        src/xmf/XmfHeader.cpp)
 add_library(X4ConverterTools SHARED ${LIB_SRCS})
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem ${pugixml_LIB} ${ZLIB_LIBRARIES} ${assimp_LIB})
 # TODO fix so that proper includes are passed onto dependent projects?
