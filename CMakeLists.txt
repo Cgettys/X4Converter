@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project (X4Converter)
+project (X4Converter CXX C)
 include(CTest)
 include(GNUInstallDirs)
 set(CMAKE_C_STANDARD 14)

@@ -148,7 +148,7 @@ aiNode *XmfImporter::ConvertComponentToAiNode(Component &component,
     auto *pComponentNode = new aiNode(component.Name);
     pComponentNode->mChildren = new aiNode *[rootNodes.size()];
 
-    aiNode *pRealRootNode = new aiNode("ROOT_NODE_PLZ");
+    aiNode *pRealRootNode = new aiNode("Scene");// To make blender happy name root node Scene?
     pRealRootNode->mChildren = new aiNode *[1];
     pRealRootNode->mChildren[0] = pComponentNode;
     pRealRootNode->mNumChildren = 1;
