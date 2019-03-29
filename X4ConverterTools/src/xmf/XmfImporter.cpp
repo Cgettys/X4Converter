@@ -5,6 +5,7 @@ using namespace boost::algorithm;
 using namespace boost::filesystem;
 using namespace Assimp;
 
+
 namespace xmf {
     XmfImporter::XmfImporter(const std::string &gameBaseFolderPath) :
             _materialLibrary(gameBaseFolderPath) {
@@ -59,7 +60,7 @@ namespace xmf {
                 std::cerr << "No ANI file fond at path: " << aniPath << ". This likely indicates an error."
                           << std::endl;
             } else {
-                AniFile aniFile(pAniStream);
+                ani::AnimFile aniFile(pAniStream);
             }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //

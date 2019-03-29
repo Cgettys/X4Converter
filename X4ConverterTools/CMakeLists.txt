@@ -9,10 +9,10 @@ set("LIB_SRCS"
         src/Material.cpp
         src/MaterialCollection.cpp
         src/MaterialLibrary.cpp
-        src/ani/AniFile.cpp
-        src/ani/AniHeader.cpp
-        src/ani/AniAnimDesc.cpp
-        src/ani/AniKeyframe.cpp
+        src/ani/AnimFile.cpp
+        src/ani/Header.cpp
+        src/ani/AnimDesc.cpp
+        src/ani/Keyframe.cpp
         src/types/Color.cpp
         src/types/Color8.cpp
         src/types/Matrix44.cpp

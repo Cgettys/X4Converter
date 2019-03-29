@@ -10,23 +10,24 @@
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
-#include "AniHeader.h"
-#include "AniAnimDesc.h"
+#include "Header.h"
+#include "AnimDesc.h"
 
 #include "../pugixml.hpp"
-// TODO superclass for XMF/ANI?
 
-class AniFile {
+namespace ani {
+class AnimFile {
 public:
 
-    explicit AniFile(Assimp::IOStream* pStream);
-    ~AniFile();
+    explicit AnimFile(Assimp::IOStream* pStream);
+    ~AnimFile();
 
     std::string validate(); // Debug method
-    AniHeader getHeader() const;
-    void setHeader(AniHeader header);
+    Header getHeader() const;
+    void setHeader(Header header);
     void WriteAnims(pugi::xml_node tgtNode) const;
 protected:
-    AniHeader header;
-    std::vector<AniAnimDesc> descs;
+    Header header;
+    std::vector<AnimDesc> descs;
 };
+}

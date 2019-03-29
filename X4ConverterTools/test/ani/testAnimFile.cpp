@@ -6,9 +6,7 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
 
-//#include <X4ConverterTools/API.h>
-//#include <X4ConverterTools/types.h>
-#include <X4ConverterTools/ani/AniFile.h>
+#include <X4ConverterTools/ani/AnimFile.h>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
@@ -21,6 +19,7 @@
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
+using namespace ani;
 BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 
 
@@ -34,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
-        AniFile file = AniFile(sourceStream);
+        AnimFile file = AnimFile(sourceStream);
         std::cout << file.validate();
         delete io;
     }
@@ -57,7 +56,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
-        AniFile file = AniFile(sourceStream);
+        AnimFile file = AnimFile(sourceStream);
         std::cout << file.validate();
 
         pugi::xml_document doc;
@@ -153,7 +152,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 
                 auto sourceStream = io->Open(filePath.c_str(), "rb");
                 try {
-                    AniFile file(sourceStream);
+                    AnimFile file(sourceStream);
                     std::cout << filePath.c_str() << std::endl;
                     file.validate();
                 } catch (std::runtime_error &e) {

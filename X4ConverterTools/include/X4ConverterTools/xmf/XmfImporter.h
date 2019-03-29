@@ -10,7 +10,7 @@
 #include <X4ConverterTools/Material.h>
 #include <X4ConverterTools/MaterialLibrary.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
-#include <X4ConverterTools/ani/AniFile.h>
+#include <X4ConverterTools/ani/AnimFile.h>
 #include <X4ConverterTools/types/ConversionContext.h>
 
 #include <assimp/IOSystem.hpp>
