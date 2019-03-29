@@ -14,10 +14,6 @@ set("LIB_SRCS"
         src/ani/AnimDesc.cpp
         src/ani/Keyframe.cpp
         src/types/Color.cpp
-        src/types/Color8.cpp
-        src/types/Matrix44.cpp
-        src/types/Quaternion.cpp
-        src/types/Vec2D.cpp
         src/types/Vec3D.cpp
         src/types/Vec4D.cpp
         src/util/AssimpUtil.cpp

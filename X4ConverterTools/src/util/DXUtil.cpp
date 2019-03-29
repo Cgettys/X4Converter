@@ -1,5 +1,5 @@
 #include <X4ConverterTools/util/DXUtil.h>
-
+#include "half.hpp"
 namespace util {
     int DXUtil::GetVertexElementTypeSize(D3DDECLTYPE type) {
         switch (type) {
@@ -64,14 +64,14 @@ namespace util {
                              (float) ((short *) pAttribute)[2] / 32767.0f);
 
             case D3DDECLTYPE_USHORT2N:
-                return Vec3D((float) ((ushort *) pAttribute)[0] / 65535.0f,
-                             (float) ((ushort *) pAttribute)[1] / 65535.0f,
+                return Vec3D((float) ((word *) pAttribute)[0] / 65535.0f,
+                             (float) ((word *) pAttribute)[1] / 65535.0f,
                              0.0f);
 
             case D3DDECLTYPE_USHORT4N:
-                return Vec3D((float) ((ushort *) pAttribute)[0] / 65535.0f,
-                             (float) ((ushort *) pAttribute)[1] / 65535.0f,
-                             (float) ((ushort *) pAttribute)[2] / 65535.0f);
+                return Vec3D((float) ((word *) pAttribute)[0] / 65535.0f,
+                             (float) ((word *) pAttribute)[1] / 65535.0f,
+                             (float) ((word *) pAttribute)[2] / 65535.0f);
 
             case D3DDECLTYPE_FLOAT16_2:
                 return Vec3D(((half_float::half *) pAttribute)[0], ((half_float::half *) pAttribute)[1], 0.0f);
@@ -167,15 +167,15 @@ namespace util {
                 break;
 
             case D3DDECLTYPE_USHORT2N:
-                ((ushort *) pAttribute)[0] = (ushort) (vector.X * 65535.0f);
-                ((ushort *) pAttribute)[1] = (ushort) (vector.Y * 65535.0f);
+                ((word *) pAttribute)[0] = (word) (vector.X * 65535.0f);
+                ((word *) pAttribute)[1] = (word) (vector.Y * 65535.0f);
                 break;
 
             case D3DDECLTYPE_USHORT4N:
-                ((ushort *) pAttribute)[0] = (ushort) (vector.X * 65535.0f);
-                ((ushort *) pAttribute)[1] = (ushort) (vector.Y * 65535.0f);
-                ((ushort *) pAttribute)[2] = (ushort) (vector.Z * 65535.0f);
-                ((ushort *) pAttribute)[3] = 0;
+                ((word *) pAttribute)[0] = (word) (vector.X * 65535.0f);
+                ((word *) pAttribute)[1] = (word) (vector.Y * 65535.0f);
+                ((word *) pAttribute)[2] = (word) (vector.Z * 65535.0f);
+                ((word *) pAttribute)[3] = 0;
                 break;
 
             case D3DDECLTYPE_FLOAT16_2:

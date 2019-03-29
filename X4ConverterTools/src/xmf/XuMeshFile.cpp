@@ -154,7 +154,7 @@ using namespace boost;
                 std::vector<byte> &compressedData = result[&buffer];
                 compressedData.resize(compressBound(buffer.GetUncompressedDataSize()));
 
-                ulong compressedSize = compressedData.size();
+                unsigned long int compressedSize = compressedData.size();
                 int status = compress(compressedData.data(), &compressedSize,
                                       buffer.GetData(), buffer.GetUncompressedDataSize());
                 if (status != Z_OK)
@@ -196,7 +196,7 @@ using namespace boost;
                     aiMesh *pMesh = ConvertXuMeshToAiMesh( 0, NumIndices(),
                                                           name, context);
 
-                    pMeshGroupNode->mMeshes = new uint[1];
+                    pMeshGroupNode->mMeshes = new dword[1];
                     pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] =
                             context.Meshes.size();
                     context.Meshes.push_back(pMesh);
@@ -220,7 +220,7 @@ using namespace boost;
 
                         auto *pMeshNode = new aiNode();
                         pMeshNode->mName = pMesh->mName;
-                        pMeshNode->mMeshes = new uint[1];
+                        pMeshNode->mMeshes = new dword[1];
                         pMeshNode->mMeshes[pMeshNode->mNumMeshes++] =
                                 context.Meshes.size();
                         context.Meshes.push_back(pMesh);
@@ -387,7 +387,7 @@ using namespace boost;
                          vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {
                         int vertexIdx = (
                                 indexFormat == D3DFMT_INDEX16 ?
-                                ((ushort *) pIndexes)[vertexIdxIdx] :
+                                ((word *) pIndexes)[vertexIdxIdx] :
                                 ((int *) pIndexes)[vertexIdxIdx]);
                         if (vertexIdx < 0
                             || vertexIdx >= buffer.Description.NumItemsPerSection)
@@ -399,7 +399,7 @@ using namespace boost;
                         int localVertexIdx = vertexIdxIdx - firstIndex;
                         switch (elem.Usage) {
                             case D3DDECLUSAGE_POSITION: {
-                                aiVector3D position = DXUtil::ConvertVertexAttributeToVec3D(
+                                aiVector3D position = util::DXUtil::ConvertVertexAttributeToVec3D(
                                         pVertexElemData, elemType);
                                 position.x = -position.x;
                                 pMesh->mVertices[localVertexIdx] = position;
@@ -407,7 +407,7 @@ using namespace boost;
                             }
 
                             case D3DDECLUSAGE_NORMAL: {
-                                aiVector3D normal = DXUtil::ConvertVertexAttributeToVec3D(
+                                aiVector3D normal = util::DXUtil::ConvertVertexAttributeToVec3D(
                                         pVertexElemData, elemType);
                                 normal.x = -normal.x;
                                 pMesh->mNormals[localVertexIdx] = normal;
@@ -418,7 +418,7 @@ using namespace boost;
                                 aiVector3D *pTangents = (
                                         elem.UsageIndex == 0 ?
                                         pMesh->mTangents : pMesh->mBitangents);
-                                aiVector3D tangent = DXUtil::ConvertVertexAttributeToVec3D(
+                                aiVector3D tangent = util::DXUtil::ConvertVertexAttributeToVec3D(
                                         pVertexElemData, elemType);
                                 tangent.x = -tangent.x;
                                 pTangents[localVertexIdx] = tangent;
@@ -426,7 +426,7 @@ using namespace boost;
                             }
 
                             case D3DDECLUSAGE_TEXCOORD: {
-                                aiVector3D texcoord = DXUtil::ConvertVertexAttributeToVec3D(
+                                aiVector3D texcoord = util::DXUtil::ConvertVertexAttributeToVec3D(
                                         pVertexElemData, elemType);
                                 texcoord.y = 1.0f - texcoord.y;
                                 pMesh->mTextureCoords[elem.UsageIndex][localVertexIdx] =
@@ -436,7 +436,7 @@ using namespace boost;
 
                             case D3DDECLUSAGE_COLOR: {
                                 pMesh->mColors[elem.UsageIndex][localVertexIdx] =
-                                        DXUtil::ConvertVertexAttributeToColorF(
+                                        util::DXUtil::ConvertVertexAttributeToColorF(
                                                 pVertexElemData, elemType);
                                 break;
                             }
@@ -445,7 +445,7 @@ using namespace boost;
                                 throw std::runtime_error(str(format("Unexpected Usage: %1%") % elem.Usage));
                         }
                     }
-                    elemOffset += DXUtil::GetVertexElementTypeSize(
+                    elemOffset += util::DXUtil::GetVertexElementTypeSize(
                             (D3DDECLTYPE) elem.Type);
                 }
             }
@@ -456,7 +456,7 @@ using namespace boost;
             int index = 0;
             for (int i = 0; i < numIndices / 3; ++i) {
                 aiFace &face = pMesh->mFaces[pMesh->mNumFaces++];
-                face.mIndices = new uint[3];
+                face.mIndices = new dword[3];
                 while (face.mNumIndices < 3) {
                     face.mIndices[face.mNumIndices++] = index++;
                 }

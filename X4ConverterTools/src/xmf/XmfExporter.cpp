@@ -133,7 +133,7 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
     }
     ApplyVertexDeclaration(vertexDecl, vertexBuffer);
     if (vertexBuffer.Description.NumItemsPerSection <= 0xFFFF) {
-        indexBuffer.Description.ItemSize = sizeof(ushort);
+        indexBuffer.Description.ItemSize = sizeof(word);
         indexBuffer.Description.Format = 30;
     } else {
         indexBuffer.Description.ItemSize = sizeof(int);
@@ -158,8 +158,8 @@ std::shared_ptr<XuMeshFile> XmfExporter::ConvertMeshNode(const aiScene *pScene, 
             aiFace *pFace = &pMesh->mFaces[i];
             for (int j = 0; j < 3; ++j) {
                 int index = vertexOffset + pFace->mIndices[j];
-                if (indexBuffer.Description.ItemSize == sizeof(ushort)) {
-                    *(ushort *) pIndex = (ushort) index;
+                if (indexBuffer.Description.ItemSize == sizeof(word)) {
+                    *(word *) pIndex = (word) index;
                 } else {
                     *(int *) pIndex = index;
                 }
@@ -256,7 +256,7 @@ void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declarat
     buffer.Description.NumVertexElements = declaration.size();
     for (int i = 0; i < declaration.size(); ++i) {
         buffer.Description.VertexElements[i] = declaration[i];
-        declarationSize += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) declaration[i].Type);
+        declarationSize += util::DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) declaration[i].Type);
     }
     buffer.Description.ItemSize = declarationSize;
     buffer.Description.DenormalizeVertexDeclaration();
@@ -272,7 +272,7 @@ int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexEleme
                 position.x = -position.x;
             }
 
-            return DXUtil::WriteVec3DToVertexAttribute(position, type, pElemData);
+            return util::DXUtil::WriteVec3DToVertexAttribute(position, type, pElemData);
         }
 
         case D3DDECLUSAGE_NORMAL: {
@@ -282,7 +282,7 @@ int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexEleme
                 normal.x = -normal.x;
             }
 
-            return DXUtil::WriteVec3DToVertexAttribute(normal, type, pElemData);
+            return util::DXUtil::WriteVec3DToVertexAttribute(normal, type, pElemData);
         }
 
         case D3DDECLUSAGE_TANGENT: {
@@ -292,7 +292,7 @@ int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexEleme
                 tangent.x = -tangent.x;
             }
 
-            return DXUtil::WriteVec3DToVertexAttribute(tangent, type, pElemData);
+            return util::DXUtil::WriteVec3DToVertexAttribute(tangent, type, pElemData);
         }
 
         case D3DDECLUSAGE_TEXCOORD: {
@@ -302,7 +302,7 @@ int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexEleme
                 texcoord.y = 1.0f - texcoord.y;
             }
 
-            return DXUtil::WriteVec3DToVertexAttribute(texcoord, type, pElemData);
+            return util::DXUtil::WriteVec3DToVertexAttribute(texcoord, type, pElemData);
         }
 
         case D3DDECLUSAGE_COLOR: {
@@ -310,7 +310,7 @@ int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexEleme
             if (pMesh->mColors[elem.UsageIndex])
                 color = pMesh->mColors[elem.UsageIndex][vertexIdx];
 
-            return DXUtil::WriteColorFToVertexAttribute(color, type, pElemData);
+            return util::DXUtil::WriteColorFToVertexAttribute(color, type, pElemData);
         }
         default:
             throw std::runtime_error("Usage not recognized");

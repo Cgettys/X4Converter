@@ -1,5 +1,6 @@
 #pragma once
 
+#include <X4ConverterTools/types.h>
 #include <unordered_map>
 #include <assimp/scene.h>
 
@@ -23,9 +24,9 @@ namespace std {
         typedef aiVector3D _Kty;
 
         size_t operator()(const _Kty &value) const {
-            return *(uint *) &value.x ^
-                   *(uint *) &value.y ^
-                   *(uint *) &value.z;
+            return *(dword *) &value.x ^
+                   *(dword *) &value.y ^
+                   *(dword *) &value.z;
         }
     };
 
@@ -35,7 +36,7 @@ namespace std {
         typedef AssimpUtil::VertexInfo _Kty;
 
         size_t operator()(const _Kty &value) const {
-            uint result = 0;
+            dword result = 0;
             result ^= hash<aiVector3D>()(value.Position);
             result ^= hash<aiVector3D>()(value.Normal);
             for (auto i : value.UV) {

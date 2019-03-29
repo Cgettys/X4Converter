@@ -137,7 +137,7 @@ namespace xmf {
     int XmfDataBufferDesc::GetVertexDeclarationSize() {
         int size = 0;
         for (int i = 0; i < NumVertexElements; ++i) {
-            size += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) VertexElements[i].Type);
+            size += util::DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) VertexElements[i].Type);
         }
         return size;
     }
@@ -179,8 +179,8 @@ namespace xmf {
             valid = false;
         } else if (IsIndexBuffer()) {
             D3DFORMAT format = GetIndexFormat();
-            if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(ushort)) ||
-                (format == D3DFMT_INDEX32 && ItemSize != sizeof(uint))) {
+            if ((format == D3DFMT_INDEX16 && ItemSize != sizeof(word)) ||
+                (format == D3DFMT_INDEX32 && ItemSize != sizeof(dword))) {
                 ret.append("\tERROR: Item size for index buffer is incorrect");
                 valid = false;
             }
