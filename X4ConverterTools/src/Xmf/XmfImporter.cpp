@@ -1,5 +1,4 @@
 #include <X4ConverterTools/Xmf/XmfImporter.h>
-#include <X4ConverterTools/Ani/AniFile.h>
 
 using namespace boost;
 using namespace boost::algorithm;
