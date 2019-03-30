@@ -10,8 +10,8 @@
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 
-#include <X4ConverterTools/xmf/XmfImporter.h>
-#include <X4ConverterTools/xmf/XmfExporter.h>
+#include <X4ConverterTools/AssetImporter.h>
+#include <X4ConverterTools/AssetExporter.h>
 
 bool ConvertXmlToDae(const char *pszGameBaseFolderPath, const char *pszXmlFilePath, const char *pszDaeFilePath);
 

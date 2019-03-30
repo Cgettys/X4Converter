@@ -23,10 +23,10 @@
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 
-namespace xmf {
-    class XmfImporter : public Assimp::BaseImporter {
+namespace X4ConverterTools {
+    class AssetImporter : public Assimp::BaseImporter {
     public:
-        explicit XmfImporter(const std::string &gameBaseFolderPath);
+        explicit AssetImporter(const std::string &gameBaseFolderPath);
 
         const aiImporterDesc *GetInfo() const override;
 

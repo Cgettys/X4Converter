@@ -15,8 +15,8 @@
 #include <assimp/Exceptional.h>
 #include <assimp/Exporter.hpp>
 
-namespace xmf {
-    class XmfExporter {
+namespace X4ConverterTools {
+    class AssetExporter {
     public:
         static Assimp::Exporter::ExportFormatEntry Format;
 
@@ -39,10 +39,10 @@ namespace xmf {
 
         static void CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
 
-        static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
+        static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<xmf::XmfVertexElement> &declaration);
 
-        static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
+        static void ApplyVertexDeclaration(std::vector<xmf::XmfVertexElement> &declaration, xmf::XmfDataBuffer &buffer);
 
-        static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, uint8_t *pElemData);
+        static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, xmf::XmfVertexElement &elem, uint8_t *pElemData);
     };
 }

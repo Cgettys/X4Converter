@@ -1,15 +1,18 @@
-#include <X4ConverterTools/xmf/XmfExporter.h>
+#include <X4ConverterTools/AssetExporter.h>
 
 using namespace boost;
 using boost::numeric_cast;
 using util::DXUtil;
-Assimp::Exporter::ExportFormatEntry xmf::XmfExporter::Format("xmf", "EgoSoft XuMeshFile exporter", ".xml",
-                                                             XmfExporter::Export);
-namespace xmf {
-    std::string XmfExporter::GameBaseFolderPath;
+namespace X4ConverterTools {
 
-    void XmfExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
-                             const Assimp::ExportProperties *props) {
+    using namespace xmf;
+    Assimp::Exporter::ExportFormatEntry AssetExporter::Format("xmf", "EgoSoft XuMeshFile exporter", ".xml",
+                                                              AssetExporter::Export);
+
+    std::string AssetExporter::GameBaseFolderPath;
+
+    void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
+                               const Assimp::ExportProperties *props) {
         try {
             if (GameBaseFolderPath.empty()) {
                 throw std::runtime_error("GameBaseFolderPath not set");
@@ -36,8 +39,8 @@ namespace xmf {
         }
     }
 
-    void XmfExporter::ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene,
-                                      aiNode *pPartNode) {
+    void AssetExporter::ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene,
+                                        aiNode *pPartNode) {
         std::string partName = pPartNode->mName.C_Str();
         if (!std::regex_match(partName, std::regex("\\w+")))
             throw std::runtime_error(
@@ -71,11 +74,11 @@ namespace xmf {
         }
     }
 
-    void XmfExporter::ConvertCollisionNode(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode) {
+    void AssetExporter::ConvertCollisionNode(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode) {
         part.CollisionMesh = ConvertMeshNode(pScene, pCollisionNode, true);
     }
 
-    void XmfExporter::ConvertLodNode(ComponentPart &part, int lodIndex, const aiScene *pScene, aiNode *pLodNode) {
+    void AssetExporter::ConvertLodNode(ComponentPart &part, int lodIndex, const aiScene *pScene, aiNode *pLodNode) {
         for (ComponentPartLod &lod: part.Lods) {
             if (lod.LodIndex == lodIndex)
                 throw std::runtime_error((format("Duplicate lod index %d for part %s") % lodIndex % part.Name).str());
@@ -85,7 +88,7 @@ namespace xmf {
     }
 
     std::shared_ptr<XuMeshFile>
-    XmfExporter::ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
+    AssetExporter::ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
         std::vector<aiNode *> meshNodes;
         if (pNode->mNumChildren == 0) {
             meshNodes.push_back(pNode);
@@ -176,7 +179,7 @@ namespace xmf {
         return pMeshFile;
     }
 
-    void XmfExporter::CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode) {
+    void AssetExporter::CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode) {
         if (pCollisionNode->mNumMeshes == 0)
             return;
 
@@ -204,7 +207,7 @@ namespace xmf {
         part.Center = aiVector3D(lowerBound.x + part.Size.x, lowerBound.y + part.Size.y, lowerBound.z + part.Size.z);
     }
 
-    void XmfExporter::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
+    void AssetExporter::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
         std::vector<XmfVertexElement> meshDeclaration;
         if (pMesh->mVertices)
             meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
@@ -238,7 +241,7 @@ namespace xmf {
         }
     }
 
-    void XmfExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
+    void AssetExporter::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
         if (declaration.size() >
             sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
             throw std::runtime_error("Too many vertex elements in vertex declaration");
@@ -254,7 +257,7 @@ namespace xmf {
         buffer.Description.DenormalizeVertexDeclaration();
     }
 
-    int XmfExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, uint8_t *pElemData) {
+    int AssetExporter::WriteVertexElement(aiMesh *pMesh, int vertexIdx, XmfVertexElement &elem, uint8_t *pElemData) {
         auto type = (D3DDECLTYPE) elem.Type;
         switch (elem.Usage) {
             case D3DDECLUSAGE_POSITION: {

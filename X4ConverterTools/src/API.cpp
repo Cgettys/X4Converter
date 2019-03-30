@@ -1,14 +1,14 @@
 #include <X4ConverterTools/API.h>
 #include <assimp/DefaultIOSystem.h>
 
-using namespace xmf;
+using namespace X4ConverterTools;
 
 bool ConvertXmlToDae(const char *pszGameBaseFolderPath, const char *pszXmlFilePath, const char *pszDaeFilePath) {
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
 //    Assimp::Importer* importer = new Assimp::Importer();
-//    importer->RegisterLoader(new XmfImporter(pszGameBaseFolderPath));
-    XmfImporter importer(pszGameBaseFolderPath);
+//    importer->RegisterLoader(new AssetImporter(pszGameBaseFolderPath));
+    AssetImporter importer(pszGameBaseFolderPath);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     importer.InternReadFile(pszXmlFilePath, pScene, io);
 //    const aiScene *pScene = importer->ReadFile(pszXmlFilePath, 0);
@@ -41,8 +41,8 @@ bool ConvertDaeToXml(const char *pszGameBaseFolderPath, const char *pszDaeFilePa
 
 
 //    Assimp::Exporter* exporter = new Assimp::Exporter();
-//    exporter->RegisterExporter(XmfExporter::Format);
-//    XmfExporter::GameBaseFolderPath = pszGameBaseFolderPath;
+//    exporter->RegisterExporter(AssetExporter::Format);
+//    AssetExporter::GameBaseFolderPath = pszGameBaseFolderPath;
 //    aiReturn result = exporter->Export(pScene, "xmf", pszXmfFilePath);
 //    if (result != aiReturn_SUCCESS) {
 //        std::cerr << "Failed during export" << std::endl;
@@ -54,10 +54,10 @@ bool ConvertDaeToXml(const char *pszGameBaseFolderPath, const char *pszDaeFilePa
 //
 //    delete importer;
 //    delete exporter;
-    XmfExporter::GameBaseFolderPath = pszGameBaseFolderPath;
+    AssetExporter::GameBaseFolderPath = pszGameBaseFolderPath;
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
-    XmfExporter exporter;
+    AssetExporter exporter;
     exporter.Export(pszXmfFilePath, io, pScene, nullptr);
     delete io;
     delete importer;

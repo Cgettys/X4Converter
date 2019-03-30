@@ -18,8 +18,8 @@ set("LIB_SRCS"
         src/util/PathUtil.cpp
         src/xmf/XmfDataBuffer.cpp
         src/xmf/XmfDataBufferDesc.cpp
-        src/xmf/XmfExporter.cpp
-        src/xmf/XmfImporter.cpp
+        src/AssetExporter.cpp
+        src/AssetImporter.cpp
         src/xmf/XmfMaterial.cpp
         src/xmf/XmfVertexElement.cpp
         src/xmf/XuMeshFile.cpp

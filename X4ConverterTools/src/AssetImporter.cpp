@@ -1,4 +1,4 @@
-#include <X4ConverterTools/xmf/XmfImporter.h>
+#include <X4ConverterTools/AssetImporter.h>
 
 using namespace boost;
 using namespace boost::algorithm;
@@ -6,12 +6,12 @@ using namespace boost::filesystem;
 using namespace Assimp;
 
 
-namespace xmf {
-    XmfImporter::XmfImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
+namespace X4ConverterTools {
+    AssetImporter::AssetImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
         _gameBaseFolderPath = gameBaseFolderPath;
     }
 
-    const aiImporterDesc *XmfImporter::GetInfo() const {
+    const aiImporterDesc *AssetImporter::GetInfo() const {
         static aiImporterDesc info;
         if (!info.mAuthor) {
             info.mName = "EgoSoft XuMeshFile importer";
@@ -25,11 +25,11 @@ namespace xmf {
         return &info;
     }
 
-    bool XmfImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler, bool checkSig) const {
+    bool AssetImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler, bool checkSig) const {
         return iends_with(filePath, ".xml");
     }
 
-    void XmfImporter::InternReadFile(const std::string &filePath, aiScene *pScene, IOSystem *pIOHandler) {
+    void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene, IOSystem *pIOHandler) {
         try {
             // Read the .xml and .xmf files
             std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, _gameBaseFolderPath, pIOHandler);
@@ -57,6 +57,9 @@ namespace xmf {
                           << std::endl;
             } else {
                 ani::AnimFile aniFile(pAniStream);
+                pugi::xml_document doc;
+                aniFile.WriteAnims(doc.root());
+
             }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //
@@ -68,7 +71,7 @@ namespace xmf {
         }
     }
 
-    void XmfImporter::AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context) {
+    void AssetImporter::AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context) {
         // Add the materials to the scene
         if (!context.Materials.empty()) {
             std::string modelFolderPath = path(filePath).parent_path().string();
@@ -91,7 +94,7 @@ namespace xmf {
         }
     }
 
-    aiNode *XmfImporter::ConvertComponentToAiNode(Component &component, ConversionContext &context) {
+    aiNode *AssetImporter::ConvertComponentToAiNode(Component &component, ConversionContext &context) {
         std::map<std::string, aiNode *> partNodes;
 
         // Create nodes and meshes
@@ -154,7 +157,7 @@ namespace xmf {
 //    return pComponentNode;
     }
 
-    aiNode *XmfImporter::ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context) {
+    aiNode *AssetImporter::ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context) {
         auto *pPartNode = new aiNode();
         try {
             pPartNode->mName = part.Name;
