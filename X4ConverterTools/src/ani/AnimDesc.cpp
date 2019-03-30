@@ -153,7 +153,7 @@ namespace ani {
     }
 
     void AnimDesc::WriteAnim(pugi::xml_node tgtNode) const {
-        std::string keys[] = {"location", "rotation_euler", "scale"};
+        std::string keys[] = {"location", "rotation", "scale"};
         std::string axes[] = {"X", "Y", "Z"};
         for (std::string &key : keys) {
             for (std::string &axis: axes) {
@@ -167,7 +167,7 @@ namespace ani {
         std::vector<Keyframe> frames;
         if (keyType == "location") {
             frames = posKeys;
-        } else if (keyType == "rotation_euler") {
+        } else if (keyType == "rotation") {
             frames = rotKeys;
         } else if (keyType == "scale") {
             frames = scaleKeys;
@@ -179,215 +179,39 @@ namespace ani {
         if (frames.empty()) {
             return;
         }
-        //TODO refactor plz
         std::vector<std::string> namePortions;
         algo::split(namePortions, SafeName, is_any_of(" "));
         std::string namePortion = namePortions[0];
-        std::string animKey = str(format("%1%_%2%_%3%") % namePortion % keyType % axis);
-        pugi::xml_node animRoot = tgtNode.append_child("animation");
-        animRoot.append_attribute("id").set_value(animKey.c_str());
+        std::string id = namePortion;
 
-        WriteInputElement(animKey, animRoot, frames, axis);
-        WriteOutputElement(animKey, animRoot, frames, axis, keyType);
-        WriteInterpolationElement(animKey, animRoot, frames, axis);
-        WriteInTangentElement(animKey, animRoot, frames, axis);
-        WriteOutTangentElement(animKey, animRoot, frames, axis);
-
-        WriteSamplerElement(animKey, animRoot);
-
-        pugi::xml_node channelNode = animRoot.append_child("channel");
-        channelNode.append_attribute("source").set_value(("#" + animKey + "-sampler").c_str());
-        if (keyType != "rotation_euler") {
-            channelNode.append_attribute("target").set_value((namePortion + "/" + keyType + "." + axis).c_str());
-        } else {
-            channelNode.append_attribute("target").set_value(
-                    (namePortion + "/" + "rotation" + axis + ".ANGLE").c_str());
+        if (tgtNode.find_child_by_attribute("part","name",id.c_str()).empty()){
+            tgtNode.append_child("part").append_attribute("name").set_value(id.c_str());
         }
+        pugi::xml_node partRoot = tgtNode.find_child_by_attribute("part","name",id.c_str());
+
+        if(!partRoot.find_child_by_attribute("animation","subname",SafeSubName.c_str())){
+            partRoot.append_child("animation").append_attribute("subname").set_value(SafeSubName.c_str());
+        }
+        pugi::xml_node animRoot = partRoot.find_child_by_attribute("animation","subname",SafeSubName.c_str());
+
+        if (!animRoot.child(keyType.c_str())){
+            animRoot.append_child(keyType.c_str());
+        }
+        pugi::xml_node channelRoot = animRoot.child(keyType.c_str());
+
+        if (!channelRoot.child(axis.c_str())){
+            channelRoot.append_child(axis.c_str());
+        }
+        pugi::xml_node axisRoot = channelRoot.child(axis.c_str());
+        for (auto f : frames){
+            f.WriteChannel(axisRoot, axis);
+        }
+
 
     }
 
 
-    void AnimDesc::WriteInputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                     std::string &axis) const {
-        pugi::xml_node inputNode = animRoot.append_child("source");
-        inputNode.append_attribute("id").set_value((animKey + "-input").c_str());
-        auto inputArrayKey = (animKey + "-input-array");
-        pugi::xml_node inputArrayNode = inputNode.append_child("float_array");
-        inputArrayNode.append_attribute("id").set_value(inputArrayKey.c_str());
-        inputArrayNode.append_attribute("count").set_value(frames.size());
-
-        // TODO scale based on frame counts from other xml?
-        std::string value;
-        for (auto f : frames) {
-            value += str(format("%1% ") % f.getTime());
-        }
-        trim_right(value);
-        inputArrayNode.append_child(pugi::node_pcdata).set_value(value.c_str());
 
 
-        pugi::xml_node inputAccessor = inputNode.append_child("technique_common").append_child("accessor");
-        inputAccessor.append_attribute("source").set_value(("#" + inputArrayKey).c_str());
-        inputAccessor.append_attribute("count").set_value(frames.size());
-        inputAccessor.append_attribute("stride").set_value(1);
-        pugi::xml_node inputParam = inputAccessor.append_child("param");
-        inputParam.append_attribute("name").set_value("TIME");
-        inputParam.append_attribute("type").set_value("float");
-    }
 
-
-    void AnimDesc::WriteOutputElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                      std::string &axis, std::string &keyType) const {
-        pugi::xml_node outputNode = animRoot.append_child("source");
-        outputNode.append_attribute("id").set_value((animKey + "-output").c_str());
-        auto outputArrayKey = (animKey + "-output-array");
-        pugi::xml_node outputArrayNode = outputNode.append_child("float_array");
-        outputArrayNode.append_attribute("id").set_value(outputArrayKey.c_str());
-        outputArrayNode.append_attribute("count").set_value(frames.size());
-
-        //TODO check me
-        std::string value;
-        for (auto f : frames) {
-            value += str(format("%1% ") % f.getValueByAxis(axis));
-        }
-        trim_right(value);
-        outputArrayNode.append_child(pugi::node_pcdata).set_value(value.c_str());
-
-        pugi::xml_node outputAccessor = outputNode.append_child("technique_common").append_child("accessor");
-        outputAccessor.append_attribute("source").set_value(("#" + outputArrayKey).c_str());
-        outputAccessor.append_attribute("count").set_value(2);
-        outputAccessor.append_attribute("stride").set_value(1);
-        pugi::xml_node outputParam = outputAccessor.append_child("param");
-        if (keyType != "euler_rotation") {
-            outputParam.append_attribute("name").set_value(axis.c_str());
-        } else {
-            outputParam.append_attribute("name").set_value("ANGLE");
-        }
-        outputParam.append_attribute("type").set_value("float");
-    }
-
-    void
-    AnimDesc::WriteInterpolationElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                        std::string &axis) const {
-        pugi::xml_node interpolationNode = animRoot.append_child("source");
-        interpolationNode.append_attribute("id").set_value((animKey + "-interpolation").c_str());
-        auto interpolationArrayKey = (animKey + "-interpolation-array");
-        pugi::xml_node interpolationArrayNode = interpolationNode.append_child("Name_array");
-        interpolationArrayNode.append_attribute("id").set_value(interpolationArrayKey.c_str());
-        interpolationArrayNode.append_attribute("count").set_value(frames.size());
-
-        std::string value;
-        for (auto f : frames) {
-            InterpolationType interp = f.getInterpByAxis(axis);
-            if (Keyframe::checkInterpolationType(interp)) {
-                value += Keyframe::getInterpolationTypeName(interp);
-            } else {
-                throw std::runtime_error(
-                        "Unsupported interpolation type, Cannot encode given interpolation type to .dae!");
-            }
-            value += " ";
-        }
-        trim_right(value);
-        interpolationArrayNode.append_child(pugi::node_pcdata).set_value(value.c_str());
-
-        pugi::xml_node interpolationAccessor = interpolationNode.append_child("technique_common").append_child(
-                "accessor");
-        interpolationAccessor.append_attribute("source").set_value(("#" + interpolationArrayKey).c_str());
-        interpolationAccessor.append_attribute("count").set_value(frames.size());
-        interpolationAccessor.append_attribute("stride").set_value(1);
-
-        pugi::xml_node interpolationParam = interpolationAccessor.append_child("param");
-        interpolationParam.append_attribute("name").set_value("INTERPOLATION");
-        interpolationParam.append_attribute("type").set_value("name");
-    }
-
-
-    void AnimDesc::WriteInTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                         std::string &axis) const {
-        // TODO refactor to combine wiht OutTangent
-        pugi::xml_node inTangentNode = animRoot.append_child("source");
-        inTangentNode.append_attribute("id").set_value((animKey + "-intangent").c_str());
-        auto inTangentArrayKey = (animKey + "-intangent-array");
-        pugi::xml_node inTangentArrayNode = inTangentNode.append_child("float_array");
-        inTangentArrayNode.append_attribute("id").set_value(inTangentArrayKey.c_str());
-        inTangentArrayNode.append_attribute("count").set_value(2 * frames.size());
-        std::string value;
-        for (auto f : frames) {
-            std::pair<float, float> p = f.getControlPoint(axis, true);
-            // TODO scale if necessary
-            value += str(format("%1% %2% ") % p.first % p.second);
-        }
-        trim_right(value);
-        inTangentArrayNode.append_child(pugi::node_pcdata).set_value(value.c_str());
-
-        pugi::xml_node inTangentAccessor = inTangentNode.append_child("technique_common").append_child("accessor");
-        inTangentAccessor.append_attribute("source").set_value(("#" + inTangentArrayKey).c_str());
-        inTangentAccessor.append_attribute("count").set_value(2);
-        inTangentAccessor.append_attribute("stride").set_value(2);
-
-        pugi::xml_node inTangentParamA = inTangentAccessor.append_child("param");
-        inTangentParamA.append_attribute("name").set_value("X");
-        inTangentParamA.append_attribute("type").set_value("float");
-        pugi::xml_node inTangentParamB = inTangentAccessor.append_child("param");
-        inTangentParamB.append_attribute("name").set_value("Y");
-        inTangentParamB.append_attribute("type").set_value("float");
-    }
-
-
-    void AnimDesc::WriteOutTangentElement(std::string &animKey, pugi::xml_node &animRoot, std::vector<Keyframe> &frames,
-                                          std::string &axis) const {
-        pugi::xml_node outTangentNode = animRoot.append_child("source");
-        outTangentNode.append_attribute("id").set_value((animKey + "-outtangent").c_str());
-        auto outTangentArrayKey = (animKey + "-outtangent-array");
-        pugi::xml_node outTangentArrayNode = outTangentNode.append_child("float_array");
-        outTangentArrayNode.append_attribute("id").set_value(outTangentArrayKey.c_str());
-        outTangentArrayNode.append_attribute("count").set_value(2 * frames.size());
-
-        std::string value;
-        for (auto f : frames) {
-            std::pair<float, float> p = f.getControlPoint(axis, false);
-            // TODO scale if necessary
-            value += str(format("%1% %2% ") % p.first % p.second);
-        }
-        trim_right(value);
-        outTangentArrayNode.append_child(pugi::node_pcdata).set_value(value.c_str());
-
-
-        pugi::xml_node outTangentAccessor = outTangentNode.append_child("technique_common").append_child("accessor");
-        outTangentAccessor.append_attribute("source").set_value(("#" + outTangentArrayKey).c_str());
-        outTangentAccessor.append_attribute("count").set_value(2);
-        outTangentAccessor.append_attribute("stride").set_value(2);
-
-        pugi::xml_node outTangentParamA = outTangentAccessor.append_child("param");
-        outTangentParamA.append_attribute("name").set_value("X");
-        outTangentParamA.append_attribute("type").set_value("float");
-        pugi::xml_node outTangentParamB = outTangentAccessor.append_child("param");
-        outTangentParamB.append_attribute("name").set_value("Y");
-        outTangentParamB.append_attribute("type").set_value("float");
-    }
-
-
-    void AnimDesc::WriteSamplerElement(std::string &animKey, pugi::xml_node &animRoot) const {
-        pugi::xml_node samplerNode = animRoot.append_child("sampler");
-        samplerNode.append_attribute("id").set_value((animKey + "-sampler").c_str());
-
-        pugi::xml_node temp = samplerNode.append_child("input");
-        temp.append_attribute("semantic").set_value("INPUT");
-        temp.append_attribute("source").set_value(("#" + animKey + "-input").c_str());
-
-        temp = samplerNode.append_child("input");
-        temp.append_attribute("semantic").set_value("OUTPUT");
-        temp.append_attribute("source").set_value(("#" + animKey + "-output").c_str());
-
-        temp = samplerNode.append_child("input");
-        temp.append_attribute("semantic").set_value("INTERPOLATION");
-        temp.append_attribute("source").set_value(("#" + animKey + "-interpolation").c_str());
-
-        temp = samplerNode.append_child("input");
-        temp.append_attribute("semantic").set_value("IN_TANGENT");
-        temp.append_attribute("source").set_value(("#" + animKey + "-intangent").c_str());
-
-        temp = samplerNode.append_child("input");
-        temp.append_attribute("semantic").set_value("OUT_TANGENT");
-        temp.append_attribute("source").set_value(("#" + animKey + "-outtangent").c_str());
-    }
 }

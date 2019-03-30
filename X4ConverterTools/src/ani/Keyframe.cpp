@@ -196,9 +196,42 @@ namespace ani {
 
     }
 
-    std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool in) {
 
-        if (in) {
+
+    void Keyframe::WriteChannel(pugi::xml_node node, std::string &axis) {
+        InterpolationType interp = getInterpByAxis(axis);
+        if (!checkInterpolationType(interp) || interp == INTERPOLATION_TCB) {
+            throw std::runtime_error("Cannot write keyframe");
+        }
+        // TODO verify assumptions about framerate/encode them into a check
+        int frameNum = 60.0*Time;
+        auto tgtNode = node.append_child("frame");
+        tgtNode.append_attribute("id").set_value(frameNum);
+        auto interpStr = getInterpolationTypeName(interp);
+        auto value = getValueByAxis(axis);
+        tgtNode.append_child("value").append_child(pugi::node_pcdata).set_value(formatFloat(value).c_str());
+        WriteHandle(tgtNode, axis, true);
+        WriteHandle(tgtNode, axis, true);
+        tgtNode.append_child("interpolation").append_child(pugi::node_pcdata).set_value(interpStr.c_str());
+
+    }
+
+    void Keyframe::WriteHandle(pugi::xml_node node, std::string &axis, bool right) {
+
+        pugi::xml_node tgtNode;
+        if (right) {
+            tgtNode = node.append_child("leftHandle");
+        } else {
+            tgtNode = node.append_child("rightHandle");
+        }
+        auto handle = getControlPoint(axis, right);
+        tgtNode.append_child("X").append_child(pugi::node_pcdata).set_value(formatFloat(handle.first).c_str());
+        tgtNode.append_child("Y").append_child(pugi::node_pcdata).set_value(formatFloat(handle.second).c_str());
+    }
+
+    std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool right) {
+
+        if (!right) {
             if (axis == "X") {
                 return std::make_pair(CPX1x, CPX1y);
             } else if (axis == "Y") {
@@ -221,7 +254,7 @@ namespace ani {
         }
     }
 
-    float Keyframe::getTime() const {
-        return Time;
+    std::string Keyframe::formatFloat(float f) {
+        return str(format("%.8e") % f);
     }
 }

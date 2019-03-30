@@ -7,6 +7,7 @@
 #include <cmath>
 #include <climits>
 #include <utility>
+#include <pugixml.hpp>
 
 namespace ani {
     enum InterpolationType {
@@ -26,21 +27,22 @@ namespace ani {
 
         explicit Keyframe(Assimp::StreamReaderLE &reader);
 
-        // TODO tuple everything?
-        float getValueByAxis(const std::string &axis);
-
-        InterpolationType getInterpByAxis(const std::string &axis);
-
-        std::pair<float, float> getControlPoint(const std::string &axis, bool in);
 
         std::string validate();// Debug method - throws exception if invalid, else returns human readable string
         static std::string getInterpolationTypeName(InterpolationType type);
 
         static bool checkInterpolationType(InterpolationType type);
-
-        float getTime() const;
+        void WriteChannel(pugi::xml_node node, std::string& axis);
 
     protected:
+        float getValueByAxis(const std::string &axis);
+
+        InterpolationType getInterpByAxis(const std::string &axis);
+
+        void WriteHandle(pugi::xml_node node, std::string& axis, bool right);
+        std::pair<float, float> getControlPoint(const std::string &axis, bool right);
+        // TODO Move to utils
+        std::string formatFloat(float f);
         // Note that these add up to exactly 128 bytes
         float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/
         InterpolationType InterpolationX;                      /**< The type of interpolation for the x part of the key. 20*/
@@ -67,6 +69,5 @@ namespace ani {
         float DerivOutX, DerivOutY, DerivOutZ;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
         uint32_t AngleKey;                                        /** 28		// this will be set to non null if there is a key */
 
-    private:
     };
 }

@@ -63,15 +63,19 @@ namespace ani {
 
         pugi::xpath_node_set partNodes = componentNode.select_nodes("connections/connection");
         for (auto partNode : partNodes) {
-            std::string name = partNode.node().attribute("name").value();
+            // TODO what if multiple parts?
+            //std::string name = partNode.node().attribute("name").value();
+            std::string name = partNode.node().child("parts").child("part").attribute("name").value();
 
             meta[name] = std::map<std::string, std::pair<int, int> >();
             pugi::xpath_node_set animMetas = partNode.node().select_nodes("animations/animation");
             for (auto animEntry : animMetas) {
                 auto animMeta = animEntry.node();
-                meta[name][animMeta.attribute("name").value()] = std::make_pair(animMeta.attribute("start").as_int(),
-                                                                                  animMeta.attribute("end").as_int());
-            }
+                std::string animName = animMeta.attribute("name").as_string();
+                int startFrame = animMeta.attribute("start").as_int();
+                int stopFrame = animMeta.attribute("end").as_int();
+                meta[name][animName] = std::make_pair(startFrame,stopFrame);
+           }
         }
     }
 
@@ -110,13 +114,17 @@ namespace ani {
         }
         pugi::xml_node metaNode = tgtNode.append_child("metadata");
         for (auto entry : meta) {
+            if (entry.second.empty()){
+                continue;
+            }
             pugi::xml_node connNode = metaNode.append_child("connection");
-            connNode.append_attribute("name").as_string(entry.first.c_str());
+            connNode.append_attribute("name").set_value(entry.first.c_str());
             for (auto subEntry : entry.second) {
+                // TODO deal with parts vs components
                 pugi::xml_node animNode = connNode.append_child("animation");
-                animNode.append_attribute("animName").as_string(subEntry.first.c_str());
-                animNode.append_attribute("start").as_int(subEntry.second.first);
-                animNode.append_attribute("end").as_int(subEntry.second.first);
+                animNode.append_attribute("subname").set_value(subEntry.first.c_str());
+                animNode.append_attribute("start").set_value(subEntry.second.first);
+                animNode.append_attribute("end").set_value(subEntry.second.second);
             }
         }
 
