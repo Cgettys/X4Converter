@@ -19,7 +19,7 @@ class AssetExporter {
 public:
     static Assimp::Exporter::ExportFormatEntry Format;
 
-    static std::string GameBaseFolderPath;
+    static std::string gameBaseFolderPath;
 
 
     static void Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,

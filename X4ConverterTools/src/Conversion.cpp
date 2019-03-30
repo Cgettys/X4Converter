@@ -1,5 +1,6 @@
 #include <X4ConverterTools/Conversion.h>
-#include <assimp/DefaultIOSystem.h>
+
+namespace fs = boost::filesystem;
 
 bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, const char *daeFilePath) {
 
@@ -8,6 +9,7 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
 //    importer->RegisterLoader(new AssetImporter(GameBaseFolderPath));
     AssetImporter importer(gameBaseFolderPath);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
+
     importer.InternReadFile(xmlFilePath, pScene, io);
 //    const aiScene *pScene = importer->ReadFile(XmlFilePath, 0);
 //    if (!pScene) {
@@ -17,8 +19,13 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
 //        return false;
 //    }
 
-    ani::AnimFile* pAnimFile;
-    pScene->mMetaData->Get("AnimFile",pAnimFile);
+    fs::path aniPath(daeFilePath);
+    aniPath.replace_extension("anixml");
+    pugi::xml_document doc;
+    importer.animFile.WriteAnims(doc.root());
+    doc.save_file(aniPath.c_str());
+//    ani::AnimFile animFile;
+//    pScene->mMetaData->Get("AnimFile", animFile);
 
     Assimp::Exporter exporter;
     aiReturn result = exporter.Export(pScene, "collada", daeFilePath);
@@ -26,7 +33,6 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
         std::cerr << "Failed during export" << std::endl;
         throw std::runtime_error(exporter.GetErrorString());
     }
-
 
 
     delete io;
@@ -41,7 +47,7 @@ bool ConvertDaeToXml(const char *gameBaseFolderPath, const char *daeFilePath, co
         std::cerr << "Failed during import" << std::endl;
         throw std::runtime_error(importer->GetErrorString());
     }
-    pScene->mMetaData->Add("GameBaseFolderPath",std::string(gameBaseFolderPath));
+//    pScene->mMetaData->Add("GameBaseFolderPath", gameBaseFolderPath);
 
 
 //    Assimp::Exporter* exporter = new Assimp::Exporter();
@@ -60,6 +66,8 @@ bool ConvertDaeToXml(const char *gameBaseFolderPath, const char *daeFilePath, co
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
     AssetExporter exporter;
+    AssetExporter::gameBaseFolderPath = gameBaseFolderPath;
+
     exporter.Export(xmfFilePath, io, pScene, nullptr);
     delete io;
     delete importer;

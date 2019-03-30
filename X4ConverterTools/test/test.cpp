@@ -42,7 +42,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
 
         BOOST_TEST_CHECKPOINT("Begin test");
-        char szError[256];
         bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), inputXMLPath.c_str(), daePath.c_str());
         BOOST_TEST(forwardSuccess);
         BOOST_TEST_CHECKPOINT("Forward parsing");

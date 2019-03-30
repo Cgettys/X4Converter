@@ -34,6 +34,10 @@ public:
 
     void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler) override;
 
+    // TODO metadata support
+
+    ani::AnimFile animFile;
+
 private:
 
 
@@ -44,6 +48,5 @@ private:
 
     std::string _gameBaseFolderPath;
     MaterialLibrary _materialLibrary;
-
     void AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context);
 };

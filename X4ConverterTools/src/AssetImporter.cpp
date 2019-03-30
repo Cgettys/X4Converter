@@ -54,9 +54,10 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         if (pAniStream == nullptr) {
             std::cerr << "No ANI file fond at path: " << aniPath << ". This likely indicates an error." << std::endl;
         } else {
-            auto pAnimFile = new ani::AnimFile(pAniStream);
-            // So we can get it back on the other end
-            pScene->mMetaData->Add("AnimFile",pAnimFile);
+            animFile=ani::AnimFile(pAniStream);
+//            // So we can get it back on the other end
+//            pScene->mMetaData=aiMetadata::Alloc(1);
+//            pScene->mMetaData->Add("AnimFile",pAnimFile);
         }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
 //

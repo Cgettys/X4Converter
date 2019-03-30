@@ -5,8 +5,11 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include <boost/filesystem.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
+#include <assimp/DefaultIOSystem.h>
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 

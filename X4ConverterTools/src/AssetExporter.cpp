@@ -8,12 +8,13 @@ using namespace xmf;
 Assimp::Exporter::ExportFormatEntry AssetExporter::Format("xmf", "EgoSoft XuMeshFile exporter", ".xml",
                                                           AssetExporter::Export);
 
-
+std::string AssetExporter::gameBaseFolderPath = "";
 void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
                            const Assimp::ExportProperties *props) {
     try {
-        std::string gameBaseFolderPath;
-        pScene->mMetaData->Get("GameBaseFolderPath", gameBaseFolderPath);
+//        aiString tmp;
+//        pScene->mMetaData->Get("GameBaseFolderPath", tmp);
+//        std::string gameBaseFolderPath(tmp.C_Str());
         if (gameBaseFolderPath.empty()) {
             throw std::runtime_error("GameBaseFolderPath not set");
         }
