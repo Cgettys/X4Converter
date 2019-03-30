@@ -50,11 +50,11 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         std::string shortName = path(filePath).filename().replace_extension("").string() + "_data.ani";
         to_upper(shortName);
         std::string aniPath = (path(filePath).parent_path() / shortName).string();
-        IOStream *pAniStream = pIOHandler->Open(aniPath, "r");
+        IOStream *pAniStream = pIOHandler->Open(aniPath, "rb");
         if (pAniStream == nullptr) {
-            std::cerr << "No ANI file fond at path: " << aniPath << ". This likely indicates an error." << std::endl;
+            std::cerr << "No ANI file found at path: " << aniPath << ". This likely indicates an error." << std::endl;
         } else {
-            animFile=ani::AnimFile(pAniStream);
+            animFile=ani::AnimFile(pAniStream,filePath);
 //            // So we can get it back on the other end
 //            pScene->mMetaData=aiMetadata::Alloc(1);
 //            pScene->mMetaData->Add("AnimFile",pAnimFile);

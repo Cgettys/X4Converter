@@ -22,7 +22,8 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
     fs::path aniPath(daeFilePath);
     aniPath.replace_extension("anixml");
     pugi::xml_document doc;
-    importer.animFile.WriteAnims(doc.root());
+    pugi::xml_node rt = doc.root().append_child("root");
+    importer.animFile.WriteAnims(rt);
     doc.save_file(aniPath.c_str());
 //    ani::AnimFile animFile;
 //    pScene->mMetaData->Get("AnimFile", animFile);

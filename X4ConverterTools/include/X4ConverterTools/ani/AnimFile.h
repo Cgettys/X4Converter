@@ -10,6 +10,7 @@
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
+#include <X4ConverterTools/Component.h>
 #include "Header.h"
 #include "AnimDesc.h"
 
@@ -20,6 +21,7 @@ namespace ani {
     public:
         AnimFile() = default;
         explicit AnimFile(Assimp::IOStream *pStream);
+        explicit AnimFile(Assimp::IOStream *pStream,std::string xmlPath);
 
         ~AnimFile();
 
@@ -30,8 +32,12 @@ namespace ani {
 
         void WriteAnims(pugi::xml_node tgtNode) const;
 
+
     protected:
         Header header;
         std::vector<AnimDesc> descs;
+
+        // TODO objects plz
+        std::map<std::string,std::map<std::string, std::pair<int,int> >> meta;
     };
 }
