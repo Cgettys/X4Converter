@@ -20,8 +20,8 @@ namespace ani {
     class AnimFile {
     public:
         AnimFile() = default;
-        explicit AnimFile(Assimp::IOStream *pStream);
-        explicit AnimFile(Assimp::IOStream *pStream,std::string xmlPath);
+        AnimFile(Assimp::IOStream *pStream);
+        explicit AnimFile(Assimp::IOStream *pStream, const std::string& xmlPath);
 
         ~AnimFile();
 

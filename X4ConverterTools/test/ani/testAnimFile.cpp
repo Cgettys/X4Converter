@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
-        AnimFile file = AnimFile(sourceStream,xmlFile);
+        AnimFile file(sourceStream,xmlFile);
         std::cout << file.validate();
         delete io;
     }
@@ -51,21 +51,22 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
         const std::string aniFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
         const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.xml";
+        const std::string aniOutFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
 //const std::string aniFile = "/home/cg/Desktop/X4/test_files/struct_bt_ut_omicron_superyard_data.ani";
 //        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
-        AnimFile file = AnimFile(sourceStream,xmlFile);
+        AnimFile file(sourceStream,xmlFile);
         std::cout << file.validate();
 
-        pugi::xml_document doc;
-        doc.load_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.dae");
-        pugi::xml_node tgt = doc.root().child("COLLADA").child("library_animations");
-        if (tgt.empty()) {
-            std::cout << "appending child" << std::endl;
-            tgt = doc.root().child("COLLADA").append_child("library_animations");
-        }
+//        pugi::xml_document doc;
+//        doc.load_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.dae");
+//        pugi::xml_node tgt = doc.root().child("COLLADA").child("library_animations");
+//        if (tgt.empty()) {
+//            std::cout << "appending child" << std::endl;
+//            tgt = doc.root().child("COLLADA").append_child("library_animations");
+//        }
         //Hackity hack hack hack...
         // Attempt to transform matrices exported by assimp into posrotloc required by blender animations
 //        struct simple_walker : pugi::xml_tree_walker {
@@ -124,7 +125,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 //
 //        };
 
-        file.WriteAnims(tgt);
+        pugi::xml_document doc;
+        pugi::xml_node rt = doc.root().append_child("root");
+        file.WriteAnims(rt);
+        doc.save_file(aniOutFile.c_str());
 //
 //        simple_walker walker;
 //        doc.traverse(walker);
@@ -134,7 +138,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 //            n = doc.find_node(matrixPred);
 //        }
 
-        doc.save_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.2.dae");
+//        doc.save_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.2.dae");
 
         delete io;
     }

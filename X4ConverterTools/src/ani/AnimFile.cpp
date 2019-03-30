@@ -28,7 +28,7 @@ namespace ani {
         // TODO fixme
     }
 
-    AnimFile::AnimFile(IOStream *pStream, std::string xmlPath) {
+    AnimFile::AnimFile(IOStream *pStream,const std::string& xmlPath) {
         // TODO endian handling??
         // TODO pass this in instead of pstream?
         auto pStreamReader = StreamReaderLE(pStream, false);
@@ -60,15 +60,16 @@ namespace ani {
         if (!componentNode) {
             throw std::runtime_error("File has no <component> element");
         }
-        pugi::xpath_node_set partNodes = componentNode.select_nodes("/connections/connection");
+
+        pugi::xpath_node_set partNodes = componentNode.select_nodes("connections/connection");
         for (auto partNode : partNodes) {
             std::string name = partNode.node().attribute("name").value();
 
             meta[name] = std::map<std::string, std::pair<int, int> >();
-            pugi::xpath_node_set animMetas = partNode.parent().parent().select_nodes("/animations/animation");
+            pugi::xpath_node_set animMetas = partNode.node().select_nodes("animations/animation");
             for (auto animEntry : animMetas) {
                 auto animMeta = animEntry.node();
-                (meta[name])[animMeta.attribute("name").value()] = std::make_pair(animMeta.attribute("start").as_int(),
+                meta[name][animMeta.attribute("name").value()] = std::make_pair(animMeta.attribute("start").as_int(),
                                                                                   animMeta.attribute("end").as_int());
             }
         }
@@ -102,12 +103,10 @@ namespace ani {
     }
 
     void AnimFile::WriteAnims(pugi::xml_node tgtNode) const {
+        pugi::xml_node dataNode = tgtNode.append_child("data");
         for (const AnimDesc &desc : descs) {
-            if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"), "landinggears_activating") == 0) {
-                desc.WriteAnim(tgtNode);
-            } else {
-                std::cout << desc.SafeSubName << std::endl;
-            }
+//            if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"), "landinggears_activating") == 0) {
+                desc.WriteAnim(dataNode);
         }
         pugi::xml_node metaNode = tgtNode.append_child("metadata");
         for (auto entry : meta) {

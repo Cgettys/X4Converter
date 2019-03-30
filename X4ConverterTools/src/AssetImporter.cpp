@@ -4,7 +4,7 @@ using namespace boost;
 using namespace boost::algorithm;
 using namespace boost::filesystem;
 using namespace Assimp;
-
+using namespace ani;
 
 AssetImporter::AssetImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
     _gameBaseFolderPath = gameBaseFolderPath;
@@ -54,7 +54,7 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         if (pAniStream == nullptr) {
             std::cerr << "No ANI file found at path: " << aniPath << ". This likely indicates an error." << std::endl;
         } else {
-            animFile=ani::AnimFile(pAniStream,filePath);
+            pAnimFile= new AnimFile(pAniStream, filePath);
 //            // So we can get it back on the other end
 //            pScene->mMetaData=aiMetadata::Alloc(1);
 //            pScene->mMetaData->Add("AnimFile",pAnimFile);
