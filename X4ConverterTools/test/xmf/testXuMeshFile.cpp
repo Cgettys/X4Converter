@@ -5,7 +5,7 @@
 #include <assimp/StreamReader.h>
 #include <assimp/DefaultIOSystem.h>
 #include <assimp/MemoryIOWrapper.h>
-#include <X4ConverterTools/API.h>
+#include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XmfHeader.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>

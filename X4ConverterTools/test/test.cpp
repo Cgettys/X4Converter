@@ -10,7 +10,7 @@
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
-#include <X4ConverterTools/API.h>
+#include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 

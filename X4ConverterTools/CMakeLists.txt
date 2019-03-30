@@ -2,7 +2,7 @@
 
 
 set("LIB_SRCS"
-        src/API.cpp
+        src/Conversion.cpp
         src/Component.cpp
         src/ComponentPart.cpp
         src/ComponentPartLod.cpp

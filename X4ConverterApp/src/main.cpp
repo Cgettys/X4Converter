@@ -4,7 +4,7 @@
 // or copy at http://www.boost.org/LICENSE_1_0.txt)
 // Modified to suit this project by Charlie Gettys in 2019
 /* Shows how to use both command line and config file. */
-#include <X4ConverterTools/API.h>
+#include <X4ConverterTools/Conversion.h>
 #include <boost/program_options.hpp>
 
 

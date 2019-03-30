@@ -8,12 +8,13 @@ using namespace xmf;
 Assimp::Exporter::ExportFormatEntry AssetExporter::Format("xmf", "EgoSoft XuMeshFile exporter", ".xml",
                                                           AssetExporter::Export);
 
-std::string AssetExporter::GameBaseFolderPath;
 
 void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
                            const Assimp::ExportProperties *props) {
     try {
-        if (GameBaseFolderPath.empty()) {
+        std::string gameBaseFolderPath;
+        pScene->mMetaData->Get("GameBaseFolderPath", gameBaseFolderPath);
+        if (gameBaseFolderPath.empty()) {
             throw std::runtime_error("GameBaseFolderPath not set");
         }
         if (!pScene->mRootNode || pScene->mRootNode->mNumChildren != 1) {
@@ -32,7 +33,7 @@ void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, 
             ConvertPartNode(component, "", pScene, pComponentNode->mChildren[i]);
         }
 
-        component.WriteToFile(pFilePath, GameBaseFolderPath, pIOHandler);
+        component.WriteToFile(pFilePath, gameBaseFolderPath, pIOHandler);
     } catch (std::exception &e) {
         throw DeadlyExportError(e.what());
     }
@@ -179,6 +180,7 @@ void AssetExporter::CalculatePartSize(ComponentPart &part, const aiScene *pScene
     if (pCollisionNode->mNumMeshes == 0)
         return;
 
+    // TODO this goes in the XMF too
     aiVector3D lowerBound;
     aiVector3D upperBound;
     aiMesh *pCollisionMesh = pScene->mMeshes[pCollisionNode->mMeshes[0]];
