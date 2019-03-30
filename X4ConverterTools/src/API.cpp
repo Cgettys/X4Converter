@@ -1,8 +1,6 @@
 #include <X4ConverterTools/API.h>
 #include <assimp/DefaultIOSystem.h>
 
-using namespace X4ConverterTools;
-
 bool ConvertXmlToDae(const char *pszGameBaseFolderPath, const char *pszXmlFilePath, const char *pszDaeFilePath) {
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();

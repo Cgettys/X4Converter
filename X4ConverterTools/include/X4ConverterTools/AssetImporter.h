@@ -23,28 +23,27 @@
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 
-namespace X4ConverterTools {
-    class AssetImporter : public Assimp::BaseImporter {
-    public:
-        explicit AssetImporter(const std::string &gameBaseFolderPath);
 
-        const aiImporterDesc *GetInfo() const override;
+class AssetImporter : public Assimp::BaseImporter {
+public:
+    explicit AssetImporter(const std::string &gameBaseFolderPath);
 
-        bool CanRead(const std::string &filePath, Assimp::IOSystem *pIOHandler, bool checkSig) const override;
+    const aiImporterDesc *GetInfo() const override;
 
-        void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler) override;
+    bool CanRead(const std::string &filePath, Assimp::IOSystem *pIOHandler, bool checkSig) const override;
 
-    private:
+    void InternReadFile(const std::string &filePath, aiScene *pScene, Assimp::IOSystem *pIOHandler) override;
 
-
-        aiNode *ConvertComponentToAiNode(Component &component, ConversionContext &context);
-
-        aiNode *ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context);
+private:
 
 
-        std::string _gameBaseFolderPath;
-        MaterialLibrary _materialLibrary;
+    aiNode *ConvertComponentToAiNode(Component &component, ConversionContext &context);
 
-        void AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context);
-    };
-}
+    aiNode *ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context);
+
+
+    std::string _gameBaseFolderPath;
+    MaterialLibrary _materialLibrary;
+
+    void AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context);
+};

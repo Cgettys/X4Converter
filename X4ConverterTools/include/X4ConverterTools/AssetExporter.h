@@ -15,34 +15,31 @@
 #include <assimp/Exceptional.h>
 #include <assimp/Exporter.hpp>
 
-namespace X4ConverterTools {
-    class AssetExporter {
-    public:
-        static Assimp::Exporter::ExportFormatEntry Format;
+class AssetExporter {
+public:
+    static Assimp::Exporter::ExportFormatEntry Format;
 
-        static std::string GameBaseFolderPath;
+    static std::string GameBaseFolderPath;
 
 
-        static void Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
-                           const Assimp::ExportProperties *props);
+    static void Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
+                       const Assimp::ExportProperties *props);
 
-    protected:
-        static void ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene,
-                                    aiNode *pPartNode);
+protected:
+    static void
+    ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene, aiNode *pPartNode);
 
-        static void ConvertLodNode(ComponentPart &part, int lodIndex, const aiScene *pScene, aiNode *pLodNode);
+    static void ConvertLodNode(ComponentPart &part, int lodIndex, const aiScene *pScene, aiNode *pLodNode);
 
-        static void ConvertCollisionNode(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
+    static void ConvertCollisionNode(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
 
-        static std::shared_ptr<xmf::XuMeshFile>
-        ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
+    static std::shared_ptr<xmf::XuMeshFile> ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
 
-        static void CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
+    static void CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
 
-        static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<xmf::XmfVertexElement> &declaration);
+    static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<xmf::XmfVertexElement> &declaration);
 
-        static void ApplyVertexDeclaration(std::vector<xmf::XmfVertexElement> &declaration, xmf::XmfDataBuffer &buffer);
+    static void ApplyVertexDeclaration(std::vector<xmf::XmfVertexElement> &declaration, xmf::XmfDataBuffer &buffer);
 
-        static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, xmf::XmfVertexElement &elem, uint8_t *pElemData);
-    };
-}
+    static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, xmf::XmfVertexElement &elem, uint8_t *pElemData);
+};
