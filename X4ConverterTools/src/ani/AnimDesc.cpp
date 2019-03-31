@@ -331,21 +331,38 @@ namespace ani {
             std::string namePortion = namePortions[0];
             std::string id = namePortion;
 
-            if (tgtNode.find_child_by_attribute("part", "name", id.c_str()).empty()) {
+            if (!tgtNode.find_child_by_attribute("part", "name", id.c_str())) {
                 tgtNode.append_child("part").append_attribute("name").set_value(id.c_str());
             }
             pugi::xml_node partRoot = tgtNode.find_child_by_attribute("part", "name", id.c_str());
 
-            if (!partRoot.find_child_by_attribute("animation", "subname", SafeSubName.c_str())) {
-                partRoot.append_child("animation").append_attribute("subname").set_value(SafeSubName.c_str());
-            }
-            pugi::xml_node animRoot = partRoot.find_child_by_attribute("animation", "subname", SafeSubName.c_str());
 
+            std::string subNameCategory;
+//            std::string subNameRemaining;
+            int idx = SafeSubName.find('_');
+            if (idx==std::string::npos){
+                subNameCategory="misc";
+//                subNameRemaining=SafeSubName;
+            } else {
+                subNameCategory=SafeSubName.substr(0, idx);
+//                subNameRemaining=SafeSubName.substr(idx+1);
+            }
+
+            if (!partRoot.find_child_by_attribute("category", "name", subNameCategory.c_str())) {
+                partRoot.append_child("category").append_attribute("name").set_value(subNameCategory.c_str());
+            }
+
+            pugi::xml_node catRoot = partRoot.find_child_by_attribute("category", "name", subNameCategory.c_str());
+            if (!catRoot.find_child_by_attribute("animation", "subname",SafeSubName.c_str())) {
+                catRoot.append_child("animation").append_attribute("subname").set_value(SafeSubName.c_str());
+            }
+
+            pugi::xml_node animRoot = catRoot.find_child_by_attribute("animation", "subname", SafeSubName.c_str());
             if (!animRoot.child(keyType.c_str())) {
                 animRoot.append_child(keyType.c_str());
             }
-            pugi::xml_node channelRoot = animRoot.child(keyType.c_str());
 
+            pugi::xml_node channelRoot = animRoot.child(keyType.c_str());
             if (!channelRoot.child(axis.c_str())) {
                 channelRoot.append_child(axis.c_str());
             }

@@ -20,8 +20,8 @@ namespace xmf {
         MaterialSize = sizeof(XmfMaterial);
         // TODO
 
-        Culling_CW;
-        RightHand;
+        Culling_CW = false;
+        RightHand = false;
         NumVertices;
         NumIndices;
 

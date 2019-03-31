@@ -41,36 +41,50 @@ def read_data(root):
     print("Starting animations")
     for part in root[0]:  # we wrote data first
         part_name = part.attrib['name']
-        for anim in part:
-            anim_name = anim.attrib['subname']
-            action_name = part_name + anim_name.split("_", 1)[0]
-            scene = D.scenes['Scene']
-            obj = D.objects[part_name]
-            if  obj.animation_data is None:
-                obj.animation_data_create()
-            for path in anim:
-                path_name = path.tag
-                for axis in path:
-                    read_frame(axis, obj, path_name)
+        obj = D.objects[part_name]
+        for cat in part:
+            handle_category(obj,cat,part_name)
+
+def handle_category(obj,cat,part_name):
+    scene = D.scenes['Scene']
+    offset_frames = 0
+    for anim in cat:
+        offset_frames = offset_frames + handle_category_anim(obj,cat,part_name,anim,offset_frames)
 
 
-def read_frame(axis_data, obj, path_name):
+def handle_category_anim(obj,cat,part_name,anim,offset_frames):
+    anim_name = anim.attrib['subname']
+    action_name = part_name + anim_name
+    frame_max = 0
+    if  obj.animation_data is None:
+        obj.animation_data_create()
+    for path in anim:
+        path_name = path.tag
+        for axis in path:
+            possible_max=read_frames(axis, obj, path_name,offset_frames)
+            frame_max=max(frame_max,possible_max)
+    return frame_max
+
+def read_frames(axis_data, obj, path_name,offset_frames):
+    # TODO test/assert assumption that all anims start at 0, data wise
     groupnames = {"location": "Location", "rotation_euler": "Rotation", "scale": "Scaling"}
     axis_name = axis_data.tag
     axes = ["X", "Y", "Z"]
     axis_idx = axes.index(axis_name)
     # TODO offset instead?
 
+    frame_min = 0
+    frame_max = 0
     starting_data={"location": obj.location, "rotation_euler": obj.rotation_euler, "scale": obj.scale}
-
     for f in axis_data:
         frame = int(f.attrib["id"])
+        fake_frame = float(frame+offset_frames)
         obj.keyframe_insert(data_path=path_name,
                             index=axis_idx,
-                            frame=float(frame),
+                            frame=fake_frame,
                             group=groupnames[path_name])
         fc = get_fcurve(obj,path_name,axis_idx)
-        kf = get_keyframe(fc,frame)
+        kf = get_keyframe(fc,fake_frame)
 
         if (path_name == "rotation_euler"):
             kf.co[1] = starting_data[path_name][axis_idx]-float(f.attrib["value"])
@@ -86,6 +100,11 @@ def read_frame(axis_data, obj, path_name):
         handle_r = f.find("handle_right")
         kf.handle_left=(float(handle_l.attrib["X"]),float(handle_l.attrib["Y"]))
         kf.handle_right=(float(handle_r.attrib["X"]),float(handle_r.attrib["Y"]))
+        frame_min = min(frame_min, frame)
+        frame_max = max(frame_max,frame)
+    if (frame_min <0):
+        print("Something has gone horribly wrong, frame_min < 0")
+    return frame_max
 
 def get_fcurve(obj,path,idx):
     for fc in obj.animation_data.action.fcurves:

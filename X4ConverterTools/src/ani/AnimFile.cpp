@@ -108,6 +108,7 @@ namespace ani {
     }
 
     void AnimFile::WriteAnims(pugi::xml_node tgtNode) const {
+        std::cout << "Writing animations!"<<std::endl;
         pugi::xml_node dataNode = tgtNode.append_child("data");
         for (const AnimDesc &desc : descs) {
 //            if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"), "landinggears_activating") == 0) {
