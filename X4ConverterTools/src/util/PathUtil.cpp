@@ -11,6 +11,9 @@ std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
     //TODO check for C://?
     algorithm::replace_all(result, "\\", preferredSep);
     algorithm::replace_all(result, "/", preferredSep);
+    if (result.empty()) {
+        throw std::runtime_error("Empty path");
+    }
     return result;
 }
 

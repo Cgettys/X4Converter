@@ -158,4 +158,7 @@ if True:
         bpy.ops.object.delete()
 
 bpy.context.window.scene = D.scenes['Scene']
-main('/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out')
+base_dir = '/home/cg/Desktop/X4/unpacked/'
+tgt_rel = 'assets/units/size_m/ship_par_m_corvette_01.out'
+tgt_rel='assets/units/size_s/ship_gen_s_fighter_01.out'
+main(base_dir+tgt_rel+'.out')

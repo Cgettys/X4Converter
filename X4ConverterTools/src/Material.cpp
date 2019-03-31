@@ -127,9 +127,7 @@ const std::string
 Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
     std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
     filePath = PathUtil::MakePlatformSafe(filePath);
-    if (filePath.empty()) {
-        throw std::runtime_error("Empty path");
-    }
+
     path textureFilePath(filePath);
     if (!iequals(textureFilePath.extension().string(), ".gz")) {
         return textureFilePath.string();
@@ -182,15 +180,15 @@ const std::string Material::GetTextureFilePath(const std::string &tgtFilePath, c
     if (is_regular_file(textureFilePath)) {
         return textureFilePath.string();
     }
-    if (textureFilePath.has_extension()) {
-        std::cerr << "Warning textureFilePath has extension" << std::endl;
-        return std::string();
-    }
     for (auto &allowedExtension : allowedExtensions) {
         textureFilePath.replace_extension(allowedExtension);
         if (is_regular_file(textureFilePath)) {
             return textureFilePath.string();
         }
+    }
+    if (textureFilePath.has_extension()) {
+        std::cerr << "Warning textureFilePath has unexpected extension" << std::endl;
+        return std::string();
     }
     std::cerr << "Warning returned empty string" << std::endl;
     return std::string();

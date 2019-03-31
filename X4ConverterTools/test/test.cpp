@@ -33,10 +33,12 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
-        const std::string tgtFolderPath = gameBaseFolderPath+"assets/units/size_s/ship_gen_s_fighter_01";
-        const std::string inputXMLPath = tgtFolderPath + ".xml";
-        const std::string daePath = tgtFolderPath + ".out.dae";
-        const std::string outputXMLPath = tgtFolderPath + ".out.xml";
+//        const std::string tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
+
+        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
+        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
+        const std::string daePath = gameBaseFolderPath +tgtPath+ ".out.dae";
+        const std::string outputXMLPath = gameBaseFolderPath +tgtPath +".out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(daePath);
         // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
