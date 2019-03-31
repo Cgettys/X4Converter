@@ -81,12 +81,13 @@ namespace ani {
         bool seenSubName = false;
         // TODO clean this up
         std::set<std::string> known {
-                // Used for ship doors (e.g. after landing). Not sure if large ship, small ship, both
+                // Used for station/teleporter doors???
                 "doors_open",
                 "doors_closing",
                 "doors_closed",
                 "doors_opening",
                 // Used for ship cockpit open/close
+                // On medium ships, sometimes used to trigger ramps
                 "cockpit_open",
                 "cockpit_closing",
                 "cockpit_closed",
@@ -117,6 +118,7 @@ namespace ani {
 
 
                 // docking bay
+                // Includes airlock as xs hatch?
                 "dockingbay_closed",
                 "dockingbay_opening",
                 "dockingbay_open",

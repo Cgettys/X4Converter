@@ -21,7 +21,6 @@ namespace ani {
     public:
         AnimFile() = default;
         AnimFile(Assimp::IOStream *pStream);
-        explicit AnimFile(Assimp::IOStream *pStream, const std::string& xmlPath);
 
         ~AnimFile();
 
@@ -30,14 +29,12 @@ namespace ani {
 
         void setHeader(Header header);
 
-        void WriteAnims(pugi::xml_node tgtNode) const;
+        void WriteAnims(const std::string xmlPath, pugi::xml_node tgtNode) const;
 
 
     protected:
         Header header;
         std::vector<AnimDesc> descs;
 
-        // TODO objects plz
-        std::map<std::string,std::map<std::string, std::pair<int,int> >> meta;
     };
 }
