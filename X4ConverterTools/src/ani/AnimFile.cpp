@@ -50,6 +50,7 @@ namespace ani {
 
 
         // TODO integrate into Component?
+        // TODO validate non-overlap
 
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_file(xmlPath.c_str());

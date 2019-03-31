@@ -300,7 +300,7 @@ namespace ani {
                 return ret;}
 
         void AnimDesc::WriteAnim(pugi::xml_node tgtNode) const {
-            std::string keys[] = {"location", "rotation", "scale"};
+            std::string keys[] = {"location", "rotation_euler", "scale"};
             std::string axes[] = {"X", "Y", "Z"};
             for (std::string &key : keys) {
                 for (std::string &axis: axes) {
@@ -314,7 +314,7 @@ namespace ani {
             std::vector<Keyframe> frames;
             if (keyType == "location") {
                 frames = posKeys;
-            } else if (keyType == "rotation") {
+            } else if (keyType == "rotation_euler") {
                 frames = rotKeys;
             } else if (keyType == "scale") {
                 frames = scaleKeys;

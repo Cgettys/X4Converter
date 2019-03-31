@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
         const std::string aniFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
         const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.xml";
-        const std::string aniOutFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
+        const std::string aniOutFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.2.dae";
 //const std::string aniFile = "/home/cg/Desktop/X4/test_files/struct_bt_ut_omicron_superyard_data.ani";
 //        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
@@ -126,7 +126,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 //        };
 
         pugi::xml_document doc;
-        pugi::xml_node rt = doc.root().append_child("root");
+        doc.load_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.dae");
+        pugi::xml_node rt = doc.root().child("asset").append_child("library_animations");
         file.WriteAnims(rt);
         doc.save_file(aniOutFile.c_str());
 //
