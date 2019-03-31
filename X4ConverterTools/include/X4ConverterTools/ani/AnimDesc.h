@@ -5,6 +5,7 @@
 #include <boost/algorithm/string.hpp>
 #include <X4ConverterTools/ani/Keyframe.h>
 #include <vector>
+#include <set>
 #include <iostream>
 #include "../pugixml.hpp"
 

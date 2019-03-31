@@ -4,97 +4,63 @@ from bpy import context as C
 from mathutils import *
 from math import *
 import xml.etree.ElementTree as ET
+
+def get_scene_by_anim_name(anim_name,create_if_not_exist=False):
+    scene_name =anim_name.split("_", 1)[0]
+    if scene_name not in D.scenes and create_if_not_exist:
+        print("Created Scene")
+        scene = D.scenes.new(scene_name)
+        scene.gravity = (0,0,0)
+        return scene
+    else:
+        return D.scenes[scene_name]
+
+def read_data(root):
+    print("Starting animations")
+    for part in root[0]:  # we wrote data first
+        part_name = part.attrib['name']
+        for anim in part:
+            anim_name = anim.attrib['subname']
+            scene = get_scene_by_anim_name(anim_name, True)
+    # tgt = anim.find("channel").attrib["target"]
+    #   tgt_name,tgt_channel = tgt.split("/")
+    #  channel_group,channel_axis=tgt_channel.split(".")
+    #    print("Target Name: {} ChannelType: {} Axis: {}".format(tgt_name,channel_group,channel_axis))
+    #   if tgt_name not in D.actions:
+    #      print("\tCreated action")
+    #      D.actions.new(tgt_name)
+    #  action = D.actions[tgt_name]
+    # for src in anim.findall("source"):
+
+def read_metadata(root):
+    print("Starting metadata")
+    for conn in root[1]:  # then we wrote metadta
+        tgt_name = conn.attrib["name"]
+        for anim in conn:
+            anim_name = anim.attrib["subname"]
+            scene = get_scene_by_anim_name(anim_name, True)
+            timeline_markers = scene.timeline_markers
+
+            start = int(anim.attrib["start"])
+            end = int(anim.attrib["end"])
+            state_name = anim_name.split("_",1)[1]
+            # TODO reverse lookup by time and concatenate?
+            if timeline_markers.get(state_name):
+                continue
+            elif start == end:
+                timeline_markers.new(state_name, frame=start)
+                continue
+            if not timeline_markers.get(state_name + "Start"):
+                # TODO if is there check if same/warn
+                timeline_markers.new(state_name + "Start", frame=start)
+            if not timeline_markers.get(state_name + "End"):
+                # TODO if is there check if same/warn
+                timeline_markers.new(state_name + "End", frame=end)
+            else:
+                print("wut")
+    print("Done with metadata")
+'/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.dae'
 tree = ET.parse('/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.anixml')
-root = tree.getroot()
-scene_num = 1
-scene = D.scenes[scene_num]
-timeline_markers = scene.timeline_markers
-print("Starting animations")
-"""
-<animation id="landinggear_front_01_location_X">
-			<source id="landinggear_front_01_location_X-input">
-				<float_array id="landinggear_front_01_location_X-input-array" count="1">0</float_array>
-				<technique_common>
-					<accessor source="#landinggear_front_01_location_X-input-array" count="1" stride="1">
-						<param name="TIME" type="float" />
-					</accessor>
-				</technique_common>
-			</source>
-			<source id="landinggear_front_01_location_X-output">
-				<float_array id="landinggear_front_01_location_X-output-array" count="1">0</float_array>
-				<technique_common>
-					<accessor source="#landinggear_front_01_location_X-output-array" count="2" stride="1">
-						<param name="X" type="float" />
-					</accessor>
-				</technique_common>
-			</source>
-			<source id="landinggear_front_01_location_X-interpolation">
-				<Name_array id="landinggear_front_01_location_X-interpolation-array" count="1">STEP</Name_array>
-				<technique_common>
-					<accessor source="#landinggear_front_01_location_X-interpolation-array" count="1" stride="1">
-						<param name="INTERPOLATION" type="name" />
-					</accessor>
-				</technique_common>
-			</source>
-			<source id="landinggear_front_01_location_X-intangent">
-				<float_array id="landinggear_front_01_location_X-intangent-array" count="2">0 0</float_array>
-				<technique_common>
-					<accessor source="#landinggear_front_01_location_X-intangent-array" count="2" stride="2">
-						<param name="X" type="float" />
-						<param name="Y" type="float" />
-					</accessor>
-				</technique_common>
-			</source>
-			<source id="landinggear_front_01_location_X-outtangent">
-				<float_array id="landinggear_front_01_location_X-outtangent-array" count="2">0 0</float_array>
-				<technique_common>
-					<accessor source="#landinggear_front_01_location_X-outtangent-array" count="2" stride="2">
-						<param name="X" type="float" />
-						<param name="Y" type="float" />
-					</accessor>
-				</technique_common>
-			</source>
-"""
-
-for anim in root[0]: # we wrote data first
-    tgt = anim.find("channel").attrib["target"]
-    tgt_name,tgt_channel = tgt.split("/")
-    channel_group,channel_axis=tgt_channel.split(".")
-    print("Target Name: {} ChannelType: {} Axis: {}".format(tgt_name,channel_group,channel_axis))
-
-    if tgt_name not in D.actions:
-        print("\tCreated action")
-        D.actions.new(tgt_name)
-    action = D.actions[tgt_name]
-
-    #for src in anim.findall("source"):
-
-
-
-print("Starting metadata")
-for conn in root[1]: # then we wrote metadta
-    tgt_name=conn.attrib["name"]
-    for anim in conn:
-        # TODO multiscene somehow
-        anim_name=anim.attrib["animName"]
-        start = int(anim.attrib["start"])
-        end = int(anim.attrib["end"])
-        if timeline_markers.get(anim_name+"Both"):
-            continue
-        elif start == end :
-            timeline_markers.new(anim_name+"Both",frame=start)
-        elif not timeline_markers.get(anim_name+"Start"):
-            # TODO if is there check if same/warn
-            timeline_markers.new(anim_name+"Start",frame=start)
-        elif not timeline_markers.get(anim_name+"End"):
-            # TODO if is there check if same/warn
-            timeline_markers.new(anim_name+"End",frame=end)
-        else:
-            print("wut")
-print("Done with metadata")
-
-
-"""
-for x in D.scenes[0].timeline_markers:
-    D.scenes[0].timeline_markers.remove(x)
-"""
+rt = tree.getroot()
+read_data(rt)
+read_metadata(rt)
