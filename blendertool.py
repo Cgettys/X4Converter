@@ -17,31 +17,24 @@ def main(path):
 
 def import_and_tweak_collada(daePath):
     bpy.ops.wm.collada_import(filepath=daePath)
-    delete_lods = True
+    delete_lods = False
     if (delete_lods):
-        override = C.copy()
-        bpy.ops.object.select_pattern(override, pattern="*lod[!0]*", case_sensitive=True, extend=False)
-        bpy.ops.object.delete(override)
+        bpy.ops.object.select_pattern(pattern="*lod[123456789]*", case_sensitive=True, extend=False)
+        bpy.ops.object.delete(use_global=True)
+    else:
+        for obj in C.scene.objects:
+            if 'lod0' not in obj.name and 'lod' in obj.name:
+                obj.hide_select = True
+                obj.hide_viewport = True
+                obj.hide_render = True
+
     hide_collision = True
     if (hide_collision):
-        override = C.copy()
-        bpy.ops.object.select_pattern(override, pattern="*collision*", case_sensitive=True, extend=False)
-        for obj in C.selected_objects(override):
-            obj.hide_select = True
-            obj.hide_viewport = True
-            obj.hide_render = True
-
-
-
-def get_scene_by_anim_name(anim_name, create_if_not_exist=False):
-    scene_name = anim_name.split("_", 1)[0]
-    if scene_name not in D.scenes and create_if_not_exist:
-        print("Created Scene")
-        scene = D.scenes.new(scene_name)
-        scene.use_gravity = False
-        return scene
-    else:
-        return D.scenes[scene_name]
+        for obj in C.scene.objects:
+            if 'collision' in obj.name:
+                obj.hide_select = True
+                obj.hide_viewport = True
+                obj.hide_render = True
 
 
 def read_data(root):
@@ -50,18 +43,61 @@ def read_data(root):
         part_name = part.attrib['name']
         for anim in part:
             anim_name = anim.attrib['subname']
-            scene = get_scene_by_anim_name(anim_name, True)
-#           scene.
-# tgt = anim.find("channel").attrib["target"]
-#   tgt_name,tgt_channel = tgt.split("/")
-#  channel_group,channel_axis=tgt_channel.split(".")
-#    print("Target Name: {} ChannelType: {} Axis: {}".format(tgt_name,channel_group,channel_axis))
-#   if tgt_name not in D.actions:
-#      print("\tCreated action")
-#      D.actions.new(tgt_name)
-#  action = D.actions[tgt_name]
-# for src in anim.findall("source"):
+            action_name = part_name + anim_name.split("_", 1)[0]
+            scene = D.scenes['Scene']
+            obj = D.objects[part_name]
+            if  obj.animation_data is None:
+                obj.animation_data_create()
+            for path in anim:
+                path_name = path.tag
+                for axis in path:
+                    read_frame(axis, obj, path_name)
 
+
+def read_frame(axis_data, obj, path_name):
+    groupnames = {"location": "Location", "rotation_euler": "Rotation", "scale": "Scaling"}
+    axis_name = axis_data.tag
+    axes = ["X", "Y", "Z"]
+    axis_idx = axes.index(axis_name)
+    # TODO offset instead?
+
+    starting_data={"location": obj.location, "rotation_euler": obj.rotation_euler, "scale": obj.scale}
+
+    for f in axis_data:
+        frame = int(f.attrib["id"])
+        obj.keyframe_insert(data_path=path_name,
+                            index=axis_idx,
+                            frame=float(frame),
+                            group=groupnames[path_name])
+        fc = get_fcurve(obj,path_name,axis_idx)
+        kf = get_keyframe(fc,frame)
+
+        if (path_name == "rotation_euler"):
+            kf.co[1] = starting_data[path_name][axis_idx]-float(f.attrib["value"])
+        else:
+            kf.co[1]=starting_data[path_name][axis_idx]+float(f.attrib["value"])
+        interp = f.attrib["interpolation"]
+        if (interp == "STEP"):
+            kf.interpolation="CONSTANT"
+        else:
+            kf.interpolation=interp
+
+        handle_l = f.find("handle_left")
+        handle_r = f.find("handle_right")
+        kf.handle_left=(float(handle_l.attrib["X"]),float(handle_l.attrib["Y"]))
+        kf.handle_right=(float(handle_r.attrib["X"]),float(handle_r.attrib["Y"]))
+
+def get_fcurve(obj,path,idx):
+    for fc in obj.animation_data.action.fcurves:
+        if fc.data_path==path and fc.array_index == idx:
+            return fc
+
+    return None
+def get_keyframe(fc,frame):
+    for kf in fc.keyframe_points:
+        if (abs(frame-kf.co[0])<0.1):
+            return kf
+    return None
 
 def read_metadata(root):
     print("Starting metadata")
@@ -69,7 +105,7 @@ def read_metadata(root):
         tgt_name = conn.attrib["name"]
         for anim in conn:
             anim_name = anim.attrib["subname"]
-            scene = get_scene_by_anim_name(anim_name, True)
+            scene = D.scenes['Scene']
             timeline_markers = scene.timeline_markers
 
             start = int(anim.attrib["start"])
@@ -87,13 +123,20 @@ def read_metadata(root):
             if not timeline_markers.get(state_name + "End"):
                 # TODO if is there check if same/warn
                 timeline_markers.new(state_name + "End", frame=end)
-            else:
-                print("wut")
+
     print("Done with metadata")
 
 
 if True:
-    override = C.copy()
-    bpy.ops.object.select_all(override)
-    bpy.ops.object.delete(override)
+    for obj in D.objects:
+        obj.hide_select = False
+        obj.hide_viewport = False
+        obj.hide_render = False
+
+    for scene in D.scenes:
+        bpy.context.window.scene = scene
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.ops.object.delete()
+
+bpy.context.window.scene = D.scenes['Scene']
 main('/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out')

@@ -209,10 +209,10 @@ namespace ani {
         tgtNode.append_attribute("id").set_value(frameNum);
         auto interpStr = getInterpolationTypeName(interp);
         auto value = getValueByAxis(axis);
-        tgtNode.append_child("value").append_child(pugi::node_pcdata).set_value(formatFloat(value).c_str());
+        tgtNode.append_attribute("value").set_value(formatFloat(value).c_str());
+        WriteHandle(tgtNode, axis, false);
         WriteHandle(tgtNode, axis, true);
-        WriteHandle(tgtNode, axis, true);
-        tgtNode.append_child("interpolation").append_child(pugi::node_pcdata).set_value(interpStr.c_str());
+        tgtNode.append_attribute("interpolation").set_value(interpStr.c_str());
 
     }
 
@@ -220,13 +220,13 @@ namespace ani {
 
         pugi::xml_node tgtNode;
         if (right) {
-            tgtNode = node.append_child("leftHandle");
+            tgtNode = node.append_child("handle_left");
         } else {
-            tgtNode = node.append_child("rightHandle");
+            tgtNode = node.append_child("handle_right");
         }
         auto handle = getControlPoint(axis, right);
-        tgtNode.append_child("X").append_child(pugi::node_pcdata).set_value(formatFloat(handle.first).c_str());
-        tgtNode.append_child("Y").append_child(pugi::node_pcdata).set_value(formatFloat(handle.second).c_str());
+        tgtNode.append_attribute("X").set_value(formatFloat(handle.first).c_str());
+        tgtNode.append_attribute("Y").set_value(formatFloat(handle.second).c_str());
     }
 
     std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool right) {
