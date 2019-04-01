@@ -106,6 +106,7 @@ namespace ani {
             // TODO cleaner way?
             if (!partNode.child("pivot").empty() && !partNode.child("pivot").child("offset").empty() &&
                 !partNode.child("pivot").child("offset").child("position").empty()) {
+                std::cout << "Wrote pivot " << std::endl;
                 auto outPivotNode = outConnNode.append_child("pivot_position_offset");
                 for (auto attr : partNode.child("pivot").child("offset").child("position").attributes()) {
                     outPivotNode.append_attribute(attr.name()).set_value(attr.value());

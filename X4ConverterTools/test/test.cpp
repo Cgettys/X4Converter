@@ -33,8 +33,9 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
 //        const std::string tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
-        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
+//        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
 
 //        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
         const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
