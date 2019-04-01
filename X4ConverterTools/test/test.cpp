@@ -20,6 +20,27 @@
 namespace fs = boost::filesystem;
 using namespace Assimp;
 BOOST_AUTO_TEST_SUITE(test_suite1)
+    BOOST_AUTO_TEST_CASE(test_ojump_file) {
+        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+        const std::string tgtPath = "extensions/DOR/assets/units/size_xl/units_size_xl_cargo_hauler_2";
+        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
+        const std::string daePath = gameBaseFolderPath +tgtPath+ "_modified.dae";
+        const std::string outputXMLPath = gameBaseFolderPath +tgtPath +"_modified.xml";
+        const std::string daeOutPath = gameBaseFolderPath +tgtPath+ "_modified.out.dae";
+        // To prevent cross contamination between runs, remove dae to be safe
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), outputXMLPath.c_str(),daeOutPath.c_str());
+        BOOST_TEST(forwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+
+}
 
     BOOST_AUTO_TEST_CASE(test_xml) {
         // TODO refactor all the io...
@@ -33,7 +54,9 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
-        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
+//        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
+        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
+
 //        const std::string tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
 //        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
 

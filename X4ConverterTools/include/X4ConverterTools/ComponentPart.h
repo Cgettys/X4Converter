@@ -27,6 +27,7 @@ public:
     aiVector3D Center;
     aiVector3D Size;
 
+    aiQuaterniont<ai_real> Rot;
     void WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
                    Assimp::IOSystem *pIOHandler);
 
@@ -41,4 +42,5 @@ protected:
 
     void WritePartLods(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                        Assimp::IOSystem *pIOHandler);
+
 };

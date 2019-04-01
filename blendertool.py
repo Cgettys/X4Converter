@@ -12,11 +12,26 @@ def main(path):
     tree = ET.parse(anixmlPath)
     rt = tree.getroot()
     read_data(rt)
-    read_metadata(rt)
+    for part in rt[1]:
+        print(part.attrib['name'])
+        for e in part:
+            if (e.tag=='pivot_position_offset'):
+                obj = D.objects[part.attrib['name']]
+                for c in obj.children:
+                    c.delta_location = (-float(e.attrib['x']),-float(e.attrib['y']),-float(e.attrib['z']))
+    ship_macro=path.rsplit('/',1)[1]
+    ship_macro=ship_macro.replace(".out","")
+    # also the root part
+    root_part=D.objects[ship_macro]
+
+    #read_metadata(rt)
 
 
 def import_and_tweak_collada(daePath):
     bpy.ops.wm.collada_import(filepath=daePath)
+    #    for obj in C.scene.objects:
+    #        obj.up_axis = 'Y'
+    #        obj.track_axis = 'POS_Z'
     delete_lods = False
     if (delete_lods):
         bpy.ops.object.select_pattern(pattern="*lod[123456789]*", case_sensitive=True, extend=False)
@@ -86,8 +101,14 @@ def read_frames(axis_data, obj, path_name,offset_frames):
         fc = get_fcurve(obj,path_name,axis_idx)
         kf = get_keyframe(fc,fake_frame)
 
-        if (path_name == "rotation_euler"):
-            kf.co[1] = starting_data[path_name][axis_idx]-float(f.attrib["value"])
+        # Ugh converting world handedness bullshit
+        if path_name == "location" and axis_name =="X":
+            kf.co[1]=starting_data[path_name][axis_idx]-float(f.attrib["value"])
+        elif path_name == "rotation_euler" and axis_name == "X":
+            kf.co[1]=starting_data[path_name][axis_idx]-float(f.attrib["value"])
+        elif path_name == "scale":
+            # scale multiplies... I'm an idiot sometimes
+            kf.co[1]=starting_data[path_name][axis_idx]*float(f.attrib["value"])
         else:
             kf.co[1]=starting_data[path_name][axis_idx]+float(f.attrib["value"])
         interp = f.attrib["interpolation"]
@@ -146,7 +167,7 @@ def read_metadata(root):
     print("Done with metadata")
 
 
-if True:
+if False:
     for obj in D.objects:
         obj.hide_select = False
         obj.hide_viewport = False
@@ -159,6 +180,11 @@ if True:
 
 bpy.context.window.scene = D.scenes['Scene']
 base_dir = '/home/cg/Desktop/X4/unpacked/'
-tgt_rel = 'assets/units/size_m/ship_par_m_corvette_01.out'
-tgt_rel='assets/units/size_s/ship_gen_s_fighter_01.out'
+#tgt_rel = 'assets/units/size_m/ship_par_m_corvette_01'
+#tgt_rel='assets/units/size_s/ship_gen_s_fighter_01'
+#tgt_rel='assets/units/size_s/ship_par_s_scout_01'
+#tgt_rel='assets/units/size_s/ship_arg_s_fighter_02'
+#tgt_rel='assets/units/size_xl/ship_arg_xl_carrier_01'
+tgt_rel='assets/units/size_m/ship_tel_m_frigate_01'
 main(base_dir+tgt_rel+'.out')
+print('done')

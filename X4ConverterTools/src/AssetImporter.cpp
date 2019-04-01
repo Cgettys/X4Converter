@@ -54,7 +54,7 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         if (pAniStream == nullptr) {
             std::cerr << "No ANI file found at path: " << aniPath << ". This likely indicates an error." << std::endl;
         } else {
-            pAnimFile= new AnimFile(pAniStream);
+            pAnimFile = new AnimFile(pAniStream);
 //            // So we can get it back on the other end
 //            pScene->mMetaData=aiMetadata::Alloc(1);
 //            pScene->mMetaData->Add("AnimFile",pAnimFile);
@@ -159,9 +159,12 @@ aiNode *AssetImporter::ConvertComponentPartToAiNode(ComponentPart &part, Convers
     auto *pPartNode = new aiNode();
     try {
         pPartNode->mName = part.Name;
-        pPartNode->mTransformation.a4 = -part.Position.x;
-        pPartNode->mTransformation.b4 = part.Position.y;
-        pPartNode->mTransformation.c4 = part.Position.z;
+
+        // TODO push this into part
+        auto outRot  = part.Rot;// * aiQuaternion(0,-M_PI,0);
+        // -X because handedness I guess. But we have to do the same when applying other data
+        (pPartNode->mTransformation) = aiMatrix4x4(aiVector3D(1, 1, 1), outRot,
+                                                   aiVector3D(-part.Position.x, part.Position.y, part.Position.z));
 
         pPartNode->mChildren = new aiNode *[part.Lods.size() + (part.CollisionMesh ? 1 : 0)];
 
