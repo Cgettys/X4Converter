@@ -4,6 +4,10 @@ using namespace boost;
 using namespace boost::filesystem;
 
 std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
+    if (filePath.empty()){
+        std::cerr << "Warning, MakePlatformSafe received an empty file path as an argument." << std::endl;
+        return filePath;
+    }
     std::string result(filePath);
 
     std::string preferredSep;
@@ -12,7 +16,7 @@ std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
     algorithm::replace_all(result, "\\", preferredSep);
     algorithm::replace_all(result, "/", preferredSep);
     if (result.empty()) {
-        throw std::runtime_error("Empty path");
+        throw std::runtime_error("Empty path after path made platform safe");
     }
     return result;
 }

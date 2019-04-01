@@ -43,10 +43,10 @@ void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, 
 void AssetExporter::ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene,
                                     aiNode *pPartNode) {
     std::string partName = pPartNode->mName.C_Str();
-    if (!std::regex_match(partName, std::regex("\\w+")))
+    if (!std::regex_match(partName, std::regex("\\w+"))) {
         throw std::runtime_error(
                 str(format("Invalid part name %s: must contain only letters, numbers and underscores") % partName));
-
+    }
     if (component.Parts.find(partName) != component.Parts.end())
         throw std::runtime_error(str(format("Duplicate part name %s") % partName));
 

@@ -129,15 +129,14 @@ namespace xmf {
 //        throw std::runtime_error("Material size is invalid");
 //    }
 
+        // TODO does this break teh animations?
         if (Culling_CW != 0) {
             // Would probably still work, but I want to know about it
-            ret.append("\tWARNING/ERROR: Culling_CW should be 0, was not 0\n");
-            valid = false;
+            ret.append("\tWARNING: Culling_CW != 0 (0 = CW). Is this file from a mod? if so, why are you converting it?\n");
         }
         if (RightHand != 0) {
             // Would probably still work, but I want to know about it
-            ret.append("\tWARNING/ERROR: RightHand != 0 (0 = D3D)\n");
-            valid = false;
+            ret.append("\tWARNING: RightHand != 0 (0 = D3D). Is this file from a mod? if so, why are you converting it?\n");
         }
         ret.append(str(format("\tNumVertices: %1%\n") % NumVertices));
         ret.append(str(format("\tNumIndices: %1%\n") % NumIndices));

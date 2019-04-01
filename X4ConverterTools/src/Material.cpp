@@ -81,7 +81,7 @@ void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFo
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
         } else {
-            throw std::runtime_error("Could not find Diffuse Texture for Material!");
+               // throw std::runtime_error("Could not find Diffuse Texture for Material!");
         }
     }
 }
@@ -93,7 +93,7 @@ void Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelF
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
         } else {
-            throw std::runtime_error("Could not find Specular Texture for Material!");
+//            throw std::runtime_error("Could not find Specular Texture for Material!");
         }
     }
 }
@@ -105,7 +105,7 @@ void Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFol
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
         } else {
-            throw std::runtime_error("Could not find Normal Texture for Material!");
+//            throw std::runtime_error("Could not find Normal Texture for Material!");
         }
     }
 }
@@ -118,7 +118,7 @@ Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFol
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_REFLECTION(0));
         } else {
-            throw std::runtime_error("Could not find Environment Texture for Material!");
+//            throw std::runtime_error("Could not find Environment Texture for Material!");
         }
     }
 }
