@@ -7,7 +7,7 @@
 #include <vector>
 #include <set>
 #include <iostream>
-#include "../pugixml.hpp"
+#include <pugixml.hpp>
 
 namespace ani {
     class AnimDesc {

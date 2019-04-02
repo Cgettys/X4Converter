@@ -4,7 +4,7 @@ using namespace boost;
 using namespace boost::filesystem;
 
 std::string PathUtil::MakePlatformSafe(const std::string &filePath) {
-    if (filePath.empty()){
+    if (filePath.empty()) {
         std::cerr << "Warning, MakePlatformSafe received an empty file path as an argument." << std::endl;
         return filePath;
     }
@@ -88,5 +88,18 @@ path PathUtil::GetRelativePath(const path &filePath, const path &relativeToFolde
     result /= filePath.filename();
 //    std::cout << "Returned path:"<< filePath << " " << relativeToFolderPath << " "<<  result.string() << std::endl;
     return result;
+}
+
+
+std::string PathUtil::GetOutputPath(const std::string &inputPath) {
+
+#ifdef X4ConverterTools_TEST
+    path p(inputPath);
+    std::string ext = ".out";
+    ext.append(p.extension().c_str());
+    p.replace_extension(ext);
+#else
+    return inputPath;
+#endif
 }
 

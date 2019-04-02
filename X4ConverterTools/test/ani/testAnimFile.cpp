@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
             if (filePath.has_extension() && iequals(filePath.extension().generic_string(), ".ANI")) {
 //                std::cout << filePath << std::endl;
 
-                auto sourceStream = io->Open(filePath.c_str(), "rb");
+                auto sourceStream = io->Open(filePath.generic_string(), "rb");
                 try {
                     AnimFile file(sourceStream);
                     std::cout << filePath.c_str() << std::endl;

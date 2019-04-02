@@ -14,7 +14,7 @@
 #include "Header.h"
 #include "AnimDesc.h"
 
-#include "../pugixml.hpp"
+#include <pugixml.hpp>
 
 namespace ani {
     class AnimFile {
@@ -33,7 +33,7 @@ namespace ani {
 
 
     protected:
-        Header header;
+        Header header = Header();
         std::vector<AnimDesc> descs;
 
     };

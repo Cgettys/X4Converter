@@ -31,20 +31,21 @@ ExternalProject_Add(zlib
         PREFIX external
         GIT_REPOSITORY       https://github.com/madler/zlib.git
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/zlib -DCMAKE_CXX_FLAGS="-fPIC")
-
+set(ZLIB_LIB ${CMAKE_BINARY_DIR}/zlib/lib/libz.a)
+set(ZLIB_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/zlib/include)
 
 ExternalProject_Add(pugixml
         PREFIX external
         GIT_REPOSITORY https://github.com/zeux/pugixml.git
         GIT_TAG v1.9
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/pugixml -DCMAKE_CXX_FLAGS="-fPIC")
-
 set(pugixml_LIB ${CMAKE_BINARY_DIR}/pugixml/lib/libpugixml.a)
 set(pugixml_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/pugixml/include)
+
 include(ExternalProject)
 ExternalProject_Add(assimp
         PREFIX external
-        GIT_REPOSITORY https://github.com/cgettys/assimp.git
+        GIT_REPOSITORY https://github.com/assimp/assimp.git
         #GIT_TAG fix-SceneCombiner-DeepCopy
         #GIT_TAG v4.1.0
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp -DCMAKE_CXX_FLAGS="-fPIC")
