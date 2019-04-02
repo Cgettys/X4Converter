@@ -2,7 +2,8 @@
 
 namespace fs = boost::filesystem;
 
-bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, const char *daeFilePath) {
+bool
+ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFilePath, const std::string &daeFilePath) {
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
 //    Assimp::Importer* importer = new Assimp::Importer();
@@ -23,7 +24,7 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
     aniPath.replace_extension("anixml");
     pugi::xml_document doc;
     pugi::xml_node rt = doc.root().append_child("root");
-    std::cout <<  importer.pAnimFile->validate();
+    std::cout << importer.pAnimFile->validate();
     importer.pAnimFile->WriteAnims(xmlFilePath, rt);
     doc.save_file(aniPath.c_str());
 //    ani::AnimFile animFile;
@@ -42,7 +43,8 @@ bool ConvertXmlToDae(const char *gameBaseFolderPath, const char *xmlFilePath, co
     return true;
 }
 
-bool ConvertDaeToXml(const char *gameBaseFolderPath, const char *daeFilePath, const char *xmfFilePath) {
+bool
+ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFilePath, const std::string &xmfFilePath) {
     Assimp::Importer *importer = new Assimp::Importer();
     const aiScene *pScene = importer->ReadFile(daeFilePath, 0);
     if (!pScene) {
@@ -70,7 +72,7 @@ bool ConvertDaeToXml(const char *gameBaseFolderPath, const char *daeFilePath, co
     AssetExporter exporter;
     AssetExporter::gameBaseFolderPath = gameBaseFolderPath;
 
-    exporter.Export(xmfFilePath, io, pScene, nullptr);
+    exporter.Export(xmfFilePath.c_str(), io, pScene, nullptr);
     delete io;
     delete importer;
     return true;

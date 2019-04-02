@@ -116,14 +116,14 @@ int main(int ac, char *av[]) {
             // .xml/.xmf -> .dae
             // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
             outFile.replace_extension(".dae");
-            outFile = PathUtil::GetOutputPath(outFile.c_str());
-            ConvertXmlToDae(gameBaseFolderPath.string().c_str(), inFile.string().c_str(), outFile.string().c_str());
+            outFile = PathUtil::GetOutputPath(outFile.generic_string());
+            ConvertXmlToDae(gameBaseFolderPath.generic_string(), inFile.generic_string(), outFile.generic_string());
         } else if (action == "exportxmf") {
             // .dae -> .xml/.xmf
             // .out.xml not necessary because already is .out.dae & .dae is the "extension"
             outFile.replace_extension(".xml");
             std::cout << outFile << std::endl;
-            ConvertDaeToXml(gameBaseFolderPath.string().c_str(), inFile.string().c_str(), outFile.string().c_str());
+            ConvertDaeToXml(gameBaseFolderPath.generic_string(), inFile.generic_string(), outFile.generic_string());
 
         } else {
             printf("Unknown action.\n\n");

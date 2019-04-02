@@ -16,6 +16,6 @@
 #include <X4ConverterTools/AssetImporter.h>
 #include <X4ConverterTools/AssetExporter.h>
 
-bool ConvertXmlToDae(const char *pszGameBaseFolderPath, const char *pszXmlFilePath, const char *pszDaeFilePath);
+bool ConvertXmlToDae(const std::string &pszGameBaseFolderPath, const std::string &pszXmlFilePath, const std::string &pszDaeFilePath);
 
-bool ConvertDaeToXml(const char *pszGameBaseFolderPath, const char *pszDaeFilePath, const char *pszXmlFilePath);
+bool ConvertDaeToXml(const std::string &pszGameBaseFolderPath, const std::string &pszDaeFilePath, const std::string &pszXmlFilePath);

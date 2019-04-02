@@ -20,8 +20,13 @@ if (WIN32 OR MINGW)
     set(BOOST_INCLUDEDIR /home/cg/boost-mingw/include)
     set(BOOST_LIBRARYDIR /home/cg/boost-mingw/lib/)
     set(Boost_NO_SYSTEM_PATHS ON)
-    link_libraries(-static-libgcc -static-libstdc++)
 endif ()
+if (MINGW)
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static-libgcc")
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+     set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS} -static-libgcc -s")
+     set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -static-libgcc -static-libstdc++ -s")
+endif()
 find_package(Boost COMPONENTS filesystem unit_test_framework program_options REQUIRED)
 
 include(ExternalProject)
@@ -48,8 +53,8 @@ ExternalProject_Add(assimp
         GIT_REPOSITORY https://github.com/assimp/assimp.git
         #GIT_TAG fix-SceneCombiner-DeepCopy
         #GIT_TAG v4.1.0
-        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp -DCMAKE_CXX_FLAGS="-fPIC")
-set(assimp_LIB ${CMAKE_BINARY_DIR}/assimp/lib/libassimp.so)
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_FLAGS="-fPIC")
+set(assimp_LIB ${CMAKE_BINARY_DIR}/assimp/lib/libassimp.a ${CMAKE_BINARY_DIR}/assimp/lib/libIrrXML.a)
 set(assimp_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/assimp/include)
 MESSAGE(STATUS "Assimp include dirs: ${assimp_INCLUDE_DIRS}")
 add_subdirectory(X4ConverterTools)

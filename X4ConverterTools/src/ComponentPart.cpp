@@ -41,6 +41,8 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
         std::cout << "rotation..." <<std::endl;
     }
 
+
+
     int lodIndex = 0;
     while (true) {
         // TODO what about the mysterious assets .xmfs?

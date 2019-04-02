@@ -55,4 +55,6 @@ install(EXPORT X4ConverterToolsConfig DESTINATION share/X4ConverterTools/cmake)
 # This makes the project importable from the build directory
 export(TARGETS X4ConverterTools FILE X4ConverterToolsConfig.cmake)
 
-add_subdirectory(test)
+if (NOT (WIN32 OR MINGW))
+    add_subdirectory(test)
+endif ()
