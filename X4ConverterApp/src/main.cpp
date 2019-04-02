@@ -115,7 +115,8 @@ int main(int ac, char *av[]) {
         if (action == "importxmf") {
             // .xml/.xmf -> .dae
             // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
-            outFile.replace_extension(".out.dae");
+            outFile.replace_extension(".dae");
+            outFile = PathUtil::GetOutputPath(outFile.c_str());
             ConvertXmlToDae(gameBaseFolderPath.string().c_str(), inFile.string().c_str(), outFile.string().c_str());
         } else if (action == "exportxmf") {
             // .dae -> .xml/.xmf

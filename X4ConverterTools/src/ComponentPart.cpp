@@ -97,7 +97,7 @@ void ComponentPart::WritePart(pugi::xml_node connectionsNode, const boost::files
     WritePartLods(partNode, geometryFolderPath, pIOHandler);
     if (CollisionMesh) {
         //TODO better solution
-        std::string xmfFileName = (format("%s-collision.out.xmf") % Name).str();
+        std::string xmfFileName = PathUtil::GetOutputPath((format("%s-collision.xmf") % Name).str());
         std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
         CollisionMesh->WriteToFile(xmfFilePath, pIOHandler);
     }
@@ -215,8 +215,7 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode, const boost::filesyst
         }
 
         // Write mesh file
-        //TODO better solution
-        std::string xmfFileName = (format("%s-lod%d.out.xmf") % Name % lod.LodIndex).str();
+        std::string xmfFileName = PathUtil::GetOutputPath((format("%s-lod%d.xmf") % Name % lod.LodIndex).str());
         std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
         lod.Mesh->WriteToFile(xmfFilePath, pIOHandler);
     }

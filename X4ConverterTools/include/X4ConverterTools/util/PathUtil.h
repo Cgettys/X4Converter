@@ -21,4 +21,14 @@ public:
     static boost::filesystem::path MakePlatformSafe(const boost::filesystem::path &filePath);
 
     static boost::filesystem::path MakeGameSafe(const boost::filesystem::path &filePath);
+
+
+    static std::string GetOutputPath(const std::string &inputPath) {
+
+#ifdef X4ConverterUtil_TEST
+        return inputPath.replace(".xml",".out.xml").replace(".dae",".out.dae").replace(".xmf",".out.xmf").replace(".ANI",".out.ANI")
+#else
+        return inputPath;
+#endif
+    }
 };

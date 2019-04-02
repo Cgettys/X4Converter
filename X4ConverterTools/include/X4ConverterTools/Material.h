@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pugixml.hpp"
-#include "zlib.h"
+#include <zlib.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>

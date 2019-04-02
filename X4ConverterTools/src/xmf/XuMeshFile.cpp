@@ -151,9 +151,9 @@ namespace xmf {
             unsigned long int compressedSize = compressedData.size();
             int status = compress(compressedData.data(), &compressedSize, buffer.GetData(),
                                   buffer.GetUncompressedDataSize());
-            if (status != Z_OK)
+            if (status != Z_OK) {
                 throw std::runtime_error("Failed to compress XMF data buffer");
-
+            }
             compressedData.resize(compressedSize);
         }
         return result;

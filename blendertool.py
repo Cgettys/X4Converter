@@ -20,7 +20,7 @@ def main(path):
                 for c in obj.children:
                     c.delta_location = (-float(e.attrib['x']),-float(e.attrib['y']),-float(e.attrib['z']))
     ship_macro=path.rsplit('/',1)[1]
-    ship_macro=ship_macro.replace(".out","")
+    #ship_macro=ship_macro.replace(".out","")
     # also the root part
     root_part=D.objects[ship_macro]
 
@@ -186,5 +186,5 @@ base_dir = '/home/cg/Desktop/X4/unpacked/'
 #tgt_rel='assets/units/size_s/ship_arg_s_fighter_02'
 #tgt_rel='assets/units/size_xl/ship_arg_xl_carrier_01'
 tgt_rel='assets/units/size_m/ship_tel_m_frigate_01'
-main(base_dir+tgt_rel+'.out')
+main(base_dir+tgt_rel)#+'.out')
 print('done')

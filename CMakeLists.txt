@@ -5,10 +5,34 @@ include(GNUInstallDirs)
 set(CMAKE_C_STANDARD 14)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
-find_package(ZLIB REQUIRED)
+
+#find_package(ZLIB REQUIRED)
+
+#set(Boost_DEBUG ON)
+if (WIN32 OR MINGW)
+    #set(Boost_USE_STATIC_RUNTIME ON)
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_ARCHITECTURE -x64)
+    set(Boost_NO_BOOST_CMAKE ON)
+    set(Boost_THREADAPI "win32")
+    set(BOOST_ROOT /home/cg/boost-mingw)
+    set(BOOST_COMPILER -mgw73)
+    set(BOOST_INCLUDEDIR /home/cg/boost-mingw/include)
+    set(BOOST_LIBRARYDIR /home/cg/boost-mingw/lib/)
+    set(Boost_NO_SYSTEM_PATHS ON)
+    link_libraries(-static-libgcc -static-libstdc++)
+endif ()
 find_package(Boost COMPONENTS filesystem unit_test_framework program_options REQUIRED)
 
 include(ExternalProject)
+
+
+ExternalProject_Add(zlib
+        PREFIX external
+        GIT_REPOSITORY       https://github.com/madler/zlib.git
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/zlib -DCMAKE_CXX_FLAGS="-fPIC")
+
+
 ExternalProject_Add(pugixml
         PREFIX external
         GIT_REPOSITORY https://github.com/zeux/pugixml.git
