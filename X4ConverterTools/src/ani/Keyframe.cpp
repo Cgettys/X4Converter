@@ -74,13 +74,11 @@ namespace ani {
         ret.append(str(format("\t\tCPX1: (%1%, %2%)\n") % CPX1x % CPX1y));
         ret.append(str(format("\t\tCPX2: (%1%, %2%)\n") % CPX2x % CPX2y));
 
-
         ret.append(str(format("\t\tCPY1: (%1%, %2%)\n") % CPY1x % CPY1y));
         ret.append(str(format("\t\tCPY2: (%1%, %2%)\n") % CPY2x % CPY2y));
 
         ret.append(str(format("\t\tCPZ1: (%1%, %2%)\n") % CPZ1x % CPZ1y));
         ret.append(str(format("\t\tCPZ2: (%1%, %2%)\n") % CPZ2x % CPZ2y));
-
 
         ret.append(str(format("\t\tTens: %1% Cont: %2% Bias: %3%\n") % Tens % Cont % Bias));
         ret.append(str(format("\t\tEaseIn: %1% EaseOut: %2%\n") % EaseIn % EaseOut));

@@ -24,17 +24,15 @@ set("LIB_SRCS"
         src/xmf/XmfVertexElement.cpp
         src/xmf/XuMeshFile.cpp
         src/xmf/XmfHeader.cpp)
-add_library(X4ConverterTools SHARED ${LIB_SRCS})
-target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem ${pugixml_LIB} ${ZLIB_LIBRARIES} ${assimp_LIB})
+add_library(X4ConverterTools STATIC ${LIB_SRCS})
+target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem Boost::unit_test_framework pugixml ${ZLIB_LIBRARIES} ${assimp_LIB})
 # TODO fix so that proper includes are passed onto dependent projects?
 target_include_directories(X4ConverterTools PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         PRIVATE src
         Vendor/half
-        ${pugixml_INCLUDE_DIRS}
         ${ZLIB_INCLUDE_DIRS}
-        ${Boost_INCLUDE_DIRS}
         ${assimp_INCLUDE_DIRS})
 # Manual dependency for external project
 add_dependencies(X4ConverterTools pugixml assimp)
