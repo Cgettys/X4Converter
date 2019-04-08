@@ -4,7 +4,7 @@
 #include <boost/format.hpp>
 #include <boost/range.hpp>
 #include <X4ConverterTools/Material.h>
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 
 class MaterialCollection {
 public:

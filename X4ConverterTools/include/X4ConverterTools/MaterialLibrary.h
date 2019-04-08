@@ -9,7 +9,7 @@
 #include <X4ConverterTools/Material.h>
 #include <X4ConverterTools/MaterialCollection.h>
 #include <X4ConverterTools/types.h>
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 
 class MaterialLibrary {
     friend Material;

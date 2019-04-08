@@ -11,7 +11,7 @@
 #include <boost/algorithm/string.hpp>
 #include <stdexcept>
 #include <assimp/scene.h>
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 #include <cstdio>
 #include <cmath>
 

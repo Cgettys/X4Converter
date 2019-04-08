@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 #include <zlib.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>

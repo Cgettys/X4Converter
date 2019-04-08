@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "zlib.h"
+#include <zlib.h>
 #include "../Vendor/half/include/half.hpp"
 #include "X4ConverterTools/types.h"
 #include <string>

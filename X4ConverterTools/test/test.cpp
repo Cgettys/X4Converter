@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE AllTests
 
-#include "pugixml.hpp"
+#include <pugixml.hpp>
 #include <set>
 #include <algorithm>
 #include <vector>
