@@ -7,34 +7,26 @@ from bpy.types import Operator
 import subprocess
 import xml.etree.ElementTree as ET
     
-print("File:"+__file__)
 def get_converter_path():
     script_path = os.path.realpath(__file__)
-    print("Script_path:"+script_path)
     dir_path = os.path.dirname(script_path)
 
-    if (os.path.exists(dir_path + "X4ConverterApp")):
-       return dir_path+"X4ConverterApp"
-    elif (os.path.exists(dir_path + "X4ConverterApp.exe")):
-        return dir_path+"X4ConverterApp.exe"
+    if (os.path.exists(dir_path + "/X4ConverterApp")):
+       return dir_path+"/X4ConverterApp"
+    elif (os.path.exists(dir_path + "/X4ConverterApp.exe")):
+        return dir_path+"/X4ConverterApp.exe"
     else:
         error = "Error, could not find converter - are you sure it's in the same directory as the script? It was not found in "+dir_path
         print(error)
         raise Exception(error)
 
-old_data_dir = None
 def get_data_dir(target):
-    # If we found it previously, and it's still there, the target file is in that path
-    if (old_data_dir is not None) and (os.path.exists(old_data_dir+"jobeditor.html")) and (os.path.commonprefix([old_data_dir,target]) == old_data_dir):
-        print("Reusing previously found data dir")
-        return old_data_dir
     # Keeps iterating up until it runs out of places to look or finds jobeditor.html
     # A bit hacky but it should work
     possible_dir = target
-    while ((not os.path.ismount(possible_dir)) and (not os.path.exists(possible_dir+"jobeditor.html"))):
+    while ((not os.path.ismount(possible_dir)) and (not os.path.exists(possible_dir+"/jobeditor.html"))):
         possible_dir = os.path.dirname(possible_dir)
     if (not os.path.ismount(possible_dir)):
-        old_data_dir = possible_dir
         return possible_dir
     else:
         error = "Could not find unpacked root"
@@ -91,7 +83,7 @@ class ImportAsset(Operator, ImportHelper):
 
 
         if (self.import_animations):
-            self.read_animations(context,base_path)
+            self.read_animations(base_path)
 
         #read_metadata(rt)
         return {'FINISHED'}
@@ -121,30 +113,30 @@ class ImportAsset(Operator, ImportHelper):
                     obj.hide_render = True
 
 
-    def read_animations(self, ctx,base_path):
+    def read_animations(self,base_path):
         anixml_path = base_path + ".anixml"
         tree = ET.parse(anixml_path)
         root = tree.getroot()
         print("Starting animations")
         for part in root[0]:  # we wrote data first
             part_name = part.attrib['name']
-            obj = ctx.objects[part_name]
+            obj = bpy.data.objects[part_name]
             for cat in part:
-                self.handle_category(ctx,obj,cat,part_name)
+                self.handle_category(obj,cat,part_name)
 
         for part in root[1]:
             print(part.attrib['name'])
             for e in part:
                 if (e.tag=='pivot_position_offset'):
-                    obj = ctx.objects[part.attrib['name']]
+                    obj = bpy.data.objects[part.attrib['name']]
                     for c in obj.children:
                         c.delta_location = (-float(e.attrib['x']),-float(e.attrib['y']),-float(e.attrib['z']))
         ship_macro=base_path.rsplit('/',1)[1]
         ship_macro=ship_macro.replace(".out","")
         # also the root part
-        root_part=ctx.objects[ship_macro]
+        root_part=bpy.data.objects[ship_macro]
 
-    def handle_category(self,ctx,obj,cat,part_name):
+    def handle_category(self,obj,cat,part_name):
         offset_frames = 0
         for anim in cat:
             offset_frames = offset_frames + self.handle_category_anim(obj,cat,part_name,anim,offset_frames)
