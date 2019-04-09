@@ -70,7 +70,6 @@ class ImportAsset(Operator, ImportHelper):
             scale_num = float(self.scale)
             root_part.scale = (scale_num, scale_num, scale_num)
         
-        #read_metadata(rt)
         return {'FINISHED'}
 
 
@@ -103,53 +102,51 @@ class ImportAsset(Operator, ImportHelper):
         print("Starting animations")
         for part in root[0]:  # we wrote data first
             part_name = part.attrib['name']
+            part_meta = root[1].findall("[@name='"+part_name+"']")
+            print(part_meta)
             obj = bpy.data.objects[part_name]
             for cat in part:
-                self.handle_category(obj,cat,part_name)
+                self.handle_category(obj,cat,part_name,part_meta)
 
-        for part in root[1]:
-            print(part.attrib['name'])
+        self.read_metadata(root)
 
-
-    def handle_category(self,obj,cat,part_name):
-        offset_frames = 0
+    def handle_category(self,obj,cat,part_name,part_meta):
         for anim in cat:
-            offset_frames = offset_frames + self.handle_category_anim(obj,cat,part_name,anim,offset_frames)
+
+            self.handle_category_anim(obj,cat,part_name,anim,part_meta)
 
 
-    def handle_category_anim(self,obj,cat,part_name,anim,offset_frames):
+    def handle_category_anim(self,obj,cat,part_name,anim,part_meta):
+
+    
         anim_name = anim.attrib['subname']
         action_name = part_name + anim_name
-        frame_max = 0
+
+        anim_meta = part_meta[0].findall("[@subname='"+anim_name+"']")[0]
+        frame_offset = anim_meta.find('frames').attrib['start']
         if  obj.animation_data is None:
             obj.animation_data_create()
         for path in anim:
             path_name = path.tag
             for axis in path:
-                possible_max=self.read_frames(axis, obj, path_name,offset_frames)
-                frame_max=max(frame_max,possible_max)
-        return frame_max
+                self.read_frames(axis, obj, path_name,frame_offset)
 
-    def read_frames(self,axis_data, obj, path_name,offset_frames):
+    def read_frames(self,axis_data, obj, path_name,frame_offset):
         # TODO test/assert assumption that all anims start at 0, data wise
         groupnames = {"location": "Location", "rotation_euler": "Rotation", "scale": "Scaling"}
         axis_name = axis_data.tag
         axes = ["X", "Y", "Z"]
         axis_idx = axes.index(axis_name)
         # TODO offset instead?
-
-        frame_min = 0
-        frame_max = 0
         starting_data={"location": obj.location, "rotation_euler": obj.rotation_euler, "scale": obj.scale}
         for f in axis_data:
-            frame = int(f.attrib["id"])
-            fake_frame = float(frame+offset_frames)
+            frame = int(f.attrib["id"])+frame_offset
             obj.keyframe_insert(data_path=path_name,
                                 index=axis_idx,
-                                frame=fake_frame,
+                                frame=frame,
                                 group=groupnames[path_name])
             fc = self.get_fcurve(obj,path_name,axis_idx)
-            kf = self.get_keyframe(fc,fake_frame)
+            kf = self.get_keyframe(fc,frame)
 
             # Ugh converting world handedness bullshit
             if path_name == "location" and axis_name =="X":
@@ -171,11 +168,6 @@ class ImportAsset(Operator, ImportHelper):
             handle_r = f.find("handle_right")
             kf.handle_left=(float(handle_l.attrib["X"]),float(handle_l.attrib["Y"]))
             kf.handle_right=(float(handle_r.attrib["X"]),float(handle_r.attrib["Y"]))
-            frame_min = min(frame_min, frame)
-            frame_max = max(frame_max,frame)
-        if (frame_min <0):
-            print("Something has gone horribly wrong, frame_min < 0")
-        return frame_max
 
     def get_fcurve(self,obj,path,idx):
         for fc in obj.animation_data.action.fcurves:
@@ -189,18 +181,18 @@ class ImportAsset(Operator, ImportHelper):
                 return kf
         return None
 
-    def read_metadata(self,ctx,root):
+    def read_metadata(self,root):
         print("Starting metadata")
         for conn in root[1]:  # then we wrote metadta
             tgt_name = conn.attrib["name"]
             for anim in conn:
                 anim_name = anim.attrib["subname"]
                 #TODO fixme
-                scene = ctx.scenes['Scene']
+                scene = bpy.data.scenes['Scene']
                 timeline_markers = scene.timeline_markers
-
-                start = int(anim.attrib["start"])
-                end = int(anim.attrib["end"])
+                frame_data = anim.find("frames")
+                start = int(frame_data.attrib["start"])
+                end = int(frame_data.attrib["end"])
                 state_name = anim_name.split("_", 1)[1]
                 # TODO reverse lookup by time and concatenate?
                 if timeline_markers.get(state_name):

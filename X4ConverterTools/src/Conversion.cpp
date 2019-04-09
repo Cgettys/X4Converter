@@ -24,11 +24,15 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     aniPath.replace_extension("anixml");
     pugi::xml_document doc;
     pugi::xml_node rt = doc.root().append_child("root");
-    std::cout << importer.pAnimFile->validate();
-    importer.pAnimFile->WriteAnims(xmlFilePath, rt);
-    doc.save_file(aniPath.c_str());
+    if (importer.pAnimFile != nullptr){
+
+        std::cout << importer.pAnimFile->validate();
+        importer.pAnimFile->WriteAnims(xmlFilePath, rt);
+        doc.save_file(aniPath.c_str());
 //    ani::AnimFile animFile;
 //    pScene->mMetaData->Get("AnimFile", animFile);
+    }
+
 
     Assimp::Exporter exporter;
     aiReturn result = exporter.Export(pScene, "collada", daeFilePath);

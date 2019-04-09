@@ -8,6 +8,10 @@ using namespace Assimp;
 
 namespace ani {
 // TODO copy constructors?
+    AnimFile::AnimFile() {
+        header = Header();
+    }
+
     AnimFile::AnimFile(IOStream *pStream) {        // TODO endian handling??
         // TODO pass this in instead of pstream?
         auto pStreamReader = StreamReaderLE(pStream, false);

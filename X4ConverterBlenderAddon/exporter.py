@@ -77,12 +77,11 @@ class ExportAsset(Operator, ExportHelper):
 
 
     def handle_category(self,obj,cat,part_name):
-        offset_frames = 0
         for anim in cat:
-            offset_frames = offset_frames + self.handle_category_anim(obj,cat,part_name,anim,offset_frames)
+            self.handle_category_anim(obj,cat,part_name,anim)
 
 
-    def handle_category_anim(self,obj,cat,part_name,anim,offset_frames):
+    def handle_category_anim(self,obj,cat,part_name,anim):
         anim_name = anim.attrib['subname']
         action_name = part_name + anim_name
         frame_max = 0
@@ -91,11 +90,9 @@ class ExportAsset(Operator, ExportHelper):
         for path in anim:
             path_name = path.tag
             for axis in path:
-                possible_max=self.read_frames(axis, obj, path_name,offset_frames)
-                frame_max=max(frame_max,possible_max)
-        return frame_max
+                self.read_frames(axis, obj, path_name)
 
-    def read_frames(self,axis_data, obj, path_name,offset_frames):
+    def read_frames(self,axis_data, obj, path_name):
         # TODO test/assert assumption that all anims start at 0, data wise
         groupnames = {"location": "Location", "rotation_euler": "Rotation", "scale": "Scaling"}
         axis_name = axis_data.tag
@@ -108,13 +105,12 @@ class ExportAsset(Operator, ExportHelper):
         starting_data={"location": obj.location, "rotation_euler": obj.rotation_euler, "scale": obj.scale}
         for f in axis_data:
             frame = int(f.attrib["id"])
-            fake_frame = float(frame+offset_frames)
             obj.keyframe_insert(data_path=path_name,
                                 index=axis_idx,
-                                frame=fake_frame,
+                                frame=frame,
                                 group=groupnames[path_name])
             fc = self.get_fcurve(obj,path_name,axis_idx)
-            kf = self.get_keyframe(fc,fake_frame)
+            kf = self.get_keyframe(fc,frame)
 
             # Ugh converting world handedness bullshit
             if path_name == "location" and axis_name =="X":
@@ -126,6 +122,7 @@ class ExportAsset(Operator, ExportHelper):
                 kf.co[1]=starting_data[path_name][axis_idx]*float(f.attrib["value"])
             else:
                 kf.co[1]=starting_data[path_name][axis_idx]+float(f.attrib["value"])
+
             interp = f.attrib["interpolation"]
             if (interp == "STEP"):
                 kf.interpolation="CONSTANT"
@@ -136,11 +133,6 @@ class ExportAsset(Operator, ExportHelper):
             handle_r = f.find("handle_right")
             kf.handle_left=(float(handle_l.attrib["X"]),float(handle_l.attrib["Y"]))
             kf.handle_right=(float(handle_r.attrib["X"]),float(handle_r.attrib["Y"]))
-            frame_min = min(frame_min, frame)
-            frame_max = max(frame_max,frame)
-        if (frame_min <0):
-            print("Something has gone horribly wrong, frame_min < 0")
-        return frame_max
 
     def get_fcurve(self,obj,path,idx):
         for fc in obj.animation_data.action.fcurves:

@@ -8,7 +8,7 @@
 namespace ani {
     class Header {
     public:
-        Header() = default;
+        Header();
         explicit Header(Assimp::StreamReaderLE &reader);
 
         std::string validate();// Debug method - throws exception if invalid, else returns human readable string

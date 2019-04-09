@@ -6,6 +6,10 @@ using namespace Assimp;
 // TODO copy constructors?
 namespace ani {
 
+    Header::Header() {
+
+    }
+
     Header::Header(Assimp::StreamReaderLE &reader) {
         reader >> NumAnims;
 
@@ -20,9 +24,8 @@ namespace ani {
         std::string result;
         bool valid = true;
         result.append("Header data:\n");
-
         // Gotta love format strings
-        result.append(str(format("\tNumAnims:  %1$d (%1$#04x)\n") % NumAnims));
+        result.append(str(format("\tNumAnims:  %1% \n") % NumAnims));
 
         result.append(str(format("\tKeyOffsetBytes: %1$d (%1$#06x)\n") % KeyOffsetBytes));
 

@@ -25,6 +25,7 @@ set("LIB_SRCS"
         src/xmf/XuMeshFile.cpp
         src/xmf/XmfHeader.cpp)
 add_library(X4ConverterTools STATIC ${LIB_SRCS})
+target_compile_definitions(X4ConverterTools PRIVATE "X4ConverterTools_TEST=TRUE") # TODO fixme
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem Boost::unit_test_framework pugixml ${ZLIB_LIBRARIES} ${assimp_LIB})
 # TODO fix so that proper includes are passed onto dependent projects?
 target_include_directories(X4ConverterTools PUBLIC

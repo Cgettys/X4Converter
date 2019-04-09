@@ -8,6 +8,8 @@ using namespace ani;
 
 AssetImporter::AssetImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
     _gameBaseFolderPath = gameBaseFolderPath;
+    pAnimFile = nullptr;
+
 }
 
 const aiImporterDesc *AssetImporter::GetInfo() const {

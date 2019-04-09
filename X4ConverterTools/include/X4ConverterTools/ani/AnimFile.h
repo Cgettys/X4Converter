@@ -19,7 +19,7 @@
 namespace ani {
     class AnimFile {
     public:
-        AnimFile() = default;
+        AnimFile();
         AnimFile(Assimp::IOStream *pStream);
 
         ~AnimFile();

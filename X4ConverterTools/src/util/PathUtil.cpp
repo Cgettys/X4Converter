@@ -94,10 +94,12 @@ path PathUtil::GetRelativePath(const path &filePath, const path &relativeToFolde
 std::string PathUtil::GetOutputPath(const std::string &inputPath) {
 
 #ifdef X4ConverterTools_TEST
+    std::cout << "Using test paths" << std::endl;
     path p(inputPath);
     std::string ext = ".out";
     ext.append(p.extension().c_str());
     p.replace_extension(ext);
+    return p.generic_string();
 #else
     return inputPath;
 #endif
