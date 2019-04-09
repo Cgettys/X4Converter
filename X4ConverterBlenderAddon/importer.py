@@ -37,7 +37,9 @@ def call_converter(action, target):
     # executable <action> <datdir> <target>
     converter_path = get_converter_path()
     dat_dir = get_data_dir(target)    
-    subprocess.check_call([converter_path,action,dat_dir,target])
+    result=subprocess.check_output([converter_path,action,dat_dir,target])
+    print(result.decode('utf-8'))
+    print("Converter appears to have been successful")
 
 class ImportAsset(Operator, ImportHelper):
     bl_idname = "import_scene.x4import"

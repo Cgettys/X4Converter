@@ -36,11 +36,10 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
     // TODO handle rotation & offset here too if possible
     pugi::xml_node rotNode = partNode.select_node("../../offset/quaternion").node();
     if (rotNode) {
-        Rot = aiQuaternion(rotNode.attribute("qx").as_float(), rotNode.attribute("qy").as_float(),
-                          rotNode.attribute("qz").as_float(), rotNode.attribute("qw").as_float())*aiQuaternion(0,1,0,0);
-        std::cout << "rotation..." <<std::endl;
+        Rot = aiQuaternion(rotNode.attribute("qw").as_float(), rotNode.attribute("qx").as_float(),
+                           rotNode.attribute("qy").as_float(), rotNode.attribute("qz").as_float());
+        std::cout << "rotation..." << std::endl;
     }
-
 
 
     int lodIndex = 0;
