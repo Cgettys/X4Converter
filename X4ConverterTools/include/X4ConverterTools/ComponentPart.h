@@ -26,6 +26,7 @@ public:
     aiVector3D Position;
     aiVector3D Center;
     aiVector3D Size;
+    aiVector3D Offset;
 
     aiQuaterniont<ai_real> Rot;
     void WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,

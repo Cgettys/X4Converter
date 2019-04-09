@@ -1,4 +1,4 @@
-#include <X4ConverterTools/Component.h>
+#include <X4ConverterTools/ComponentPart.h>
 
 using namespace boost;
 using namespace xmf;
@@ -23,7 +23,7 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
 
     pugi::xml_node posNode = partNode.select_node("../../offset/position").node();
     if (posNode) {
-        Position = aiVector3D(posNode.attribute("x").as_float(), posNode.attribute("y").as_float(),
+        Position = aiVector3D(-posNode.attribute("x").as_float(), posNode.attribute("y").as_float(),
                               posNode.attribute("z").as_float());
     }
 
@@ -40,6 +40,27 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
                            rotNode.attribute("qy").as_float(), rotNode.attribute("qz").as_float());
         std::cout << "rotation..." << std::endl;
     }
+
+    // TODO are there any pivot rotations?
+    pugi::xml_node pivotNode = partNode.select_node("pivot").node();
+    if (!pivotNode.empty() && !pivotNode.child("offset").empty()) {
+        std::cout << "Found pivot" << std::endl;
+        pugi::xml_node offsetNode = pivotNode.child("offset");
+        if (!offsetNode.child("position").empty()) {
+            pugi::xml_node posOffsetNode = offsetNode.child("position");
+            Offset = aiVector3D(-posOffsetNode.attribute("x").as_float(),posOffsetNode.attribute("y").as_float(),
+            posOffsetNode.attribute("z").as_float());
+
+        } else {
+            Offset = aiVector3D(0,0,0);
+            std::cerr << "Warning: pivot & offset found, but no position node!\n";
+        }
+    } else {
+        Offset = aiVector3D(0,0,0);
+        std::cerr << "Warning: pivot found, but no offset node!\n";
+    }
+
+    // TODO check for extra child nodes of pivot/offset
 
 
     int lodIndex = 0;

@@ -163,18 +163,22 @@ aiNode *AssetImporter::ConvertComponentPartToAiNode(ComponentPart &part, Convers
         // TODO push this into part
         auto outRot  = part.Rot;// * aiQuaternion(0,-M_PI,0);
         // -X because handedness I guess. But we have to do the same when applying other data
-        (pPartNode->mTransformation) = aiMatrix4x4(aiVector3D(1, 1, 1), outRot,
-                                                   aiVector3D(-part.Position.x, part.Position.y, part.Position.z));
+        (pPartNode->mTransformation) = aiMatrix4x4(aiVector3D(1, 1, 1), outRot,part.Position);
 
         pPartNode->mChildren = new aiNode *[part.Lods.size() + (part.CollisionMesh ? 1 : 0)];
 
         for (ComponentPartLod &lod : part.Lods) {
             const std::string name = (format("%sXlod%d") % part.Name % lod.LodIndex).str();
-            pPartNode->mChildren[pPartNode->mNumChildren++] = lod.Mesh->ConvertToAiNode(name, context);
+            auto child = lod.Mesh->ConvertToAiNode(name, context);
+            aiMatrix4x4::Translation(part.Offset,child->mTransformation);
+            pPartNode->mChildren[pPartNode->mNumChildren++] = child;
         }
         if (part.CollisionMesh) {
             std::string name = part.Name + "Xcollision";
-            pPartNode->mChildren[pPartNode->mNumChildren++] = part.CollisionMesh->ConvertToAiNode(name, context);
+
+            auto child = part.CollisionMesh->ConvertToAiNode(name, context);
+            aiMatrix4x4::Translation(part.Offset,child->mTransformation);
+            pPartNode->mChildren[pPartNode->mNumChildren++] = child;
         }
     } catch (...) {
         // TODO real exception handling

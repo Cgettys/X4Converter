@@ -128,11 +128,6 @@ class ImportAsset(Operator, ImportHelper):
 
         for part in root[1]:
             print(part.attrib['name'])
-            for e in part:
-                if (e.tag=='pivot_position_offset'):
-                    obj = bpy.data.objects[part.attrib['name']]
-                    for c in obj.children:
-                        c.delta_location = (-float(e.attrib['x']),-float(e.attrib['y']),-float(e.attrib['z']))
         ship_macro=base_path.rsplit('/',1)[1]
         ship_macro=ship_macro.replace(".out","")
         # also the root part
