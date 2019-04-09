@@ -39,6 +39,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         BOOST_TEST(backwardSuccess);
 
         BOOST_TEST_CHECKPOINT("Backward parsing");
+        // TODO utility function
         pugi::xml_document expectedDoc;
         pugi::xml_parse_result expectedResult = expectedDoc.load_file(inputXMLPath.c_str());
 
@@ -99,10 +100,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
         BOOST_TEST(backwardSuccess);
 
-        // TODO why did this start seg-faulting?
-//        BOOST_TEST_CHECKPOINT("Forward parsing");
-//        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), outputXMLPath.c_str(),daeOutPath.c_str());
-//        BOOST_TEST(forwardSuccess);
+//        // TODO why did this start seg-faulting?
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), outputXMLPath.c_str(),daeOutPath.c_str());
+        BOOST_TEST(forwardSuccess);
 
 
 }

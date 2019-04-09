@@ -1,45 +1,12 @@
 import re
-import os
 import bpy
 from bpy_extras.io_utils import ImportHelper
 from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
-import subprocess
 import xml.etree.ElementTree as ET
+from X4ConverterBlenderAddon.common import *
+
     
-def get_converter_path():
-    script_path = os.path.realpath(__file__)
-    dir_path = os.path.dirname(script_path)
-
-    if (os.path.exists(dir_path + "/X4ConverterApp")):
-       return dir_path+"/X4ConverterApp"
-    elif (os.path.exists(dir_path + "/X4ConverterApp.exe")):
-        return dir_path+"/X4ConverterApp.exe"
-    else:
-        error = "Error, could not find converter - are you sure it's in the same directory as the script? It was not found in "+dir_path
-        print(error)
-        raise Exception(error)
-
-def get_data_dir(target):
-    # Keeps iterating up until it runs out of places to look or finds jobeditor.html
-    # A bit hacky but it should work
-    possible_dir = target
-    while ((not os.path.ismount(possible_dir)) and (not os.path.exists(possible_dir+"/jobeditor.html"))):
-        possible_dir = os.path.dirname(possible_dir)
-    if (not os.path.ismount(possible_dir)):
-        return possible_dir
-    else:
-        error = "Could not find unpacked root"
-        print(error)
-        raise Exception(error)
-def call_converter(action, target):
-    # As per the converter's command line args:
-    # executable <action> <datdir> <target>
-    converter_path = get_converter_path()
-    dat_dir = get_data_dir(target)    
-    result=subprocess.check_output([converter_path,action,dat_dir,target])
-    print(result.decode('utf-8'))
-    print("Converter appears to have been successful")
 
 class ImportAsset(Operator, ImportHelper):
     bl_idname = "import_scene.x4import"
@@ -77,6 +44,14 @@ class ImportAsset(Operator, ImportHelper):
         description="Import Animation Data - wip",
         default=True,
     )
+    scale: EnumProperty(
+        name="Scale",
+        description="Desired scale - use smaller values if the ship doesn't show up right",
+        default="1",
+        items=[("1", "1.00x","No scaling"),
+                ("0.1","0.10x","1/10th size"),
+                ("0.01","0.01x","1/100th size")]
+    )
     def execute(self, context):
         if (self.run_converter):
             call_converter("importxmf",self.filepath)
@@ -87,6 +62,14 @@ class ImportAsset(Operator, ImportHelper):
         if (self.import_animations):
             self.read_animations(base_path)
 
+        ship_macro=base_path.rsplit('/',1)[1]
+        ship_macro=ship_macro.replace(".out","")
+        # also the root part
+        root_part=bpy.data.objects[ship_macro]
+        if (self.scale != "1.00"):
+            scale_num = float(self.scale)
+            root_part.scale = (scale_num, scale_num, scale_num)
+        
         #read_metadata(rt)
         return {'FINISHED'}
 
@@ -94,9 +77,7 @@ class ImportAsset(Operator, ImportHelper):
     def import_and_tweak_collada(self,ctx, base_path):
         dae_path = base_path+ ".dae"
         bpy.ops.wm.collada_import(filepath=dae_path)
-        #    for obj in C.scene.objects:
-        #        obj.up_axis = 'Y'
-        #        obj.track_axis = 'POS_Z'
+        
         if (self.delete_lods):
             bpy.ops.object.select_pattern(pattern="*lod[123456789]*", case_sensitive=True, extend=False)
             bpy.ops.object.delete(use_global=True)
@@ -128,10 +109,7 @@ class ImportAsset(Operator, ImportHelper):
 
         for part in root[1]:
             print(part.attrib['name'])
-        ship_macro=base_path.rsplit('/',1)[1]
-        ship_macro=ship_macro.replace(".out","")
-        # also the root part
-        root_part=bpy.data.objects[ship_macro]
+
 
     def handle_category(self,obj,cat,part_name):
         offset_frames = 0
