@@ -1,5 +1,6 @@
 import bpy
 from X4ConverterBlenderAddon.importer import *
+from X4ConverterBlenderAddon.panel import *
 from X4ConverterBlenderAddon.exporter import *
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +35,9 @@ def menu_func_export(self, context):
 
 def register():
     print("X4 Foundations Addon registered!")
+    bpy.utils.register_class(SubAnimationItem)
+    bpy.types.Object.X4_anim_data = bpy.props.CollectionProperty(type=SubAnimationItem)
+    bpy.utils.register_class(OBJECT_PT_X4Panel)
     bpy.utils.register_class(ImportAsset)
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.utils.register_class(ExportAsset)
@@ -41,6 +45,8 @@ def register():
 
 def unregister():
     print("X4 Foundations Addon unregistered :(")
+    bpy.utils.unregister_class(SubAnimationItem)
+    bpy.utils.unregister_class(OBJECT_PT_X4Panel)
     bpy.utils.unregister_class(ImportAsset)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.utils.unregister_class(ExportAsset)

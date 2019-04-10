@@ -5,7 +5,7 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
 import xml.etree.ElementTree as ET
 from X4ConverterBlenderAddon.common import *
-
+from X4ConverterBlenderAddon.panel import SubAnimationItem
     
 
 class ImportAsset(Operator, ImportHelper):
@@ -100,30 +100,38 @@ class ImportAsset(Operator, ImportHelper):
         tree = ET.parse(anixml_path)
         root = tree.getroot()
         print("Starting animations")
-        for part in root[0]:  # we wrote data first
+        for part in root[1]: #metadata first
             part_name = part.attrib['name']
-            part_meta = root[1].findall("[@name='"+part_name+"']")
-            print(part_meta)
             obj = bpy.data.objects[part_name]
-            for cat in part:
-                self.handle_category(obj,cat,part_name,part_meta)
+            for anim in part:
+                child = anim.find("frames")
+                subname = anim.attrib["subname"]
+                state = obj.X4_anim_data.add()
+                state.key = subname
+                state.subname=subname
+                state.start_frame=int(child.attrib["start"])
+                state.end_frame=int(child.attrib["end"])
 
-        self.read_metadata(root)
+        for part in root[0]:  
+            self.handle_part(part)
 
-    def handle_category(self,obj,cat,part_name,part_meta):
-        for anim in cat:
+    def handle_part(self,part):
+        part_name = part.attrib['name']
+        obj = bpy.data.objects[part_name]
+        part_metadata=find_anim_metadata_source(obj).X4_anim_data
+        print(part_metadata)
+        for cat in part:
+            for anim in cat:
+                self.handle_category_anim(obj,cat,part_name,anim,part_metadata)
 
-            self.handle_category_anim(obj,cat,part_name,anim,part_meta)
 
-
-    def handle_category_anim(self,obj,cat,part_name,anim,part_meta):
+    def handle_category_anim(self,obj,cat,part_name,anim,part_metadata):
 
     
         anim_name = anim.attrib['subname']
         action_name = part_name + anim_name
-
-        anim_meta = part_meta[0].findall("[@subname='"+anim_name+"']")[0]
-        frame_offset = anim_meta.find('frames').attrib['start']
+        anim_metadata = part_metadata[anim_name]
+        frame_offset = anim_metadata[0]
         if  obj.animation_data is None:
             obj.animation_data_create()
         for path in anim:
@@ -181,30 +189,3 @@ class ImportAsset(Operator, ImportHelper):
                 return kf
         return None
 
-    def read_metadata(self,root):
-        print("Starting metadata")
-        for conn in root[1]:  # then we wrote metadta
-            tgt_name = conn.attrib["name"]
-            for anim in conn:
-                anim_name = anim.attrib["subname"]
-                #TODO fixme
-                scene = bpy.data.scenes['Scene']
-                timeline_markers = scene.timeline_markers
-                frame_data = anim.find("frames")
-                start = int(frame_data.attrib["start"])
-                end = int(frame_data.attrib["end"])
-                state_name = anim_name.split("_", 1)[1]
-                # TODO reverse lookup by time and concatenate?
-                if timeline_markers.get(state_name):
-                    continue
-                elif start == end:
-                    timeline_markers.new(state_name, frame=start)
-                    continue
-                if not timeline_markers.get(state_name + "Start"):
-                    # TODO if is there check if same/warn
-                    timeline_markers.new(state_name + "Start", frame=start)
-                if not timeline_markers.get(state_name + "End"):
-                    # TODO if is there check if same/warn
-                    timeline_markers.new(state_name + "End", frame=end)
-
-        print("Done with metadata")

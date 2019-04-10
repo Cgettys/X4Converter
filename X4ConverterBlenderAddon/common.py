@@ -35,3 +35,17 @@ def call_converter(action, target):
     result=subprocess.check_output([converter_path,action,dat_dir,target])
     print(result.decode('utf-8'))
     print("Converter appears to have been successful")
+
+
+def parse_anim_states(obj):
+    data=obj["X4_anim_states"]
+
+
+def find_anim_metadata_source(obj):
+    tgt = obj
+    while ((tgt is not None) and (not tgt.X4_anim_data)):
+        print(tgt.name)
+        tgt = tgt.parent
+    return tgt
+
+
