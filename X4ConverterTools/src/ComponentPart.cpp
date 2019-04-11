@@ -88,7 +88,7 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
 
 
 // Import conversion
-aiNode *ComponentPart::GetEquivalentAiNode(ConversionContext &context) {
+aiNode *ComponentPart::ConvertToAiNode(ConversionContext &context) {
     auto *pPartNode = new aiNode();
     try {
         pPartNode->mName = Name;

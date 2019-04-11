@@ -31,7 +31,7 @@ public:
     aiQuaterniont<ai_real> Rot;
 
     // Import Conversion
-    aiNode *GetEquivalentAiNode( ConversionContext &context);
+    aiNode *ConvertToAiNode(ConversionContext &context);
 
 
 

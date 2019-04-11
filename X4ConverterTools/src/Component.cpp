@@ -35,12 +35,12 @@ Component::ReadFromFile(const std::string &filePath, const ConversionContext &co
     return pComponent;
 }
 // Import
-aiNode *Component::GetEquivalentAiNode( ConversionContext &context) {
+aiNode *Component::ConvertToAiNode(ConversionContext &context) {
     std::map<std::string, aiNode *> partNodes;
 
     // Create nodes and meshes
     for (auto &Part : Parts) {
-        partNodes[Part.first] = Part.second.GetEquivalentAiNode(context);
+        partNodes[Part.first] = Part.second.ConvertToAiNode(context);
     }
 
     // Link parent nodes

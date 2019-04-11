@@ -35,7 +35,7 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
         std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, context, pIOHandler);
 
         // Convert to the Assimp data model
-        pScene->mRootNode = pComponent->GetEquivalentAiNode(context);
+        pScene->mRootNode = pComponent->ConvertToAiNode(context);
 
         // Add the meshes to the scene
         pScene->mMeshes = new aiMesh *[context.Meshes.size()];

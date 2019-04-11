@@ -21,7 +21,7 @@ public:
 
 
     // Import Conversion
-    aiNode *GetEquivalentAiNode( ConversionContext &context);
+    aiNode *ConvertToAiNode(ConversionContext &context);
 
     // Export
     void WriteToFile(const std::string &filePath, const std::string &gameBaseFolderPath, Assimp::IOSystem *pIOHandler);
