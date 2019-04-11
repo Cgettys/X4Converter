@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
         pugi::xml_document doc;
         doc.load_file("/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.dae");
         pugi::xml_node rt = doc.root().child("asset").append_child("library_animations");
-        file.WriteAnims(xmlFile, rt);
+        file.WriteIntermediateRepr(xmlFile, rt);
         doc.save_file(aniOutFile.c_str());
 //
 //        simple_walker walker;

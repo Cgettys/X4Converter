@@ -301,17 +301,17 @@ namespace ani {
                 }
                 return ret;}
 
-        void AnimDesc::WriteAnim(pugi::xml_node tgtNode) const {
+        void AnimDesc::WriteIntermediateRepr(pugi::xml_node tgtNode) const {
             std::string keys[] = {"location", "rotation_euler", "scale"};
             std::string axes[] = {"X", "Y", "Z"};
             for (std::string &key : keys) {
                 for (std::string &axis: axes) {
-                    WriteChannel(tgtNode, key, axis);
+                    WriteIntermediateReprOfChannel(tgtNode, key, axis);
                 }
             }
         }
 
-        void AnimDesc::WriteChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const {
+        void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const {
 
             std::vector<Keyframe> frames;
             if (keyType == "location") {

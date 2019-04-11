@@ -30,7 +30,6 @@ namespace xmf {
 
         uint8_t *GetData();
 
-
         D3DFORMAT GetIndexFormat();
 
         void AllocData();

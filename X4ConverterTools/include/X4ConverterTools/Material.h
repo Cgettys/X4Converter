@@ -13,10 +13,7 @@ public:
 
     Material(std::string pCollectionName, pugi::xml_node node);
 
-    const std::string GetCollectionName() { return _pCollectionName; }
-
     const std::string &GetName() { return _name; }
-
 
     aiMaterial *
     ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath, const boost::filesystem::path &baseFolderPath);

@@ -27,7 +27,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     if (importer.pAnimFile != nullptr){
 
         std::cout << importer.pAnimFile->validate();
-        importer.pAnimFile->WriteAnims(xmlFilePath, rt);
+        importer.pAnimFile->WriteIntermediateRepr(xmlFilePath, rt);
         doc.save_file(aniPath.c_str());
 //    ani::AnimFile animFile;
 //    pScene->mMetaData->Get("AnimFile", animFile);

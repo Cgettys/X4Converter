@@ -19,9 +19,9 @@ namespace ani {
         void read_frames(Assimp::StreamReaderLE &reader);
 
         std::string validate();// Debug method - throws exception if invalid, else returns human readable string
-        void WriteAnim(pugi::xml_node tgtNode) const;
+        void WriteIntermediateRepr(pugi::xml_node tgtNode) const;
 
-        void WriteChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const;
+        void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const;
 
         std::string SafeSubName;
     protected:

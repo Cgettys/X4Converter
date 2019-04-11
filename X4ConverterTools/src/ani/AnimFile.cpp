@@ -59,12 +59,12 @@ namespace ani {
         return s;
     }
 
-    void AnimFile::WriteAnims(const std::string xmlPath, pugi::xml_node tgtNode) const {
+    void AnimFile::WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const {
         std::cout << "Writing animations!" << std::endl;
         pugi::xml_node dataNode = tgtNode.append_child("data");
         for (const AnimDesc &desc : descs) {
 //            if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"), "landinggears_activating") == 0) {
-            desc.WriteAnim(dataNode);
+            desc.WriteIntermediateRepr(dataNode);
         }
         pugi::xml_node outMetaNode = tgtNode.append_child("metadata");
 

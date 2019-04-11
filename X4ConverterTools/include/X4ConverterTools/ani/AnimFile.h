@@ -29,7 +29,7 @@ namespace ani {
 
         void setHeader(Header header);
 
-        void WriteAnims(const std::string xmlPath, pugi::xml_node tgtNode) const;
+        void WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const;
 
 
     protected:
