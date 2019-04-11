@@ -50,7 +50,7 @@ void AssetExporter::ConvertPartNode(Component &component, const std::string &par
     if (component.Parts.find(partName) != component.Parts.end())
         throw std::runtime_error(str(format("Duplicate part name %s") % partName));
 
-    ComponentPart &part = component.Parts[partName];
+    Part &part = component.Parts[partName];
     part.Name = partName;
     part.ParentName = parentPartName;
     part.Position = aiVector3D(-pPartNode->mTransformation.a4, pPartNode->mTransformation.b4,

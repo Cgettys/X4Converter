@@ -1,18 +1,18 @@
-#include <X4ConverterTools/ComponentPart.h>
+#include <X4ConverterTools/Part.h>
 
 using namespace boost;
 using namespace xmf;
 
-ComponentPartLod *ComponentPart::GetLod(int lodIndex) {
-    for (ComponentPartLod &lod: Lods) {
-        if (lod.LodIndex == lodIndex) {
+Lod *Part::GetLod(int lodIndex) {
+    for (Lod &lod: Lods) {
+        if (lod.Index == lodIndex) {
             return &lod;
         }
     }
     return nullptr;
 }
 
-ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
+Part::Part(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                              Assimp::IOSystem *pIOHandler) {
 
     Name = partNode.attribute("name").value();
@@ -88,7 +88,7 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
 
 
 // Import conversion
-aiNode *ComponentPart::ConvertToAiNode(ConversionContext &context) {
+aiNode *Part::ConvertToAiNode(ConversionContext &context) {
     auto *pPartNode = new aiNode();
     try {
         pPartNode->mName = Name;
@@ -100,8 +100,8 @@ aiNode *ComponentPart::ConvertToAiNode(ConversionContext &context) {
 
         pPartNode->mChildren = new aiNode *[Lods.size() + (CollisionMesh ? 1 : 0)];
 
-        for (ComponentPartLod &lod : Lods) {
-            const std::string name = (format("%sXlod%d") % Name % lod.LodIndex).str();
+        for (Lod &lod : Lods) {
+            const std::string name = (format("%sXlod%d") % Name % lod.Index).str();
             auto child = lod.Mesh->ConvertToAiNode(name, context);
             aiMatrix4x4::Translation(Offset,child->mTransformation);
             pPartNode->mChildren[pPartNode->mNumChildren++] = child;
@@ -122,16 +122,16 @@ aiNode *ComponentPart::ConvertToAiNode(ConversionContext &context) {
 }
 
 
-void ComponentPart::PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode) {
-    for (ComponentPartLod &lod: Lods) {
-        if (lod.LodIndex == lodIndex)
+void Part::PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode) {
+    for (Lod &lod: Lods) {
+        if (lod.Index == lodIndex)
             throw std::runtime_error((format("Duplicate lod index %d for part %s") % lodIndex % Name).str());
     }
 
     Lods.emplace_back(lodIndex, XuMeshFile::GenerateMeshFile(pScene, pLodNode, false));
 }
 
-void ComponentPart::PrepareCollisionNodeForExport(const aiScene *pScene, aiNode *pCollisionNode) {
+void Part::PrepareCollisionNodeForExport(const aiScene *pScene, aiNode *pCollisionNode) {
     CollisionMesh = XuMeshFile::GenerateMeshFile(pScene, pCollisionNode, true);
 
     if (pCollisionNode->mNumMeshes == 0){
@@ -164,7 +164,7 @@ void ComponentPart::PrepareCollisionNodeForExport(const aiScene *pScene, aiNode 
     Center = aiVector3D(lowerBound.x + Size.x, lowerBound.y +Size.y, lowerBound.z + Size.z);
 }
 
-void ComponentPart::WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
+void Part::WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
                               Assimp::IOSystem *pIOHandler) {
     pugi::xml_node connectionNode;
     pugi::xml_node partNode = connectionsNode.select_node(
@@ -203,7 +203,7 @@ void ComponentPart::WritePart(pugi::xml_node connectionsNode, const boost::files
     }
 }
 
-void ComponentPart::WritePartParent(pugi::xml_node partNode) {
+void Part::WritePartParent(pugi::xml_node partNode) {
     pugi::xml_node connectionNode = partNode.parent().parent();
     pugi::xml_attribute parentAttr = connectionNode.attribute("parent");
     if (ParentName.empty()) {
@@ -218,7 +218,7 @@ void ComponentPart::WritePartParent(pugi::xml_node partNode) {
     }
 }
 
-void ComponentPart::WritePartPosition(pugi::xml_node partNode) {
+void Part::WritePartPosition(pugi::xml_node partNode) {
     pugi::xml_node connectionNode = partNode.parent().parent();
     pugi::xml_node offsetNode = connectionNode.select_node("offset").node();
     if (!offsetNode) {
@@ -236,7 +236,7 @@ void ComponentPart::WritePartPosition(pugi::xml_node partNode) {
     positionNode.attribute("z").set_value((format("%f") % Position.z).str().c_str());
 }
 
-void ComponentPart::WritePartSize(pugi::xml_node sizeNode) {
+void Part::WritePartSize(pugi::xml_node sizeNode) {
     pugi::xml_node maxNode = sizeNode.select_node("max").node();
     if (!maxNode) {
         maxNode = sizeNode.append_child("max");
@@ -249,7 +249,7 @@ void ComponentPart::WritePartSize(pugi::xml_node sizeNode) {
     maxNode.attribute("z").set_value(Size.z);
 }
 
-void ComponentPart::WritePartCenter(pugi::xml_node sizeNode) {
+void Part::WritePartCenter(pugi::xml_node sizeNode) {
     pugi::xml_node centerNode = sizeNode.select_node("center").node();
     if (!centerNode) {
         centerNode = sizeNode.append_child("center");
@@ -262,7 +262,7 @@ void ComponentPart::WritePartCenter(pugi::xml_node sizeNode) {
     centerNode.attribute("z").set_value(Center.z);
 }
 
-void ComponentPart::WritePartLods(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
+void Part::WritePartLods(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                                   Assimp::IOSystem *pIOHandler) {
     pugi::xml_node lodsNode = partNode.select_node("lods").node();
     if (!lodsNode)
@@ -277,11 +277,11 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode, const boost::filesyst
     }
 
     // Add/update remaining LOD's
-    for (ComponentPartLod &lod: Lods) {
-        pugi::xml_node lodNode = lodsNode.select_node((format("lod[@index='%d']") % lod.LodIndex).str().c_str()).node();
+    for (Lod &lod: Lods) {
+        pugi::xml_node lodNode = lodsNode.select_node((format("lod[@index='%d']") % lod.Index).str().c_str()).node();
         if (!lodNode) {
             lodNode = lodsNode.append_child("lod");
-            lodNode.append_attribute("index").set_value(lod.LodIndex);
+            lodNode.append_attribute("index").set_value(lod.Index);
         }
 
         // Ensure material node
@@ -315,7 +315,7 @@ void ComponentPart::WritePartLods(pugi::xml_node partNode, const boost::filesyst
         }
 
         // Write mesh file
-        std::string xmfFileName = PathUtil::GetOutputPath((format("%s-lod%d.xmf") % Name % lod.LodIndex).str());
+        std::string xmfFileName = PathUtil::GetOutputPath((format("%s-lod%d.xmf") % Name % lod.Index).str());
         std::string xmfFilePath = (geometryFolderPath / xmfFileName).string();
         lod.Mesh->WriteToFile(xmfFilePath, pIOHandler);
     }

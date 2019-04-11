@@ -4,8 +4,8 @@
 set("LIB_SRCS"
         src/Conversion.cpp
         src/Component.cpp
-        src/ComponentPart.cpp
-        src/ComponentPartLod.cpp
+        src/Part.cpp
+        src/Lod.cpp
         src/Material.cpp
         src/MaterialCollection.cpp
         src/MaterialLibrary.cpp

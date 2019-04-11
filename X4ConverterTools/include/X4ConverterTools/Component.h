@@ -11,8 +11,8 @@
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 #include <X4ConverterTools/util/PathUtil.h>
-#include <X4ConverterTools/ComponentPart.h>
-#include <X4ConverterTools/ComponentPartLod.h>
+#include <X4ConverterTools/Part.h>
+#include <X4ConverterTools/Lod.h>
 
 class Component {
 public:
@@ -27,7 +27,7 @@ public:
     void WriteToFile(const std::string &filePath, const std::string &gameBaseFolderPath, Assimp::IOSystem *pIOHandler);
 
     std::string Name;
-    std::map<std::string, ComponentPart> Parts;
+    std::map<std::string, Part> Parts;
 
 private:
     static pugi::xml_node GetComponentNode(pugi::xml_document &doc);

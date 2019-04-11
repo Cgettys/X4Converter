@@ -29,7 +29,7 @@ Component::ReadFromFile(const std::string &filePath, const ConversionContext &co
     std::shared_ptr<Component> pComponent = std::make_shared<Component>();
     pComponent->Name = componentNode.attribute("name").value();
     for (auto partNode : partNodes) {
-        ComponentPart part(partNode.node(), geometryFolderPath, pIOHandler);
+        Part part(partNode.node(), geometryFolderPath, pIOHandler);
         pComponent->Parts[part.Name] = part;
     }
     return pComponent;
