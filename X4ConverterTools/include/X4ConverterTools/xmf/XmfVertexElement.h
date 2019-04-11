@@ -2,8 +2,10 @@
 
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
+#include <assimp/mesh.h>
+
 #include <X4ConverterTools/types.h>
-#include "X4ConverterTools/types/DirectX.h"
+#include <X4ConverterTools/util/DXUtil.h>
 
 namespace xmf {
     class XmfVertexElement {
@@ -17,6 +19,7 @@ namespace xmf {
 
         void Write(Assimp::StreamWriterLE &writer);
 
+        int WriteVertexElement(aiMesh *pMesh, int vertexIdx,  uint8_t *pElemData);
         uint32_t Type;
         uint8_t Usage;
         uint8_t UsageIndex;

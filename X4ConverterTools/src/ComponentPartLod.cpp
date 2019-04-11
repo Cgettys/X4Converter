@@ -4,3 +4,4 @@ ComponentPartLod::ComponentPartLod(int lodIndex, std::shared_ptr<xmf::XuMeshFile
                                                                                            Mesh(std::move(pMesh)) {
 
 }
+

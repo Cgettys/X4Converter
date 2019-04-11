@@ -2,7 +2,8 @@
 
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 
-struct ComponentPartLod {
+class ComponentPartLod {
+public:
     ComponentPartLod(int lodIndex, std::shared_ptr<xmf::XuMeshFile> pMesh);
 
     int LodIndex;

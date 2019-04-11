@@ -29,17 +29,5 @@ protected:
     static void
     ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene, aiNode *pPartNode);
 
-    static void ConvertLodNode(ComponentPart &part, int lodIndex, const aiScene *pScene, aiNode *pLodNode);
 
-    static void ConvertCollisionNode(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
-
-    static std::shared_ptr<xmf::XuMeshFile> ConvertMeshNode(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
-
-    static void CalculatePartSize(ComponentPart &part, const aiScene *pScene, aiNode *pCollisionNode);
-
-    static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<xmf::XmfVertexElement> &declaration);
-
-    static void ApplyVertexDeclaration(std::vector<xmf::XmfVertexElement> &declaration, xmf::XmfDataBuffer &buffer);
-
-    static int WriteVertexElement(aiMesh *pMesh, int vertexIdx, xmf::XmfVertexElement &elem, uint8_t *pElemData);
 };

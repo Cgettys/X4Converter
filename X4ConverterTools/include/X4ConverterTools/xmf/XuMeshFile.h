@@ -16,7 +16,6 @@
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 
-#include "X4ConverterTools/types/DirectX.h"
 
 #include <X4ConverterTools/ConversionContext.h>
 #include "XmfHeader.h"
@@ -70,6 +69,11 @@ namespace xmf {
 
         static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 
+        // For export:
+        static std::shared_ptr<XuMeshFile> GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
+
+        static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
+        static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
     private:
 
         void ReadBufferDescs(Assimp::StreamReaderLE &pStreamReader);

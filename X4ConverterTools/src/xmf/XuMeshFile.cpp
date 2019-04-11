@@ -420,4 +420,147 @@ namespace xmf {
             }
         }
     }
+
+
+    std::shared_ptr<XuMeshFile> XuMeshFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
+        std::vector<aiNode *> meshNodes;
+        if (pNode->mNumChildren == 0) {
+            meshNodes.push_back(pNode);
+        } else {
+            for (int i = 0; i < pNode->mNumChildren; ++i) {
+                meshNodes.push_back(pNode->mChildren[i]);
+            }
+        }
+
+        std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
+        pMeshFile->GetBuffers().resize(2);
+        XmfDataBuffer &vertexBuffer = pMeshFile->GetBuffers()[0];
+        XmfDataBuffer &indexBuffer = pMeshFile->GetBuffers()[1];
+
+        vertexBuffer.Description.Type = 0;
+        indexBuffer.Description.Type = 30;
+
+        vertexBuffer.Description.NumSections = 1;
+        indexBuffer.Description.NumSections = 1;
+
+        std::vector<XmfVertexElement> vertexDecl;
+        for (aiNode *pMeshNode: meshNodes) {
+            if (pMeshNode->mNumMeshes == 0) {
+                throw std::runtime_error(str(format("Node %s has no mesh attached") % pMeshNode->mName.C_Str()));
+            }
+            if (pMeshNode->mNumMeshes > 1) {
+                throw std::runtime_error(str(format("Node %s has multiple meshes attached") % pMeshNode->mName.C_Str()));
+            }
+            aiMesh *pMesh = pScene->mMeshes[pMeshNode->mMeshes[0]];
+            if (pMesh->mPrimitiveTypes & ~aiPrimitiveType_TRIANGLE) {
+                throw std::runtime_error(str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
+            }
+            if (!isCollisionMesh) {
+                XuMeshFile::ExtendVertexDeclaration(pMesh, vertexDecl);
+            }
+            vertexBuffer.Description.NumItemsPerSection += pMesh->mNumVertices;
+            indexBuffer.Description.NumItemsPerSection += pMesh->mNumFaces * 3;
+        }
+        if (isCollisionMesh) {
+            vertexDecl.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
+        }
+        XuMeshFile::ApplyVertexDeclaration(vertexDecl, vertexBuffer);
+        if (vertexBuffer.Description.NumItemsPerSection <= 0xFFFF) {
+            indexBuffer.Description.ItemSize = sizeof(uint16_t);
+            indexBuffer.Description.Format = 30;
+        } else {
+            indexBuffer.Description.ItemSize = sizeof(int);
+            indexBuffer.Description.Format = 31;
+        }
+
+        vertexBuffer.AllocData();
+        indexBuffer.AllocData();
+        uint8_t *pVertex = vertexBuffer.GetData();
+        uint8_t *pIndex = indexBuffer.GetData();
+        int vertexOffset = 0;
+        int indexOffset = 0;
+        for (aiNode *pMeshNode: meshNodes) {
+            aiMesh *pMesh = pScene->mMeshes[pMeshNode->mMeshes[0]];
+            for (int i = 0; i < pMesh->mNumVertices; ++i) {
+                for (XmfVertexElement &vertexElem: vertexDecl) {
+                    pVertex += vertexElem.WriteVertexElement(pMesh, i, pVertex);
+                }
+            }
+
+            for (int i = 0; i < pMesh->mNumFaces; ++i) {
+                aiFace *pFace = &pMesh->mFaces[i];
+                for (int j = 0; j < 3; ++j) {
+                    int index = vertexOffset + pFace->mIndices[j];
+                    if (indexBuffer.Description.ItemSize == sizeof(uint16_t)) {
+                        *(uint16_t *) pIndex = (uint16_t) index;
+                    } else {
+                        *(int *) pIndex = index;
+                    }
+                    pIndex += indexBuffer.Description.ItemSize;
+                }
+            }
+
+            std::cmatch match;
+            if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?X\w+?X(\w+?)X(\w+?))"))) {
+                pMeshFile->AddMaterial(indexOffset, pMesh->mNumFaces * 3, match[1].str() + "." + match[2].str());
+            }
+            vertexOffset += pMesh->mNumVertices;
+            indexOffset += pMesh->mNumFaces * 3;
+        }
+
+        return pMeshFile;
+    }
+
+    void XuMeshFile::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
+        std::vector<XmfVertexElement> meshDeclaration;
+        if (pMesh->mVertices)
+            meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
+
+        if (pMesh->mNormals)
+            meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_NORMAL);
+
+        if (pMesh->mTangents)
+            meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_TANGENT, 0);
+
+        for (int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
+            if (pMesh->mTextureCoords[i])
+                meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT16_2, D3DDECLUSAGE_TEXCOORD, i);
+        }
+
+        for (int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i) {
+            if (pMesh->mColors[i])
+                meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_COLOR, i);
+        }
+
+        for (XmfVertexElement &meshElem: meshDeclaration) {
+            bool alreadyExists = false;
+            for (XmfVertexElement &partElem: declaration) {
+                if (meshElem.Usage == partElem.Usage && meshElem.UsageIndex == partElem.UsageIndex) {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+            if (!alreadyExists)
+                declaration.push_back(meshElem);
+        }
+    }
+
+    // TODO move me to XmfDataBuffer?
+    void XuMeshFile::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
+        if (declaration.size() > sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
+            throw std::runtime_error("Too many vertex elements in vertex declaration");
+        }
+        uint32_t declarationSize = 0;
+
+        buffer.Description.NumVertexElements = numeric_cast<uint32_t>(declaration.size());
+        for (int i = 0; i < declaration.size(); ++i) {
+            buffer.Description.VertexElements[i] = declaration[i];
+            declarationSize += DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) declaration[i].Type);
+        }
+        buffer.Description.ItemSize = declarationSize;
+        buffer.Description.DenormalizeVertexDeclaration();
+    }
+
+
+
 }

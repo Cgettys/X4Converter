@@ -86,6 +86,51 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
     }
 }
 
+
+
+
+void ComponentPart::PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode) {
+    for (ComponentPartLod &lod: Lods) {
+        if (lod.LodIndex == lodIndex)
+            throw std::runtime_error((format("Duplicate lod index %d for part %s") % lodIndex % Name).str());
+    }
+
+    Lods.emplace_back(lodIndex, XuMeshFile::GenerateMeshFile(pScene, pLodNode, false));
+}
+
+void ComponentPart::PrepareCollisionNodeForExport(const aiScene *pScene, aiNode *pCollisionNode) {
+    CollisionMesh = XuMeshFile::GenerateMeshFile(pScene, pCollisionNode, true);
+
+    if (pCollisionNode->mNumMeshes == 0){
+        std::cerr << "Empty collision mesh!\n";
+        return;
+    }
+    // TODO this goes in the XMF too?
+    aiVector3D lowerBound;
+    aiVector3D upperBound;
+    // TODO can we have more than 1 mesh or is that bad?
+    aiMesh *pCollisionMesh = pScene->mMeshes[pCollisionNode->mMeshes[0]];
+    for (int i = 0; i < pCollisionMesh->mNumVertices; ++i) {
+        aiVector3D &position = pCollisionMesh->mVertices[i];
+        if (i == 0) {
+            lowerBound = position;
+            upperBound = position;
+        } else {
+            lowerBound.x = std::min(lowerBound.x, position.x);
+            lowerBound.y = std::min(lowerBound.y, position.y);
+            lowerBound.z = std::min(lowerBound.z, position.z);
+
+            upperBound.x = std::max(upperBound.x, position.x);
+            upperBound.y = std::max(upperBound.y, position.y);
+            upperBound.z = std::max(upperBound.z, position.z);
+        }
+    }
+
+    Size = aiVector3D((upperBound.x - lowerBound.x) / 2.0f, (upperBound.y - lowerBound.y) / 2.0f,
+                           (upperBound.z - lowerBound.z) / 2.0f);
+    Center = aiVector3D(lowerBound.x + Size.x, lowerBound.y +Size.y, lowerBound.z + Size.z);
+}
+
 void ComponentPart::WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
                               Assimp::IOSystem *pIOHandler) {
     pugi::xml_node connectionNode;

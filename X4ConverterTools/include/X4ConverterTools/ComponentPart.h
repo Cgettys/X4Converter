@@ -32,6 +32,10 @@ public:
     void WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
                    Assimp::IOSystem *pIOHandler);
 
+    // For Exporting back to the game:
+
+    void PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode);
+    void PrepareCollisionNodeForExport(const aiScene *pScene, aiNode *pCollisionNode);
 protected:
     void WritePartParent(pugi::xml_node partNode);
 
@@ -43,5 +47,6 @@ protected:
 
     void WritePartLods(pugi::xml_node partNode, const boost::filesystem::path &geometryFolderPath,
                        Assimp::IOSystem *pIOHandler);
+
 
 };
