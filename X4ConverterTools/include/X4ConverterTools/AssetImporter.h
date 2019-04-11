@@ -11,7 +11,7 @@
 #include <X4ConverterTools/MaterialLibrary.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 #include <X4ConverterTools/ani/AnimFile.h>
-#include <X4ConverterTools/types/ConversionContext.h>
+#include <X4ConverterTools/ConversionContext.h>
 
 #include <assimp/IOSystem.hpp>
 #include <assimp/ProgressHandler.hpp>
@@ -45,8 +45,6 @@ private:
 
     aiNode *ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context);
 
+    ConversionContext context;
 
-    std::string _gameBaseFolderPath;
-    MaterialLibrary _materialLibrary;
-    void AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context);
 };

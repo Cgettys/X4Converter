@@ -6,8 +6,7 @@ using namespace boost::filesystem;
 using namespace Assimp;
 using namespace ani;
 
-AssetImporter::AssetImporter(const std::string &gameBaseFolderPath) : _materialLibrary(gameBaseFolderPath) {
-    _gameBaseFolderPath = gameBaseFolderPath;
+AssetImporter::AssetImporter(const std::string &gameBaseFolderPath) : context(gameBaseFolderPath) {
     pAnimFile = nullptr;
 
 }
@@ -33,10 +32,9 @@ bool AssetImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler, b
 void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene, IOSystem *pIOHandler) {
     try {
         // Read the .xml and .xmf files
-        std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, _gameBaseFolderPath, pIOHandler);
+        std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, context, pIOHandler);
 
         // Convert to the Assimp data model
-        ConversionContext context;
         pScene->mRootNode = ConvertComponentToAiNode(*pComponent, context);
 
         // Add the meshes to the scene
@@ -62,8 +60,8 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
 //            pScene->mMetaData->Add("AnimFile",pAnimFile);
         }
 //        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
-//
-        AddMaterials(filePath, pScene, context);
+
+        context.AddMaterialsToScene(filePath,pScene);
 
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
@@ -71,28 +69,6 @@ void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene,
     }
 }
 
-void AssetImporter::AddMaterials(const std::string &filePath, aiScene *pScene, const ConversionContext &context) {
-    // Add the materials to the scene
-    if (!context.Materials.empty()) {
-        std::string modelFolderPath = path(filePath).parent_path().string();
-        pScene->mNumMaterials = numeric_cast<unsigned int>(context.Materials.size());
-        pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
-        for (auto &it : context.Materials) {
-            Material *pMaterial = _materialLibrary.GetMaterial(it.first);
-            aiMaterial *pAiMaterial;
-            if (pMaterial) {
-                pAiMaterial = pMaterial->ConvertToAiMaterial(modelFolderPath, _gameBaseFolderPath);
-            } else {
-                std::cerr << "Warning, weird case" << std::endl;
-                auto *tempString = new aiString(it.first);
-                pAiMaterial = new aiMaterial();
-                pAiMaterial->AddProperty(tempString, AI_MATKEY_NAME);
-                delete tempString;
-            }
-            pScene->mMaterials[it.second] = pAiMaterial;
-        }
-    }
-}
 
 aiNode *AssetImporter::ConvertComponentToAiNode(Component &component, ConversionContext &context) {
     std::map<std::string, aiNode *> partNodes;
@@ -154,7 +130,6 @@ aiNode *AssetImporter::ConvertComponentToAiNode(Component &component, Conversion
         pComponentNode->mNumChildren++;
     }
     return pRealRootNode;
-//    return pComponentNode;
 }
 
 aiNode *AssetImporter::ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context) {

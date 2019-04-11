@@ -17,7 +17,7 @@
 class Component {
 public:
     static std::shared_ptr<Component>
-    ReadFromFile(const std::string &filePath, const std::string &gameBaseFolderPath, Assimp::IOSystem *pIOHandler);
+    ReadFromFile(const std::string &filePath, const ConversionContext &context, Assimp::IOSystem *pIOHandler);
 
     void WriteToFile(const std::string &filePath, const std::string &gameBaseFolderPath, Assimp::IOSystem *pIOHandler);
 

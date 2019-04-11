@@ -6,7 +6,7 @@ using namespace boost;
 using namespace boost::filesystem;
 
 std::shared_ptr<Component>
-Component::ReadFromFile(const std::string &filePath, const std::string &gameBaseFolderPath, IOSystem *pIOHandler) {
+Component::ReadFromFile(const std::string &filePath, const ConversionContext &context, IOSystem *pIOHandler) {
 
     if (!is_regular_file(filePath)) {
         throw std::runtime_error(".xml file doesn't exist");
@@ -19,7 +19,7 @@ Component::ReadFromFile(const std::string &filePath, const std::string &gameBase
     }
 
     pugi::xml_node componentNode = GetComponentNode(doc);
-    path geometryFolderPath = GetGeometryFolderPath(componentNode, gameBaseFolderPath, false);
+    path geometryFolderPath = GetGeometryFolderPath(componentNode, context.gameBaseFolderPath, false);
     pugi::xpath_node_set partNodes = componentNode.select_nodes("connections/connection/parts/part");
 
     if (partNodes.empty()) {

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <X4ConverterTools/types.h>
+#include <assimp/types.h>
 #include "../Vendor/half/include/half.hpp"
+#include <boost/format.hpp>
 
 namespace util {
     class DXUtil {

@@ -18,6 +18,7 @@ namespace fs = boost::filesystem;
 using namespace Assimp;
 using namespace test;
 BOOST_AUTO_TEST_SUITE(test_suite1)
+// TODO tests for changing stuff
 //    BOOST_AUTO_TEST_CASE(test_ojump_xr_file) {        // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
 //        const std::string tgtPath = "extensions/DOR_XR_ORIGINAL/assets/units/size_xl/units_size_xl_red_destroyer";
@@ -71,7 +72,6 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 
     BOOST_AUTO_TEST_CASE(test_xml) {
         // TODO refactor all the io...
-        // TODO par scout not quite right
 //        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
 //        const std::string inputXMLPath = gameBaseFolderPath
 //                                         + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.xml";

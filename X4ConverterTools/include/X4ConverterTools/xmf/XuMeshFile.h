@@ -18,7 +18,7 @@
 
 #include "X4ConverterTools/types/DirectX.h"
 
-#include <X4ConverterTools/types/ConversionContext.h>
+#include <X4ConverterTools/ConversionContext.h>
 #include "XmfHeader.h"
 #include "XmfVertexElement.h"
 #include "XmfMaterial.h"
