@@ -40,11 +40,6 @@ public:
 
 private:
 
-
-    aiNode *ConvertComponentToAiNode(Component &component, ConversionContext &context);
-
-    aiNode *ConvertComponentPartToAiNode(ComponentPart &part, ConversionContext &context);
-
     ConversionContext context;
 
 };

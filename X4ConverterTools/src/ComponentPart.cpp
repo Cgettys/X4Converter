@@ -87,6 +87,39 @@ ComponentPart::ComponentPart(pugi::xml_node partNode, const boost::filesystem::p
 }
 
 
+// Import conversion
+aiNode *ComponentPart::GetEquivalentAiNode(ConversionContext &context) {
+    auto *pPartNode = new aiNode();
+    try {
+        pPartNode->mName = Name;
+
+        // TODO push this into part
+        auto outRot  = Rot;// * aiQuaternion(0,-M_PI,0);
+        // -X because handedness I guess. But we have to do the same when applying other data
+        (pPartNode->mTransformation) = aiMatrix4x4(aiVector3D(1, 1, 1), outRot,Position);
+
+        pPartNode->mChildren = new aiNode *[Lods.size() + (CollisionMesh ? 1 : 0)];
+
+        for (ComponentPartLod &lod : Lods) {
+            const std::string name = (format("%sXlod%d") % Name % lod.LodIndex).str();
+            auto child = lod.Mesh->ConvertToAiNode(name, context);
+            aiMatrix4x4::Translation(Offset,child->mTransformation);
+            pPartNode->mChildren[pPartNode->mNumChildren++] = child;
+        }
+        if (CollisionMesh) {
+            std::string name = Name + "Xcollision";
+
+            auto child = CollisionMesh->ConvertToAiNode(name, context);
+            aiMatrix4x4::Translation(Offset,child->mTransformation);
+            pPartNode->mChildren[pPartNode->mNumChildren++] = child;
+        }
+    } catch (...) {
+        // TODO real exception handling
+        delete pPartNode;
+        throw;
+    }
+    return pPartNode;
+}
 
 
 void ComponentPart::PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode) {

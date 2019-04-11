@@ -19,6 +19,11 @@ public:
     static std::shared_ptr<Component>
     ReadFromFile(const std::string &filePath, const ConversionContext &context, Assimp::IOSystem *pIOHandler);
 
+
+    // Import Conversion
+    aiNode *GetEquivalentAiNode( ConversionContext &context);
+
+    // Export
     void WriteToFile(const std::string &filePath, const std::string &gameBaseFolderPath, Assimp::IOSystem *pIOHandler);
 
     std::string Name;

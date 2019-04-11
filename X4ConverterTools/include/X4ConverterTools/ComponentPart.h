@@ -29,10 +29,16 @@ public:
     aiVector3D Offset;
 
     aiQuaterniont<ai_real> Rot;
+
+    // Import Conversion
+    aiNode *GetEquivalentAiNode( ConversionContext &context);
+
+
+
+    // For Exporting back to the game:
     void WritePart(pugi::xml_node connectionsNode, const boost::filesystem::path &geometryFolderPath,
                    Assimp::IOSystem *pIOHandler);
 
-    // For Exporting back to the game:
 
     void PrepareLodNodeForExport(int lodIndex, const aiScene *pScene, aiNode *pLodNode);
     void PrepareCollisionNodeForExport(const aiScene *pScene, aiNode *pCollisionNode);

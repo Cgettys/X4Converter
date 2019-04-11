@@ -34,6 +34,68 @@ Component::ReadFromFile(const std::string &filePath, const ConversionContext &co
     }
     return pComponent;
 }
+// Import
+aiNode *Component::GetEquivalentAiNode( ConversionContext &context) {
+    std::map<std::string, aiNode *> partNodes;
+
+    // Create nodes and meshes
+    for (auto &Part : Parts) {
+        partNodes[Part.first] = Part.second.GetEquivalentAiNode(context);
+    }
+
+    // Link parent nodes
+    std::vector<aiNode *> rootNodes;
+    std::map<aiNode *, std::vector<aiNode *> > nodeChildren;
+    for (auto &Part : Parts) {
+        aiNode *pPartNode = partNodes[Part.first];
+        if (Part.second.ParentName.empty()) {
+            rootNodes.push_back(pPartNode);
+            continue;
+        }
+
+        auto parentIt = partNodes.find(Part.second.ParentName);
+        if (parentIt == partNodes.end()) {
+            throw std::runtime_error(str(format("Node %1% has invalid parent %2%") % (Part.first).c_str() %
+                                         (Part.second.ParentName).c_str()));
+        }
+        nodeChildren[parentIt->second].push_back(pPartNode);
+    }
+
+    for (auto &it : nodeChildren) {
+        aiNode *pParentNode = it.first;
+        auto **ppNewChildren = new aiNode *[pParentNode->mNumChildren + it.second.size()];
+        if (pParentNode->mChildren) {
+            memcpy(ppNewChildren, pParentNode->mChildren, sizeof(aiNode *) * pParentNode->mNumChildren);
+            delete[] pParentNode->mChildren;
+        }
+        pParentNode->mChildren = ppNewChildren;
+
+        for (aiNode *pChildNode : it.second) {
+            pParentNode->mChildren[pParentNode->mNumChildren++] = pChildNode;
+            pChildNode->mParent = pParentNode;
+        }
+    }
+
+    // Create component node that contains all the part nodes
+    if (rootNodes.empty()) {
+        throw std::runtime_error("No root parts found");
+    }
+    auto *pComponentNode = new aiNode(Name);
+    pComponentNode->mChildren = new aiNode *[rootNodes.size()];
+
+    aiNode *pRealRootNode = new aiNode("Scene");// To make blender happy name root node Scene?
+    pRealRootNode->mChildren = new aiNode *[1];
+    pRealRootNode->mChildren[0] = pComponentNode;
+    pRealRootNode->mNumChildren = 1;
+    pComponentNode->mParent = pRealRootNode;
+    for (int i = 0; i < rootNodes.size(); i++) {
+        aiNode *pRootNode = rootNodes[i];
+        pComponentNode->mChildren[i] = pRootNode;
+        pRootNode->mParent = pComponentNode;
+        pComponentNode->mNumChildren++;
+    }
+    return pRealRootNode;
+}
 
 void Component::WriteToFile(const std::string &filePath, const std::string &gameBaseFolderPath,
                             Assimp::IOSystem *pIOHandler) {
