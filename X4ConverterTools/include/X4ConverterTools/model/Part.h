@@ -10,6 +10,7 @@ namespace model {
         Part(pugi::xml_node node);
 
         virtual aiNode *ConvertToAiNode();
+
         virtual void ConvertFromAiNode(aiNode *);
     };
 }
