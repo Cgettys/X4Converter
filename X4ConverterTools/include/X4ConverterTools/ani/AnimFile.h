@@ -9,6 +9,7 @@
 
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
+#include <assimp/StreamWriter.h>
 #include <assimp/StreamReader.h>
 #include <X4ConverterTools/Component.h>
 #include "Header.h"
@@ -21,6 +22,7 @@ namespace ani {
     public:
         AnimFile();
         AnimFile(Assimp::IOStream *pStream);
+        AnimFile(pugi::xml_node node);
 
         ~AnimFile();
 
@@ -30,7 +32,7 @@ namespace ani {
         void setHeader(Header header);
 
         void WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const;
-
+        void WriteGameFiles(Assimp::StreamWriterLE &writer,pugi::xml_node node);
 
     protected:
         Header header = Header();

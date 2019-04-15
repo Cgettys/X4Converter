@@ -8,6 +8,10 @@ namespace ani {
 
     Header::Header() {
 
+        NumAnims = 0;
+        KeyOffsetBytes = 16;
+        Version = 1;
+        Padding = 0;
     }
 
     Header::Header(Assimp::StreamReaderLE &reader) {
@@ -60,24 +64,23 @@ namespace ani {
         return NumAnims;
     }
 
-    void Header::setNumAnims(int NumAnims) {
-        Header::NumAnims = NumAnims;
+    void Header::setNumAnims(int numAnims) {
+        NumAnims = numAnims;
+        // TODO checkme
+        KeyOffsetBytes=16+ 160*numAnims;
     }
 
     int Header::getKeyOffsetBytes() const {
         return KeyOffsetBytes;
     }
 
-    void Header::setKeyOffsetBytes(int KeyOffsetBytes) {
-        Header::KeyOffsetBytes = KeyOffsetBytes;
-    }
 
     int Header::getVersion() const {
         return Version;
     }
 
-    void Header::setVersion(int Version) {
-        Header::Version = Version;
+    void Header::setVersion(int version) {
+        Version = version;
     }
 
     int Header::getPadding() const {

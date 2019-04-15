@@ -2,6 +2,7 @@
 
 #include <assimp/StreamReader.h>
 #include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
 #include <exception>
 #include <cmath>
@@ -24,7 +25,7 @@ namespace ani {
     class Keyframe {
     public:
         Keyframe() = default;
-
+        Keyframe(pugi::xml_node node);
         explicit Keyframe(Assimp::StreamReaderLE &reader);
 
 
@@ -41,7 +42,7 @@ namespace ani {
 
         void WriteHandle(pugi::xml_node node, std::string& axis, bool right);
         std::pair<float, float> getControlPoint(const std::string &axis, bool right);
-        std::string formatFloat(float f);
+        static std::string formatFloat(float f);
         // Note that these add up to exactly 128 bytes
         float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/
         InterpolationType InterpolationX;                      /**< The type of interpolation for the x part of the key. 20*/
@@ -58,14 +59,14 @@ namespace ani {
         float CPZ1x, CPZ1y;                                /**< First control point for the z value. 40*/
         float CPZ2x, CPZ2y;                                /**< Second control point for the z value. 48*/
 
-        float Tens;                                            /**< Tension. 4*/
-        float Cont;                                            /**< Continuity. 8*/
-        float Bias;                                            /**< Bias. 12*/
-        float EaseIn;                                        /**< Ease In. 16*/
-        float EaseOut;                                        /**< Ease Out. 20*/
-        int Deriv;                                            /**< 24 Indicates whether derivatives have been calculated already. Is mutable to allow it being altered in the CalculateDerivatives() method. */
-        float DerivInX, DerivInY, DerivInZ;                    /**< 12 Derivative In value. Is mutable to allow it being altered in the CalculateDerivatives() method. */
-        float DerivOutX, DerivOutY, DerivOutZ;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
+        float Tens=0;                                            /**< Tension. 4*/
+        float Cont=0;                                            /**< Continuity. 8*/
+        float Bias=0;                                            /**< Bias. 12*/
+        float EaseIn=0;                                        /**< Ease In. 16*/
+        float EaseOut=0;                                        /**< Ease Out. 20*/
+        int Deriv=0;                                            /**< 24 Indicates whether derivatives have been calculated already. Is mutable to allow it being altered in the CalculateDerivatives() method. */
+        float DerivInX=0, DerivInY=0, DerivInZ=0;                    /**< 12 Derivative In value. Is mutable to allow it being altered in the CalculateDerivatives() method. */
+        float DerivOutX=0, DerivOutY=0, DerivOutZ=0;                /**< 24 Derivative Out value.  Is mutable to allow it being altered in the CalculateDerivatives() method.*/
         uint32_t AngleKey;                                        /** 28		// this will be set to non null if there is a key */
 
     };

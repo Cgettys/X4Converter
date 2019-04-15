@@ -16,29 +16,6 @@ namespace ani {
             reader >> c;
         }
 
-//        for (unsigned long i = 0; i < 64; i++) {
-//            char c = Name[i];
-//            if (c == ' ') {
-//                throw std::runtime_error("Did not expect spaces in names");
-//            } else if (c == '\0') {
-//                SafeName.insert(i, 1, ' ');
-//            } else {
-//                SafeName.insert(i, 1, c);
-//            }
-//        }
-//        algorithm::trim_right(SafeName);
-//        for (unsigned long i = 0; i < 64; i++) {
-//            char c = SubName[i];
-//            if (c == ' ') {
-//                throw std::runtime_error("Did not expect spaces in names");
-//            } else if (c == '\0') {
-//                SafeSubName.insert(i, 1, ' ');
-//            } else {
-//                SafeSubName.insert(i, 1, c);
-//            }
-//        }
-//        algorithm::trim_right(SafeSubName);
-
         SafeName = std::string(Name);
         SafeSubName = std::string(SubName);
         reader >> NumPosKeys;
@@ -50,8 +27,62 @@ namespace ani {
         for (int &i : Padding) {
             reader >> i;
         }
+    }
+    // Export Conversion
+    AnimDesc::AnimDesc(std::string partName, pugi::xml_node node) {
+        // TODO validate against what's actually written
+        std::fill( Name, Name + sizeof( Name ), 0 );
+        std::fill( SubName, SubName + sizeof( SubName ), 0 );
+        SafeName = partName;
+        memcpy(Name,partName.c_str(),partName.size());
+        SafeSubName = node.attribute("subname").as_string();
+        memcpy(SubName,  SafeSubName.c_str(), SafeSubName.size());
+        // TODO validate better
+        auto locNode = node.child("location");
+        if (locNode){
+            for (auto& keyNode : locNode.children()){
+                posKeys.emplace_back(keyNode);
+            }
+            NumPosKeys=numeric_cast<int>(posKeys.size());
+        }
+        auto rotNode = node.child("rotation_euler");
+        if (rotNode){
+            for (auto& keyNode : rotNode.children()){
+                rotKeys.emplace_back(keyNode);
+            }
+            NumRotKeys = numeric_cast<int>(rotKeys.size());
+        }
+        auto scaleNode = node.child("scale");
+        if (scaleNode){
+            for (auto& keyNode : scaleNode.children()){
+                scaleKeys.emplace_back(keyNode);
+            }
+            NumScaleKeys=numeric_cast<int>(scaleKeys.size());
+        }
 
+    }
+    // Export
+    void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
+        for (char &c : Name) {
+            writer << c;
 
+        }
+
+        for (char &c : SubName) {
+            writer << c;
+        }
+
+        SafeName = std::string(Name);
+        SafeSubName = std::string(SubName);
+        writer << NumPosKeys;
+        writer << NumRotKeys;
+        writer << NumScaleKeys;
+        writer << NumPreScaleKeys;
+        writer << NumPostScaleKeys;
+        writer << Duration;
+        for (int &i : Padding) {
+            writer << i;
+        }
     }
 
     void AnimDesc::read_frames(StreamReaderLE &reader) {
@@ -321,8 +352,7 @@ namespace ani {
             } else if (keyType == "scale") {
                 frames = scaleKeys;
             } else {
-                // TODO error
-                std::cerr << "YOU FOOL!" << std::endl;
+                throw runtime_error("Invalid keyType");
             }
 
             if (frames.empty()) {
@@ -341,7 +371,7 @@ namespace ani {
 
             std::string subNameCategory;
 //            std::string subNameRemaining;
-            int idx = SafeSubName.find('_');
+            auto idx = SafeSubName.find('_');
             if (idx==std::string::npos){
                 subNameCategory="misc";
 //                subNameRemaining=SafeSubName;

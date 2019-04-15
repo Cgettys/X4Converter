@@ -41,6 +41,11 @@ namespace ani {
         validate();
 
     }
+    // Export Conversion
+
+    Keyframe::Keyframe(pugi::xml_node node) {
+
+    }
 
     std::string Keyframe::validate() {
         bool valid = true;
@@ -202,7 +207,7 @@ namespace ani {
             throw std::runtime_error("Cannot write keyframe");
         }
         // TODO verify assumptions about framerate/encode them into a check
-        int frameNum = 60.0*Time;
+        int frameNum = numeric_cast<int>(30.0*Time);
         auto tgtNode = node.append_child("frame");
         tgtNode.append_attribute("id").set_value(frameNum);
         auto interpStr = getInterpolationTypeName(interp);

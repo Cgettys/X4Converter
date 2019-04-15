@@ -8,8 +8,8 @@ using namespace Assimp;
 
 namespace ani {
 // TODO copy constructors?
-    AnimFile::AnimFile() {
-        header = Header();
+    AnimFile::AnimFile() : header() {
+
     }
 
     AnimFile::AnimFile(IOStream *pStream) {        // TODO endian handling??
@@ -39,8 +39,8 @@ namespace ani {
     }
 
 
-    void AnimFile::setHeader(Header header) {
-        AnimFile::header = header;
+    void AnimFile::setHeader(Header h) {
+        header = h;
     }
 
     std::string AnimFile::validate() {
@@ -54,6 +54,9 @@ namespace ani {
                 s.append(e.what());
                 throw std::runtime_error(s);
             }
+        }
+        if (descs.size()!=header.getNumAnims()){
+            s.append(str(format("Expected %1% descriptoins but only read %2%") %descs.size() %header.getNumAnims()));
         }
 
         return s;
@@ -118,6 +121,26 @@ namespace ani {
             }
 
         }
+
+    }
+
+    AnimFile::AnimFile(pugi::xml_node node) {
+        header=Header();
+        pugi::xml_node dataNode = node.child("data");
+        for (auto &part : dataNode.children()) {
+            std::string partName = part.attribute("name").as_string();
+            for (auto &animCat : part.children()) {
+                for (auto &anim : animCat.children()) {
+                    // TODO move this one layer down and assert only 1 category
+                    descs.emplace_back(partName, anim);
+                }
+            }
+        }
+        header.setNumAnims(descs.size());
+        pugi::xml_node metaNode = node.child("metadata");
+    }
+
+    void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node) {
 
     }
 

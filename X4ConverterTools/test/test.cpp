@@ -71,6 +71,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //}
 
     BOOST_AUTO_TEST_CASE(test_xml) {
+    // TODO from nothing test case
         // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
 //        const std::string inputXMLPath = gameBaseFolderPath

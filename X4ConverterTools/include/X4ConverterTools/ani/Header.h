@@ -20,7 +20,6 @@ namespace ani {
 
         int getKeyOffsetBytes() const;
 
-        void setKeyOffsetBytes(int KeyOffsetBytes);
 
         int getVersion() const;
 
