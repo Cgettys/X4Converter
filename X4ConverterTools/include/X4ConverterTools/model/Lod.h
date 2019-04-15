@@ -3,16 +3,18 @@
 #include <pugixml.hpp>
 #include <iostream>
 #include "AbstractElement.h"
+namespace model{
 
-namespace model {
-    class Part : public AbstractElement {
+    class Lod  : public AbstractElement {
     public:
-        Part() = default;
-        Part(pugi::xml_node node);
+        Lod() = default;
+        Lod(pugi::xml_node node);
 
         virtual aiNode *ConvertToAiNode();
 
         virtual void ConvertFromAiNode(aiNode *);
-    };
+    };{
+
 }
+
 

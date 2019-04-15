@@ -1,8 +1,4 @@
-//
-// Created by cg on 4/14/19.
-//
 
-#include <iostream>
 #include "X4ConverterTools/model/Part.h"
 
 model::Part::Part(pugi::xml_node node) {
