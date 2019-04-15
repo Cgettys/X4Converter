@@ -31,37 +31,7 @@ bool AssetImporter::CanRead(const std::string &filePath, IOSystem *pIOHandler, b
 
 void AssetImporter::InternReadFile(const std::string &filePath, aiScene *pScene, IOSystem *pIOHandler) {
     try {
-        // Read the .xml and .xmf files
-        std::shared_ptr<Component> pComponent = Component::ReadFromFile(filePath, context, pIOHandler);
 
-        // Convert to the Assimp data model
-        pScene->mRootNode = pComponent->ConvertToAiNode(context);
-
-        // Add the meshes to the scene
-        pScene->mMeshes = new aiMesh *[context.Meshes.size()];
-        for (aiMesh *pMesh : context.Meshes) {
-            AssimpUtil::MergeVertices(pMesh);
-            pScene->mMeshes[pScene->mNumMeshes++] = pMesh;
-        }
-
-        // TODO
-//        // ANI file stuff
-        // TODO more robust
-        std::string shortName = path(filePath).filename().replace_extension("").string() + "_data.ani";
-        to_upper(shortName);
-        std::string aniPath = (path(filePath).parent_path() / shortName).string();
-        IOStream *pAniStream = pIOHandler->Open(aniPath, "rb");
-        if (pAniStream == nullptr) {
-            std::cerr << "No ANI file found at path: " << aniPath << ". This likely indicates an error." << std::endl;
-        } else {
-            pAnimFile = new AnimFile(pAniStream);
-//            // So we can get it back on the other end
-//            pScene->mMetaData=aiMetadata::Alloc(1);
-//            pScene->mMetaData->Add("AnimFile",pAnimFile);
-        }
-//        pScene->mNumAnimations = aniFile.getHeader().getNumAnims();
-
-        context.AddMaterialsToScene(filePath,pScene);
 
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;

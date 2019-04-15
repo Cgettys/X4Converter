@@ -6,8 +6,6 @@
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <X4ConverterTools/util/AssimpUtil.h>
-#include <X4ConverterTools/Component.h>
-#include <X4ConverterTools/Part.h>
 #include <X4ConverterTools/Material.h>
 #include <X4ConverterTools/MaterialLibrary.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
@@ -26,8 +24,8 @@ public:
                        const Assimp::ExportProperties *props);
 
 protected:
-    static void
-    ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene, aiNode *pPartNode);
+//    static void
+//    ConvertPartNode(Component &component, const std::string &parentPartName, const aiScene *pScene, aiNode *pPartNode);
 
 
 };

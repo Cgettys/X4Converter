@@ -11,7 +11,6 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamWriter.h>
 #include <assimp/StreamReader.h>
-#include <X4ConverterTools/Component.h>
 #include "Header.h"
 #include "AnimDesc.h"
 

@@ -5,8 +5,6 @@
 #include <boost/format.hpp>
 
 #include <X4ConverterTools/util/AssimpUtil.h>
-#include <X4ConverterTools/Component.h>
-#include <X4ConverterTools/Part.h>
 #include <X4ConverterTools/Material.h>
 #include <X4ConverterTools/MaterialLibrary.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>

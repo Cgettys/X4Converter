@@ -3,9 +3,6 @@
 
 set("LIB_SRCS"
         src/Conversion.cpp
-        src/Component.cpp
-        src/Part.cpp
-        src/Lod.cpp
         src/Material.cpp
         src/MaterialCollection.cpp
         src/MaterialLibrary.cpp
@@ -23,7 +20,7 @@ set("LIB_SRCS"
         src/xmf/XmfMaterial.cpp
         src/xmf/XmfVertexElement.cpp
         src/xmf/XuMeshFile.cpp
-        src/xmf/XmfHeader.cpp src/ConversionContext.cpp)
+        src/xmf/XmfHeader.cpp src/ConversionContext.cpp src/model/Component.cpp include/X4ConverterTools/model/Component.h src/model/Connection.cpp include/X4ConverterTools/model/Connection.h src/model/Part.cpp include/X4ConverterTools/model/Part.h src/model/AbstractElement.cpp include/X4ConverterTools/model/AbstractElement.h)
 add_library(X4ConverterTools STATIC ${LIB_SRCS})
 target_compile_definitions(X4ConverterTools PRIVATE "X4ConverterTools_TEST=TRUE") # TODO fixme
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem Boost::unit_test_framework pugixml ${ZLIB_LIBRARIES} ${assimp_LIB})
