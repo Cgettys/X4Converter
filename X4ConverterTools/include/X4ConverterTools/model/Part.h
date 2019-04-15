@@ -3,6 +3,9 @@
 #include <pugixml.hpp>
 #include <iostream>
 #include "AbstractElement.h"
+#include "Lod.h"
+#include <map>
+#include <string>
 
 namespace model {
     class Part : public AbstractElement {
@@ -13,6 +16,9 @@ namespace model {
         virtual aiNode *ConvertToAiNode();
 
         virtual void ConvertFromAiNode(aiNode *);
+
+    protected:
+        std::map<std::string, Lod> lods;
     };
 }
 

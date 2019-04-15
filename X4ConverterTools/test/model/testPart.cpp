@@ -1,9 +1,5 @@
 #include <boost/test/unit_test.hpp>
-#include <assimp/types.h>
-#include <assimp/Importer.hpp>
-#include <assimp/IOStream.hpp>
-#include <assimp/IOSystem.hpp>
-#include <assimp/DefaultIOSystem.h>
+
 
 #include <X4ConverterTools/model/Part.h>
 #include <boost/filesystem.hpp>
@@ -20,52 +16,64 @@ namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
 using namespace model;
-BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
-    BOOST_AUTO_TEST_SUITE(part) // NOLINT(cert-err58-cpp)
-
-
-        BOOST_AUTO_TEST_CASE(test_read_part_name_correct) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
-                    "/components/component/connections/connection[@name='Connection01']/parts/part").node();
-            BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto part = Part(partNode);
-            BOOST_TEST(part.getName() == "anim_main");
-            // TODO make sure nodes are not changed by reading
-        }
-
-        BOOST_AUTO_TEST_CASE(test_read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
-                    "/components/component/connections/connection[@name='Connection01']/parts/part").node();
-            BOOST_TEST_REQUIRE(!partNode.empty());
-            partNode.remove_attribute("name");
-
-            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
-        }
-
-        BOOST_AUTO_TEST_CASE(test_read_part_name_convert_to_ai_node) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
-                    "/components/component/connections/connection[@name='Connection01']/parts/part").node();
-            BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto part = Part(partNode);
-            auto result = part.ConvertToAiNode();
-            BOOST_TEST(std::string(result->mName.C_Str()) == std::string("anim_main"));
-        }
+BOOST_AUTO_TEST_SUITE(PartUnitTests) // NOLINT(cert-err58-cpp)
 
 
-    BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_CASE(test_read_part_name_correct) { // NOLINT(cert-err58-cpp)
+        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        pugi::xml_document expected;
+        pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
+        BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
+        auto partNode = expected.select_node(
+                "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+        BOOST_TEST_REQUIRE(!partNode.empty());
+
+        auto part = Part(partNode);
+        std::string expectedName = "anim_main";
+        BOOST_TEST(part.getName() == expectedName);
+        auto result = part.ConvertToAiNode();
+        BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
+        // TODO make sure nodes are not changed by reading
+    }
+
+    BOOST_AUTO_TEST_CASE(test_read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
+        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        pugi::xml_document expected;
+        pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
+        BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
+        auto partNode = expected.select_node(
+                "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+        BOOST_TEST_REQUIRE(!partNode.empty());
+        partNode.remove_attribute("name");
+
+        BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_read_part_name_throws_on_wrong_type) { // NOLINT(cert-err58-cpp)
+        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        pugi::xml_document expected;
+        pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
+        BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
+        auto partNode = expected.select_node(
+                "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
+        BOOST_TEST_REQUIRE(!partNode.empty());
+        BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+    }
+
+
+
+
+    // TODO global naming constraints
+    // TODO wrecks
+    // TODO does a collision mesh always exist?
+
+
+BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(PartIntegrationTests) // NOLINT(cert-err58-cpp)
+
+BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

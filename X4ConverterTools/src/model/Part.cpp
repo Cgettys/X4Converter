@@ -3,7 +3,7 @@
 
 model::Part::Part(pugi::xml_node node) {
     if (std::string(node.name()) != "part"){
-        throw std::runtime_error("XML element must be a part element!");
+        throw std::runtime_error("XML element must be a <part> element!");
     }
     if (node.attribute("name").empty()){
         throw std::runtime_error("Part must have a name attribute!");
