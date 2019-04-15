@@ -13,9 +13,9 @@ namespace model {
         Part() = default;
         Part(pugi::xml_node node);
 
-        virtual aiNode *ConvertToAiNode();
+        aiNode *ConvertToAiNode();
 
-        virtual void ConvertFromAiNode(aiNode *);
+        void ConvertFromAiNode(aiNode * node);
 
     protected:
         std::map<std::string, Lod> lods;

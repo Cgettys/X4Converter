@@ -63,8 +63,19 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests) // NOLINT(cert-err58-cpp)
         BOOST_CHECK_THROW(auto lod = Lod(node,"anim_main"), std::runtime_error);
     }
 
+    BOOST_AUTO_TEST_CASE(test_part_name_from_ainode) { // NOLINT(cert-err58-cpp)
+        std::string lodName = "anim_main^lod0";
+        auto ainode = new aiNode(lodName);
 
+        auto lod = Lod();
+        lod.ConvertFromAiNode(ainode);
+        BOOST_TEST(lod.getName() == lodName);
+        BOOST_TEST(lod.getIndex() == 0);
+    }
+    // TODO failure case
 
+    // TODO materials
+// TODO check that name makes sense with parent name
 // TODO in part make assertions about lods existing
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

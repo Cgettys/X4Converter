@@ -11,10 +11,11 @@ namespace model{
         Lod() = default;
         Lod(pugi::xml_node node,std::string parentName);
 
-        virtual aiNode *ConvertToAiNode();
+        aiNode *ConvertToAiNode();
 
-        virtual void ConvertFromAiNode(aiNode *);
+        void ConvertFromAiNode(aiNode * node);
 
+        int getIndex();
     protected:
         int index;
     };

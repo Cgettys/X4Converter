@@ -16,7 +16,7 @@ namespace model {
 
         virtual aiNode *ConvertToAiNode() = 0;
 
-        virtual void ConvertFromAiNode(aiNode *) = 0;
+        virtual void ConvertFromAiNode(aiNode * node) = 0;
 
     protected:
         std::string name;

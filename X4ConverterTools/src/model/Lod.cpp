@@ -18,6 +18,18 @@ aiNode *model::Lod::ConvertToAiNode() {
     return new aiNode(name);
 }
 
-void model::Lod::ConvertFromAiNode(aiNode *) {
+void model::Lod::ConvertFromAiNode(aiNode * node) {
+    std::string rawName = node->mName.C_Str();
+    setName(rawName);
+    // Parse out the index
+    size_t pos = rawName.rfind("^lod");
+    if (pos == std::string::npos){
+        throw std::runtime_error("lod lacks index");
+    }
+    index=std::stoi(rawName.substr(pos+4));
 
+}
+
+int model::Lod::getIndex() {
+    return index;
 }
