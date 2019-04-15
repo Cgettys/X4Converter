@@ -18,3 +18,7 @@ model::Part::Part(pugi::xml_node node) {
 aiNode *model::Part::ConvertToAiNode() {
     return nullptr;
 }
+
+void model::Part::ConvertFromAiNode(aiNode *) {
+
+}

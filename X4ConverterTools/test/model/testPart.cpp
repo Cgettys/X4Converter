@@ -49,10 +49,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
 
-            BOOST_CHECK_THROW(auto part = Part(partNode),std::runtime_error);
+            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
         }
 
-        BOOST_AUTO_TEST_CASE(test_write_part_name) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(test_read_part_name_convert_to_ai_node) { // NOLINT(cert-err58-cpp)
             const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
             pugi::xml_document expected;
             pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
@@ -60,9 +60,10 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
             auto partNode = expected.select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            partNode.remove_attribute("name");
 
-            BOOST_CHECK_THROW(auto part = Part(partNode),std::runtime_error);
+            auto part = Part(partNode);
+            auto result = part.ConvertToAiNode();
+            BOOST_TEST(std::string(result->mName.C_Str()) == std::string("anim_main"));
         }
 
 
