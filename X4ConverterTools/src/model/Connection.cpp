@@ -84,6 +84,7 @@ aiNode *model::Connection::ConvertToAiNode() {
         child->mNumChildren = 1;
         auto attrChild = new aiNode(attr.second);
         attrChild->mParent = child;
+        child->mChildren = new aiNode*[1];
         child->mChildren[0] = attrChild;
         result->mChildren[idx++] = child;
     }
