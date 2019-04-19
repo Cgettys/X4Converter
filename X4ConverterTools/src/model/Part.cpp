@@ -8,9 +8,6 @@ model::Part::Part(pugi::xml_node node) {
         throw std::runtime_error("Part must have a name attribute!");
     }
     setName(node.attribute("name").as_string());
-
-
-    }
 }
 
 aiNode *model::Part::ConvertToAiNode() {
