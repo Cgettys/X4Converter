@@ -55,8 +55,8 @@ namespace ani {
                 throw std::runtime_error(s);
             }
         }
-        if (descs.size()!=header.getNumAnims()){
-            s.append(str(format("Expected %1% descriptoins but only read %2%") %descs.size() %header.getNumAnims()));
+        if (descs.size() != header.getNumAnims()) {
+            s.append(str(format("Expected %1% descriptoins but only read %2%") % descs.size() % header.getNumAnims()));
         }
 
         return s;
@@ -125,7 +125,7 @@ namespace ani {
     }
 
     AnimFile::AnimFile(pugi::xml_node node) {
-        header=Header();
+        header = Header();
         pugi::xml_node dataNode = node.child("data");
         for (auto &part : dataNode.children()) {
             std::string partName = part.attribute("name").as_string();

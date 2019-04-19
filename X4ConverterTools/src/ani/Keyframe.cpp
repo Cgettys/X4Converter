@@ -200,14 +200,13 @@ namespace ani {
     }
 
 
-
     void Keyframe::WriteChannel(pugi::xml_node node, std::string &axis) {
         InterpolationType interp = getInterpByAxis(axis);
         if (!checkInterpolationType(interp) || interp == INTERPOLATION_TCB) {
             throw std::runtime_error("Cannot write keyframe");
         }
         // TODO verify assumptions about framerate/encode them into a check
-        int frameNum = numeric_cast<int>(30.0*Time);
+        int frameNum = numeric_cast<int>(30.0 * Time);
         auto tgtNode = node.append_child("frame");
         tgtNode.append_attribute("id").set_value(frameNum);
         auto interpStr = getInterpolationTypeName(interp);

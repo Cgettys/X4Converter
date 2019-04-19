@@ -1,4 +1,5 @@
 #include <X4ConverterTools/xmf/XmfVertexElement.h>
+
 namespace xmf {
     XmfVertexElement::XmfVertexElement() {
         Type = D3DDECLTYPE_UNUSED;
@@ -28,8 +29,9 @@ namespace xmf {
         writer << UsageIndex;
         writer << _pad0[0] << _pad0[1];
     }
+
     // TODO get rid of duplication/unused code
-    int XmfVertexElement::WriteVertexElement(aiMesh *pMesh, int vertexIdx,  uint8_t *pElemData) {
+    int XmfVertexElement::WriteVertexElement(aiMesh *pMesh, int vertexIdx, uint8_t *pElemData) {
         auto type = (D3DDECLTYPE) Type;
         switch (Usage) {
             case D3DDECLUSAGE_POSITION: {

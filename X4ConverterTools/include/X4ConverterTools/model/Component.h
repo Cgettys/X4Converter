@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <pugixml.hpp>
@@ -6,7 +5,7 @@
 
 namespace model {
 
-    class Component : AbstractElement{
+    class Component : AbstractElement {
 
         Component(pugi::xml_node node);
     };

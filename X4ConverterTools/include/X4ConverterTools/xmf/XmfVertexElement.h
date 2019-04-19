@@ -19,7 +19,8 @@ namespace xmf {
 
         void Write(Assimp::StreamWriterLE &writer);
 
-        int WriteVertexElement(aiMesh *pMesh, int vertexIdx,  uint8_t *pElemData);
+        int WriteVertexElement(aiMesh *pMesh, int vertexIdx, uint8_t *pElemData);
+
         uint32_t Type;
         uint8_t Usage;
         uint8_t UsageIndex;

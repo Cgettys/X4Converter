@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include <pugixml.hpp>
 #include <set>
 #include <algorithm>
@@ -11,12 +12,17 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include <regex>
 #include <cmath>
-namespace test{
+#include <assimp/scene.h>
 
-    class TestUtil{
+namespace test {
+
+    class TestUtil {
     public:
+        static void checkAiNodeName(aiNode *node, std::string name);
+
         static std::string GetBasePath();
-        static void CompareXMLFiles(pugi::xml_document& expectedDoc, pugi::xml_document& actualDoc);
+
+        static void CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc);
 
     };
 }

@@ -81,7 +81,7 @@ void Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFo
             aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
             pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
         } else {
-               // throw std::runtime_error("Could not find Diffuse Texture for Material!");
+            // throw std::runtime_error("Could not find Diffuse Texture for Material!");
             std::cerr << "WARNING: Could not find Diffuse Texture for Material!\n";
         }
     }

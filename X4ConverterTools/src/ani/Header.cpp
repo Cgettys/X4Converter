@@ -67,7 +67,7 @@ namespace ani {
     void Header::setNumAnims(int numAnims) {
         NumAnims = numAnims;
         // TODO checkme
-        KeyOffsetBytes=16+ 160*numAnims;
+        KeyOffsetBytes = 16 + 160 * numAnims;
     }
 
     int Header::getKeyOffsetBytes() const {

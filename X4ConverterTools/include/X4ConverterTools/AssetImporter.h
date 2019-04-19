@@ -34,7 +34,7 @@ public:
 
     // TODO metadata support
 
-    ani::AnimFile* pAnimFile;
+    ani::AnimFile *pAnimFile;
 
 private:
 

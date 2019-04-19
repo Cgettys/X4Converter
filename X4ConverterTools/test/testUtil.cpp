@@ -1,12 +1,21 @@
 #include "testUtil.h"
 
 namespace test {
-    std::string TestUtil::GetBasePath(){
 
-        char* path = std::getenv("X4_UNPACKED_ROOT");
+    void TestUtil::checkAiNodeName(aiNode *node, std::string name) {
+
+        BOOST_TEST_REQUIRE(node != nullptr);
+        const char *actualName = node->mName.C_Str();
+        BOOST_TEST(name == std::string(actualName));
+    }
+
+    std::string TestUtil::GetBasePath() {
+
+        char *path = std::getenv("X4_UNPACKED_ROOT");
         BOOST_TEST_REQUIRE(path != nullptr);
         return std::string(path);
     }
+
     void TestUtil::CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc) {
 
         //https://pugixml.org/docs/manual.html#access.walker
@@ -86,18 +95,18 @@ namespace test {
                 std::string expectedValueStr = expectedAttr.as_string();
                 if (!std::regex_match(expectedValueStr, re_float)) {
                     BOOST_TEST_WARN(expectedValueStr == actualAttr.as_string(),
-                               "String attribute " + attrName + " at path " + x + " should be equal");
+                                    "String attribute " + attrName + " at path " + x + " should be equal");
                 } else {
                     // We'll assume float otherwise
                     float expectedValueFloat = expectedAttr.as_float();
                     float actualValueFloat = actualAttr.as_float();
                     const float small = 2e-6;
-                    if (fabs(expectedValueFloat)>small&& fabs(actualValueFloat) > small){
-                        BOOST_WARN_CLOSE(expectedValueFloat, actualValueFloat,1.0);
+                    if (fabs(expectedValueFloat) > small && fabs(actualValueFloat) > small) {
+                        BOOST_WARN_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
 //                        BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat,1.0);
                     } else {
-                        BOOST_CHECK_SMALL(expectedValueFloat,small);
-                        BOOST_CHECK_SMALL(actualValueFloat,small);
+                        BOOST_CHECK_SMALL(expectedValueFloat, small);
+                        BOOST_CHECK_SMALL(actualValueFloat, small);
                     }
                 }
 

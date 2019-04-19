@@ -73,7 +73,9 @@ namespace xmf {
         static std::shared_ptr<XuMeshFile> GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
 
         static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
+
         static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
+
     private:
 
         void ReadBufferDescs(Assimp::StreamReaderLE &pStreamReader);

@@ -19,7 +19,7 @@ using namespace Assimp;
 using namespace test;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 // TODO tests for changing stuff
-//    BOOST_AUTO_TEST_CASE(test_ojump_xr_file) {        // TODO refactor all the io...
+//    BOOST_AUTO_TEST_CASE(ojump_xr_file) {        // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string tgtPath = "extensions/DOR_XR_ORIGINAL/assets/units/size_xl/units_size_xl_red_destroyer";
 //        const std::string inputXMLPath = gameBaseFolderPath + tgtPath + ".xml";
@@ -43,11 +43,11 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //
 //        pugi::xml_document actualDoc;
 //        pugi::xml_parse_result actualResult = actualDoc.load_file(outputXMLPath.c_str());
-          //    CompareXMLFiles(expectedDoc, actualDoc);
+    //    CompareXMLFiles(expectedDoc, actualDoc);
 //        BOOST_TEST_CHECKPOINT("Cleanup");
 //    }
     // TODO fixme
-//    BOOST_AUTO_TEST_CASE(test_ojump_file) {
+//    BOOST_AUTO_TEST_CASE(ojump_file) {
 //        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string tgtPath = "extensions/DOR/assets/units/size_xl/units_size_xl_cargo_hauler_2";
 //        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //
 //}
 
-    BOOST_AUTO_TEST_CASE(test_xml) {
-    // TODO from nothing test case
+    BOOST_AUTO_TEST_CASE(xml) {
+        // TODO from nothing test case
         // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string inputXMLPath = gameBaseFolderPath
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //        const std::string outputXMLPath =
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
-        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath() + "/";
 //        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
 //        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
 //        const std::string tgtPath = "assets/props/SurfaceElements/shield_arg_l_standard_01_mk2";
@@ -90,9 +90,9 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
 
 //        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
-        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
-        const std::string daePath = gameBaseFolderPath +tgtPath+ ".out.dae";
-        const std::string outputXMLPath = gameBaseFolderPath +tgtPath +".out.xml";
+        const std::string inputXMLPath = gameBaseFolderPath + tgtPath + ".xml";
+        const std::string daePath = gameBaseFolderPath + tgtPath + ".out.dae";
+        const std::string outputXMLPath = gameBaseFolderPath + tgtPath + ".out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(daePath);
         // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that

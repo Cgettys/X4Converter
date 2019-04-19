@@ -68,16 +68,17 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
     };
 
 
-    BOOST_AUTO_TEST_CASE(test_xmf_material) {
+    BOOST_AUTO_TEST_CASE(xmf_material) {
         // TODO writeme
     }
 
-    BOOST_AUTO_TEST_CASE(test_xmf) {
+    BOOST_AUTO_TEST_CASE(xmf) {
 
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-        const std::string basePath =test::TestUtil::GetBasePath()+"/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
+        const std::string basePath = test::TestUtil::GetBasePath() +
+                                     "/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
         const std::string testFile = basePath + ".xmf";
         const std::string resultsFile = basePath + ".out.xmf";
         IOSystem *io = new DefaultIOSystem();

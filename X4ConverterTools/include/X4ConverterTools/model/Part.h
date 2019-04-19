@@ -11,11 +11,12 @@ namespace model {
     class Part : public AbstractElement {
     public:
         Part() = default;
+
         Part(pugi::xml_node node);
 
         aiNode *ConvertToAiNode();
 
-        void ConvertFromAiNode(aiNode * node);
+        void ConvertFromAiNode(aiNode *node);
 
     protected:
         std::map<std::string, Lod> lods;

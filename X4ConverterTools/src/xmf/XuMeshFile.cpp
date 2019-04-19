@@ -422,7 +422,8 @@ namespace xmf {
     }
 
 
-    std::shared_ptr<XuMeshFile> XuMeshFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
+    std::shared_ptr<XuMeshFile>
+    XuMeshFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
         std::vector<aiNode *> meshNodes;
         if (pNode->mNumChildren == 0) {
             meshNodes.push_back(pNode);
@@ -449,11 +450,13 @@ namespace xmf {
                 throw std::runtime_error(str(format("Node %s has no mesh attached") % pMeshNode->mName.C_Str()));
             }
             if (pMeshNode->mNumMeshes > 1) {
-                throw std::runtime_error(str(format("Node %s has multiple meshes attached") % pMeshNode->mName.C_Str()));
+                throw std::runtime_error(
+                        str(format("Node %s has multiple meshes attached") % pMeshNode->mName.C_Str()));
             }
             aiMesh *pMesh = pScene->mMeshes[pMeshNode->mMeshes[0]];
             if (pMesh->mPrimitiveTypes & ~aiPrimitiveType_TRIANGLE) {
-                throw std::runtime_error(str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
+                throw std::runtime_error(
+                        str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
             }
             if (!isCollisionMesh) {
                 XuMeshFile::ExtendVertexDeclaration(pMesh, vertexDecl);
@@ -547,7 +550,8 @@ namespace xmf {
 
     // TODO move me to XmfDataBuffer?
     void XuMeshFile::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
-        if (declaration.size() > sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
+        if (declaration.size() >
+            sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
             throw std::runtime_error("Too many vertex elements in vertex declaration");
         }
         uint32_t declarationSize = 0;
@@ -560,7 +564,6 @@ namespace xmf {
         buffer.Description.ItemSize = declarationSize;
         buffer.Description.DenormalizeVertexDeclaration();
     }
-
 
 
 }

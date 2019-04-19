@@ -20,7 +20,9 @@ namespace ani {
     class AnimFile {
     public:
         AnimFile();
+
         AnimFile(Assimp::IOStream *pStream);
+
         AnimFile(pugi::xml_node node);
 
         ~AnimFile();
@@ -31,7 +33,8 @@ namespace ani {
         void setHeader(Header header);
 
         void WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const;
-        void WriteGameFiles(Assimp::StreamWriterLE &writer,pugi::xml_node node);
+
+        void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node);
 
     protected:
         Header header = Header();

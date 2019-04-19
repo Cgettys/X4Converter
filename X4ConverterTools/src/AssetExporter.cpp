@@ -9,6 +9,7 @@ Assimp::Exporter::ExportFormatEntry AssetExporter::Format("xmf", "EgoSoft XuMesh
                                                           AssetExporter::Export);
 
 std::string AssetExporter::gameBaseFolderPath = "";
+
 void AssetExporter::Export(const char *pFilePath, Assimp::IOSystem *pIOHandler, const aiScene *pScene,
                            const Assimp::ExportProperties *props) {
     try {
