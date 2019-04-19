@@ -14,6 +14,7 @@
 #include <pugixml.hpp>
 #include <cstdio>
 #include <cmath>
+#include "../testUtil.h"
 
 namespace fs = boost::filesystem;
 using namespace boost;
@@ -25,7 +26,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_CASE(test_ani_read_basic) { // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
-        const std::string aniFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+        const std::string aniFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
@@ -40,11 +41,11 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 
     BOOST_AUTO_TEST_CASE(test_ani_out) { // NOLINT(cert-err58-cpp)
     // TODO fixme
-        const std::string aniFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
-        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.xml";
-        const std::string aniOutFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
-//const std::string aniFile = "/home/cg/Desktop/X4/test_files/struct_bt_ut_omicron_superyard_data.ani";
-//        const std::string aniFile ="/home/cg/Desktop/X4/unpacked/assets/fx/lensflares/LENSFLARES_DATA.ANI";
+        const std::string aniFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+        const std::string xmlFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_gen_s_fighter_01.xml";
+        const std::string aniOutFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
+//const std::string aniFile = "test::TestUtil::GetBasePath()/test_files/struct_bt_ut_omicron_superyard_data.ani";
+//        const std::string aniFile =current_path().string()+"/assets/fx/lensflares/LENSFLARES_DATA.ANI";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
@@ -63,8 +64,8 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
 
     BOOST_AUTO_TEST_CASE(test_ani_both) { // NOLINT(cert-err58-cpp)
         // TODO fixme
-        const std::string aniFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
-        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_gen_s_fighter_01.xml";
+        const std::string aniFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+        const std::string xmlFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_gen_s_fighter_01.xml";
         IOSystem *io = new DefaultIOSystem();
         IOStream *sourceStream = io->Open(aniFile, "rb");
         BOOST_TEST_REQUIRE(sourceStream != nullptr);
@@ -87,7 +88,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_CASE(test_ani_struct_correctness) { // NOLINT(cert-err58-cpp)
         // TODO mock reading & writing to memory - would be faster & good form
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
-        const fs::path basePath = fs::path("/home/cg/Desktop/X4/unpacked/");
+        const fs::path basePath = fs::path(std::getenv("X4_UNPACKED_ROOT"));
         fs::recursive_directory_iterator iter(basePath);
         IOSystem *io = new DefaultIOSystem();
         for (const auto &x : iter) {

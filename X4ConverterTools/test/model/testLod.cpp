@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <iostream>
 #include <cmath>
+#include "../testUtil.h"
 
 namespace fs = boost::filesystem;
 using namespace boost;
@@ -22,7 +23,7 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests) // NOLINT(cert-err58-cpp)
 
 
     BOOST_AUTO_TEST_CASE(test_read_lod_name) { // NOLINT(cert-err58-cpp)
-        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        const std::string xmlFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_arg_s_fighter_01.xml";
         pugi::xml_document expected;
         pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
         BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
@@ -38,7 +39,7 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests) // NOLINT(cert-err58-cpp)
     }
 
     BOOST_AUTO_TEST_CASE(test_read_lod_no_index) { // NOLINT(cert-err58-cpp)
-        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        const std::string xmlFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_arg_s_fighter_01.xml";
         pugi::xml_document expected;
         pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
         BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
@@ -51,7 +52,7 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests) // NOLINT(cert-err58-cpp)
     }
 
     BOOST_AUTO_TEST_CASE(test_read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
-        const std::string xmlFile = "/home/cg/Desktop/X4/unpacked/assets/units/size_s/ship_arg_s_fighter_01.xml";
+        const std::string xmlFile =test::TestUtil::GetBasePath()+"/assets/units/size_s/ship_arg_s_fighter_01.xml";
         pugi::xml_document expected;
         pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
         BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);

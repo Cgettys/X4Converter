@@ -20,7 +20,7 @@ using namespace test;
 BOOST_AUTO_TEST_SUITE(test_suite1)
 // TODO tests for changing stuff
 //    BOOST_AUTO_TEST_CASE(test_ojump_xr_file) {        // TODO refactor all the io...
-//        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string tgtPath = "extensions/DOR_XR_ORIGINAL/assets/units/size_xl/units_size_xl_red_destroyer";
 //        const std::string inputXMLPath = gameBaseFolderPath + tgtPath + ".xml";
 //        const std::string daePath = gameBaseFolderPath + tgtPath + ".out.dae";
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //    }
     // TODO fixme
 //    BOOST_AUTO_TEST_CASE(test_ojump_file) {
-//        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string tgtPath = "extensions/DOR/assets/units/size_xl/units_size_xl_cargo_hauler_2";
 //        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
 //        const std::string daePath = gameBaseFolderPath +tgtPath+ "_modified.dae";
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
     BOOST_AUTO_TEST_CASE(test_xml) {
     // TODO from nothing test case
         // TODO refactor all the io...
-//        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string inputXMLPath = gameBaseFolderPath
 //                                         + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.xml";
 //        const std::string daePath =
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
 //        const std::string outputXMLPath =
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
-        const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
 //        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
 //        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
 //        const std::string tgtPath = "assets/props/SurfaceElements/shield_arg_l_standard_01_mk2";
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_SUITE(test_suite1)
         pugi::xml_document actualDoc;
         pugi::xml_parse_result actualResult = actualDoc.load_file(outputXMLPath.c_str());
 
-        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        test::TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
         BOOST_TEST_CHECKPOINT("Cleanup");
 
 

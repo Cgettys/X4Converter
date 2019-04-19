@@ -1,6 +1,12 @@
 #include "testUtil.h"
 
 namespace test {
+    std::string TestUtil::GetBasePath(){
+
+        char* path = std::getenv("X4_UNPACKED_ROOT");
+        BOOST_TEST_REQUIRE(path != nullptr);
+        return std::string(path);
+    }
     void TestUtil::CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc) {
 
         //https://pugixml.org/docs/manual.html#access.walker

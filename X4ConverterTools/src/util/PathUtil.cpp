@@ -97,7 +97,7 @@ std::string PathUtil::GetOutputPath(const std::string &inputPath) {
     std::cout << "Using test paths" << std::endl;
     path p(inputPath);
     std::string ext = ".out";
-    ext.append(p.extension().c_str());
+    ext.append(p.extension().string());
     p.replace_extension(ext);
     return p.generic_string();
 #else

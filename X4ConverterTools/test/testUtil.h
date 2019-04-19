@@ -15,6 +15,7 @@ namespace test{
 
     class TestUtil{
     public:
+        static std::string GetBasePath();
         static void CompareXMLFiles(pugi::xml_document& expectedDoc, pugi::xml_document& actualDoc);
 
     };
