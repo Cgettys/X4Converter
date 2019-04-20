@@ -7,7 +7,7 @@
 #include "AbstractElement.h"
 
 namespace model {
-    class Connection : AbstractElement {
+    class Connection : public AbstractElement {
     public:
         Connection(pugi::xml_node node,std::string componentName="");
 
@@ -18,6 +18,10 @@ namespace model {
         void ConvertToXml(pugi::xml_node out);
 
         std::string getParentName();
+
+        std::vector<Part> getParts(){
+            return parts;
+        }
 
     private:
         std::string parentName;

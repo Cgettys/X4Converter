@@ -35,24 +35,21 @@ namespace model {
         // TODO template pattern?
         virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
             int numChildren = children.size() + attrs.size();
-            target->mNumChildren = numChildren;
-            target->mChildren = new aiNode *[numChildren];
+            auto childArray = new aiNode *[numChildren];
 
-            // TODO can we use addChildren?
             int idx = 0;
             for (auto child : children) {
-                target->mChildren[idx++] = child;
+                childArray[idx++]=child;
             }
             for (auto attr : attrs) {
-                target->mChildren[idx++] = GenerateAttrNode(target, attr.first, attr.second);
+                childArray[idx++]= GenerateAttrNode(attr.first, attr.second);
             }
-
+            target->addChildren(numChildren,childArray);
         }
 
-        virtual aiNode *GenerateAttrNode(aiNode *parent, std::string key, std::string value) {
-            auto result = new aiNode(name + "^" + key + "^" + value);
-            result->mParent = parent;
-            return result;
+        virtual aiNode *GenerateAttrNode(std::string key, std::string value) {
+            return new aiNode(name + "^" + key + "^" + value);
+
         }
 
         std::map<std::string, std::string> attrs;

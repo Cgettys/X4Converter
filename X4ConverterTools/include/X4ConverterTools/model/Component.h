@@ -2,7 +2,9 @@
 
 #include <pugixml.hpp>
 #include <iostream>
+#include <vector>
 #include "AbstractElement.h"
+#include "Connection.h"
 
 namespace model {
 
@@ -15,6 +17,8 @@ namespace model {
         void ConvertFromAiNode(aiNode *node);
         void ConvertToXml(pugi::xml_node out);
 
+    protected:
+        std::vector<Connection> connections;
     };
 
 }

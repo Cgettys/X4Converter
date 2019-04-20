@@ -31,6 +31,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto component = Component(node);
             BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
             delete doc;
+
         }
 // TODO layers
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

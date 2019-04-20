@@ -17,7 +17,7 @@
 namespace fs = boost::filesystem;
 using namespace Assimp;
 using namespace test;
-BOOST_AUTO_TEST_SUITE(test_suite1)
+BOOST_AUTO_TEST_SUITE(IntegrationTests)
 // TODO tests for changing stuff
 //    BOOST_AUTO_TEST_CASE(ojump_xr_file) {        // TODO refactor all the io...
 //        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";

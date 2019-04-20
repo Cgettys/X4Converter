@@ -12,10 +12,7 @@
 #include <assimp/DefaultIOSystem.h>
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
-
-#include <X4ConverterTools/AssetImporter.h>
-#include <X4ConverterTools/AssetExporter.h>
-
+#include <pugixml.hpp>
 bool ConvertXmlToDae(const std::string &pszGameBaseFolderPath, const std::string &pszXmlFilePath,
                      const std::string &pszDaeFilePath);
 

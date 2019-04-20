@@ -6,6 +6,7 @@
 /* Shows how to use both command line and config file. */
 #include <X4ConverterTools/Conversion.h>
 #include <boost/program_options.hpp>
+#include <X4ConverterTools/util/PathUtil.h>
 
 
 namespace po = boost::program_options;

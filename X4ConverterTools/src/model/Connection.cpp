@@ -38,20 +38,20 @@ namespace model {
         }
 
         for (auto attr: node.attributes()) {
-            auto name = std::string(attr.name());
+            auto attrName = std::string(attr.name());
             auto value = std::string(attr.value());
-            if (name == "name") {
+            if (attrName == "name") {
                 setName(value);
-            } else if (name == "parent") {
+            } else if (attrName == "parent") {
                 parentName = value;
             } else {
-                attrs[name] = value;
+                attrs[attrName] = value;
             }
         }
     }
 
     aiNode *Connection::ConvertToAiNode() {
-        auto result = new aiNode();
+        auto result = new aiNode(name);
         aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
         // TODO fixme upstream... this sucks
         result->mTransformation.a1 = tmp.a1;
