@@ -17,7 +17,7 @@ namespace model {
         void ConvertFromAiNode(aiNode *node);
         void ConvertToXml(pugi::xml_node out);
 
-        int getNumberOfConnections();
+        unsigned long getNumberOfConnections();
     protected:
         std::vector<Connection> connections;
     };

@@ -12,13 +12,13 @@ namespace model {
     public:
         Part() = default;
 
-        Part(pugi::xml_node node);
+        explicit Part(pugi::xml_node node);
 
-        aiNode *ConvertToAiNode();
+        aiNode *ConvertToAiNode() override;
 
-        void ConvertFromAiNode(aiNode *node);
+        void ConvertFromAiNode(aiNode *node) override;
 
-        void ConvertToXml(pugi::xml_node out);
+        void ConvertToXml(pugi::xml_node out) override;
 
     private:
         std::map<int, Lod> lods;

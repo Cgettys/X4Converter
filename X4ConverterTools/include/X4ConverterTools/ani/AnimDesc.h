@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <assimp/StreamWriter.h>
 #include <assimp/StreamReader.h>
 #include <boost/format.hpp>
@@ -16,7 +17,7 @@ namespace ani {
     public:
         AnimDesc() = default;
 
-        AnimDesc(std::string partName, pugi::xml_node node);
+        AnimDesc(const std::string &partName, pugi::xml_node node);
 
         explicit AnimDesc(Assimp::StreamReaderLE &reader);
 
@@ -25,7 +26,7 @@ namespace ani {
         std::string validate();// Debug method - throws exception if invalid, else returns human readable string
         void WriteIntermediateRepr(pugi::xml_node tgtNode) const;
 
-        void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const;
+        void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType, std::string axis) const;
 
         void WriteToGameFiles(Assimp::StreamWriterLE &writer);
 

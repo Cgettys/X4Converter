@@ -1,10 +1,7 @@
-//
-// Created by cg on 3/13/19.
-//
-
 #pragma once
 
 #include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
 
 #include <assimp/IOStream.hpp>
@@ -32,7 +29,7 @@ namespace ani {
 
         void setHeader(Header header);
 
-        void WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const;
+        void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const;
 
         void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node);
 

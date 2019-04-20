@@ -13,15 +13,16 @@ namespace model {
 
         Lod(pugi::xml_node node, std::string partName);
 
-        virtual aiNode *ConvertToAiNode();
+        aiNode *ConvertToAiNode() override;
 
-        virtual void ConvertFromAiNode(aiNode *node);
-        virtual void ConvertToXml(pugi::xml_node out);
+        void ConvertFromAiNode(aiNode *node) override;
+
+        void ConvertToXml(pugi::xml_node out) override;
 
         int getIndex();
 
     protected:
-        int index;
+        int index = -2;
     };
 
 }

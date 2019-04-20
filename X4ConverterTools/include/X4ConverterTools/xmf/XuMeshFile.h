@@ -64,7 +64,7 @@ namespace xmf {
         //void                            AllocSceneMaterials             ( aiScene* pScene);
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);
 
-        void AllocMeshFaces(aiMesh *pMesh, int numIndices);
+        static void AllocMeshFaces(aiMesh *pMesh, int numIndices);
 
         void PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices);
 

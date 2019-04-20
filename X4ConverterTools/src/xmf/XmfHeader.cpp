@@ -20,10 +20,10 @@ namespace xmf {
         MaterialSize = sizeof(XmfMaterial);
         // TODO
 
-        Culling_CW = false;
-        RightHand = false;
-        NumVertices;
-        NumIndices;
+        Culling_CW = static_cast<uint8_t>(false);
+        RightHand = static_cast<uint8_t>(false);
+        NumVertices = 0;//TODO
+        NumIndices = 0;//TODO
 
 
         PrimitiveType = D3DPT_TRIANGLELIST;

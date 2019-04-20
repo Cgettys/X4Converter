@@ -11,7 +11,7 @@
 
 class ConversionContext {
 public:
-    ConversionContext(std::string gameBaseFolderPath);
+    explicit ConversionContext(const std::string &gameBaseFolderPath);
 
     void AddMaterialsToScene(const std::string &filePath, aiScene *pScene);
 

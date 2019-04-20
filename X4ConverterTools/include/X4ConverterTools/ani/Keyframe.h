@@ -26,7 +26,7 @@ namespace ani {
     public:
         Keyframe() = default;
 
-        Keyframe(pugi::xml_node node);
+        explicit Keyframe(pugi::xml_node node);
 
         explicit Keyframe(Assimp::StreamReaderLE &reader);
 

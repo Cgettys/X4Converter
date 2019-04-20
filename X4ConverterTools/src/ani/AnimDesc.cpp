@@ -30,7 +30,7 @@ namespace ani {
     }
 
     // Export Conversion
-    AnimDesc::AnimDesc(std::string partName, pugi::xml_node node) {
+    AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
         // TODO validate against what's actually written
         std::fill(Name, Name + sizeof(Name), 0);
         std::fill(SubName, SubName + sizeof(SubName), 0);
@@ -187,7 +187,7 @@ namespace ani {
                 // And they appear on some ships bizarrely
                 // may be how it knows what to do with them during a cutscene??
                 "cutsceneloop", "gamestart1", "gamestart2", "gamestart3", "gamestart4",};
-        for (auto s : known) {
+        for (const auto &s : known) {
             if (s == SafeSubName) {
                 seenSubName = true;
                 break;
@@ -283,7 +283,8 @@ namespace ani {
         }
     }
 
-    void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, std::string keyType, std::string axis) const {
+    void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType,
+                                                  std::string axis) const {
 
         std::vector<Keyframe> frames;
         if (keyType == "location") {
@@ -302,7 +303,7 @@ namespace ani {
         std::vector<std::string> namePortions;
         algo::split(namePortions, SafeName, is_any_of(" "));
         std::string namePortion = namePortions[0];
-        std::string id = namePortion;
+        const std::string &id = namePortion;
 
         if (!tgtNode.find_child_by_attribute("part", "name", id.c_str())) {
             tgtNode.append_child("part").append_attribute("name").set_value(id.c_str());

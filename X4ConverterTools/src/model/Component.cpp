@@ -4,12 +4,12 @@ namespace model {
     Component::Component(pugi::xml_node node) {
         auto componentsNode = node.child("components");
         if (componentsNode.empty()) {
-            throw new std::runtime_error("<components> node not found");
+            throw std::runtime_error("<components> node not found");
         }
 
         auto componentNode = componentsNode.child("component");
         if (componentNode.empty()) {
-            throw new std::runtime_error("<component> node not found");
+            throw std::runtime_error("<component> node not found");
         }
         if (componentNode.next_sibling()) {
             std::cerr << "Warning, this file contains more than one component. Ignoring all but the first."
@@ -17,7 +17,7 @@ namespace model {
         }
 
         if (!componentNode.attribute("name")) {
-            throw new std::runtime_error("Unnamed component!");
+            throw std::runtime_error("Unnamed component!");
         }
         for (auto attr: componentNode.attributes()) {
             auto name = std::string(attr.name());
@@ -31,7 +31,7 @@ namespace model {
 
         auto connectionsNode =componentNode.child("connections");
         if (connectionsNode.empty()) {
-            throw new std::runtime_error("No connections found!");
+            throw std::runtime_error("No connections found!");
         }
         for (auto connectionNode : connectionsNode.children()) {
             connections.emplace_back(connectionNode,name);
@@ -58,6 +58,7 @@ namespace model {
                 if (nodes.count(partName)) {
                     throw std::runtime_error("Duplicate key is not allowed!" + partName);
                 }
+
                 nodes[partName] = part.ConvertToAiNode();
             }
         }
@@ -79,7 +80,7 @@ namespace model {
         for (auto conn: connections) {
             auto connNode = nodes[conn.getName()];
             if(connNode->mParent==nullptr){
-                throw new std::runtime_error("UGH");
+                throw std::runtime_error("UGH");
             }
         }
 
@@ -96,7 +97,7 @@ namespace model {
 
     }
 
-    int Component::getNumberOfConnections() {
+    unsigned long Component::getNumberOfConnections() {
         return connections.size();
     }
 }

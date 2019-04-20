@@ -24,21 +24,21 @@ namespace model {
 
         auto lodsNode = node.child("lods");
         if (hasRef && !lodsNode.empty()) {
-            throw new std::runtime_error("ref should not contain lods");
+            throw std::runtime_error("ref should not contain lods");
         }
 
         if (!hasRef) {
-            lods[COLLISION_INDEX] = Collision(name);
+            lods.insert(std::pair<int, Collision>(COLLISION_INDEX, Collision(name)));
             for (auto lodNode : lodsNode.children()) {
                 auto lod = Lod(lodNode, name);
-                lods[lod.getIndex()] = lod;
+                lods.insert(std::pair<int, Lod>(lod.getIndex(), lod));
             }
         }
 
     }
 
     aiNode *Part::ConvertToAiNode() {
-        auto result = new aiNode(name);
+        auto *result = new aiNode(name);
         std::vector<aiNode *> children;
         for (auto lod: lods) {
             children.push_back(lod.second.ConvertToAiNode());

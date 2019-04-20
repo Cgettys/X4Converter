@@ -1,5 +1,14 @@
 #include "testUtil.h"
 
+#include <set>
+#include <algorithm>
+#include <vector>
+#include <boost/test/unit_test.hpp>
+#include <boost/test/floating_point_comparison.hpp>
+#include <regex>
+#include <cmath>
+#include <X4ConverterTools/xmf/XmfHeader.h>
+
 namespace test {
 
     void TestUtil::checkAiNodeName(aiNode *node, std::string name) {
@@ -11,7 +20,7 @@ namespace test {
 
     pugi::xml_document *TestUtil::GetXmlDocument(std::string path) {
         std::string fullPath = GetBasePath() + path;
-        pugi::xml_document *doc = new pugi::xml_document();
+        auto doc = new pugi::xml_document();
         pugi::xml_parse_result result = doc->load_file(fullPath.c_str());
         BOOST_TEST_REQUIRE(result.status == pugi::status_ok);
         return doc;
@@ -24,7 +33,7 @@ namespace test {
         return std::string(path);
     }
 
-    void TestUtil::CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc) {
+    void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc) {
 
         //https://pugixml.org/docs/manual.html#access.walker
         // See also: https://stackoverflow.com/a/29599648
@@ -66,9 +75,9 @@ namespace test {
             }
         };
         my_walker expectedWalk;
-        expectedDoc.traverse(expectedWalk);
+        expectedDoc->traverse(expectedWalk);
         my_walker actualWalk;
-        actualDoc.traverse(actualWalk);
+        actualDoc->traverse(actualWalk);
         std::set<std::string> expectedMinusActual;
         std::set_difference(expectedWalk.paths.begin(), expectedWalk.paths.end(), actualWalk.paths.begin(),
                             actualWalk.paths.end(), std::inserter(expectedMinusActual, expectedMinusActual.begin()));
@@ -94,8 +103,8 @@ namespace test {
         auto re_float = std::regex(
                 "^\\s*[+-]?([0-9]+\\.?[0-9]*([Ee][+-]?[0-9]+)?|\\.?[0-9]+([Ee][+-]?[0-9]+)?|[0-9]+[Ee][+-]?[0-9]+)$");
         for (auto &&x : intersection) {
-            auto expectedNode = expectedDoc.select_node(x.c_str()).node();
-            auto actualNode = actualDoc.select_node(x.c_str()).node();
+            auto expectedNode = expectedDoc->select_node(x.c_str()).node();
+            auto actualNode = actualDoc->select_node(x.c_str()).node();
             for (auto &expectedAttr: expectedNode.attributes()) {
                 std::string attrName = expectedAttr.name();
                 auto actualAttr = actualNode.attribute(attrName.c_str());
@@ -126,6 +135,56 @@ namespace test {
             }
 
         }
+    }
+
+    using namespace xmf;
+
+    void TestUtil::checkXuMeshFileEquality(XuMeshFile &lhs, XuMeshFile &rhs) {
+        checkXmfHeaderEquality(lhs, rhs);
+        // TODO write nice equality functions for this
+//            BOOST_TEST( lhs.GetBuffers() == rhs.GetBuffers());
+//            BOOST_TEST( lhs.GetMaterials() == rhs.GetMaterials());
+    }
+
+    void TestUtil::checkXmfHeaderEquality(XuMeshFile &lFile, XuMeshFile &rFile) {
+        XmfHeader lhs = lFile.GetHeader();
+        XmfHeader rhs = rFile.GetHeader();
+
+        //    byte Culling_CW;                    // byte       12; false == CCW, other is CW TODO validate
+        //    byte RightHand;                     // byte       13; 0 == lefthand D3D convention, other is righthand openGL format todo validate
+        //    uint32_t NumVertices;                  // bytes 14 - 17; TODO use for validation
+        //    uint32_t NumIndices;                   // bytes 18 - 21; TODO use for validation
+        //
+        //    uint32_t PrimitiveType;                // bytes 22 - 25;
+        //    uint32_t MeshOptimization;	            // bytes 26 - 29; MeshOptimizationType - enum MeshOptimizationType applied
+        //    float BoundingBoxCenter[3];		    // bytes 30 - 41; virtual center of the mesh TODO calculate
+        //    float BoundingBoxSize[3];		    // bytes 42 - 53; max absolute extents from the center (aligned coords) TODO calculate
+        //    byte pad[10];                       // bytes 54 - 63
+        BOOST_TEST(lhs.Magic == rhs.Magic);
+        BOOST_TEST(lhs.Version == rhs.Version);
+        BOOST_TEST(lhs.IsBigEndian == rhs.IsBigEndian);
+        BOOST_TEST(lhs.SizeOfHeader == rhs.SizeOfHeader);
+        BOOST_TEST(lhs.reserved0 == rhs.reserved0);
+
+        BOOST_TEST(lhs.NumDataBuffers == rhs.NumDataBuffers);
+        BOOST_TEST(lhs.DataBufferDescSize == rhs.DataBufferDescSize);
+        BOOST_TEST(lhs.NumMaterials == rhs.NumMaterials);
+        BOOST_TEST(lhs.MaterialSize == rhs.MaterialSize);
+
+
+        BOOST_TEST(lhs.Culling_CW == rhs.Culling_CW);
+        BOOST_TEST(lhs.RightHand == rhs.RightHand);
+        BOOST_WARN(lhs.NumVertices == rhs.NumVertices);  // TODO turn these into tests
+        BOOST_WARN(lhs.NumIndices == rhs.NumIndices);
+        BOOST_TEST(lhs.PrimitiveType == rhs.PrimitiveType);
+
+        BOOST_WARN(lhs.MeshOptimization == rhs.MeshOptimization); // TODO turn these into tests
+        BOOST_WARN(lhs.BoundingBoxCenter == rhs.BoundingBoxCenter);
+        BOOST_WARN(lhs.BoundingBoxSize == rhs.BoundingBoxSize);
+
+        BOOST_TEST(lhs.pad == rhs.pad);
 
     }
+
+
 }

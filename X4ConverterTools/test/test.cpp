@@ -3,15 +3,9 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/types.h>
-#include <assimp/IOStream.hpp>
-#include <assimp/IOSystem.hpp>
-#include <assimp/DefaultIOSystem.h>
 #include <X4ConverterTools/Conversion.h>
-#include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 
-#include <assimp/anim.h>
-#include <assimp/Importer.hpp>
 #include "testUtil.h"
 
 namespace fs = boost::filesystem;
@@ -99,22 +93,19 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
 
         BOOST_TEST_CHECKPOINT("Begin test");
-        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), inputXMLPath.c_str(), daePath.c_str());
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
         BOOST_TEST(forwardSuccess);
         BOOST_TEST_CHECKPOINT("Forward parsing");
-        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
         BOOST_TEST(backwardSuccess);
 
         BOOST_TEST_CHECKPOINT("Backward parsing");
-        pugi::xml_document expectedDoc;
-        pugi::xml_parse_result expectedResult = expectedDoc.load_file(inputXMLPath.c_str());
-
-        pugi::xml_document actualDoc;
-        pugi::xml_parse_result actualResult = actualDoc.load_file(outputXMLPath.c_str());
-
-        test::TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
         BOOST_TEST_CHECKPOINT("Cleanup");
-
+        delete expectedDoc;
+        delete actualDoc;
 
     }
 

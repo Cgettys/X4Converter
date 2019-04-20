@@ -1,5 +1,6 @@
 #include "X4ConverterTools/model/Collision.h"
-
+#include <iostream>
+#include <boost/format.hpp>
 namespace model {
     Collision::Collision(std::string partName) {
         index = COLLISION_INDEX;

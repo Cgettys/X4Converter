@@ -2,7 +2,7 @@
 using namespace boost;
 using namespace boost::algorithm;
 using namespace boost::filesystem;
-
+using boost::numeric_cast;
 Material::Material() {
     _pCollectionName = "";
 
@@ -14,7 +14,7 @@ Material::Material() {
 }
 
 Material::Material(std::string pCollectionName, pugi::xml_node node) {
-    _pCollectionName = pCollectionName;
+    _pCollectionName = std::move(pCollectionName);
     _name = node.attribute("name").value();
 
     pugi::xpath_node_set properties = node.select_nodes("properties/property");
@@ -33,15 +33,14 @@ Material::Material(std::string pCollectionName, pugi::xml_node node) {
             else if (name == "environment_map")
                 _environmentMapFilePath = value;
         } else if (type == "Float") {
-            float fValue = numeric_cast<float>(stof(value));
             if (name == "diffuseStr")
-                _diffuseStrength = fValue;
+                _diffuseStrength = numeric_cast<float>(stof(value));
             else if (name == "normalStr")
-                _normalStrength = fValue;
+                _normalStrength = numeric_cast<float>(stof(value));
             else if (name == "specularStr")
-                _specularStrength = fValue;
+                _specularStrength = numeric_cast<float>(stof(value));
             else if (name == "environmentStr")
-                _environmentStrength = fValue;
+                _environmentStrength = numeric_cast<float>(stof(value));
         }
     }
 }
@@ -150,12 +149,13 @@ Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, 
         return textureFilePath.string();
     }
 
+    // Appears to decompress compressed textures
     uint8_t buffer[0x400];
-    int bytesRead;
+    size_t bytesRead;
     do {
-        bytesRead = gzread(pGzFile, buffer, sizeof(buffer));
+        bytesRead = numeric_cast<size_t>(gzread(pGzFile, buffer, sizeof(buffer)));
         fwrite(buffer, 1, bytesRead, pDdsFile);
-    } while (bytesRead == sizeof(buffer));
+    } while (bytesRead == sizeof(buffer)); // Until end of file
 
     fclose(pDdsFile);
     gzclose(pGzFile);

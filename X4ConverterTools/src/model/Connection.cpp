@@ -1,3 +1,4 @@
+#include <utility>
 #include "X4ConverterTools/model/Connection.h"
 
 namespace model {
@@ -5,9 +6,9 @@ namespace model {
     Connection::Connection(pugi::xml_node node, std::string componentName) {
 
         if (!node.attribute("name")) {
-            throw new std::runtime_error("Unnamed connection!");
+            throw std::runtime_error("Unnamed connection!");
         }
-        parentName = componentName;//Default to component as parent
+        parentName = std::move(componentName);//Default to component as parent
 
         offsetPos = aiVector3D(0, 0, 0);
         offsetRot = aiQuaternion(0, 0, 0, 0);
@@ -22,10 +23,8 @@ namespace model {
             }
             auto quaternionNode = offsetNode.child("quaternion");
             if (quaternionNode) {
-                offsetRot = aiQuaternion(quaternionNode.attribute("qw").as_float(),
-                                         quaternionNode.attribute("qx").as_float(),
-                                         quaternionNode.attribute("qy").as_float(),
-                                         quaternionNode.attribute("qz").as_float());
+                offsetRot = aiQuaternion(quaternionNode.attribute("qw").as_float(), quaternionNode.attribute("qx").as_float(),
+                                         quaternionNode.attribute("qy").as_float(), quaternionNode.attribute("qz").as_float());
             }
             // TODO check for weird other cases
         }

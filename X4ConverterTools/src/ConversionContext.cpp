@@ -3,8 +3,8 @@
 using namespace boost;
 using namespace boost::filesystem;
 
-ConversionContext::ConversionContext(std::string gameBaseFolderPath) : materialLibrary(gameBaseFolderPath),
-                                                                       gameBaseFolderPath(gameBaseFolderPath) {
+ConversionContext::ConversionContext(const std::string &gameBaseFolderPath) : materialLibrary(gameBaseFolderPath),
+                                                                              gameBaseFolderPath(gameBaseFolderPath) {
 
 }
 

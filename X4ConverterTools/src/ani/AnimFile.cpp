@@ -5,7 +5,7 @@
 
 using namespace boost;
 using namespace Assimp;
-
+using boost::numeric_cast;
 namespace ani {
 // TODO copy constructors?
     AnimFile::AnimFile() : header() {
@@ -62,7 +62,7 @@ namespace ani {
         return s;
     }
 
-    void AnimFile::WriteIntermediateRepr(const std::string xmlPath, pugi::xml_node tgtNode) const {
+    void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const {
         std::cout << "Writing animations!" << std::endl;
         pugi::xml_node dataNode = tgtNode.append_child("data");
         for (const AnimDesc &desc : descs) {
@@ -136,7 +136,7 @@ namespace ani {
                 }
             }
         }
-        header.setNumAnims(descs.size());
+        header.setNumAnims(numeric_cast<int>(descs.size()));
         pugi::xml_node metaNode = node.child("metadata");
     }
 

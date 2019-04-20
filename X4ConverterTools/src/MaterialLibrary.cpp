@@ -32,10 +32,11 @@ MaterialCollection *MaterialLibrary::GetCollection(const std::string &name) {
 
 Material *MaterialLibrary::GetMaterial(const std::string &dottedName) {
     std::smatch match;
-    if (!std::regex_match(dottedName, match, std::regex(R"((\w+)\.(\w+))"))) {
+    std::string regexPattern(R"((\w+)\.(\w+))");
+    if (!std::regex_match(dottedName, match, std::regex(regexPattern))) {
         return nullptr;
     }
-    MaterialCollection *pCollection = GetCollection(match[1]);
+    auto pCollection = GetCollection(match[1]);
     if (!pCollection) {
         return nullptr;
     }

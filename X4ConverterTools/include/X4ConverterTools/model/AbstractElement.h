@@ -13,7 +13,7 @@ namespace model {
     class AbstractElement {
     public:
         virtual void setName(std::string n) {
-            name = n;
+            name = std::move(n);
         }
 
         virtual std::string getName() {
@@ -35,19 +35,13 @@ namespace model {
         // TODO template pattern?
         virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
             unsigned long numChildren = children.size() + attrs.size();
-            auto childArray = new aiNode *[numChildren];
-
-            unsigned long idx = 0;
-            for (auto child : children) {
-                childArray[idx++] = child;
+            for (const auto &attr : attrs) {
+                children.push_back(GenerateAttrNode(attr.first, attr.second));
             }
-            for (auto attr : attrs) {
-                childArray[idx++] = GenerateAttrNode(attr.first, attr.second);
-            }
-            target->addChildren(static_cast<unsigned int>(numChildren), childArray);
+            target->addChildren(static_cast<unsigned int>(numChildren), children.data());
         }
 
-        virtual aiNode *GenerateAttrNode(std::string key, std::string value) {
+        virtual aiNode *GenerateAttrNode(const std::string &key, const std::string &value) {
             return new aiNode(name + "|" + key + "|" + value);
 
         }

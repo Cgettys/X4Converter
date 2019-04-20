@@ -5,15 +5,9 @@
 #pragma once
 
 #include <pugixml.hpp>
-#include <set>
-#include <algorithm>
-#include <vector>
-#include <boost/test/unit_test.hpp>
-#include <boost/test/floating_point_comparison.hpp>
-#include <regex>
-#include <cmath>
+#include <string>
 #include <assimp/scene.h>
-
+#include <X4ConverterTools/xmf/XuMeshFile.h>
 namespace test {
 
     class TestUtil {
@@ -23,7 +17,11 @@ namespace test {
         static pugi::xml_document* GetXmlDocument(std::string path);
         static std::string GetBasePath();
 
-        static void CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc);
+        static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
+
+        static void checkXuMeshFileEquality(xmf::XuMeshFile &lhs, xmf::XuMeshFile &rhs);
+
+        static void checkXmfHeaderEquality(xmf::XuMeshFile &lFile, xmf::XuMeshFile &rFile);
 
     };
 }

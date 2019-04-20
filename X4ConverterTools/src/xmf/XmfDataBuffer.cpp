@@ -34,13 +34,13 @@ namespace xmf {
         } else {
 
             uint8_t b = 0;
-            unsigned long compressedDataSize = numeric_cast<unsigned long>(GetCompressedDataSize());
+            auto compressedDataSize = numeric_cast<unsigned long>(GetCompressedDataSize());
             for (int i = 0; i < compressedDataSize; i++) {
                 reader >> b;
                 compressedData.emplace_back(b);
             }
 
-            unsigned long uncompressedSize = numeric_cast<unsigned long>(GetUncompressedDataSize());
+            auto uncompressedSize = numeric_cast<unsigned long>(GetUncompressedDataSize());
             _data.reserve(uncompressedSize);
             int status = uncompress(GetData(), &uncompressedSize, compressedData.data(), compressedDataSize);
 
