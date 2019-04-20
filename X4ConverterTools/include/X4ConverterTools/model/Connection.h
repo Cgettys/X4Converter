@@ -15,6 +15,7 @@ namespace model {
 
         void ConvertFromAiNode(aiNode *node);
 
+        void ConvertToXml(pugi::xml_node out);
 
         std::string getParentName();
 

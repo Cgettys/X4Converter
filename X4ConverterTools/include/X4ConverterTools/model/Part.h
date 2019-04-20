@@ -4,8 +4,8 @@
 #include <iostream>
 #include "AbstractElement.h"
 #include "Lod.h"
-#include <map>
 #include <string>
+#include <X4ConverterTools/model/Collision.h>
 
 namespace model {
     class Part : public AbstractElement {
@@ -18,8 +18,10 @@ namespace model {
 
         void ConvertFromAiNode(aiNode *node);
 
+        void ConvertToXml(pugi::xml_node out);
+
     private:
-        std::map<std::string, Lod> lods;
+        std::map<int, Lod> lods;
     };
 }
 

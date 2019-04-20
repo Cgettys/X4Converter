@@ -24,6 +24,8 @@ namespace model {
 
         virtual void ConvertFromAiNode(aiNode *node) = 0;
 
+        virtual void ConvertToXml(pugi::xml_node out) = 0;
+
     protected:
 
         virtual void ParseAttrNode(aiNode *node) {

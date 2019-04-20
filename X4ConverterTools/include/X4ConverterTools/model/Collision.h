@@ -1,20 +1,21 @@
 #pragma once
 
+#include <boost/format.hpp>
 #include <pugixml.hpp>
 #include <iostream>
-#include "AbstractElement.h"
+#include "Lod.h"
 
 namespace model {
 
-    class Component : public AbstractElement {
+    const static int COLLISION_INDEX = -1;
+    class Collision : public Lod {
     public:
-        Component(pugi::xml_node node);
-
-        aiNode *ConvertToAiNode();
-
+        Collision(std::string partName);
         void ConvertFromAiNode(aiNode *node);
         void ConvertToXml(pugi::xml_node out);
 
     };
 
 }
+
+

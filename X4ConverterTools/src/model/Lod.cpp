@@ -1,8 +1,7 @@
 #include "X4ConverterTools/model/Lod.h"
 
 namespace model {
-// TODO fold in or split off lod
-    Lod::Lod(pugi::xml_node node, std::string parentName) {
+    Lod::Lod(pugi::xml_node node, std::string partName) {
 
         if (std::string(node.name()) != "lod") {
             throw std::runtime_error("XML element must be a <lod> element!");
@@ -11,7 +10,7 @@ namespace model {
             throw std::runtime_error("Lod must have an index attribute!");
         }
         index = node.attribute("index").as_int();
-        setName(str(boost::format("%1%^lod%2%") % parentName % index));
+        setName(str(boost::format("%1%^lod%2%") % partName % index));
     }
 
     aiNode *Lod::ConvertToAiNode() {
@@ -27,11 +26,14 @@ namespace model {
             throw std::runtime_error("lod lacks index");
         }
         index = std::stoi(rawName.substr(pos + 4));
-
     }
 
     int Lod::getIndex() {
         return index;
+    }
+
+    void Lod::ConvertToXml(pugi::xml_node out) {
+
     }
 
 }

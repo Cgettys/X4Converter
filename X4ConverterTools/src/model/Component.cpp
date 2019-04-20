@@ -38,4 +38,8 @@ namespace model {
     void Component::ConvertFromAiNode(aiNode *node) {
 
     }
+
+    void Component::ConvertToXml(pugi::xml_node out) {
+
+    }
 }

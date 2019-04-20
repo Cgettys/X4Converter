@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
             auto part = Part();
             part.ConvertFromAiNode(ainode);
-            BOOST_TEST(part.getName() == partName);
+            std::string name = part.getName();
+            BOOST_TEST(name == partName);
         }
 
 
@@ -89,10 +90,27 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06^DO_NOT_EDIT.ref^thruster_ship_s_01.anim_thruster_001");
             delete doc;
         }
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { // NOLINT(cert-err58-cpp)
+            auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+            auto partNode = doc->select_node(
+                    "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+            BOOST_TEST_REQUIRE(!partNode.empty());
+            auto part = Part(partNode);
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { // NOLINT(cert-err58-cpp)
-            auto node = new aiNode("Connection35");
+            auto result = part.ConvertToAiNode();
+            BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
+            BOOST_TEST_REQUIRE(result->mNumChildren == 5);
+            TestUtil::checkAiNodeName(result->mChildren[0], "anim_main^collision");
+            TestUtil::checkAiNodeName(result->mChildren[1], "anim_main^lod0");
+            TestUtil::checkAiNodeName(result->mChildren[2], "anim_main^lod1");
+            TestUtil::checkAiNodeName(result->mChildren[3], "anim_main^lod2");
+            TestUtil::checkAiNodeName(result->mChildren[4], "anim_main^lod3");
+            delete doc;
+
         }
+//        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { // NOLINT(cert-err58-cpp)
+//            auto node = new aiNode("Connection35");
+//        }
         // TODO global naming constraints
         // TODO wrecks, uv_animation
         // TODO does a collision mesh always exist?
