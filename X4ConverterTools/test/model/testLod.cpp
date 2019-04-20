@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!node.empty());
 
             auto lod = Lod(node, "anim_main");
-            std::string expectedName = "anim_main^lod0";
+            std::string expectedName = "anim_main|lod0";
             BOOST_TEST(lod.getName() == expectedName);
             auto result = lod.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(part_name_from_ainode) { // NOLINT(cert-err58-cpp)
-            std::string lodName = "anim_main^lod0";
+            std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
             auto lod = Lod();

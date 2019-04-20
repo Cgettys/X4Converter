@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(result->mNumChildren == 2);
 //        BOOST_TEST(result->mChildren[0]->mName); TODO someday
             TestUtil::checkAiNodeName(result->mChildren[1],
-                                      "Connection02^tags^part animation iklink nocollision forceoutline detail_xl  ");
+                                      "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ");
             delete doc;
         }
 

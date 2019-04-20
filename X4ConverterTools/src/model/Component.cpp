@@ -28,10 +28,12 @@ namespace model {
                 attrs[name] = value;
             }
         }
-        if (!componentNode.child("connections")) {
+
+        auto connectionsNode =componentNode.child("connections");
+        if (connectionsNode.empty()) {
             throw new std::runtime_error("No connections found!");
         }
-        for (auto connectionNode : componentNode.child("connections")) {
+        for (auto connectionNode : connectionsNode.children()) {
             connections.emplace_back(connectionNode,name);
         }
 
@@ -66,12 +68,21 @@ namespace model {
             if (!nodes.count(parentName)) {
                 throw std::runtime_error("Missing parent \""+parentName +"\" on: \"" +conn.getName() +"\"");
             } else {
+                std::cout << conn.getName() <<  " "<<parentName<<std::endl;
                 auto connNode = nodes[conn.getName()];
                 auto parentNode = nodes[parentName];
                 parentNode->addChildren(1,&connNode);
 
             }
         }
+        // Now double check that we didn't miss anything
+        for (auto conn: connections) {
+            auto connNode = nodes[conn.getName()];
+            if(connNode->mParent==nullptr){
+                throw new std::runtime_error("UGH");
+            }
+        }
+
         auto fakeRoot = new aiNode("ROOT");
         fakeRoot->addChildren(1,&result);
         return fakeRoot;

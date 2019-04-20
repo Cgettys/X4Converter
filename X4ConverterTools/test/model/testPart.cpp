@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_thruster_06");
             BOOST_TEST_REQUIRE(result->mNumChildren == 1);
-            TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06^DO_NOT_EDIT.ref^thruster_ship_s_01.anim_thruster_001");
+            TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
             delete doc;
         }
         BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { // NOLINT(cert-err58-cpp)
@@ -100,11 +100,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             BOOST_TEST_REQUIRE(result->mNumChildren == 5);
-            TestUtil::checkAiNodeName(result->mChildren[0], "anim_main^collision");
-            TestUtil::checkAiNodeName(result->mChildren[1], "anim_main^lod0");
-            TestUtil::checkAiNodeName(result->mChildren[2], "anim_main^lod1");
-            TestUtil::checkAiNodeName(result->mChildren[3], "anim_main^lod2");
-            TestUtil::checkAiNodeName(result->mChildren[4], "anim_main^lod3");
+            TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|collision");
+            TestUtil::checkAiNodeName(result->mChildren[1], "anim_main|lod0");
+            TestUtil::checkAiNodeName(result->mChildren[2], "anim_main|lod1");
+            TestUtil::checkAiNodeName(result->mChildren[3], "anim_main|lod2");
+            TestUtil::checkAiNodeName(result->mChildren[4], "anim_main|lod3");
             delete doc;
 
         }

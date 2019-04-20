@@ -36,7 +36,6 @@ namespace model {
                 parts.emplace_back(child);
             }
         }
-
         for (auto attr: node.attributes()) {
             auto attrName = std::string(attr.name());
             auto value = std::string(attr.value());
@@ -48,6 +47,7 @@ namespace model {
                 attrs[attrName] = value;
             }
         }
+        std::cerr << name<<std::endl;
     }
 
     aiNode *Connection::ConvertToAiNode() {

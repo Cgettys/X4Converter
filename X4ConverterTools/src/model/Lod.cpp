@@ -10,7 +10,7 @@ namespace model {
             throw std::runtime_error("Lod must have an index attribute!");
         }
         index = node.attribute("index").as_int();
-        setName(str(boost::format("%1%^lod%2%") % partName % index));
+        setName(str(boost::format("%1%|lod%2%") % partName % index));
     }
 
     aiNode *Lod::ConvertToAiNode() {
@@ -21,7 +21,7 @@ namespace model {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
-        size_t pos = rawName.rfind("^lod");
+        size_t pos = rawName.rfind("|lod");
         if (pos == std::string::npos) {
             throw std::runtime_error("lod lacks index");
         }

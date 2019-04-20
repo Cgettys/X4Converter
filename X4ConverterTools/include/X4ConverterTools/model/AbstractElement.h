@@ -48,7 +48,7 @@ namespace model {
         }
 
         virtual aiNode *GenerateAttrNode(std::string key, std::string value) {
-            return new aiNode(name + "^" + key + "^" + value);
+            return new aiNode(name + "|" + key + "|" + value);
 
         }
 
