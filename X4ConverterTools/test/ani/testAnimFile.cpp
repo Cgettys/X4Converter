@@ -7,13 +7,6 @@
 
 #include <X4ConverterTools/ani/AnimFile.h>
 #include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <boost/algorithm/string.hpp>
-#include <stdexcept>
-#include <assimp/scene.h>
-#include <pugixml.hpp>
-#include <cstdio>
-#include <cmath>
 #include "../testUtil.h"
 
 namespace fs = boost::filesystem;

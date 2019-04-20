@@ -3,14 +3,7 @@
 
 #include <X4ConverterTools/model/Part.h>
 #include <boost/filesystem.hpp>
-#include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
-#include <stdexcept>
-#include <assimp/scene.h>
-#include <pugixml.hpp>
-#include <cstdio>
-#include <iostream>
-#include <cmath>
 #include <X4ConverterTools/model/Component.h>
 #include "../testUtil.h"
 
@@ -30,8 +23,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
             auto component = Component(node);
             BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
+            BOOST_TEST(component.getNumberOfConnections() == 74);
             delete doc;
-
         }
 // TODO layers
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

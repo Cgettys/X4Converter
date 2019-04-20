@@ -163,6 +163,7 @@ namespace xmf {
     void XuMeshFile::WriteBufferDescs(Assimp::IOStream *pStream,
                                       std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
         uint32_t dataOffset = 0;
+        // TODO kill this
         for (XmfDataBuffer &buffer: buffers) {
             buffer.Description.DataOffset = dataOffset;
             buffer.Description.Compressed = 1;

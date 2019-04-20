@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <zlib.h>
 #include "../Vendor/half/include/half.hpp"

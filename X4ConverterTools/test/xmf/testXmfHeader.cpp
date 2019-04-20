@@ -4,7 +4,6 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/MemoryIOWrapper.h>
-#include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XmfHeader.h>
 
 using namespace xmf;

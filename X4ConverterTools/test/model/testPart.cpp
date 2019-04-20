@@ -3,14 +3,7 @@
 
 #include <X4ConverterTools/model/Part.h>
 #include <boost/filesystem.hpp>
-#include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
-#include <stdexcept>
-#include <assimp/scene.h>
-#include <pugixml.hpp>
-#include <cstdio>
-#include <iostream>
-#include <cmath>
 #include "../testUtil.h"
 
 namespace fs = boost::filesystem;

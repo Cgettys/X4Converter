@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>

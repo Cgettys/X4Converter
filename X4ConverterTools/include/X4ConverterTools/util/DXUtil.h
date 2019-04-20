@@ -4,7 +4,7 @@
 #include <assimp/types.h>
 #include "../Vendor/half/include/half.hpp"
 #include <boost/format.hpp>
-
+#include <cstdint>
 namespace util {
     class DXUtil {
     public:

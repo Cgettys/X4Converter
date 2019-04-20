@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
 #include <X4ConverterTools/types.h>

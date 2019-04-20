@@ -1,6 +1,3 @@
-//
-// Created by cg on 3/25/19.
-//
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
 
 using namespace Assimp;

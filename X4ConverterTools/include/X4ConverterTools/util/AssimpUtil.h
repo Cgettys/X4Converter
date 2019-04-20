@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <X4ConverterTools/types.h>
 #include <unordered_map>
 #include <assimp/scene.h>

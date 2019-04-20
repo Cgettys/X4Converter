@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstdint>
 #include <pugixml.hpp>
 #include <zlib.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>
 #include <X4ConverterTools/util/PathUtil.h>
-
+#include <boost/numeric/conversion/cast.hpp>
 class Material {
 public:
     Material();

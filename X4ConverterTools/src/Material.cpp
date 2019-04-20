@@ -1,6 +1,4 @@
 #include <X4ConverterTools/Material.h>
-#include <boost/numeric/conversion/cast.hpp>
-
 using namespace boost;
 using namespace boost::algorithm;
 using namespace boost::filesystem;

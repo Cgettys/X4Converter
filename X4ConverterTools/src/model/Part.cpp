@@ -29,7 +29,7 @@ namespace model {
 
         if (!hasRef) {
             lods[COLLISION_INDEX] = Collision(name);
-            for (auto lodNode : lodsNode) {
+            for (auto lodNode : lodsNode.children()) {
                 auto lod = Lod(lodNode, name);
                 lods[lod.getIndex()] = lod;
             }

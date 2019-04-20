@@ -95,4 +95,8 @@ namespace model {
     void Component::ConvertToXml(pugi::xml_node out) {
 
     }
+
+    int Component::getNumberOfConnections() {
+        return connections.size();
+    }
 }
