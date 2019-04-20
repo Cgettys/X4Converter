@@ -9,18 +9,18 @@
 namespace model {
     class Connection : AbstractElement {
     public:
-        Connection(pugi::xml_node node);
+        Connection(pugi::xml_node node,std::string componentName="");
 
         aiNode *ConvertToAiNode();
 
         void ConvertFromAiNode(aiNode *node);
 
+
         std::string getParentName();
 
     private:
-        std::string parentName = "ROOT";
+        std::string parentName;
         std::vector<Part> parts;
-        std::map<std::string, std::string> attrs;
         aiVector3D offsetPos;
         aiQuaternion offsetRot;
     };

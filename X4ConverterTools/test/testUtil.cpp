@@ -9,13 +9,14 @@ namespace test {
         BOOST_TEST(name == std::string(actualName));
     }
 
-     pugi::xml_document* TestUtil::GetXmlDocument(std::string path){
-        std::string fullPath = GetBasePath()+path;
-        pugi::xml_document* doc = new pugi::xml_document();
+    pugi::xml_document *TestUtil::GetXmlDocument(std::string path) {
+        std::string fullPath = GetBasePath() + path;
+        pugi::xml_document *doc = new pugi::xml_document();
         pugi::xml_parse_result result = doc->load_file(fullPath.c_str());
         BOOST_TEST_REQUIRE(result.status == pugi::status_ok);
         return doc;
     }
+
     std::string TestUtil::GetBasePath() {
 
         char *path = std::getenv("X4_UNPACKED_ROOT");

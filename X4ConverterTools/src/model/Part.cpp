@@ -11,8 +11,7 @@ namespace model {
         for (auto attr: node.attributes()) {
             auto attrName = std::string(attr.name());
             if (attrName == "ref") {
-                isRef = true;
-                ref = attr.value();
+                attrs["DO_NOT_EDIT.ref"] = attr.value();
             } else if (attrName == "name") {
                 setName(attr.value());
             } else {
@@ -24,14 +23,7 @@ namespace model {
 
     aiNode *Part::ConvertToAiNode() {
         auto result = new aiNode(name);
-        if (isRef) {
-            result->mNumChildren = 1;
-            result->mChildren = new aiNode *[1];
-            auto child = new aiNode("DO_NOT_EDIT^ref^" + ref);
-            child->mParent = result;
-            result->mChildren[0] = child;
-        }
-
+        populateAiNodeChildren(result,std::vector<aiNode*>());
         return result;
     }
 

@@ -1,11 +1,13 @@
 #include "X4ConverterTools/model/Connection.h"
 
 namespace model {
-    Connection::Connection(pugi::xml_node node) {
+
+    Connection::Connection(pugi::xml_node node, std::string componentName) {
+
         if (!node.attribute("name")) {
             throw new std::runtime_error("Unnamed connection!");
         }
-        this->setName(node.attribute("name").as_string());
+        parentName = componentName;//Default to component as parent
 
         offsetPos = aiVector3D(0, 0, 0);
         offsetRot = aiQuaternion(0, 0, 0, 0);
@@ -39,7 +41,7 @@ namespace model {
             auto name = std::string(attr.name());
             auto value = std::string(attr.value());
             if (name == "name") {
-                this->setName(value);
+                setName(value);
             } else if (name == "parent") {
                 parentName = value;
             } else {
@@ -68,24 +70,11 @@ namespace model {
         result->mTransformation.d2 = tmp.d2;
         result->mTransformation.d3 = tmp.d3;
 
-        auto numChildren = parts.size() + attrs.size();
-
-        result->mNumChildren = numChildren;
-        result->mChildren = new aiNode *[numChildren];
-        int idx = 0;
+        std::vector<aiNode *> children;
         for (auto part : parts) {
-            auto child = part.ConvertToAiNode();
-            child->mParent = result;
-            result->mChildren[idx++] = child;
+            children.push_back(part.ConvertToAiNode());
         }
-        // TODO refactor?
-        for (auto attr: attrs) {
-            auto child = new aiNode(name + "^" + attr.first + "^" + attr.second);
-            child->mParent = result;
-            child->mNumChildren = 1;
-            result->mChildren[idx++] = child;
-        }
-        // TODO can we use addChildren?
+        populateAiNodeChildren(result, children);
         return result;
     }
 

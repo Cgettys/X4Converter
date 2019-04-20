@@ -19,8 +19,6 @@ namespace model {
         void ConvertFromAiNode(aiNode *node);
 
     private:
-        bool isRef = false;
-        std::string ref;
         std::map<std::string, Lod> lods;
     };
 }
