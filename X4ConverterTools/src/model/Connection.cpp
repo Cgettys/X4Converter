@@ -79,13 +79,9 @@ aiNode *model::Connection::ConvertToAiNode() {
     }
     // TODO refactor?
     for (auto attr: attrs) {
-        auto child = new aiNode(attr.first);
+        auto child = new aiNode(name+"^"+attr.first+"^"+attr.second);
         child->mParent = result;
         child->mNumChildren = 1;
-        auto attrChild = new aiNode(attr.second);
-        attrChild->mParent = child;
-        child->mChildren = new aiNode*[1];
-        child->mChildren[0] = attrChild;
         result->mChildren[idx++] = child;
     }
     // TODO can we use addChildren?

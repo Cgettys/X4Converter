@@ -20,6 +20,7 @@ namespace test {
     public:
         static void checkAiNodeName(aiNode *node, std::string name);
 
+        static pugi::xml_document* GetXmlDocument(std::string path);
         static std::string GetBasePath();
 
         static void CompareXMLFiles(pugi::xml_document &expectedDoc, pugi::xml_document &actualDoc);

@@ -7,12 +7,28 @@ model::Part::Part(pugi::xml_node node) {
     if (node.attribute("name").empty()) {
         throw std::runtime_error("Part must have a name attribute!");
     }
-    setName(node.attribute("name").as_string());
+    for (auto attr: node.attributes()) {
+        auto attrName = std::string(attr.name());
+        if (attrName == "ref") {
+            isRef = true;
+            ref = attr.value();
+        } else if (attrName == "name") {
+            setName(attr.value());
+        } else {
+            std::cerr << "Warning, unhandled attribute on part: " << name << " attribute: " << attrName << std::endl;
+        }
+    }
 }
 
 aiNode *model::Part::ConvertToAiNode() {
     auto result = new aiNode(name);
-
+    if (isRef){
+        result->mNumChildren=1;
+        result->mChildren=new aiNode*[1];
+        auto child = new aiNode("DO_NOT_EDIT^ref^"+ref);
+        child->mParent=result;
+        result->mChildren[0]=child;
+    }
 
     return result;
 }

@@ -22,13 +22,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_SUITE(PartUnitTests) // NOLINT(cert-err58-cpp)
 
 
-        BOOST_AUTO_TEST_CASE(read_part_name_correct) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile =
-                    test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) { // NOLINT(cert-err58-cpp)
+            auto doc = test::TestUtil::GetXmlDocument( "/assets/units/size_s/ship_arg_s_fighter_01.xml");
+            auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
@@ -40,33 +36,26 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             // TODO make sure nodes are not changed by reading
         }
 
-        BOOST_AUTO_TEST_CASE(read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile =
-                    test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
+        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
+            auto doc = test::TestUtil::GetXmlDocument( "/assets/units/size_s/ship_arg_s_fighter_01.xml");
+            auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
 
-            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(read_part_name_throws_on_wrong_type) { // NOLINT(cert-err58-cpp)
-            const std::string xmlFile =
-                    test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_arg_s_fighter_01.xml";
-            pugi::xml_document expected;
-            pugi::xml_parse_result expectedResult = expected.load_file(xmlFile.c_str());
-            BOOST_TEST_REQUIRE(expectedResult.status == pugi::status_ok);
-            auto partNode = expected.select_node(
+        BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) { // NOLINT(cert-err58-cpp)
+            auto doc = test::TestUtil::GetXmlDocument( "/assets/units/size_s/ship_arg_s_fighter_01.xml");
+            auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
             BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+            delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(part_name_from_ainode) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(from_ai_node_part_name) { // NOLINT(cert-err58-cpp)
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
@@ -76,9 +65,26 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
 
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) { // NOLINT(cert-err58-cpp)
+            auto doc = test::TestUtil::GetXmlDocument( "/assets/units/size_s/ship_arg_s_fighter_01.xml");
+            auto partNode = doc->select_node(
+                    "/components/component/connections/connection[@name='Connection35']/parts/part").node();
+            BOOST_TEST_REQUIRE(!partNode.empty());
+            auto part = Part(partNode);
 
+            auto result = part.ConvertToAiNode();
+            BOOST_TEST(std::string(result->mName.C_Str()) == "anim_thruster_06");
+            BOOST_TEST_REQUIRE(result->mNumChildren == 1);
+            test::TestUtil::checkAiNodeName(result->mChildren[0],
+                                            "DO_NOT_EDIT^ref^thruster_ship_s_01.anim_thruster_001");
+            delete doc;
+        }
+
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { // NOLINT(cert-err58-cpp)
+            auto node = new aiNode("Connection35");
+        }
         // TODO global naming constraints
-        // TODO wrecks
+        // TODO wrecks, uv_animation
         // TODO does a collision mesh always exist?
         // TODO size, sizeraw,pivot, sounds, effectemmiters etc
 
