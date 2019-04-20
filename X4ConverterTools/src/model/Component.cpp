@@ -1,5 +1,6 @@
 #include "X4ConverterTools/model/Component.h"
 
+#include <iostream>
 namespace model {
     Component::Component(pugi::xml_node node) {
         auto componentsNode = node.child("components");

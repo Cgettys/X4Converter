@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 
-#include <X4ConverterTools/model/Lod.h>
+#include <X4ConverterTools/model/VisualLod.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include "../testUtil.h"
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto lod = Lod(node, "anim_main");
+            auto lod = VisualLod(node, "anim_main");
             std::string expectedName = "anim_main|lod0";
             BOOST_TEST(lod.getName() == expectedName);
             auto result = lod.ConvertToAiNode();
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!node.empty());
             node.remove_attribute("index");
 
-            BOOST_CHECK_THROW(auto lod = Lod(node, "anim_main"), std::runtime_error);
+            BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main"), std::runtime_error);
             delete doc;
         }
 
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!node.empty());
             node.remove_attribute("index");
 
-            BOOST_CHECK_THROW(auto lod = Lod(node, "anim_main"), std::runtime_error);
+            BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main"), std::runtime_error);
             delete doc;
         }
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
-            auto lod = Lod();
+            auto lod = VisualLod();
             lod.ConvertFromAiNode(ainode);
             BOOST_TEST(lod.getName() == lodName);
             BOOST_TEST(lod.getIndex() == 0);

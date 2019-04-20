@@ -1,30 +1,19 @@
 #pragma once
 
-#include <boost/format.hpp>
-#include <pugixml.hpp>
-#include <iostream>
 #include "AbstractElement.h"
 
 namespace model {
-
     class Lod : public AbstractElement {
     public:
-        Lod() = default;
+        int getIndex() {
+            return index;
+        }
 
-        Lod(pugi::xml_node node, std::string partName);
-
-        aiNode *ConvertToAiNode() override;
-
-        void ConvertFromAiNode(aiNode *node) override;
-
-        void ConvertToXml(pugi::xml_node out) override;
-
-        int getIndex();
-
+        aiNode *ConvertToAiNode() override {
+            return new aiNode(name);
+        }
     protected:
         int index = -2;
     };
 
 }
-
-

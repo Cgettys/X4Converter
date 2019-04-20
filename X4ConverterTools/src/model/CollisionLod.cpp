@@ -1,12 +1,14 @@
-#include "X4ConverterTools/model/Collision.h"
+#include "X4ConverterTools/model/CollisionLod.h"
 #include <iostream>
 #include <boost/format.hpp>
+
 namespace model {
-    Collision::Collision(std::string partName) {
+    CollisionLod::CollisionLod(std::string partName) {
         index = COLLISION_INDEX;
         setName(str(boost::format("%1%|collision") % partName));
     }
-    void Collision::ConvertFromAiNode(aiNode *node) {
+
+    void CollisionLod::ConvertFromAiNode(aiNode *node) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
@@ -17,7 +19,7 @@ namespace model {
         index = COLLISION_INDEX;
     }
 
-    void Collision::ConvertToXml(pugi::xml_node out) {
+    void CollisionLod::ConvertToXml(pugi::xml_node out) {
 
     }
 }

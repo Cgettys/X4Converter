@@ -1,5 +1,9 @@
 #include "X4ConverterTools/model/Part.h"
 
+#include <string>
+#include <iostream>
+#include <X4ConverterTools/model/CollisionLod.h>
+#include <X4ConverterTools/model/VisualLod.h>
 namespace model {
     Part::Part(pugi::xml_node node) {
         if (std::string(node.name()) != "part") {
@@ -28,10 +32,11 @@ namespace model {
         }
 
         if (!hasRef) {
-            lods.insert(std::pair<int, Collision>(COLLISION_INDEX, Collision(name)));
+            auto collisionLod = new CollisionLod(name);
+            lods.insert(std::pair<int, CollisionLod *>(collisionLod->getIndex(), collisionLod));
             for (auto lodNode : lodsNode.children()) {
-                auto lod = Lod(lodNode, name);
-                lods.insert(std::pair<int, Lod>(lod.getIndex(), lod));
+                auto lod = new VisualLod(lodNode, name);
+                lods.insert(std::pair<int, VisualLod *>(lod->getIndex(), lod));
             }
         }
 
@@ -41,7 +46,7 @@ namespace model {
         auto *result = new aiNode(name);
         std::vector<aiNode *> children;
         for (auto lod: lods) {
-            children.push_back(lod.second.ConvertToAiNode());
+            children.push_back(lod.second->ConvertToAiNode());
         }
         populateAiNodeChildren(result, children);
 

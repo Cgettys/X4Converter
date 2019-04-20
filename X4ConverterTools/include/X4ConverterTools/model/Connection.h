@@ -3,7 +3,6 @@
 #include <X4ConverterTools/model/Part.h>
 #include <pugixml.hpp>
 #include <vector>
-#include <map>
 #include "AbstractElement.h"
 
 namespace model {

@@ -1,6 +1,9 @@
-#include <utility>
 #include "X4ConverterTools/model/Connection.h"
 
+#include <utility>
+#include <vector>
+#include <map>
+#include <iostream>
 namespace model {
 
     Connection::Connection(pugi::xml_node node, std::string componentName) {

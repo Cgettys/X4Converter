@@ -7,9 +7,10 @@
 namespace model {
 
     const static int COLLISION_INDEX = -1;
-    class Collision : public Lod {
+
+    class CollisionLod : public Lod {
     public:
-        explicit Collision(std::string partName);
+        explicit CollisionLod(std::string partName);
 
         void ConvertFromAiNode(aiNode *node) override;
 

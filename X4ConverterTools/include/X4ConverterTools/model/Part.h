@@ -1,11 +1,8 @@
 #pragma once
 
 #include <pugixml.hpp>
-#include <iostream>
 #include "AbstractElement.h"
 #include "Lod.h"
-#include <string>
-#include <X4ConverterTools/model/Collision.h>
 
 namespace model {
     class Part : public AbstractElement {
@@ -21,7 +18,7 @@ namespace model {
         void ConvertToXml(pugi::xml_node out) override;
 
     private:
-        std::map<int, Lod> lods;
+        std::map<int, Lod *> lods;
     };
 }
 
