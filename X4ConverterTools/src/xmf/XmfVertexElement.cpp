@@ -3,6 +3,8 @@
 namespace xmf {
     XmfVertexElement::XmfVertexElement() {
         Type = D3DDECLTYPE_UNUSED;
+        Usage = 0;
+        UsageIndex = 0;
     }
 
     XmfVertexElement::XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, uint8_t usageIndex) {

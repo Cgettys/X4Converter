@@ -76,21 +76,22 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 //        const std::string outputXMLPath =
 //                gameBaseFolderPath
 //                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
-        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath() + "/";
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
 //        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
 //        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
 //        const std::string tgtPath = "assets/props/SurfaceElements/shield_arg_l_standard_01_mk2";
-        const std::string tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
+        const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
 //        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
 
 //        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
-        const std::string inputXMLPath = gameBaseFolderPath + tgtPath + ".xml";
-        const std::string daePath = gameBaseFolderPath + tgtPath + ".out.dae";
-        const std::string outputXMLPath = gameBaseFolderPath + tgtPath + ".out.xml";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(daePath);
         // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-        fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
 
         BOOST_TEST_CHECKPOINT("Begin test");
         bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
