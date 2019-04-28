@@ -91,11 +91,11 @@ namespace model {
     }
 
     void Component::ConvertFromAiNode(aiNode *node) {
-
+        // TODO
     }
 
     void Component::ConvertToXml(pugi::xml_node out) {
-
+        // TODO asset.xmf?
     }
 
     unsigned long Component::getNumberOfConnections() {

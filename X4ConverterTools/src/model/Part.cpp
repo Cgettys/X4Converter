@@ -55,9 +55,10 @@ namespace model {
 
     void Part::ConvertFromAiNode(aiNode *node) {
         setName(node->mName.C_Str());
+        // TODO more
     }
 
     void Part::ConvertToXml(pugi::xml_node out) {
-
+        // TODO out
     }
 }

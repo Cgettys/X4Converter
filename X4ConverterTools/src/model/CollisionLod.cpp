@@ -20,6 +20,6 @@ namespace model {
     }
 
     void CollisionLod::ConvertToXml(pugi::xml_node out) {
-
+        // TODO XMF
     }
 }

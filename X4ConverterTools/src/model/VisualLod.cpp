@@ -26,7 +26,7 @@ namespace model {
     }
 
     void VisualLod::ConvertToXml(pugi::xml_node out) {
-
+        // TODO out
     }
 
 }

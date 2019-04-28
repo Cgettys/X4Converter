@@ -13,7 +13,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     if (fs::exists(xmlFilePath)) {
         load_result = doc.load_file((xmlFilePath).c_str());
     } else if (fs::exists(gameBaseFolderPath + xmlFilePath)) {
-        std::cout << "Paths appear to be relative";
+        std::cout << "Paths appear to be relative" << std::endl;
         load_result = doc.load_file((gameBaseFolderPath + xmlFilePath).c_str());
         relative_paths = true;
     }
@@ -48,7 +48,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
 bool
 ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFilePath, const std::string &xmfFilePath) {
     auto actualDaeFilePath = fs::exists(daeFilePath) ? daeFilePath : gameBaseFolderPath + daeFilePath;
-    Assimp::Importer *importer = new Assimp::Importer();
+    auto *importer = new Assimp::Importer();
     const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);
     if (!pScene) {
         std::cerr << "Failed during import" << std::endl;

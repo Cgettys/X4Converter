@@ -80,13 +80,14 @@ namespace model {
         return result;
     }
 
+    std::string Connection::getParentName() {
+        return parentName;
+    }
+
+
     void Connection::ConvertFromAiNode(aiNode *node) {
 
 
-    }
-
-    std::string Connection::getParentName() {
-        return parentName;
     }
 
     void Connection::ConvertToXml(pugi::xml_node out) {
