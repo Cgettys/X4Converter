@@ -26,7 +26,15 @@ namespace model {
     }
 
     void VisualLod::ConvertToXml(pugi::xml_node out) {
-        // TODO out
+        if (std::string(out.name()) != "lods") {
+            throw std::runtime_error("Lods must be added to a lods node");
+        }
+        auto lodNode = out.find_child_by_attribute("lod", "index", std::to_string(index).c_str());
+        if (lodNode.empty()) {
+            // TODO insert in correct place to be safe??
+            lodNode = out.append_child("lod");
+            lodNode.attribute("index").set_value(index);
+        }
     }
 
 }

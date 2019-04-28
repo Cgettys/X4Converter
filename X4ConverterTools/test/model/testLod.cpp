@@ -61,6 +61,44 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(lod.getName() == lodName);
             BOOST_TEST(lod.getIndex() == 0);
         }
+
+        BOOST_AUTO_TEST_CASE(to_xml_one_lod) { // NOLINT(cert-err58-cpp)
+            std::string lodName = "anim_main|lod0";
+            auto ainode = new aiNode(lodName);
+
+            auto lod = VisualLod();
+            lod.ConvertFromAiNode(ainode);
+            pugi::xml_document doc;
+            auto lodsNode = doc.append_child("lods");
+            lod.ConvertToXml(lodsNode);
+            BOOST_TEST(lodsNode.child("lod").empty() == false);
+            BOOST_TEST(lodsNode.child("lod").attribute("index").as_int() == 0);
+        }
+
+        BOOST_AUTO_TEST_CASE(to_xml_two_lod) { // NOLINT(cert-err58-cpp)
+            std::string lodZeroName = "anim_main|lod0";
+            auto ainodeZero = new aiNode(lodZeroName);
+            auto lodZero = VisualLod();
+            lodZero.ConvertFromAiNode(ainodeZero);
+
+            std::string lodOneName = "anim_main|lod1";
+            auto ainodeOne = new aiNode(lodOneName);
+            auto lodOne = VisualLod();
+            lodOne.ConvertFromAiNode(ainodeOne);
+            pugi::xml_document doc;
+            auto lodsNode = doc.append_child("lods");
+            lodZero.ConvertToXml(lodsNode);
+            lodOne.ConvertToXml(lodsNode);
+
+            auto firstChild = lodsNode.first_child();
+            auto secondChild = firstChild.next_sibling();
+            BOOST_TEST(std::string(firstChild.name()) == "lod");
+            BOOST_TEST(std::string(secondChild.name()) == "lod");
+            BOOST_TEST(firstChild.attribute("index").as_int() == 0);
+            BOOST_TEST(secondChild.attribute("index").as_int() == 1);
+        }
+        // TODO overwrite lod case
+
         // TODO failure case
 
         // TODO materials
