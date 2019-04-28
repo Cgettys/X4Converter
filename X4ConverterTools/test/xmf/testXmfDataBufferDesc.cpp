@@ -6,7 +6,7 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/MemoryIOWrapper.h>
-#include <X4ConverterTools/xmf/XmfHeader.h>
+#include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
 
 using namespace Assimp;
 using namespace xmf;

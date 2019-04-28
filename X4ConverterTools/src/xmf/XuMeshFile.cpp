@@ -1,5 +1,6 @@
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 
+#include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
 using namespace Assimp;
 using namespace boost;
 using util::DXUtil;
@@ -134,23 +135,23 @@ namespace xmf {
         header.Write(pStreamWriter);
         pStreamWriter.Flush();
 
-        WriteBufferDescs(pStream, compressedBuffers);
+        WriteBufferDescs(pStreamWriter, compressedBuffers);
         for (XmfMaterial &material: materials) {
             material.Write(pStreamWriter);
         }
         pStreamWriter.Flush();
-        WriteBuffers(pStream, compressedBuffers);
+        WriteBuffers(pStreamWriter, compressedBuffers);
     }
 
     std::map<XmfDataBuffer *, std::vector<uint8_t> > XuMeshFile::CompressBuffers() {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > result;
         for (XmfDataBuffer &buffer: buffers) {
             std::vector<uint8_t> &compressedData = result[&buffer];
-            compressedData.resize(compressBound(buffer.GetUncompressedDataSize()));
+            compressedData.resize(compressBound(buffer.Description.GetUncompressedDataSize()));
 
             unsigned long int compressedSize = compressedData.size();
             int status = compress(compressedData.data(), &compressedSize, buffer.GetData(),
-                                  buffer.GetUncompressedDataSize());
+                                  buffer.Description.GetUncompressedDataSize());
             if (status != Z_OK) {
                 throw std::runtime_error("Failed to compress XMF data buffer");
             }
@@ -160,7 +161,7 @@ namespace xmf {
     }
 
 
-    void XuMeshFile::WriteBufferDescs(Assimp::IOStream *pStream,
+    void XuMeshFile::WriteBufferDescs(StreamWriterLE &pStreamWriter,
                                       std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
         uint32_t dataOffset = 0;
         // TODO kill this
@@ -168,16 +169,18 @@ namespace xmf {
             buffer.Description.DataOffset = dataOffset;
             buffer.Description.Compressed = 1;
             buffer.Description.CompressedDataSize = numeric_cast<uint32_t>(compressedBuffers[&buffer].size());
-            pStream->Write(&buffer.Description, sizeof(buffer.Description), 1);
+            buffer.Description.Write(pStreamWriter);
             dataOffset += buffer.Description.CompressedDataSize;
         }
     }
 
-    void XuMeshFile::WriteBuffers(Assimp::IOStream *pStream,
+    void XuMeshFile::WriteBuffers(StreamWriterLE &pStreamWriter,
                                   std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
         for (XmfDataBuffer &buffer: buffers) {
             std::vector<uint8_t> &compressedData = compressedBuffers[&buffer];
-            pStream->Write(compressedData.data(), 1, compressedData.size());
+            for (int i = 0; i < compressedData.size(); i++) {
+                pStreamWriter << compressedData[i];
+            }
         }
     }
 

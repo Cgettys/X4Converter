@@ -1,5 +1,8 @@
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
 
+#include <iostream>
+#include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 using namespace Assimp;
 using namespace boost;
 using boost::numeric_cast;
@@ -41,6 +44,9 @@ namespace xmf {
         validate();
     }
 
+    bool XmfDataBufferDesc::IsCompressed() const {
+        return Compressed != 0;
+    };
     bool XmfDataBufferDesc::IsVertexBuffer() const {
         return !IsIndexBuffer();
     }
@@ -147,7 +153,26 @@ namespace xmf {
     }
 
     void XmfDataBufferDesc::Write(Assimp::StreamWriterLE &writer) {
+        writer << Type;
+        writer << UsageIndex;
+        writer << DataOffset;
+        writer << Compressed;
+        for (uint8_t &b : _pad0) {
+            writer << b;
+        }
 
+        writer << Format;
+        writer << CompressedDataSize;
+        writer << NumItemsPerSection;
+        writer << ItemSize;
+        writer << NumSections;
+        for (uint8_t &b : _pad1) {
+            writer << b;
+        }
+        writer << NumVertexElements;
+        for (XmfVertexElement &e : VertexElements) {
+            e.Write(writer);
+        }
     }
 
     std::string XmfDataBufferDesc::validate() {

@@ -1,5 +1,10 @@
 #include <X4ConverterTools/xmf/XmfHeader.h>
 
+#include <boost/format.hpp>
+#include <iostream>
+#include <X4ConverterTools/xmf/XmfMaterial.h>
+#include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
+#include <X4ConverterTools/types/DirectX.h>
 using namespace Assimp;
 using namespace boost;
 

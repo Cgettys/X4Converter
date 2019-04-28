@@ -3,12 +3,7 @@
 #include <cstdint>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
-#include <boost/format.hpp>
-#include <iostream>
 
-#include "XmfMaterial.h"
-#include "XmfDataBufferDesc.h"
-#include "X4ConverterTools/types/DirectX.h"
 
 namespace xmf {
     class XmfHeader {

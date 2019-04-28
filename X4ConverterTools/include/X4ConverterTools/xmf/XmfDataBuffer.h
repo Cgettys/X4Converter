@@ -5,7 +5,6 @@
 #include <assimp/StreamWriter.h>
 #include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
-#include "zlib.h"
 
 namespace xmf {
     class XmfDataBuffer {
@@ -19,15 +18,9 @@ namespace xmf {
         void Read(Assimp::StreamReaderLE &reader); // Used to read in the binary data
         void Write(Assimp::StreamWriterLE &writer);
 
-        bool IsCompressed() const;
-
         bool IsIndexBuffer() const;
 
         bool IsVertexBuffer() const;
-
-        uint64_t GetCompressedDataSize() const;
-
-        uint64_t GetUncompressedDataSize() const;
 
         uint8_t *GetData();
 
