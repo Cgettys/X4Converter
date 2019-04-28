@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             lodOne.ConvertToXml(lodsNode);
 
             auto firstChild = lodsNode.first_child();
-            auto secondChild = firstChild.next_sibling();
+            auto secondChild = lodsNode.last_child();
             BOOST_TEST(std::string(firstChild.name()) == "lod");
             BOOST_TEST(std::string(secondChild.name()) == "lod");
             BOOST_TEST(firstChild.attribute("index").as_int() == 0);

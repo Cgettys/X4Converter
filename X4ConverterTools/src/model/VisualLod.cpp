@@ -31,9 +31,17 @@ namespace model {
         }
         auto lodNode = out.find_child_by_attribute("lod", "index", std::to_string(index).c_str());
         if (lodNode.empty()) {
-            // TODO insert in correct place to be safe??
-            lodNode = out.append_child("lod");
-            lodNode.attribute("index").set_value(index);
+            auto previousLod = out.find_child_by_attribute("lod", "index", std::to_string(index - 1).c_str());
+            auto nextLod = out.find_child_by_attribute("lod", "index", std::to_string(index + 1).c_str());
+            // Ensure correct ordering
+            if (!previousLod.empty()) {
+                lodNode = out.insert_child_after("lod", previousLod);
+            } else if (!nextLod.empty()) {
+                lodNode = out.insert_child_before("lod", nextLod);
+            } else {
+                lodNode = out.append_child("lod");
+            }
+            lodNode.append_attribute("index").set_value(index);
         }
     }
 
