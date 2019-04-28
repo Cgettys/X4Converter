@@ -10,6 +10,7 @@ namespace model {
 
     class CollisionLod : public Lod {
     public:
+        CollisionLod() = default;
         explicit CollisionLod(std::string partName);
 
         void ConvertFromAiNode(aiNode *node) override;

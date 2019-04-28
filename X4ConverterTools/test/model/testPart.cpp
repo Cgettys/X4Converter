@@ -112,7 +112,6 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_SUITE(PartIntegrationTests) // NOLINT(cert-err58-cpp)
-
         BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { // NOLINT(cert-err58-cpp)
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
@@ -143,10 +142,10 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             auto part = Part();
             part.ConvertFromAiNode(ainode);
             pugi::xml_document doc;
-            auto node = doc.append_child("connection");
+            auto node = doc.append_child("parts");
             part.ConvertToXml(node);
 
-            BOOST_TEST(!node.child("lods").empty());
+            BOOST_TEST(!node.child("part").child("lods").empty())
         }
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
