@@ -26,6 +26,6 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(component.getNumberOfConnections() == 74);
             delete doc;
         }
-// TODO layers
+// TODO layers?
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

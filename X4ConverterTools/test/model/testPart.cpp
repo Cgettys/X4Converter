@@ -67,6 +67,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             part.ConvertFromAiNode(ainode);
             std::string name = part.getName();
             BOOST_TEST(name == partName);
+            delete ainode;
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_name) { // NOLINT(cert-err58-cpp)
@@ -76,11 +77,13 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto part = Part();
             part.ConvertFromAiNode(ainode);
             pugi::xml_document doc;
-            auto node = doc.append_child("connection");
+            auto node = doc.append_child("parts");
             part.ConvertToXml(node);
 
             std::string actualName = node.child(partName.c_str()).attribute("name").value();
             BOOST_TEST(partName == actualName);
+
+            delete ainode;
         }
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) { // NOLINT(cert-err58-cpp)
@@ -96,7 +99,26 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
             delete doc;
         }
-        // TODO write ref
+
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) { // NOLINT(cert-err58-cpp)
+            std::string partName = "anim_thruster_06";
+            std::string childName = "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001";
+            auto node = new aiNode(partName);
+            auto children = new aiNode *[1];
+            children[0] = new aiNode(childName);
+            node->addChildren(1, children);
+
+            auto part = Part();
+            part.ConvertFromAiNode(node);
+
+            pugi::xml_document doc;
+            auto outNode = doc.append_child("parts");
+            part.ConvertToXml(outNode);
+
+            auto partNode = outNode.child("part");
+            std::string ref = partNode.attribute("ref").value();
+            BOOST_TEST("thruster_ship_s_01.anim_thruster_001" == ref);
+        }
 
 
 
@@ -145,7 +167,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             auto node = doc.append_child("parts");
             part.ConvertToXml(node);
 
-            BOOST_TEST(!node.child("part").child("lods").empty())
+            BOOST_TEST(!node.child("part").child("lods").empty());
         }
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

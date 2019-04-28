@@ -64,6 +64,6 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
+// TODO animations, tags, etc
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-// TODO animations, tags, etc

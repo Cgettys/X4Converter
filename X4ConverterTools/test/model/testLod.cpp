@@ -103,6 +103,5 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         // TODO materials
 // TODO check that name makes sense with parent name
-// TODO in part make assertions about lods existing
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
