@@ -47,6 +47,7 @@ namespace model {
     aiNode *Part::ConvertToAiNode() {
         auto *result = new aiNode(name);
         std::vector<aiNode *> children;
+        children.push_back(collisionLod.ConvertToAiNode());
         for (auto lod: lods) {
             children.push_back(lod.second.ConvertToAiNode());
         }

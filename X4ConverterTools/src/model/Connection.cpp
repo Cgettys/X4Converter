@@ -90,18 +90,18 @@ namespace model {
 
 
     void Connection::ConvertFromAiNode(aiNode *node) {
-        // TODO
         setName(node->mName.C_Str());
         // TODO check for scaling
         node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 
-        // TODO validate attributes
-        // TODO parts & a better solution
+        // TODO validate attributes; better check for parts & a better solution
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             auto childName = std::string(child->mName.C_Str());
             if (childName.find('|') != std::string::npos) {
                 readAiNodeChild(child);
+            } else {
+                parts.emplace_back(child);
             }
         }
     }
@@ -112,7 +112,7 @@ namespace model {
         }
         auto node = getOrMakeChildByAttr(out, "connection", "name", name);
 
-        for (auto pair : attrs) {
+        for (const auto &pair : attrs) {
             createOrOverwriteAttr(node, pair.first, pair.second);
         }
 

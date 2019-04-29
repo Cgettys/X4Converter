@@ -91,6 +91,7 @@ namespace model {
     }
 
     void Component::ConvertFromAiNode(aiNode *node) {
+        setName(node->mName.C_Str());
         // TODO
     }
 

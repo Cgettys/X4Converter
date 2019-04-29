@@ -9,6 +9,7 @@ namespace model {
 
     class Component : public AbstractElement {
     public:
+        Component() = default;
         explicit Component(pugi::xml_node node);
 
         aiNode *ConvertToAiNode() override;

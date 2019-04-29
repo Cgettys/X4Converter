@@ -135,8 +135,13 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         const std::string outputXMLPath = tgtPath + ".out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(gameBaseFolderPath + daePath);
-        // Also to prevent cross contamination, overwrite the output XML with nothing.
-        fs::resize_file(gameBaseFolderPath + outputXMLPath, 0);
+        // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
+        // TODO as we get further along, start cutting out more and more of this file
+        pugi::xml_document doc;
+        BOOST_TEST_REQUIRE(doc.load_file((gameBaseFolderPath + inputXMLPath).c_str()).status == pugi::status_ok);
+        auto compNode = doc.child("components").child("component");
+        compNode.remove_child("connections");
+        BOOST_TEST_REQUIRE(doc.save_file((gameBaseFolderPath + outputXMLPath).c_str()));
 
         BOOST_TEST_CHECKPOINT("Begin test");
         bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);

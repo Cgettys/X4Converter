@@ -35,7 +35,6 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto part = Part(partNode);
             auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
-            // TODO make sure nodes are not changed by reading
             delete doc;
             delete result;
         }
@@ -129,8 +128,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 //        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { // NOLINT(cert-err58-cpp)
 //            auto node = new aiNode("Connection35");
 //        }
-        // TODO global naming constraints
-        // TODO wrecks, uv_animation
+        // TODO global naming constraints, wrecks, uv_animation
         // TODO does a collision mesh always exist?
         // TODO size, sizeraw,pivot, sounds, effectemmiters etc
 

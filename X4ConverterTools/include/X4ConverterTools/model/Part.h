@@ -13,6 +13,9 @@ namespace model {
 
         explicit Part(pugi::xml_node node);
 
+        explicit Part(aiNode *node) {
+            ConvertFromAiNode(node);
+        }
         aiNode *ConvertToAiNode() override;
 
         void ConvertFromAiNode(aiNode *node) override;

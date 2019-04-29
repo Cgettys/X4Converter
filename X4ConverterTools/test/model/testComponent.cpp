@@ -42,6 +42,14 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete result;
         }
 
+        BOOST_AUTO_TEST_CASE(from_ainode_basic) { // NOLINT(cert-err58-cpp)
+            auto node = new aiNode("ship_arg_s_fighter_01");
+            auto component = Component();
+            component.ConvertFromAiNode(node);
+            BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
+            delete node;
+        }
+
 
 // TODO layers?
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
