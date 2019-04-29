@@ -1,8 +1,15 @@
 #include <X4ConverterTools/ani/Keyframe.h>
+#include <iostream>
+#include <exception>
+#include <cmath>
+#include <climits>
+#include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
+#include <X4ConverterTools/util/FormatUtil.h>
 
 using namespace boost;
 using namespace Assimp;
-
+using namespace util;
 namespace ani {
 /**
  * Interpolation types
@@ -211,7 +218,7 @@ namespace ani {
         tgtNode.append_attribute("id").set_value(frameNum);
         auto interpStr = getInterpolationTypeName(interp);
         auto value = getValueByAxis(axis);
-        tgtNode.append_attribute("value").set_value(formatFloat(value).c_str());
+        tgtNode.append_attribute("value").set_value(FormatUtil::formatFloat(value).c_str());
         WriteHandle(tgtNode, axis, false);
         WriteHandle(tgtNode, axis, true);
         tgtNode.append_attribute("interpolation").set_value(interpStr.c_str());
@@ -227,8 +234,8 @@ namespace ani {
             tgtNode = node.append_child("handle_right");
         }
         auto handle = getControlPoint(axis, right);
-        tgtNode.append_attribute("X").set_value(formatFloat(handle.first).c_str());
-        tgtNode.append_attribute("Y").set_value(formatFloat(handle.second).c_str());
+        tgtNode.append_attribute("X").set_value(FormatUtil::formatFloat(handle.first).c_str());
+        tgtNode.append_attribute("Y").set_value(FormatUtil::formatFloat(handle.second).c_str());
     }
 
     std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool right) {
@@ -256,7 +263,5 @@ namespace ani {
         }
     }
 
-    std::string Keyframe::formatFloat(float f) {
-        return str(format("%.8e") % f);
-    }
+
 }

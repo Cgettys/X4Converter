@@ -8,6 +8,7 @@
 namespace model {
     class Connection : public AbstractElement {
     public:
+        Connection() = default;
         Connection(pugi::xml_node node,std::string componentName="");
 
         aiNode *ConvertToAiNode();

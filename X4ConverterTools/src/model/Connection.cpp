@@ -4,6 +4,9 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <X4ConverterTools/util/FormatUtil.h>
+
+using namespace util;
 namespace model {
 
     Connection::Connection(pugi::xml_node node, std::string componentName) {
@@ -13,8 +16,8 @@ namespace model {
         }
         parentName = std::move(componentName);//Default to component as parent
 
-        offsetPos = aiVector3D(0, 0, 0);
         offsetRot = aiQuaternion(0, 0, 0, 0);
+        offsetPos = aiVector3D(0, 0, 0);
         // A word to the wise: the XML tends to be listed qx, qy, qz, qw. Why, I do not know.
         // However, most sensible software expects qw, qx, qy, qz
         auto offsetNode = node.child("offset");
@@ -71,6 +74,7 @@ namespace model {
         result->mTransformation.d1 = tmp.d1;
         result->mTransformation.d2 = tmp.d2;
         result->mTransformation.d3 = tmp.d3;
+        result->mTransformation.d4 = tmp.d4;
 
         std::vector<aiNode *> children;
         for (auto part : parts) {
@@ -87,10 +91,34 @@ namespace model {
 
     void Connection::ConvertFromAiNode(aiNode *node) {
         // TODO
+        setName(node->mName.C_Str());
+        // TODO check for scaling
+        node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 
     }
 
     void Connection::ConvertToXml(pugi::xml_node out) {
-        // TODO
+        if (std::string(out.name()) != "connections") {
+            throw std::runtime_error("parent of connection must be connections xml element");
+        }
+        auto node = getOrMakeChildByAttr(out, "connection", "name", name);
+
+        for (auto pair : attrs) {
+            createOrOverwriteAttr(node, pair.first, pair.second);
+        }
+
+        // TODO threshold? careful to destroy if exist if you do so
+        auto offsetNode = getOrMakeChild(node, "offset");
+        auto posNode = getOrMakeChild(offsetNode, "position");
+        auto quatNode = getOrMakeChild(offsetNode, "quaternion");
+        createOrOverwriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
+        createOrOverwriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
+        createOrOverwriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
+
+        // NB: weird XML ordering
+        createOrOverwriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
+        createOrOverwriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
+        createOrOverwriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
+        createOrOverwriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
     }
 }

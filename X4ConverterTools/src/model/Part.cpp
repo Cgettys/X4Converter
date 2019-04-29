@@ -89,7 +89,7 @@ namespace model {
         }
 
 
-        // Note that offset is intentional before this statement since it should not have anything else
+        // Note the return statement! referenced parts don't get LODS!!!
         if (attrs.count("DO_NOT_EDIT.ref")) {
             auto value = attrs["DO_NOT_EDIT.ref"];
             if (partNode.attribute("ref")) {

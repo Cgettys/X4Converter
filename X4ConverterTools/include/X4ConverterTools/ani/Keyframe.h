@@ -1,12 +1,6 @@
 #pragma once
 
 #include <assimp/StreamReader.h>
-#include <boost/format.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-#include <iostream>
-#include <exception>
-#include <cmath>
-#include <climits>
 #include <utility>
 #include <pugixml.hpp>
 
@@ -46,8 +40,6 @@ namespace ani {
         void WriteHandle(pugi::xml_node node, std::string &axis, bool right);
 
         std::pair<float, float> getControlPoint(const std::string &axis, bool right);
-
-        static std::string formatFloat(float f);
 
         // Note that these add up to exactly 128 bytes
         float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/

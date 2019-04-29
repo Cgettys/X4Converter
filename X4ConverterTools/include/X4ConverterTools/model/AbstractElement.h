@@ -34,6 +34,7 @@ namespace model {
 
         }
 
+        // TODO .cpp file
         // TODO template pattern?
         virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
             unsigned long numChildren = children.size() + attrs.size();
@@ -63,6 +64,35 @@ namespace model {
             }
             attrs[tagPart] = valPart;
         }
+
+        virtual pugi::xml_node getOrMakeChild(pugi::xml_node parent, std::string elementName) {
+            auto result = parent.child(elementName.c_str());
+            if (result) {
+                return result;
+            }
+            return parent.append_child(elementName.c_str());
+        }
+
+        virtual pugi::xml_node
+        getOrMakeChildByAttr(pugi::xml_node parent, std::string elementName, std::string attrName,
+                             std::string attrValue) {
+            auto result = parent.find_child_by_attribute(elementName.c_str(), attrName.c_str(), attrValue.c_str());
+            if (result) {
+                return result;
+            }
+            result = parent.append_child(elementName.c_str());
+            result.append_attribute(attrName.c_str()).set_value(attrValue.c_str());
+            return result;
+        }
+
+        virtual void createOrOverwriteAttr(pugi::xml_node target, std::string name, std::string val) {
+            auto attr = target.attribute(name.c_str());
+            if (!attr) {
+                attr = target.append_attribute(name.c_str());
+            }
+            attr.set_value(val.c_str());
+        }
+
 
         std::map<std::string, std::string> attrs;
         std::string name;
