@@ -92,7 +92,13 @@ namespace model {
 
     void Component::ConvertFromAiNode(aiNode *node) {
         setName(node->mName.C_Str());
-        // TODO
+        for (int i = 0; i < node->mNumChildren; i++) {
+            auto child = node->mChildren[i];
+            std::string childName = child->mName.C_Str();
+            if (childName.find('*') != std::string::npos) {
+
+            }
+        }
     }
 
     void Component::ConvertToXml(pugi::xml_node out) {

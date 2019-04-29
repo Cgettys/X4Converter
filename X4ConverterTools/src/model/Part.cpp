@@ -13,7 +13,7 @@ namespace model {
         if (node.attribute("name").empty()) {
             throw std::runtime_error("Part must have a name attribute!");
         }
-        bool hasRef = false;
+        hasRef = false;
         for (auto attr: node.attributes()) {
             auto attrName = std::string(attr.name());
             if (attrName == "ref") {
@@ -45,11 +45,13 @@ namespace model {
 
 
     aiNode *Part::ConvertToAiNode() {
-        auto *result = new aiNode(name);
+        auto *result = new aiNode("*" + name + "*");
         std::vector<aiNode *> children;
-        children.push_back(collisionLod.ConvertToAiNode());
-        for (auto lod: lods) {
-            children.push_back(lod.second.ConvertToAiNode());
+        if (!hasRef) {
+            children.push_back(collisionLod.ConvertToAiNode());
+            for (auto lod: lods) {
+                children.push_back(lod.second.ConvertToAiNode());
+            }
         }
         populateAiNodeChildren(result, children);
 
@@ -59,7 +61,9 @@ namespace model {
     static std::regex lodRegex("[^|]+\\|lod\\d");
     static std::regex collisionRegex("[^|]+\\|collision");
     void Part::ConvertFromAiNode(aiNode *node) {
-        setName(node->mName.C_Str());
+        std::string tmp = std::string(node->mName.C_Str());
+        tmp.substr(1, tmp.size() - 1);
+        setName(tmp);
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
@@ -92,6 +96,7 @@ namespace model {
 
         // Note the return statement! referenced parts don't get LODS!!!
         if (attrs.count("DO_NOT_EDIT.ref")) {
+            hasRef = true;
             auto value = attrs["DO_NOT_EDIT.ref"];
             if (partNode.attribute("ref")) {
                 partNode.attribute("ref").set_value(value.c_str());

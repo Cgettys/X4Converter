@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
             auto part = Part(partNode);
             auto result = part.ConvertToAiNode();
-            BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
+            BOOST_TEST(std::string(result->mName.C_Str()) == "*anim_main*");
             delete doc;
             delete result;
         }
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto part = Part(partNode);
 
             auto result = part.ConvertToAiNode();
-            TestUtil::checkAiNodeName(result, "anim_thruster_06");
+            TestUtil::checkAiNodeName(result, "*anim_thruster_06*");
             BOOST_TEST_REQUIRE(result->mNumChildren == 1);
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
             delete doc;

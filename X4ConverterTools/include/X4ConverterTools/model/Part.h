@@ -23,6 +23,7 @@ namespace model {
         void ConvertToXml(pugi::xml_node out) override;
 
     private:
+        bool hasRef;
         CollisionLod collisionLod;
         std::map<int, VisualLod> lods;
     };
