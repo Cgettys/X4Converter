@@ -58,7 +58,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
     model::Component component;
-    component.ConvertFromAiNode(pScene->mRootNode);
+    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0]);
 
     pugi::xml_document doc;
     auto load_result = doc.load_file(actualXmlFilePath.c_str());
@@ -66,7 +66,11 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
         throw std::runtime_error("output xml file could not be opened!");
     }
     auto tgtNode = doc.child("components");
+    if (!tgtNode) {
+        tgtNode = doc.append_child("components");
+    }
     component.ConvertToXml(tgtNode);
+    doc.save_file(actualXmlFilePath.c_str());
 
     delete io;
     delete importer;

@@ -63,7 +63,7 @@ namespace model {
 
         virtual pugi::xml_node getOrMakeChild(pugi::xml_node parent, std::string elementName) {
             auto result = parent.child(elementName.c_str());
-            if (result) {
+            if (!result.empty()) {
                 return result;
             }
             return parent.append_child(elementName.c_str());
@@ -73,7 +73,7 @@ namespace model {
         getOrMakeChildByAttr(pugi::xml_node parent, std::string elementName, std::string attrName,
                              std::string attrValue) {
             auto result = parent.find_child_by_attribute(elementName.c_str(), attrName.c_str(), attrValue.c_str());
-            if (result) {
+            if (!result.empty()) {
                 return result;
             }
             result = parent.append_child(elementName.c_str());
@@ -83,7 +83,7 @@ namespace model {
 
         virtual void createOrOverwriteAttr(pugi::xml_node target, std::string name, std::string val) {
             auto attr = target.attribute(name.c_str());
-            if (!attr) {
+            if (attr.empty()) {
                 attr = target.append_attribute(name.c_str());
             }
             attr.set_value(val.c_str());
