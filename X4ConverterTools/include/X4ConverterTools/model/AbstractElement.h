@@ -7,6 +7,8 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cstdio>
+#include <iostream>
 #include <assimp/scene.h>
 
 namespace model {
@@ -43,7 +45,23 @@ namespace model {
 
         virtual aiNode *GenerateAttrNode(const std::string &key, const std::string &value) {
             return new aiNode(name + "|" + key + "|" + value);
+        }
 
+        virtual void readAiNodeChild(aiNode *source) {
+            std::string raw = source->mName.C_Str();
+            auto firstSplit = raw.find('|');
+            auto secondSplit = raw.rfind('|');
+            if (firstSplit == secondSplit || firstSplit == std::string::npos || secondSplit == std::string::npos) {
+                std::cerr << "warning, could not read node" << raw << std::endl;
+                return;
+            }
+            auto namePart = raw.substr(0, firstSplit);
+            auto tagPart = raw.substr(firstSplit + 1, secondSplit - firstSplit - 1);
+            auto valPart = raw.substr(secondSplit + 1);
+            if (namePart != name) {
+                std::cerr << "Warning, name of element was " + name + " but tag was for name: " + namePart << std::endl;
+            }
+            attrs[tagPart] = valPart;
         }
 
         std::map<std::string, std::string> attrs;

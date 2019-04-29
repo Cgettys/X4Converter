@@ -55,8 +55,8 @@ namespace model {
         return result;
     }
 
-    static std::regex lodRegex("[a-zA-Z]+\\|lod\\d");
-    static std::regex collisionRegex("[a-zA-Z]+\\|collision");
+    static std::regex lodRegex("[^|]+\\|lod\\d");
+    static std::regex collisionRegex("[^|]+\\|collision");
     void Part::ConvertFromAiNode(aiNode *node) {
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
@@ -71,7 +71,7 @@ namespace model {
                 collisionLod = CollisionLod();
                 collisionLod.ConvertFromAiNode(child);
             } else {
-                // TODO warn/error
+                readAiNodeChild(child);
             }
         }
         // TODO more
@@ -88,6 +88,17 @@ namespace model {
             partNode.append_attribute("name").set_value(name.c_str());
         }
 
+
+        // Note that offset is intentional before this statement since it should not have anything else
+        if (attrs.count("DO_NOT_EDIT.ref")) {
+            auto value = attrs["DO_NOT_EDIT.ref"];
+            if (partNode.attribute("ref")) {
+                partNode.attribute("ref").set_value(value.c_str());
+            } else {
+                partNode.prepend_attribute("ref").set_value(value.c_str());
+            }
+            return;
+        }
 
         if (!lods.empty()) {
             auto lodsNode = partNode.child("lods");

@@ -46,7 +46,8 @@ namespace xmf {
 
     bool XmfDataBufferDesc::IsCompressed() const {
         return Compressed != 0;
-    };
+    }
+
     bool XmfDataBufferDesc::IsVertexBuffer() const {
         return !IsIndexBuffer();
     }

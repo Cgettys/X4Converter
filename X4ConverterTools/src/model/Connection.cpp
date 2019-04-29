@@ -86,11 +86,11 @@ namespace model {
 
 
     void Connection::ConvertFromAiNode(aiNode *node) {
-
+        // TODO
 
     }
 
     void Connection::ConvertToXml(pugi::xml_node out) {
-
+        // TODO
     }
 }
