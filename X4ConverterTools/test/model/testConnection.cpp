@@ -133,6 +133,27 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete ainode;
         }
 
-// TODO animations, tags, etc
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
+            auto node = new aiNode("Connection02");
+            auto children = new aiNode *[1];
+            std::string tagStr = "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ";
+            children[0] = new aiNode(tagStr);
+            node->addChildren(1, children);
+            pugi::xml_document doc;
+            auto outNode = doc.append_child("connections");
+
+            auto conn = Connection();
+            conn.ConvertFromAiNode(node);
+            conn.ConvertToXml(outNode);
+
+            auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
+            BOOST_TEST(std::string(connNode.attribute("tags").value()) ==
+                       "part animation iklink nocollision forceoutline detail_xl  ");
+
+            delete node;
+            delete[] children;
+        }
+
+// TODO animations, etc
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

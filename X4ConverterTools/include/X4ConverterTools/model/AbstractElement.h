@@ -30,10 +30,6 @@ namespace model {
 
     protected:
 
-        virtual void ParseAttrNode(aiNode *node) {
-
-        }
-
         // TODO .cpp file
         // TODO template pattern?
         virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {

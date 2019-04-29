@@ -95,6 +95,15 @@ namespace model {
         // TODO check for scaling
         node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 
+        // TODO validate attributes
+        // TODO parts & a better solution
+        for (int i = 0; i < node->mNumChildren; i++) {
+            auto child = node->mChildren[i];
+            auto childName = std::string(child->mName.C_Str());
+            if (childName.find('|') != std::string::npos) {
+                readAiNodeChild(child);
+            }
+        }
     }
 
     void Connection::ConvertToXml(pugi::xml_node out) {
