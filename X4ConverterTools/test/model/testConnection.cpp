@@ -27,6 +27,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                                        aiVector3D(9.411734, -2.738604, -2.866085));
             BOOST_TEST(result->mTransformation.Equal(expectedMatrix));
             delete doc;
+            delete result;
         }
         // TODO reverse
 
@@ -62,6 +63,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             TestUtil::checkAiNodeName(result->mChildren[1],
                                       "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ");
             delete doc;
+            delete result;
         }
 
 // TODO animations, tags, etc

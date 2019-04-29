@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             // TODO make sure nodes are not changed by reading
             delete doc;
+            delete result;
         }
 
         BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
@@ -98,6 +99,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(result->mNumChildren == 1);
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
             delete doc;
+            delete result;
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) { // NOLINT(cert-err58-cpp)
@@ -118,6 +120,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto partNode = outNode.child("part");
             std::string ref = partNode.attribute("ref").value();
             BOOST_TEST("thruster_ship_s_01.anim_thruster_001" == ref);
+            delete node;
+            delete[] children;
         }
 
 

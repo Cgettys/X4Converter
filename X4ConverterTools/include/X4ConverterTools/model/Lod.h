@@ -5,6 +5,7 @@
 namespace model {
     class Lod : public AbstractElement {
     public:
+        virtual ~Lod() = default;
         int getIndex() {
             return index;
         }

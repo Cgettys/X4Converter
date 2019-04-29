@@ -3,6 +3,8 @@
 #include <pugixml.hpp>
 #include "AbstractElement.h"
 #include "Lod.h"
+#include "CollisionLod.h"
+#include "VisualLod.h"
 
 namespace model {
     class Part : public AbstractElement {
@@ -18,7 +20,8 @@ namespace model {
         void ConvertToXml(pugi::xml_node out) override;
 
     private:
-        std::map<int, Lod *> lods;
+        CollisionLod collisionLod;
+        std::map<int, VisualLod> lods;
     };
 }
 

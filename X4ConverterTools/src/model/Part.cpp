@@ -33,21 +33,22 @@ namespace model {
         }
 
         if (!hasRef) {
-            auto collisionLod = new CollisionLod(name);
-            lods.insert(std::pair<int, CollisionLod *>(collisionLod->getIndex(), collisionLod));
+            collisionLod = CollisionLod(name);
+
             for (auto lodNode : lodsNode.children()) {
-                auto lod = new VisualLod(lodNode, name);
-                lods.insert(std::pair<int, VisualLod *>(lod->getIndex(), lod));
+                auto lod = VisualLod(lodNode, name);
+                lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             }
         }
 
     }
 
+
     aiNode *Part::ConvertToAiNode() {
         auto *result = new aiNode(name);
         std::vector<aiNode *> children;
         for (auto lod: lods) {
-            children.push_back(lod.second->ConvertToAiNode());
+            children.push_back(lod.second.ConvertToAiNode());
         }
         populateAiNodeChildren(result, children);
 
@@ -63,13 +64,12 @@ namespace model {
             std::string childName = child->mName.C_Str();
             // TODO check part names?
             if (regex_match(childName, lodRegex)) {
-                auto lod = new VisualLod();
-                lod->ConvertFromAiNode(child);
-                lods.insert(std::pair<int, VisualLod *>(lod->getIndex(), lod));
+                auto lod = VisualLod();
+                lod.ConvertFromAiNode(child);
+                lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
-                auto lod = new CollisionLod();
-                lod->ConvertFromAiNode(child);
-                lods.insert(std::pair<int, CollisionLod *>(lod->getIndex(), lod));
+                collisionLod = CollisionLod();
+                collisionLod.ConvertFromAiNode(child);
             } else {
                 // TODO warn/error
             }
@@ -95,8 +95,9 @@ namespace model {
                 lodsNode = partNode.append_child("lods");
             }
 
+            collisionLod.ConvertToXml(lodsNode); // TODO
             for (auto lod : lods) {
-                lod.second->ConvertToXml(lodsNode);
+                lod.second.ConvertToXml(lodsNode);
             }
         }
         // TODO out more

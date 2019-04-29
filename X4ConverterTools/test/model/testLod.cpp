@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto result = lod.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
             delete doc;
+            delete result;
         }
 
         BOOST_AUTO_TEST_CASE(read_lod_no_index) { // NOLINT(cert-err58-cpp)
@@ -60,6 +61,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             lod.ConvertFromAiNode(ainode);
             BOOST_TEST(lod.getName() == lodName);
             BOOST_TEST(lod.getIndex() == 0);
+            delete ainode;
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_one_lod) { // NOLINT(cert-err58-cpp)
@@ -73,6 +75,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             lod.ConvertToXml(lodsNode);
             BOOST_TEST(lodsNode.child("lod").empty() == false);
             BOOST_TEST(lodsNode.child("lod").attribute("index").as_int() == 0);
+            delete ainode;
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_two_lod) { // NOLINT(cert-err58-cpp)
@@ -96,6 +99,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(std::string(secondChild.name()) == "lod");
             BOOST_TEST(firstChild.attribute("index").as_int() == 0);
             BOOST_TEST(secondChild.attribute("index").as_int() == 1);
+            delete ainodeZero;
+            delete ainodeOne;
         }
         // TODO overwrite lod case
 

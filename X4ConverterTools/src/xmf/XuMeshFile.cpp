@@ -133,13 +133,11 @@ namespace xmf {
         header = XmfHeader(numeric_cast<uint8_t>(buffers.size()), numeric_cast<uint8_t>(materials.size()));
         auto pStreamWriter = StreamWriterLE(pStream, false);
         header.Write(pStreamWriter);
-        pStreamWriter.Flush();
 
         WriteBufferDescs(pStreamWriter, compressedBuffers);
         for (XmfMaterial &material: materials) {
             material.Write(pStreamWriter);
         }
-        pStreamWriter.Flush();
         WriteBuffers(pStreamWriter, compressedBuffers);
     }
 
