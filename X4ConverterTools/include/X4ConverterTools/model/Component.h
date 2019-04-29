@@ -21,6 +21,8 @@ namespace model {
         unsigned long getNumberOfConnections();
     protected:
         std::vector<Connection> connections;
+
+        void recurseOnChildren(aiNode *child);
     };
 
 }

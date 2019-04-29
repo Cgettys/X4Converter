@@ -55,8 +55,14 @@ namespace model {
         std::cerr << name<<std::endl;
     }
 
+    Connection::Connection(aiNode *node, std::string componentName) {
+        ConvertFromAiNode(node);
+        parentName = std::move(componentName);//Default to component as parent
+
+    }
+
     aiNode *Connection::ConvertToAiNode() {
-        auto result = new aiNode(name);
+        auto result = new aiNode("*" + name + "*");
         aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
         // TODO fixme upstream... this sucks
         result->mTransformation.a1 = tmp.a1;
@@ -90,7 +96,8 @@ namespace model {
 
 
     void Connection::ConvertFromAiNode(aiNode *node) {
-        setName(node->mName.C_Str());
+        std::string tmp = node->mName.C_Str();
+        setName(tmp.substr(1, tmp.size() - 2));
         // TODO check for scaling
         node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 

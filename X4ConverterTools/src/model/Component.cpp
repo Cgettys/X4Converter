@@ -95,14 +95,41 @@ namespace model {
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
-            if (childName.find('*') != std::string::npos) {
-
+            if (childName.find('*') == std::string::npos) {
+                throw std::runtime_error("Non-component directly under root!");
             }
+            connections.emplace_back(child);
+            recurseOnChildren(child);
         }
+    }
+
+    void Component::recurseOnChildren(aiNode *tgt) {
+        std::string tgtName = tgt->mName.C_Str();
+        bool is_connection = tgtName.find('*') != std::string::npos;
+        for (int i = 0; i < tgt->mNumChildren; i++) {
+            auto child = tgt->mChildren[i];
+            std::string childName = child->mName.C_Str();
+            if (childName.find('*') != std::string::npos) {
+                if (is_connection) {
+                    throw std::runtime_error("connection cannot have a connection as a parent!");
+                }
+                connections.emplace_back(child, tgtName);
+            }
+            recurseOnChildren(child);
+        }
+
     }
 
     void Component::ConvertToXml(pugi::xml_node out) {
         // TODO asset.xmf?
+        if (std::string(out.name()) != "components") {
+            throw std::runtime_error("Component should be under components element");
+        }
+        auto compNode = getOrMakeChildByAttr(out, "component", "name", name);
+        auto connsNode = getOrMakeChild(compNode, "connections");
+        for (auto conn : connections) {
+            conn.ConvertToXml(connsNode);
+        }
     }
 
     unsigned long Component::getNumberOfConnections() {

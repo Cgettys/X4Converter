@@ -9,13 +9,16 @@ namespace model {
     class Connection : public AbstractElement {
     public:
         Connection() = default;
-        Connection(pugi::xml_node node,std::string componentName="");
 
-        aiNode *ConvertToAiNode();
+        explicit Connection(pugi::xml_node node, std::string componentName = "");
 
-        void ConvertFromAiNode(aiNode *node);
+        explicit Connection(aiNode *node, std::string componentName = "");
 
-        void ConvertToXml(pugi::xml_node out);
+        aiNode *ConvertToAiNode() override;
+
+        void ConvertFromAiNode(aiNode *node) override;
+
+        void ConvertToXml(pugi::xml_node out) override;
 
         std::string getParentName();
 

@@ -53,10 +53,13 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
             auto node = new aiNode("ship_arg_s_fighter_01");
             auto childrenZero = new aiNode *[2];
-            childrenZero[0] = new aiNode("test_conn_0");
-            childrenZero[1] = new aiNode("test_conn_1");
+            childrenZero[0] = new aiNode("*test_conn_0*");
+            childrenZero[1] = new aiNode("*test_conn_1*");
             auto childrenOne = new aiNode *[1];
-            childrenOne[0] = new aiNode("test_conn_2");
+            childrenOne[0] = new aiNode("test_part_0");
+            auto childrenTwo = new aiNode *[1];
+            childrenTwo[0] = new aiNode("*test_conn_2*");
+            childrenOne[0]->addChildren(1, childrenTwo);
             childrenZero[0]->addChildren(1, childrenOne);
             node->addChildren(2, childrenZero);
             pugi::xml_document doc;
@@ -72,9 +75,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(connsNode.find_child_by_attribute("connection", "name", "test_conn_0"));
             BOOST_TEST(connsNode.find_child_by_attribute("connection", "name", "test_conn_1"));
             BOOST_TEST(connsNode.find_child_by_attribute("connection", "name", "test_conn_2"));
-
+            doc.print(std::cout);
             delete[] childrenZero;
             delete[] childrenOne;
+            delete[] childrenTwo;
             delete node;
         }
 

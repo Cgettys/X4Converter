@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
-            auto ainode = new aiNode("Connection02");
+            auto ainode = new aiNode("*Connection02*");
 
             auto conn = Connection();
             conn.ConvertFromAiNode(ainode);
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
-            auto node = new aiNode("Connection02");
+            auto node = new aiNode("*Connection02*");
             auto children = new aiNode *[1];
             std::string tagStr = "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ";
             children[0] = new aiNode(tagStr);

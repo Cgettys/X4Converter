@@ -45,7 +45,7 @@ namespace model {
 
 
     aiNode *Part::ConvertToAiNode() {
-        auto *result = new aiNode("*" + name + "*");
+        auto *result = new aiNode(name);
         std::vector<aiNode *> children;
         if (!hasRef) {
             children.push_back(collisionLod.ConvertToAiNode());
@@ -61,9 +61,8 @@ namespace model {
     static std::regex lodRegex("[^|]+\\|lod\\d");
     static std::regex collisionRegex("[^|]+\\|collision");
     void Part::ConvertFromAiNode(aiNode *node) {
-        std::string tmp = std::string(node->mName.C_Str());
-        tmp.substr(1, tmp.size() - 1);
-        setName(tmp);
+        std::string tmp = std::string();
+        setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
