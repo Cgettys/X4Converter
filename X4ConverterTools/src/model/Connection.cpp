@@ -119,6 +119,10 @@ namespace model {
         }
         auto node = getOrMakeChildByAttr(out, "connection", "name", name);
 
+        if (parentName != "") {
+            createOrOverwriteAttr(node, "parent", parentName);
+        }
+
         for (const auto &pair : attrs) {
             createOrOverwriteAttr(node, pair.first, pair.second);
         }
@@ -136,5 +140,14 @@ namespace model {
         createOrOverwriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
         createOrOverwriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
         createOrOverwriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
+
+        if (parts.empty()) {
+            return;
+        }
+        auto partsNode = getOrMakeChild(node, "parts");
+        for (auto part : parts) {
+            part.ConvertToXml(partsNode);
+        }
+
     }
 }

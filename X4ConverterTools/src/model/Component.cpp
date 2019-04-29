@@ -59,12 +59,16 @@ namespace model {
                 if (nodes.count(partName)) {
                     throw std::runtime_error("Duplicate key is not allowed!" + partName);
                 }
-
-                nodes[partName] = part.ConvertToAiNode();
+                auto partNode = nodes[connName]->FindNode(partName.c_str());
+                if (partNode == nullptr) {
+                    throw std::runtime_error("something has gone horribly wrong");
+                }
+                nodes[partName] = partNode;
             }
         }
 
         // Now to unflatten everything
+        std::map<std::string, std::vector<aiNode *>> parentMap;
         for (auto conn: connections) {
             auto parentName = conn.getParentName();
             if (!nodes.count(parentName)) {
@@ -72,21 +76,42 @@ namespace model {
             } else {
                 std::cout << conn.getName() <<  " "<<parentName<<std::endl;
                 auto connNode = nodes[conn.getName()];
-                auto parentNode = nodes[parentName];
-                parentNode->addChildren(1,&connNode);
-
+                if (parentMap.count(parentName) == 0) {
+                    parentMap[parentName].emplace_back();
+                }
+                parentMap[parentName].push_back(connNode);
             }
         }
+        for (auto pair : parentMap) {
+            auto parentNode = nodes[pair.first];
+            parentNode->addChildren(pair.second.size(), pair.second.data());
+        }
+
         // Now double check that we didn't miss anything
         for (auto conn: connections) {
             auto connNode = nodes[conn.getName()];
             if(connNode->mParent==nullptr){
-                throw std::runtime_error("UGH");
+                throw std::runtime_error("connection" + conn.getName() + "lost its parent");
             }
         }
-
+        for (auto pair : nodes) {
+            if (pair.first == name) {
+                continue;
+            }
+            if (pair.second->mParent == nullptr) {
+                throw std::runtime_error("something lost its parent");
+            }
+            for (int i = 0; i < pair.second->mNumChildren; i++) {
+                if (pair.second->mChildren[i] == nullptr) {
+                    throw std::runtime_error("something has a null child!");
+                }
+            }
+        }
+        auto rootChildren = new aiNode *[1];
+        rootChildren[0] = result;
         auto fakeRoot = new aiNode("ROOT");
-        fakeRoot->addChildren(1,&result);
+        fakeRoot->addChildren(1, rootChildren);
+        delete[] rootChildren;
         return fakeRoot;
     }
 

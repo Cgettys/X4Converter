@@ -53,7 +53,9 @@ namespace model {
                 children.push_back(lod.second.ConvertToAiNode());
             }
         }
-        populateAiNodeChildren(result, children);
+        if (!children.empty()) {
+            populateAiNodeChildren(result, children);
+        }
 
         return result;
     }
@@ -74,6 +76,8 @@ namespace model {
             } else if (regex_match(childName, collisionRegex)) {
                 collisionLod = CollisionLod();
                 collisionLod.ConvertFromAiNode(child);
+            } else if (childName.find('*') != std::string::npos) {
+                // Ignore connection, handled elsewhere
             } else {
                 readAiNodeChild(child);
             }

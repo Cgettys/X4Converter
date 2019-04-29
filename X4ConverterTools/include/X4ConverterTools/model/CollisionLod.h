@@ -19,6 +19,10 @@ namespace model {
 
         void ConvertToXml(pugi::xml_node out) override;
 
+        aiNode *ConvertToAiNode() override {
+            return new aiNode(name);
+        }
+
     };
 
 }

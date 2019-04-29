@@ -5,6 +5,7 @@
 #include <assimp/types.h>
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/xmf/XuMeshFile.h>
+#include <X4ConverterTools/model/Connection.h>
 
 #include "testUtil.h"
 

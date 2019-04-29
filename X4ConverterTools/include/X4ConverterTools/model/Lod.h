@@ -10,9 +10,6 @@ namespace model {
             return index;
         }
 
-        aiNode *ConvertToAiNode() override {
-            return new aiNode(name);
-        }
     protected:
         int index = -2;
     };
