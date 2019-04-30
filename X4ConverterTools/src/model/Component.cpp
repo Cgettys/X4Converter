@@ -77,14 +77,17 @@ namespace model {
                 std::cout << conn.getName() <<  " "<<parentName<<std::endl;
                 auto connNode = nodes[conn.getName()];
                 if (parentMap.count(parentName) == 0) {
-                    parentMap[parentName].emplace_back();
+                    parentMap[parentName] = std::vector<aiNode *>();
+                }
+                if (connNode == nullptr) {
+                    throw std::runtime_error("null ainode");
                 }
                 parentMap[parentName].push_back(connNode);
             }
         }
         for (auto pair : parentMap) {
             auto parentNode = nodes[pair.first];
-            parentNode->addChildren(pair.second.size(), pair.second.data());
+            populateAiNodeChildren(parentNode, pair.second);
         }
 
         // Now double check that we didn't miss anything
@@ -99,11 +102,11 @@ namespace model {
                 continue;
             }
             if (pair.second->mParent == nullptr) {
-                throw std::runtime_error("something lost its parent");
+                throw std::runtime_error(std::string(pair.second->mName.C_Str()) + "lost its parent");
             }
             for (int i = 0; i < pair.second->mNumChildren; i++) {
                 if (pair.second->mChildren[i] == nullptr) {
-                    throw std::runtime_error("something has a null child!");
+                    throw std::runtime_error(std::string(pair.second->mName.C_Str()) + "has null child");
                 }
             }
         }

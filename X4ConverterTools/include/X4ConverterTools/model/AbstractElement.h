@@ -37,7 +37,29 @@ namespace model {
             for (const auto &attr : attrs) {
                 children.push_back(GenerateAttrNode(attr.first, attr.second));
             }
-            target->addChildren(static_cast<unsigned int>(numChildren), children.data());
+
+            if (children.empty()) {
+                return;
+            }
+
+            auto oldCount = target->mNumChildren;
+            auto newCount = oldCount + numChildren;
+            auto arr = new aiNode *[newCount];
+            auto oldLen = oldCount * sizeof(aiNode *);
+
+            if (target->mChildren != nullptr) {
+                memcpy(arr, target->mChildren, oldLen);
+            }
+            memcpy(arr + oldCount, children.data(), numChildren * sizeof(aiNode *));
+            target->mNumChildren = newCount;
+            auto old = target->mChildren;
+            target->mChildren = arr;
+            for (int i = 0; i < newCount; i++) {
+                auto child = arr[i];
+                child->mParent = target;
+
+            }
+            delete[] old;
         }
 
         virtual aiNode *GenerateAttrNode(const std::string &key, const std::string &value) {
