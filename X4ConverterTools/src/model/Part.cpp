@@ -46,16 +46,16 @@ namespace model {
 
     aiNode *Part::ConvertToAiNode() {
         auto *result = new aiNode(name);
-        std::vector<aiNode *> children;
+        std::vector<aiNode *> children = attrToAiNode();
         if (!hasRef) {
             children.push_back(collisionLod.ConvertToAiNode());
             for (auto lod: lods) {
                 children.push_back(lod.second.ConvertToAiNode());
             }
         }
-        if (!children.empty()) {
-            populateAiNodeChildren(result, children);
-        }
+
+        populateAiNodeChildren(result, children);
+
 
         return result;
     }

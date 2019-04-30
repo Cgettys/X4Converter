@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto result = conn.ConvertToAiNode();
             BOOST_TEST_REQUIRE(result->mNumChildren == 2);
 //        BOOST_TEST(result->mChildren[0]->mName); TODO someday
-            TestUtil::checkAiNodeName(result->mChildren[1],
+            TestUtil::checkAiNodeName(result->mChildren[0],
                                       "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ");
             delete doc;
             delete result;
@@ -155,5 +155,6 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
 // TODO animations, etc
+// TODO ship_arg_s_fighter_01 restrictions
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

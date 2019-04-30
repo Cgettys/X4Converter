@@ -32,12 +32,18 @@ namespace model {
 
         // TODO .cpp file
         // TODO template pattern?
-        virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
-            unsigned long numChildren = children.size() + attrs.size();
+        // TODO refactor me please....
+        virtual std::vector<aiNode *> attrToAiNode() {
+            std::vector<aiNode *> children;
             for (const auto &attr : attrs) {
                 children.push_back(GenerateAttrNode(attr.first, attr.second));
             }
+            return children;
+        }
 
+
+        virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
+            unsigned long numChildren = children.size();
             if (children.empty()) {
                 return;
             }

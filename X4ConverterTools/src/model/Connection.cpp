@@ -82,7 +82,7 @@ namespace model {
         result->mTransformation.d3 = tmp.d3;
         result->mTransformation.d4 = tmp.d4;
 
-        std::vector<aiNode *> children;
+        std::vector<aiNode *> children = attrToAiNode();
         for (auto part : parts) {
             children.push_back(part.ConvertToAiNode());
         }
@@ -119,7 +119,7 @@ namespace model {
         }
         auto node = getOrMakeChildByAttr(out, "connection", "name", name);
 
-        if (parentName != "") {
+        if (!parentName.empty()) {
             createOrOverwriteAttr(node, "parent", parentName);
         }
 
@@ -127,19 +127,32 @@ namespace model {
             createOrOverwriteAttr(node, pair.first, pair.second);
         }
 
-        // TODO threshold? careful to destroy if exist if you do so
+        bool offsetPosZero = offsetPos.Equal(aiVector3D());
+        bool offsetRotZero = offsetRot.Equal(aiQuaternion());
         auto offsetNode = getOrMakeChild(node, "offset");
-        auto posNode = getOrMakeChild(offsetNode, "position");
-        auto quatNode = getOrMakeChild(offsetNode, "quaternion");
-        createOrOverwriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
-        createOrOverwriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
-        createOrOverwriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
+        if (!offsetPosZero) {
+            auto posNode = getOrMakeChild(offsetNode, "position");
+            createOrOverwriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
+            createOrOverwriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
+            createOrOverwriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
+        } else {
+            offsetNode.remove_child("position");
+        }
+        if (!offsetRotZero) {
+            auto quatNode = getOrMakeChild(offsetNode, "quaternion");
+            // NB: weird XML ordering
+            createOrOverwriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
+            createOrOverwriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
+            createOrOverwriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
+            createOrOverwriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
+        } else {
+            offsetNode.remove_child("quaternion");
+        }
+        if (offsetPosZero && offsetRotZero) {
+            node.remove_child("offset");
+        }
 
-        // NB: weird XML ordering
-        createOrOverwriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
-        createOrOverwriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
-        createOrOverwriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
-        createOrOverwriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
+
 
         if (parts.empty()) {
             return;

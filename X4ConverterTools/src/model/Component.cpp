@@ -44,6 +44,7 @@ namespace model {
         auto result = new aiNode(name);
         std::map<std::string, aiNode *> nodes;
         nodes[name] = result;
+        populateAiNodeChildren(result, attrToAiNode());
 
         // Convert all the nodes
         for (auto conn : connections) {
@@ -123,11 +124,16 @@ namespace model {
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
-            if (childName.find('*') == std::string::npos) {
-                throw std::runtime_error("Non-component directly under root!");
+            if (childName.find("class") != std::string::npos) {
+                readAiNodeChild(child);
+                continue;
+            } else if (childName.find('*') == std::string::npos) {
+                std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
+                          << std::endl;
+            } else {
+                connections.emplace_back(child);
+                recurseOnChildren(child);
             }
-            connections.emplace_back(child);
-            recurseOnChildren(child);
         }
     }
 

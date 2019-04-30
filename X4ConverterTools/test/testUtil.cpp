@@ -40,9 +40,12 @@ namespace test {
         struct my_walker : pugi::xml_tree_walker {
             std::set<std::string> paths;
 
-            virtual bool for_each(pugi::xml_node &node) {
+            bool for_each(pugi::xml_node &node) override {
                 std::vector<std::string> pathParts;
                 auto parent = node;
+                if (node.attributes_begin() == node.attributes().end()) {
+                    return true;
+                }
                 do {
                     std::string part = parent.name();
                     if (parent.attribute("name")) {
