@@ -23,7 +23,8 @@ namespace model {
                 setName(attr.value());
             } else {
                 std::cerr << "Warning, unhandled attribute on part: " << name << " attribute: " << attrName
-                          << std::endl;
+                          << ". This may work fine, just a heads up ;)" << std::endl;
+                attrs[attrName] = attr.value();
             }
         }
 
@@ -108,17 +109,18 @@ namespace model {
             }
             return;
         }
+        for (auto attr : attrs) {
+            createOrOverwriteAttr(partNode, attr.first, attr.second);
+        }
 
         if (!lods.empty()) {
-            auto lodsNode = partNode.child("lods");
-            if (lodsNode.empty()) {
-                lodsNode = partNode.append_child("lods");
-            }
-
+            auto lodsNode = getOrMakeChild(partNode, "lods");
             collisionLod.ConvertToXml(lodsNode); // TODO
             for (auto lod : lods) {
                 lod.second.ConvertToXml(lodsNode);
             }
+        } else {
+            partNode.remove_child("lods");
         }
         // TODO out more
     }

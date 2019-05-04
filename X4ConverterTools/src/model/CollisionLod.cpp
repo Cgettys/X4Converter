@@ -3,11 +3,15 @@
 #include <boost/format.hpp>
 
 namespace model {
+    // Not really a LOD but it makes more sense if we pretend
     CollisionLod::CollisionLod(std::string partName) {
         index = COLLISION_INDEX;
         setName(str(boost::format("%1%|collision") % partName));
     }
 
+    aiNode *CollisionLod::ConvertToAiNode() {
+        return new aiNode(name);
+    }
     void CollisionLod::ConvertFromAiNode(aiNode *node) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);

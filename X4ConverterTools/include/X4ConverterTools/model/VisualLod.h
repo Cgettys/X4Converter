@@ -12,13 +12,12 @@ namespace model {
         VisualLod() = default;
         VisualLod(pugi::xml_node node, std::string partName);
 
+        aiNode *ConvertToAiNode() override;
+
         void ConvertFromAiNode(aiNode *node) override;
 
         void ConvertToXml(pugi::xml_node out) override;
 
-        aiNode *ConvertToAiNode() override {
-            return new aiNode(name);
-        }
     };
 
 }

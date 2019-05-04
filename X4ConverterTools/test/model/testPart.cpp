@@ -145,12 +145,13 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
 
             auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
-            BOOST_TEST_REQUIRE(result->mNumChildren == 5);
-            TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|collision");
-            TestUtil::checkAiNodeName(result->mChildren[1], "anim_main|lod0");
-            TestUtil::checkAiNodeName(result->mChildren[2], "anim_main|lod1");
-            TestUtil::checkAiNodeName(result->mChildren[3], "anim_main|lod2");
-            TestUtil::checkAiNodeName(result->mChildren[4], "anim_main|lod3");
+            BOOST_TEST_REQUIRE(result->mNumChildren == 6);
+            TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|wreck|anim_main_wreck");
+            TestUtil::checkAiNodeName(result->mChildren[1], "anim_main|collision");
+            TestUtil::checkAiNodeName(result->mChildren[2], "anim_main|lod0");
+            TestUtil::checkAiNodeName(result->mChildren[3], "anim_main|lod1");
+            TestUtil::checkAiNodeName(result->mChildren[4], "anim_main|lod2");
+            TestUtil::checkAiNodeName(result->mChildren[5], "anim_main|lod3");
             delete doc;
         }
 

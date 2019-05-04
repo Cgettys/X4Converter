@@ -13,6 +13,9 @@ namespace model {
         setName(str(boost::format("%1%|lod%2%") % partName % index));
     }
 
+    aiNode *VisualLod::ConvertToAiNode() {
+        return new aiNode(name);
+    }
 
     void VisualLod::ConvertFromAiNode(aiNode *node) {
         std::string rawName = node->mName.C_Str();
@@ -41,7 +44,8 @@ namespace model {
             } else {
                 lodNode = out.append_child("lod");
             }
-            lodNode.append_attribute("index").set_value(index);
+            createOrOverwriteAttr(lodNode, "index", std::to_string(index));
+            auto matsNode = getOrMakeChild(lodNode, "materials");
         }
     }
 
