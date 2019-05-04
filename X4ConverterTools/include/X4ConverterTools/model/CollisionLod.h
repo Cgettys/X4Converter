@@ -10,17 +10,17 @@ namespace model {
 
     class CollisionLod : public Lod {
     public:
-        CollisionLod() = default;
+        explicit CollisionLod(std::shared_ptr<ConversionContext> ctx);
+
+        explicit CollisionLod(std::string partName, std::shared_ptr<ConversionContext> ctx);
 
         ~CollisionLod() override = default;
 
-        explicit CollisionLod(std::string partName, const ConversionContext &ctx);
+        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+        void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
-
-        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
+        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
 
     };
 

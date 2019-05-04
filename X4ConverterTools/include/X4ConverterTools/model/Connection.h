@@ -8,17 +8,18 @@
 namespace model {
     class Connection : public AbstractElement {
     public:
-        Connection() = default;
+        Connection(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
 
-        explicit Connection(pugi::xml_node node, ConversionContext ctx, std::string componentName = "");
+        explicit Connection(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx,
+                            std::string componentName = "");
 
-        explicit Connection(aiNode *node, ConversionContext ctx, std::string componentName = "");
+        explicit Connection(aiNode *node, std::shared_ptr<ConversionContext> ctx, std::string componentName = "");
 
-        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
+        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
+        void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
 
         std::string getParentName();
 

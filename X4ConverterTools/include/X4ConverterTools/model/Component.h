@@ -9,22 +9,22 @@ namespace model {
 
     class Component : public AbstractElement {
     public:
-        Component() = default;
+        explicit Component(std::shared_ptr<ConversionContext> ctx);
 
-        explicit Component(pugi::xml_node node, const ConversionContext &ctx);
+        explicit Component(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx);
 
-        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
+        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
+        void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
 
         unsigned long getNumberOfConnections();
 
     protected:
         std::vector<Connection> connections;
 
-        void recurseOnChildren(aiNode *child, const ConversionContext &ctx);
+        void recurseOnChildren(aiNode *child, std::shared_ptr<ConversionContext> ctx);
     };
 
 }

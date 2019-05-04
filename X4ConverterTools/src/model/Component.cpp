@@ -1,8 +1,12 @@
 #include "X4ConverterTools/model/Component.h"
 
 #include <iostream>
+
 namespace model {
-    Component::Component(pugi::xml_node node, const ConversionContext &ctx) {
+
+    Component::Component(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
+
+    Component::Component(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
         auto componentsNode = node.child("components");
         if (componentsNode.empty()) {
             throw std::runtime_error("<components> node not found");
@@ -30,7 +34,7 @@ namespace model {
             }
         }
 
-        auto connectionsNode =componentNode.child("connections");
+        auto connectionsNode = componentNode.child("connections");
         if (connectionsNode.empty()) {
             throw std::runtime_error("No connections found!");
         }
@@ -40,7 +44,7 @@ namespace model {
 
     }
 
-    aiNode *Component::ConvertToAiNode(const ConversionContext &ctx) {
+    aiNode *Component::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
         auto result = new aiNode(getName());
         std::map<std::string, aiNode *> nodes;
         nodes[getName()] = result;
@@ -55,7 +59,7 @@ namespace model {
             nodes[connName] = conn.ConvertToAiNode(ctx);
 
             // TODO get rid of this getParts somehow
-            for (auto part : conn.getParts()){
+            for (auto part : conn.getParts()) {
                 std::string partName = part.getName();
                 if (nodes.count(partName)) {
                     throw std::runtime_error("Duplicate key is not allowed!" + partName);
@@ -73,9 +77,9 @@ namespace model {
         for (auto conn: connections) {
             auto parentName = conn.getParentName();
             if (!nodes.count(parentName)) {
-                throw std::runtime_error("Missing parent \""+parentName +"\" on: \"" +conn.getName() +"\"");
+                throw std::runtime_error("Missing parent \"" + parentName + "\" on: \"" + conn.getName() + "\"");
             } else {
-                std::cout << conn.getName() <<  " "<<parentName<<std::endl;
+                std::cout << conn.getName() << " " << parentName << std::endl;
                 auto connNode = nodes[conn.getName()];
                 if (parentMap.count(parentName) == 0) {
                     parentMap[parentName] = std::vector<aiNode *>();
@@ -94,7 +98,7 @@ namespace model {
         // Now double check that we didn't miss anything
         for (auto conn: connections) {
             auto connNode = nodes[conn.getName()];
-            if(connNode->mParent==nullptr){
+            if (connNode->mParent == nullptr) {
                 throw std::runtime_error("connection" + conn.getName() + "lost its parent");
             }
         }
@@ -119,7 +123,7 @@ namespace model {
         return fakeRoot;
     }
 
-    void Component::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
+    void Component::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
@@ -137,7 +141,7 @@ namespace model {
         }
     }
 
-    void Component::recurseOnChildren(aiNode *tgt, const ConversionContext &ctx) {
+    void Component::recurseOnChildren(aiNode *tgt, std::shared_ptr<ConversionContext> ctx) {
         std::string tgtName = tgt->mName.C_Str();
         bool is_connection = tgtName.find('*') != std::string::npos;
         for (int i = 0; i < tgt->mNumChildren; i++) {
@@ -154,7 +158,7 @@ namespace model {
 
     }
 
-    void Component::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
+    void Component::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         // TODO asset.xmf?
         if (std::string(out.name()) != "components") {
             throw std::runtime_error("Component should be under components element");

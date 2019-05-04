@@ -22,7 +22,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
         throw std::runtime_error("xml file could not be opened!");
     }
 
-    ConversionContext ctx(gameBaseFolderPath);
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath);
     model::Component component(doc.root(), ctx);
     aiNode *root = component.ConvertToAiNode(ctx);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
@@ -61,8 +61,8 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
 
 
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
-    ConversionContext ctx(gameBaseFolderPath);
-    model::Component component;
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath);
+    model::Component component(ctx);
     component.ConvertFromAiNode(pScene->mRootNode->mChildren[0], ctx);
 
     pugi::xml_document doc;

@@ -7,7 +7,12 @@
 #include <regex>
 
 namespace model {
-    Part::Part(pugi::xml_node node, const ConversionContext &ctx) {
+    Part::Part(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+        hasRef = false;
+        collisionLod = nullptr;
+    }
+
+    Part::Part(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
         if (std::string(node.name()) != "part") {
             throw std::runtime_error("XML element must be a <part> element!");
         }
@@ -34,8 +39,9 @@ namespace model {
             throw std::runtime_error("ref should not contain lods");
         }
 
+        // TODO figure out a better way
         if (!hasRef) {
-            collisionLod = CollisionLod(getName(), ctx);
+            collisionLod = new CollisionLod(getName(), ctx);
 
             for (auto lodNode : lodsNode.children()) {
                 auto lod = VisualLod(lodNode, getName(), ctx);
@@ -45,15 +51,15 @@ namespace model {
 
     }
 
-    Part::Part(aiNode *node, const ConversionContext &ctx) {
-        ConvertFromAiNode(node, ctx);
+    Part::~Part() {
+        delete collisionLod;
     }
 
-    aiNode *Part::ConvertToAiNode(const ConversionContext &ctx) {
+    aiNode *Part::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
         auto *result = new aiNode(getName());
         std::vector<aiNode *> children = attrToAiNode();
         if (!hasRef) {
-            children.push_back(collisionLod.ConvertToAiNode(ctx));
+            children.push_back(collisionLod->ConvertToAiNode(ctx));
             for (auto lod: lods) {
                 children.push_back(lod.second.ConvertToAiNode(ctx));
             }
@@ -68,7 +74,7 @@ namespace model {
     static std::regex lodRegex("[^|]+\\|lod\\d");
     static std::regex collisionRegex("[^|]+\\|collision");
 
-    void Part::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
+    void Part::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
         std::string tmp = std::string();
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
@@ -76,12 +82,12 @@ namespace model {
             std::string childName = child->mName.C_Str();
             // TODO check part names?
             if (regex_match(childName, lodRegex)) {
-                auto lod = VisualLod();
+                auto lod = VisualLod(ctx);
                 lod.ConvertFromAiNode(child, ctx);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
-                collisionLod = CollisionLod();
-                collisionLod.ConvertFromAiNode(child, ctx);
+                collisionLod = new CollisionLod(ctx);
+                collisionLod->ConvertFromAiNode(child, ctx);
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere
             } else {
@@ -91,7 +97,7 @@ namespace model {
         // TODO more
     }
 
-    void Part::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
+    void Part::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "parts") {
             throw std::runtime_error("part must be appended to a parts xml element");
         }
@@ -111,13 +117,13 @@ namespace model {
             }
             return;
         }
-        for (auto attr : attrs) {
+        for (const auto &attr : attrs) {
             WriteAttr(partNode, attr.first, attr.second);
         }
 
         if (!lods.empty()) {
             auto lodsNode = Child(partNode, "lods");
-            collisionLod.ConvertToXml(lodsNode, ctx); // TODO
+            collisionLod->ConvertToXml(lodsNode, ctx); // TODO
             for (auto lod : lods) {
                 lod.second.ConvertToXml(lodsNode, ctx);
             }

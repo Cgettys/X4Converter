@@ -9,21 +9,21 @@
 namespace model {
     class Part : public AbstractElement {
     public:
-        Part() = default;
+        explicit Part(std::shared_ptr<ConversionContext> ctx);
 
-        explicit Part(pugi::xml_node node, const ConversionContext &ctx);
+        explicit Part(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx);
 
-        explicit Part(aiNode *node, const ConversionContext &ctx);
+        ~Part() override;
 
-        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
+        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
 
-        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
+        void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
 
     private:
         bool hasRef;
-        CollisionLod collisionLod;
+        CollisionLod *collisionLod;
         std::map<int, VisualLod> lods;
     };
 }

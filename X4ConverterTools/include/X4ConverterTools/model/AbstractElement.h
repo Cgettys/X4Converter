@@ -12,16 +12,20 @@
 namespace model {
     class AbstractElement {
     public:
+        explicit AbstractElement(std::shared_ptr<ConversionContext> ctx);
 
-        virtual std::string getName();
 
-        virtual void setName(std::string n);
+        virtual ~AbstractElement() = default;
 
-        virtual aiNode *ConvertToAiNode(const ConversionContext &ctx) = 0;
+        std::string getName();
 
-        virtual void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) = 0;
+        void setName(std::string n);
 
-        virtual void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) = 0;
+        virtual aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) = 0;
+
+        virtual void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) = 0;
+
+        virtual void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) = 0;
 
     protected:
 
@@ -42,11 +46,14 @@ namespace model {
         virtual void WriteAttr(pugi::xml_node target, std::string name, std::string val);
 
         std::map<std::string, std::string> attrs;
+
+        std::shared_ptr<ConversionContext> ctx;
     private:
 
         std::string name;
 
         aiNode *GenerateAttrNode(const std::string &key, const std::string &value);
+
     };
 
 

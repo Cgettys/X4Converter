@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(read_lod_name) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(read_lod_no_index) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -62,11 +62,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(part_name_from_ainode) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
-            auto lod = VisualLod();
+            auto lod = VisualLod(ctx);
             lod.ConvertFromAiNode(ainode, ctx);
             BOOST_TEST(lod.getName() == lodName);
             BOOST_TEST(lod.getIndex() == 0);
@@ -75,11 +75,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(to_xml_one_lod) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
-            auto lod = VisualLod();
+            auto lod = VisualLod(ctx);
             lod.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");
@@ -91,15 +91,15 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(to_xml_two_lod) { // NOLINT(cert-err58-cpp)
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodZeroName = "anim_main|lod0";
             auto ainodeZero = new aiNode(lodZeroName);
-            auto lodZero = VisualLod();
+            auto lodZero = VisualLod(ctx);
             lodZero.ConvertFromAiNode(ainodeZero, ctx);
 
             std::string lodOneName = "anim_main|lod1";
             auto ainodeOne = new aiNode(lodOneName);
-            auto lodOne = VisualLod();
+            auto lodOne = VisualLod(ctx);
             lodOne.ConvertFromAiNode(ainodeOne, ctx);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");

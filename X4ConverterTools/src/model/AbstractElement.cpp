@@ -4,6 +4,9 @@
 #include <iostream>
 
 namespace model {
+    AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(ctx) {
+
+    }
 
     std::string AbstractElement::getName() {
         return name;

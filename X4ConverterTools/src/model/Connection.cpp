@@ -9,7 +9,8 @@
 using namespace util;
 namespace model {
 
-    Connection::Connection(pugi::xml_node node, ConversionContext ctx, std::string componentName) {
+    Connection::Connection(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string componentName)
+            : AbstractElement(ctx) {
 
         if (!node.attribute("name")) {
             throw std::runtime_error("Unnamed connection!");
@@ -56,13 +57,14 @@ namespace model {
         }
     }
 
-    Connection::Connection(aiNode *node, ConversionContext ctx, std::string componentName) {
+    Connection::Connection(aiNode *node, std::shared_ptr<ConversionContext> ctx, std::string componentName)
+            : AbstractElement(ctx) {
         ConvertFromAiNode(node, ctx);
         parentName = std::move(componentName);//Default to component as parent
 
     }
 
-    aiNode *Connection::ConvertToAiNode(const ConversionContext &ctx) {
+    aiNode *Connection::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
         auto result = new aiNode("*" + getName() + "*");
         aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
         // TODO fixme upstream... this sucks
@@ -96,7 +98,7 @@ namespace model {
     }
 
 
-    void Connection::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
+    void Connection::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
         std::string tmp = node->mName.C_Str();
         setName(tmp.substr(1, tmp.size() - 2));
         // TODO check for scaling and error if cfound
@@ -109,12 +111,14 @@ namespace model {
             if (childName.find('|') != std::string::npos) {
                 readAiNodeChild(child);
             } else {
-                parts.emplace_back(child, ctx);
+                Part part(ctx);
+                part.ConvertFromAiNode(child, ctx);
+                parts.emplace(parts.end(), part);
             }
         }
     }
 
-    void Connection::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
+    void Connection::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "connections") {
             throw std::runtime_error("parent of connection must be connections xml element");
         }

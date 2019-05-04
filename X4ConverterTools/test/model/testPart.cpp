@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             auto part = Part(partNode, ctx);
             BOOST_TEST(part.getName() == "anim_main");
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             auto part = Part(partNode, ctx);
             auto result = part.ConvertToAiNode(ctx);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
-            auto part = Part();
+            Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);
             std::string name = part.getName();
             BOOST_TEST(name == partName);
@@ -84,10 +84,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         BOOST_AUTO_TEST_CASE(ainode_to_xml_name) { // NOLINT(cert-err58-cpp)
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
-            ConversionContext ctx(TestUtil::GetBasePath());
-
-            auto part = Part();
+            Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
@@ -105,7 +104,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection35']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             auto part = Part(partNode, ctx);
 
@@ -126,11 +125,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             children[0] = new aiNode(childName);
             node->addChildren(1, children);
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
-            auto part = Part();
+            Part part(ctx);
             part.ConvertFromAiNode(node, ctx);
-
             pugi::xml_document doc;
             auto outNode = doc.append_child("parts");
             part.ConvertToXml(outNode, ctx);
@@ -161,7 +159,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
             auto part = Part(partNode, ctx);
 
@@ -186,9 +184,9 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             ainodeChildren[2] = new aiNode(partName + "|lod2");
             ainode->addChildren(3, ainodeChildren);
 
-            ConversionContext ctx(TestUtil::GetBasePath());
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
 
-            auto part = Part();
+            Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");

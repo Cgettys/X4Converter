@@ -1,7 +1,9 @@
 #include "X4ConverterTools/model/VisualLod.h"
 
 namespace model {
-    VisualLod::VisualLod(pugi::xml_node node, std::string partName, const ConversionContext &ctx) {
+    VisualLod::VisualLod(std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {}
+
+    VisualLod::VisualLod(pugi::xml_node node, std::string partName, std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {
 
         if (std::string(node.name()) != "lod") {
             throw std::runtime_error("XML element must be a <lod> element!");
@@ -13,11 +15,11 @@ namespace model {
         setName(str(boost::format("%1%|lod%2%") % partName % index));
     }
 
-    aiNode *VisualLod::ConvertToAiNode(const ConversionContext &ctx) {
+    aiNode *VisualLod::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
         return new aiNode(getName());
     }
 
-    void VisualLod::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
+    void VisualLod::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
@@ -28,7 +30,7 @@ namespace model {
         index = std::stoi(rawName.substr(pos + 4));
     }
 
-    void VisualLod::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
+    void VisualLod::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "lods") {
             throw std::runtime_error("Lods must be added to a lods node");
         }
@@ -48,5 +50,4 @@ namespace model {
             auto matsNode = Child(lodNode, "materials");
         }
     }
-
 }
