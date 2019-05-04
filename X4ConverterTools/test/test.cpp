@@ -66,25 +66,9 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 //}
 
     BOOST_AUTO_TEST_CASE(xml) {
-        // TODO from nothing test case
         // TODO refactor all the io...
-//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
-//        const std::string inputXMLPath = gameBaseFolderPath
-//                                         + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.xml";
-//        const std::string daePath =
-//                gameBaseFolderPath
-//                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.dae";
-//        const std::string outputXMLPath =
-//                gameBaseFolderPath
-//                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-//        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
-//        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
-//        const std::string tgtPath = "assets/props/SurfaceElements/shield_arg_l_standard_01_mk2";
         const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
-//        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
-
-//        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
         const std::string inputXMLPath = tgtPath + ".xml";
         const std::string daePath = tgtPath + ".out.dae";
         const std::string outputXMLPath = tgtPath + ".out.xml";
@@ -112,25 +96,9 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
     }
 
     BOOST_AUTO_TEST_CASE(xml_hard) {
-        // TODO from nothing test case
         // TODO refactor all the io...
-//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
-//        const std::string inputXMLPath = gameBaseFolderPath
-//                                         + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.xml";
-//        const std::string daePath =
-//                gameBaseFolderPath
-//                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.dae";
-//        const std::string outputXMLPath =
-//                gameBaseFolderPath
-//                + "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
         const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-//        const std::string tgtPath = "assets/units/size_s/ship_arg_s_scout_01";
-//        const std::string tgtPath = "assets/units/size_m/ship_tel_m_frigate_01";
-//        const std::string tgtPath = "assets/props/SurfaceElements/shield_arg_l_standard_01_mk2";
         const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
-//        const std::string tgtPath = "assets/units/size_s/ship_par_s_scout_01";
-
-//        const std::string tgtPath = "assets/units/size_m/ship_par_m_corvette_01";
         const std::string inputXMLPath = tgtPath + ".xml";
         const std::string daePath = tgtPath + ".out.dae";
         const std::string outputXMLPath = tgtPath + ".out.xml";

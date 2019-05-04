@@ -5,19 +5,18 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include "../testUtil.h"
-
+// NOLINT(cert-err58-cpp)
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
 using namespace model;
 using namespace test;
-BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(UnitTests)
 
-    BOOST_AUTO_TEST_SUITE(LodUnitTests) // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_SUITE(LodUnitTests)
 
 
-        BOOST_AUTO_TEST_CASE(read_lod_name) { // NOLINT(cert-err58-cpp)
-
+        BOOST_AUTO_TEST_CASE(read_lod_name) {
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
@@ -34,8 +33,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete result;
         }
 
-        BOOST_AUTO_TEST_CASE(read_lod_no_index) { // NOLINT(cert-err58-cpp)
-
+        BOOST_AUTO_TEST_CASE(read_lod_no_index) {
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
@@ -60,8 +58,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(part_name_from_ainode) { // NOLINT(cert-err58-cpp)
-
+        BOOST_AUTO_TEST_CASE(part_name_from_ainode) {
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
@@ -73,8 +70,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(to_xml_one_lod) { // NOLINT(cert-err58-cpp)
-
+        BOOST_AUTO_TEST_CASE(to_xml_one_lod) {
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
@@ -89,8 +85,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(to_xml_two_lod) { // NOLINT(cert-err58-cpp)
-
+        BOOST_AUTO_TEST_CASE(to_xml_two_lod) {
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
             std::string lodZeroName = "anim_main|lod0";
             auto ainodeZero = new aiNode(lodZeroName);
@@ -121,5 +116,5 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         // TODO materials
 // TODO check that name makes sense with parent name
-    BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()

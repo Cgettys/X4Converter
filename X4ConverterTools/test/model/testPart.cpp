@@ -10,12 +10,12 @@ namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
 using namespace model;
-using namespace test;
-BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
+using namespace test;// NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(UnitTests)
 
-    BOOST_AUTO_TEST_SUITE(PartUnitTests) // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_SUITE(PartUnitTests)
 
-        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete result;
         }
 
-        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(from_ai_node_part_name) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(from_ai_node_part_name) { 
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_name) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_name) { 
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection35']/parts/part").node();
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             delete result;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) { 
             std::string partName = "anim_thruster_06";
             std::string childName = "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001";
             auto node = new aiNode(partName);
@@ -142,19 +142,19 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
 
 
-//        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { // NOLINT(cert-err58-cpp)
+//        BOOST_AUTO_TEST_CASE(ainode_to_xml_to_read_ref) { 
 //            auto node = new aiNode("Connection35");
 //        }
         // TODO global naming constraints, wrecks, uv_animation
         // TODO does a collision mesh always exist?
         // TODO size, sizeraw,pivot, sounds, effectemmiters etc
 
-    BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
-    BOOST_AUTO_TEST_SUITE(PartIntegrationTests) // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(IntegrationTests)
+    BOOST_AUTO_TEST_SUITE(PartIntegrationTests)
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { 
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) { // NOLINT(cert-err58-cpp)
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) { 
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
             auto ainodeChildren = new aiNode *[3];
@@ -195,5 +195,5 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST(!node.child("part").child("lods").empty());
         }
 
-    BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+    BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END() 
