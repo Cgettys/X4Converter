@@ -17,12 +17,14 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_SUITE(ConnectionUnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto conn = Connection(node);
-            auto result = conn.ConvertToAiNode();
+            auto conn = Connection(node, ctx);
+            auto result = conn.ConvertToAiNode(ctx);
             aiMatrix4x4 expectedMatrix(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
                                        aiVector3D(9.411734, -2.738604, -2.866085));
             BOOST_TEST(result->mTransformation.Equal(expectedMatrix));
@@ -31,6 +33,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto node = new aiNode("Connection02");
 
             aiMatrix4x4 tmp(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
@@ -53,11 +57,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             node->mTransformation.d4 = tmp.d4;
 
             auto conn = Connection();
-            conn.ConvertFromAiNode(node);
+            conn.ConvertFromAiNode(node, ctx);
 
             pugi::xml_document doc;
             auto outNode = doc.append_child("connections");
-            conn.ConvertToXml(outNode);
+            conn.ConvertToXml(outNode, ctx);
 
 
             auto offsetNode = outNode.child("connection").child("offset");
@@ -80,42 +84,50 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto conn = Connection(node);
+            auto conn = Connection(node, ctx);
             BOOST_TEST(conn.getName() == "Connection02");
             delete doc;
         }
 
         BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection01']").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto conn = Connection(node, "ship_arg_s_fighter_01");
+            auto conn = Connection(node, ctx, "ship_arg_s_fighter_01");
             BOOST_TEST(conn.getParentName() == "ship_arg_s_fighter_01");
             delete doc;
         }
 
         BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto conn = Connection(node);
+            auto conn = Connection(node, ctx);
             BOOST_TEST(conn.getParentName() == "anim_main");
             delete doc;
         }
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto conn = Connection(node);
-            auto result = conn.ConvertToAiNode();
+            auto conn = Connection(node, ctx);
+            auto result = conn.ConvertToAiNode(ctx);
             BOOST_TEST_REQUIRE(result->mNumChildren == 2);
 //        BOOST_TEST(result->mChildren[0]->mName); TODO someday
             TestUtil::checkAiNodeName(result->mChildren[0],
@@ -127,13 +139,17 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
             auto ainode = new aiNode("*Connection02*");
 
+            ConversionContext ctx(TestUtil::GetBasePath());
+
             auto conn = Connection();
-            conn.ConvertFromAiNode(ainode);
+            conn.ConvertFromAiNode(ainode, ctx);
             BOOST_TEST(conn.getName() == "Connection02");
             delete ainode;
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto node = new aiNode("*Connection02*");
             auto children = new aiNode *[1];
             std::string tagStr = "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ";
@@ -143,8 +159,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto outNode = doc.append_child("connections");
 
             auto conn = Connection();
-            conn.ConvertFromAiNode(node);
-            conn.ConvertToXml(outNode);
+            conn.ConvertFromAiNode(node, ctx);
+            conn.ConvertToXml(outNode, ctx);
 
             auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
             BOOST_TEST(std::string(connNode.attribute("tags").value()) ==

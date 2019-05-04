@@ -13,13 +13,14 @@ namespace model {
         CollisionLod() = default;
 
         ~CollisionLod() override = default;
-        explicit CollisionLod(std::string partName);
 
-        void ConvertFromAiNode(aiNode *node) override;
+        explicit CollisionLod(std::string partName, const ConversionContext &ctx);
 
-        void ConvertToXml(pugi::xml_node out) override;
+        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
 
-        aiNode *ConvertToAiNode() override;
+        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
+
+        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
 
     };
 

@@ -21,8 +21,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto part = Part(partNode);
-            BOOST_TEST(part.getName() =="anim_main");
+            ConversionContext ctx(TestUtil::GetBasePath());
+
+            auto part = Part(partNode, ctx);
+            BOOST_TEST(part.getName() == "anim_main");
             delete doc;
         }
 
@@ -32,8 +34,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto part = Part(partNode);
-            auto result = part.ConvertToAiNode();
+            ConversionContext ctx(TestUtil::GetBasePath());
+
+            auto part = Part(partNode, ctx);
+            auto result = part.ConvertToAiNode(ctx);
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             delete doc;
             delete result;
@@ -46,7 +50,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
 
-            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+            ConversionContext ctx(TestUtil::GetBasePath());
+
+            BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
         }
 
@@ -55,7 +61,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            BOOST_CHECK_THROW(auto part = Part(partNode), std::runtime_error);
+
+            ConversionContext ctx(TestUtil::GetBasePath());
+
+            BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
         }
 
@@ -63,8 +72,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
+            ConversionContext ctx(TestUtil::GetBasePath());
+
             auto part = Part();
-            part.ConvertFromAiNode(ainode);
+            part.ConvertFromAiNode(ainode, ctx);
             std::string name = part.getName();
             BOOST_TEST(name == partName);
             delete ainode;
@@ -74,11 +85,13 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
+            ConversionContext ctx(TestUtil::GetBasePath());
+
             auto part = Part();
-            part.ConvertFromAiNode(ainode);
+            part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToXml(node);
+            part.ConvertToXml(node, ctx);
 
             std::string actualName = node.child("part").attribute("name").value();
             BOOST_TEST(partName == actualName);
@@ -91,12 +104,16 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection35']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            auto part = Part(partNode);
 
-            auto result = part.ConvertToAiNode();
+            ConversionContext ctx(TestUtil::GetBasePath());
+
+            auto part = Part(partNode, ctx);
+
+            auto result = part.ConvertToAiNode(ctx);
             TestUtil::checkAiNodeName(result, "anim_thruster_06");
             BOOST_TEST_REQUIRE(result->mNumChildren == 1);
-            TestUtil::checkAiNodeName(result->mChildren[0], "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
+            TestUtil::checkAiNodeName(result->mChildren[0],
+                                      "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001");
             delete doc;
             delete result;
         }
@@ -109,12 +126,14 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             children[0] = new aiNode(childName);
             node->addChildren(1, children);
 
+            ConversionContext ctx(TestUtil::GetBasePath());
+
             auto part = Part();
-            part.ConvertFromAiNode(node);
+            part.ConvertFromAiNode(node, ctx);
 
             pugi::xml_document doc;
             auto outNode = doc.append_child("parts");
-            part.ConvertToXml(outNode);
+            part.ConvertToXml(outNode, ctx);
 
             auto partNode = outNode.child("part");
             std::string ref = partNode.attribute("ref").value();
@@ -136,14 +155,17 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_SUITE(PartIntegrationTests) // NOLINT(cert-err58-cpp)
+
         BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { // NOLINT(cert-err58-cpp)
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            auto part = Part(partNode);
+            ConversionContext ctx(TestUtil::GetBasePath());
 
-            auto result = part.ConvertToAiNode();
+            auto part = Part(partNode, ctx);
+
+            auto result = part.ConvertToAiNode(ctx);
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             BOOST_TEST_REQUIRE(result->mNumChildren == 6);
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|wreck|anim_main_wreck");
@@ -164,13 +186,16 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests) // NOLINT(cert-err58-cpp)
             ainodeChildren[2] = new aiNode(partName + "|lod2");
             ainode->addChildren(3, ainodeChildren);
 
+            ConversionContext ctx(TestUtil::GetBasePath());
+
             auto part = Part();
-            part.ConvertFromAiNode(ainode);
+            part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToXml(node);
+            part.ConvertToXml(node, ctx);
 
             BOOST_TEST(!node.child("part").child("lods").empty());
         }
+
     BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

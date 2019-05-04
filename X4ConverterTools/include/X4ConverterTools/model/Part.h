@@ -11,16 +11,15 @@ namespace model {
     public:
         Part() = default;
 
-        explicit Part(pugi::xml_node node);
+        explicit Part(pugi::xml_node node, const ConversionContext &ctx);
 
-        explicit Part(aiNode *node) {
-            ConvertFromAiNode(node);
-        }
-        aiNode *ConvertToAiNode() override;
+        explicit Part(aiNode *node, const ConversionContext &ctx);
 
-        void ConvertFromAiNode(aiNode *node) override;
+        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
 
-        void ConvertToXml(pugi::xml_node out) override;
+        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+
+        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
 
     private:
         bool hasRef;

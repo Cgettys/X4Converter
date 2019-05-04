@@ -2,7 +2,7 @@
 
 #include <iostream>
 namespace model {
-    Component::Component(pugi::xml_node node) {
+    Component::Component(pugi::xml_node node, const ConversionContext &ctx) {
         auto componentsNode = node.child("components");
         if (componentsNode.empty()) {
             throw std::runtime_error("<components> node not found");
@@ -35,15 +35,15 @@ namespace model {
             throw std::runtime_error("No connections found!");
         }
         for (auto connectionNode : connectionsNode.children()) {
-            connections.emplace_back(connectionNode,name);
+            connections.emplace_back(connectionNode, ctx, getName());
         }
 
     }
 
-    aiNode *Component::ConvertToAiNode() {
-        auto result = new aiNode(name);
+    aiNode *Component::ConvertToAiNode(const ConversionContext &ctx) {
+        auto result = new aiNode(getName());
         std::map<std::string, aiNode *> nodes;
-        nodes[name] = result;
+        nodes[getName()] = result;
         populateAiNodeChildren(result, attrToAiNode());
 
         // Convert all the nodes
@@ -52,7 +52,7 @@ namespace model {
             if (nodes.count(connName)) {
                 throw std::runtime_error("Duplicate key is not allowed!" + connName);
             }
-            nodes[connName] = conn.ConvertToAiNode();
+            nodes[connName] = conn.ConvertToAiNode(ctx);
 
             // TODO get rid of this getParts somehow
             for (auto part : conn.getParts()){
@@ -86,7 +86,7 @@ namespace model {
                 parentMap[parentName].push_back(connNode);
             }
         }
-        for (auto pair : parentMap) {
+        for (const auto &pair : parentMap) {
             auto parentNode = nodes[pair.first];
             populateAiNodeChildren(parentNode, pair.second);
         }
@@ -98,8 +98,8 @@ namespace model {
                 throw std::runtime_error("connection" + conn.getName() + "lost its parent");
             }
         }
-        for (auto pair : nodes) {
-            if (pair.first == name) {
+        for (const auto &pair : nodes) {
+            if (pair.first == getName()) {
                 continue;
             }
             if (pair.second->mParent == nullptr) {
@@ -119,7 +119,7 @@ namespace model {
         return fakeRoot;
     }
 
-    void Component::ConvertFromAiNode(aiNode *node) {
+    void Component::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
@@ -131,13 +131,13 @@ namespace model {
                 std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
                           << std::endl;
             } else {
-                connections.emplace_back(child);
-                recurseOnChildren(child);
+                connections.emplace_back(child, ctx);
+                recurseOnChildren(child, ctx);
             }
         }
     }
 
-    void Component::recurseOnChildren(aiNode *tgt) {
+    void Component::recurseOnChildren(aiNode *tgt, const ConversionContext &ctx) {
         std::string tgtName = tgt->mName.C_Str();
         bool is_connection = tgtName.find('*') != std::string::npos;
         for (int i = 0; i < tgt->mNumChildren; i++) {
@@ -147,22 +147,22 @@ namespace model {
                 if (is_connection) {
                     throw std::runtime_error("connection cannot have a connection as a parent!");
                 }
-                connections.emplace_back(child, tgtName);
+                connections.emplace_back(child, ctx, tgtName);
             }
-            recurseOnChildren(child);
+            recurseOnChildren(child, ctx);
         }
 
     }
 
-    void Component::ConvertToXml(pugi::xml_node out) {
+    void Component::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
         // TODO asset.xmf?
         if (std::string(out.name()) != "components") {
             throw std::runtime_error("Component should be under components element");
         }
-        auto compNode = getOrMakeChildByAttr(out, "component", "name", name);
-        auto connsNode = getOrMakeChild(compNode, "connections");
+        auto compNode = ChildByAttr(out, "component", "name", getName());
+        auto connsNode = Child(compNode, "connections");
         for (auto conn : connections) {
-            conn.ConvertToXml(connsNode);
+            conn.ConvertToXml(connsNode, ctx);
         }
     }
 

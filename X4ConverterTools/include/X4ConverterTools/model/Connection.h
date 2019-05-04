@@ -10,15 +10,15 @@ namespace model {
     public:
         Connection() = default;
 
-        explicit Connection(pugi::xml_node node, std::string componentName = "");
+        explicit Connection(pugi::xml_node node, ConversionContext ctx, std::string componentName = "");
 
-        explicit Connection(aiNode *node, std::string componentName = "");
+        explicit Connection(aiNode *node, ConversionContext ctx, std::string componentName = "");
 
-        aiNode *ConvertToAiNode() override;
+        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
 
-        void ConvertFromAiNode(aiNode *node) override;
+        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
 
-        void ConvertToXml(pugi::xml_node out) override;
+        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
 
         std::string getParentName();
 

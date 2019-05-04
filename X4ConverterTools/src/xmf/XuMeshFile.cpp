@@ -1,6 +1,7 @@
 #include <X4ConverterTools/xmf/XuMeshFile.h>
 
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
+#include <regex>
 using namespace Assimp;
 using namespace boost;
 using util::DXUtil;

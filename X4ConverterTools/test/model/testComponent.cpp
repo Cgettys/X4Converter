@@ -17,23 +17,27 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
     BOOST_AUTO_TEST_SUITE(ComponentUnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_xml_basic) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->root();
             BOOST_TEST_REQUIRE(!node.empty());
 
-            auto component = Component(node);
+            auto component = Component(node, ctx);
             BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
             BOOST_TEST(component.getNumberOfConnections() == 74);
             delete doc;
         }
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_basic) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->root();
             BOOST_TEST_REQUIRE(!node.empty());
-            auto component = Component(node);
+            auto component = Component(node, ctx);
 
-            auto result = component.ConvertToAiNode();
+            auto result = component.ConvertToAiNode(ctx);
 
             BOOST_TEST_REQUIRE(result->mNumChildren > 0);
             TestUtil::checkAiNodeName(result->mChildren[0], "ship_arg_s_fighter_01");
@@ -43,14 +47,19 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         }
 
         BOOST_AUTO_TEST_CASE(from_ainode_basic) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto node = new aiNode("ship_arg_s_fighter_01");
+
             auto component = Component();
-            component.ConvertFromAiNode(node);
+            component.ConvertFromAiNode(node, ctx);
             BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
             delete node;
         }
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
+
+            ConversionContext ctx(TestUtil::GetBasePath());
             auto node = new aiNode("ship_arg_s_fighter_01");
             auto childrenZero = new aiNode *[2];
             childrenZero[0] = new aiNode("*test_conn_0*");
@@ -66,10 +75,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto outNode = doc.append_child("components");
 
             auto component = Component();
-            component.ConvertFromAiNode(node);
+            component.ConvertFromAiNode(node, ctx);
             BOOST_TEST(component.getNumberOfConnections() == 3);
 
-            component.ConvertToXml(outNode);
+            component.ConvertToXml(outNode, ctx);
 
             auto connsNode = outNode.child("component").child("connections");
             BOOST_TEST(connsNode.find_child_by_attribute("connection", "name", "test_conn_0"));

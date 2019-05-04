@@ -1,5 +1,7 @@
 #include <X4ConverterTools/ConversionContext.h>
-
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 using namespace boost;
 using namespace boost::filesystem;
 

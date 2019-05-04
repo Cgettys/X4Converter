@@ -4,9 +4,7 @@
 #include <vector>
 #include <assimp/scene.h>
 
-#include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <boost/numeric/conversion/cast.hpp>
+
 #include "MaterialLibrary.h"
 
 class ConversionContext {

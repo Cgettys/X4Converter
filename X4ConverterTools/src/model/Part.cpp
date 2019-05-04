@@ -5,8 +5,9 @@
 #include <X4ConverterTools/model/CollisionLod.h>
 #include <X4ConverterTools/model/VisualLod.h>
 #include <regex>
+
 namespace model {
-    Part::Part(pugi::xml_node node) {
+    Part::Part(pugi::xml_node node, const ConversionContext &ctx) {
         if (std::string(node.name()) != "part") {
             throw std::runtime_error("XML element must be a <part> element!");
         }
@@ -22,7 +23,7 @@ namespace model {
             } else if (attrName == "name") {
                 setName(attr.value());
             } else {
-                std::cerr << "Warning, unhandled attribute on part: " << name << " attribute: " << attrName
+                std::cerr << "Warning, unhandled attribute on part: " << getName() << " attribute: " << attrName
                           << ". This may work fine, just a heads up ;)" << std::endl;
                 attrs[attrName] = attr.value();
             }
@@ -34,24 +35,27 @@ namespace model {
         }
 
         if (!hasRef) {
-            collisionLod = CollisionLod(name);
+            collisionLod = CollisionLod(getName(), ctx);
 
             for (auto lodNode : lodsNode.children()) {
-                auto lod = VisualLod(lodNode, name);
+                auto lod = VisualLod(lodNode, getName(), ctx);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             }
         }
 
     }
 
+    Part::Part(aiNode *node, const ConversionContext &ctx) {
+        ConvertFromAiNode(node, ctx);
+    }
 
-    aiNode *Part::ConvertToAiNode() {
-        auto *result = new aiNode(name);
+    aiNode *Part::ConvertToAiNode(const ConversionContext &ctx) {
+        auto *result = new aiNode(getName());
         std::vector<aiNode *> children = attrToAiNode();
         if (!hasRef) {
-            children.push_back(collisionLod.ConvertToAiNode());
+            children.push_back(collisionLod.ConvertToAiNode(ctx));
             for (auto lod: lods) {
-                children.push_back(lod.second.ConvertToAiNode());
+                children.push_back(lod.second.ConvertToAiNode(ctx));
             }
         }
 
@@ -63,7 +67,8 @@ namespace model {
 
     static std::regex lodRegex("[^|]+\\|lod\\d");
     static std::regex collisionRegex("[^|]+\\|collision");
-    void Part::ConvertFromAiNode(aiNode *node) {
+
+    void Part::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
         std::string tmp = std::string();
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
@@ -72,11 +77,11 @@ namespace model {
             // TODO check part names?
             if (regex_match(childName, lodRegex)) {
                 auto lod = VisualLod();
-                lod.ConvertFromAiNode(child);
+                lod.ConvertFromAiNode(child, ctx);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
                 collisionLod = CollisionLod();
-                collisionLod.ConvertFromAiNode(child);
+                collisionLod.ConvertFromAiNode(child, ctx);
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere
             } else {
@@ -86,19 +91,16 @@ namespace model {
         // TODO more
     }
 
-    void Part::ConvertToXml(pugi::xml_node out) {
+    void Part::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
         if (std::string(out.name()) != "parts") {
             throw std::runtime_error("part must be appended to a parts xml element");
         }
 
-        auto partNode = out.find_child_by_attribute("part", "name", name.c_str());
-        if (partNode.empty()) {
-            partNode = out.append_child("part");
-            partNode.append_attribute("name").set_value(name.c_str());
-        }
+        auto partNode = ChildByAttr(out, "part", "name", getName());
 
 
         // Note the return statement! referenced parts don't get LODS!!!
+        // TODO remove if lods exist or at least error out
         if (attrs.count("DO_NOT_EDIT.ref")) {
             hasRef = true;
             auto value = attrs["DO_NOT_EDIT.ref"];
@@ -110,14 +112,14 @@ namespace model {
             return;
         }
         for (auto attr : attrs) {
-            createOrOverwriteAttr(partNode, attr.first, attr.second);
+            WriteAttr(partNode, attr.first, attr.second);
         }
 
         if (!lods.empty()) {
-            auto lodsNode = getOrMakeChild(partNode, "lods");
-            collisionLod.ConvertToXml(lodsNode); // TODO
+            auto lodsNode = Child(partNode, "lods");
+            collisionLod.ConvertToXml(lodsNode, ctx); // TODO
             for (auto lod : lods) {
-                lod.second.ConvertToXml(lodsNode);
+                lod.second.ConvertToXml(lodsNode, ctx);
             }
         } else {
             partNode.remove_child("lods");

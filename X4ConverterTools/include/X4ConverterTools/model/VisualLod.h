@@ -10,13 +10,14 @@ namespace model {
     class VisualLod : public Lod {
     public:
         VisualLod() = default;
-        VisualLod(pugi::xml_node node, std::string partName);
 
-        aiNode *ConvertToAiNode() override;
+        VisualLod(pugi::xml_node node, std::string partName, const ConversionContext &ctx);
 
-        void ConvertFromAiNode(aiNode *node) override;
+        aiNode *ConvertToAiNode(const ConversionContext &ctx) override;
 
-        void ConvertToXml(pugi::xml_node out) override;
+        void ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) override;
+
+        void ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) override;
 
     };
 

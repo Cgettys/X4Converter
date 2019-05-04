@@ -1,5 +1,6 @@
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/model/Component.h>
+#include <X4ConverterTools/ConversionContext.h>
 
 namespace fs = boost::filesystem;
 
@@ -20,8 +21,10 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     if(load_result.status!=pugi::status_ok){
         throw std::runtime_error("xml file could not be opened!");
     }
-    model::Component component(doc.root());
-    aiNode* root = component.ConvertToAiNode();
+
+    ConversionContext ctx(gameBaseFolderPath);
+    model::Component component(doc.root(), ctx);
+    aiNode *root = component.ConvertToAiNode(ctx);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     pScene->mRootNode=root;
 
@@ -56,9 +59,11 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
         throw std::runtime_error(importer->GetErrorString());
     }
 
+
     Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
+    ConversionContext ctx(gameBaseFolderPath);
     model::Component component;
-    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0]);
+    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0], ctx);
 
     pugi::xml_document doc;
     auto load_result = doc.load_file(actualXmlFilePath.c_str());
@@ -69,7 +74,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     if (!tgtNode) {
         tgtNode = doc.append_child("components");
     }
-    component.ConvertToXml(tgtNode);
+    component.ConvertToXml(tgtNode, ctx);
     doc.save_file(actualXmlFilePath.c_str());
 
     delete io;

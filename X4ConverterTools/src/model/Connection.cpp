@@ -9,7 +9,7 @@
 using namespace util;
 namespace model {
 
-    Connection::Connection(pugi::xml_node node, std::string componentName) {
+    Connection::Connection(pugi::xml_node node, ConversionContext ctx, std::string componentName) {
 
         if (!node.attribute("name")) {
             throw std::runtime_error("Unnamed connection!");
@@ -29,8 +29,10 @@ namespace model {
             }
             auto quaternionNode = offsetNode.child("quaternion");
             if (quaternionNode) {
-                offsetRot = aiQuaternion(quaternionNode.attribute("qw").as_float(), quaternionNode.attribute("qx").as_float(),
-                                         quaternionNode.attribute("qy").as_float(), quaternionNode.attribute("qz").as_float());
+                offsetRot = aiQuaternion(quaternionNode.attribute("qw").as_float(),
+                                         quaternionNode.attribute("qx").as_float(),
+                                         quaternionNode.attribute("qy").as_float(),
+                                         quaternionNode.attribute("qz").as_float());
             }
             // TODO check for weird other cases
         }
@@ -38,7 +40,7 @@ namespace model {
         auto partsNode = node.child("parts");
         if (partsNode) {
             for (auto child : partsNode.children()) {
-                parts.emplace_back(child);
+                parts.emplace_back(child, ctx);
             }
         }
         for (auto attr: node.attributes()) {
@@ -52,17 +54,16 @@ namespace model {
                 attrs[attrName] = value;
             }
         }
-        std::cerr << name<<std::endl;
     }
 
-    Connection::Connection(aiNode *node, std::string componentName) {
-        ConvertFromAiNode(node);
+    Connection::Connection(aiNode *node, ConversionContext ctx, std::string componentName) {
+        ConvertFromAiNode(node, ctx);
         parentName = std::move(componentName);//Default to component as parent
 
     }
 
-    aiNode *Connection::ConvertToAiNode() {
-        auto result = new aiNode("*" + name + "*");
+    aiNode *Connection::ConvertToAiNode(const ConversionContext &ctx) {
+        auto result = new aiNode("*" + getName() + "*");
         aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
         // TODO fixme upstream... this sucks
         result->mTransformation.a1 = tmp.a1;
@@ -84,7 +85,7 @@ namespace model {
 
         std::vector<aiNode *> children = attrToAiNode();
         for (auto part : parts) {
-            children.push_back(part.ConvertToAiNode());
+            children.push_back(part.ConvertToAiNode(ctx));
         }
         populateAiNodeChildren(result, children);
         return result;
@@ -95,10 +96,10 @@ namespace model {
     }
 
 
-    void Connection::ConvertFromAiNode(aiNode *node) {
+    void Connection::ConvertFromAiNode(aiNode *node, const ConversionContext &ctx) {
         std::string tmp = node->mName.C_Str();
         setName(tmp.substr(1, tmp.size() - 2));
-        // TODO check for scaling
+        // TODO check for scaling and error if cfound
         node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 
         // TODO validate attributes; better check for parts & a better solution
@@ -108,43 +109,43 @@ namespace model {
             if (childName.find('|') != std::string::npos) {
                 readAiNodeChild(child);
             } else {
-                parts.emplace_back(child);
+                parts.emplace_back(child, ctx);
             }
         }
     }
 
-    void Connection::ConvertToXml(pugi::xml_node out) {
+    void Connection::ConvertToXml(pugi::xml_node out, const ConversionContext &ctx) {
         if (std::string(out.name()) != "connections") {
             throw std::runtime_error("parent of connection must be connections xml element");
         }
-        auto node = getOrMakeChildByAttr(out, "connection", "name", name);
+        auto node = ChildByAttr(out, "connection", "name", getName());
 
         if (!parentName.empty()) {
-            createOrOverwriteAttr(node, "parent", parentName);
+            WriteAttr(node, "parent", parentName);
         }
 
         for (const auto &pair : attrs) {
-            createOrOverwriteAttr(node, pair.first, pair.second);
+            WriteAttr(node, pair.first, pair.second);
         }
 
         bool offsetPosZero = offsetPos.Equal(aiVector3D());
         bool offsetRotZero = offsetRot.Equal(aiQuaternion());
-        auto offsetNode = getOrMakeChild(node, "offset");
+        auto offsetNode = Child(node, "offset");
         if (!offsetPosZero) {
-            auto posNode = getOrMakeChild(offsetNode, "position");
-            createOrOverwriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
-            createOrOverwriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
-            createOrOverwriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
+            auto posNode = Child(offsetNode, "position");
+            WriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
+            WriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
+            WriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
         } else {
             offsetNode.remove_child("position");
         }
         if (!offsetRotZero) {
-            auto quatNode = getOrMakeChild(offsetNode, "quaternion");
+            auto quatNode = Child(offsetNode, "quaternion");
             // NB: weird XML ordering
-            createOrOverwriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
-            createOrOverwriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
-            createOrOverwriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
-            createOrOverwriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
+            WriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
+            WriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
+            WriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
+            WriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
         } else {
             offsetNode.remove_child("quaternion");
         }
@@ -153,13 +154,12 @@ namespace model {
         }
 
 
-
         if (parts.empty()) {
             return;
         }
-        auto partsNode = getOrMakeChild(node, "parts");
+        auto partsNode = Child(node, "parts");
         for (auto part : parts) {
-            part.ConvertToXml(partsNode);
+            part.ConvertToXml(partsNode, ctx);
         }
 
     }
