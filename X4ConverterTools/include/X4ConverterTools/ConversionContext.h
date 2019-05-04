@@ -5,7 +5,7 @@
 #include <assimp/scene.h>
 
 
-#include "MaterialLibrary.h"
+#include "X4ConverterTools/model/MaterialLibrary.h"
 
 class ConversionContext {
 public:
@@ -18,5 +18,5 @@ public:
     std::string gameBaseFolderPath;
 private:
 
-    MaterialLibrary materialLibrary;
+    model::MaterialLibrary materialLibrary;
 };

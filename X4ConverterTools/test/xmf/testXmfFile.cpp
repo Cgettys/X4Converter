@@ -5,7 +5,7 @@
 #include <assimp/DefaultIOSystem.h>
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/xmf/XmfHeader.h>
-#include <X4ConverterTools/xmf/XuMeshFile.h>
+#include <X4ConverterTools/xmf/XmfFile.h>
 #include "../testUtil.h"
 
 using namespace Assimp;
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             IOSystem *io = new DefaultIOSystem();
             IOStream *sourceStream = io->Open(testFile, "rb");
             IOStream *outStream = io->Open(resultsFile, "wb");
-            std::shared_ptr<XuMeshFile> meshFile = XuMeshFile::ReadFromIOStream(sourceStream);
+            std::shared_ptr<XmfFile> meshFile = XmfFile::ReadFromIOStream(sourceStream);
             meshFile->WriteToIOStream(outStream);
             BOOST_TEST_CHECKPOINT("Read/Write complete");
 
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             std::vector<uint8_t> sourceBytes(sourceLen);
             std::vector<uint8_t> resultByte(resultLen);
             // First layer of checks - Read the result in again - is it equal to what it just wrote out
-            std::shared_ptr<XuMeshFile> reloadedFile = XuMeshFile::ReadFromIOStream(resultStream);
+            std::shared_ptr<XmfFile> reloadedFile = XmfFile::ReadFromIOStream(resultStream);
 
             TestUtil::checkXuMeshFileEquality(*meshFile, *reloadedFile);
             //	 Directly read the data into the vector & make sure we got it one go)

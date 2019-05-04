@@ -3,9 +3,9 @@
 
 set("LIB_SRCS"
         src/Conversion.cpp
-        src/Material.cpp
-        src/MaterialCollection.cpp
-        src/MaterialLibrary.cpp
+        src/model/Material.cpp
+        src/model/MaterialCollection.cpp
+        src/model/MaterialLibrary.cpp
         src/ani/AnimFile.cpp
         src/ani/Header.cpp
         src/ani/AnimDesc.cpp
@@ -17,7 +17,7 @@ set("LIB_SRCS"
         src/xmf/XmfDataBufferDesc.cpp
         src/xmf/XmfMaterial.cpp
         src/xmf/XmfVertexElement.cpp
-        src/xmf/XuMeshFile.cpp
+        src/xmf/XmfFile.cpp
         src/xmf/XmfHeader.cpp src/ConversionContext.cpp src/model/Component.cpp include/X4ConverterTools/model/Component.h src/model/Connection.cpp include/X4ConverterTools/model/Connection.h src/model/Part.cpp include/X4ConverterTools/model/Part.h include/X4ConverterTools/model/AbstractElement.h src/model/VisualLod.cpp include/X4ConverterTools/model/VisualLod.h src/model/CollisionLod.cpp include/X4ConverterTools/util/FormatUtil.h src/model/AbstractElement.cpp)
 add_library(X4ConverterTools STATIC ${LIB_SRCS})
 target_compile_definitions(X4ConverterTools PRIVATE "X4ConverterTools_TEST=TRUE") # TODO fixme

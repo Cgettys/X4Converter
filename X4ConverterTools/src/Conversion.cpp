@@ -66,9 +66,13 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     component.ConvertFromAiNode(pScene->mRootNode->mChildren[0], ctx);
 
     pugi::xml_document doc;
-    auto load_result = doc.load_file(actualXmlFilePath.c_str());
-    if (load_result.status != pugi::status_ok) {
-        throw std::runtime_error("output xml file could not be opened!");
+    if (fs::exists(actualXmlFilePath)) {
+        auto load_result = doc.load_file(actualXmlFilePath.c_str());
+        if (load_result.status != pugi::status_ok) {
+            throw std::runtime_error("output xml file could not be opened!");
+        }
+    } else {
+        std::cerr << "Warning, creating output file at path: " << actualXmlFilePath;
     }
     auto tgtNode = doc.child("components");
     if (!tgtNode) {

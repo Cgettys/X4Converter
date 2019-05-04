@@ -1,12 +1,14 @@
-#include <X4ConverterTools/xmf/XuMeshFile.h>
+#include <X4ConverterTools/xmf/XmfFile.h>
 
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
 #include <regex>
+#include <boost/numeric/conversion/cast.hpp>
+
 using namespace Assimp;
 using namespace boost;
 using util::DXUtil;
 namespace xmf {
-    XmfDataBuffer *XuMeshFile::GetIndexBuffer() {
+    XmfDataBuffer *XmfFile::GetIndexBuffer() {
         for (auto &_buffer : buffers) {
             if (_buffer.IsIndexBuffer())
                 return &_buffer;
@@ -14,7 +16,7 @@ namespace xmf {
         return nullptr;
     }
 
-    std::vector<XmfVertexElement> XuMeshFile::GetVertexDeclaration() {
+    std::vector<XmfVertexElement> XmfFile::GetVertexDeclaration() {
         std::vector<XmfVertexElement> result;
         for (auto &_buffer : buffers) {
             for (int i = 0; i < _buffer.Description.NumVertexElements; ++i) {
@@ -24,7 +26,7 @@ namespace xmf {
         return result;
     }
 
-    int XuMeshFile::NumVertices() {
+    int XmfFile::NumVertices() {
         for (auto &_buffer : buffers) {
             if (_buffer.IsVertexBuffer())
                 return _buffer.Description.NumItemsPerSection;
@@ -32,20 +34,24 @@ namespace xmf {
         return 0;
     }
 
-    int XuMeshFile::NumIndices() {
+    int XmfFile::NumIndices() {
         XmfDataBuffer *pIndexBuffer = GetIndexBuffer();
         return pIndexBuffer != nullptr ? pIndexBuffer->Description.NumItemsPerSection : 0;
     }
 
-    void XuMeshFile::AddMaterial(int firstIndex, int numIndices, const std::string &name) {
+    int XmfFile::NumMaterials() {
+        return boost::numeric_cast<int>(materials.size());
+    }
+
+    void XmfFile::AddMaterial(int firstIndex, int numIndices, const std::string &name) {
         materials.emplace_back(firstIndex, numIndices, name);
     }
 
-    std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler) {
+    std::shared_ptr<XmfFile> XmfFile::ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler) {
         IOStream *pStream;
         try {
             pStream = pIOHandler->Open(filePath, "rb");
-            auto result = XuMeshFile::ReadFromIOStream(pStream);
+            auto result = XmfFile::ReadFromIOStream(pStream);
 //        pIOHandler->Close(pStream);
             return result;
         } catch (...) {
@@ -53,12 +59,12 @@ namespace xmf {
         }
     }
 
-    std::shared_ptr<XuMeshFile> XuMeshFile::ReadFromIOStream(IOStream *pStream) {
+    std::shared_ptr<XmfFile> XmfFile::ReadFromIOStream(IOStream *pStream) {
         if (!pStream) {
             throw std::runtime_error("pStream may not be null!");
         }
         try {
-            std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
+            std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>();
 
             if (pStream->FileSize() < 16) {
                 throw std::runtime_error(".xmf file is too small (< 16 bytes)");
@@ -89,7 +95,7 @@ namespace xmf {
         }
     }
 
-    void XuMeshFile::ReadBufferDescs(StreamReaderLE &pStreamReader) {
+    void XmfFile::ReadBufferDescs(StreamReaderLE &pStreamReader) {
 
 
 //    pStreamReader.SetCurrentPos(header.SizeOfHeader);
@@ -98,13 +104,13 @@ namespace xmf {
         }
     }
 
-    void XuMeshFile::ReadBuffers(StreamReaderLE &pStreamReader) {
+    void XmfFile::ReadBuffers(StreamReaderLE &pStreamReader) {
         for (XmfDataBuffer &buffer : buffers) {
             buffer.Read(pStreamReader);
         }
     }
 
-    void XuMeshFile::Validate() {
+    void XmfFile::Validate() {
         header.validate();
         int numVertices = -1;
         for (XmfDataBuffer &buffer : buffers) {
@@ -119,7 +125,7 @@ namespace xmf {
         }
     }
 
-    void XuMeshFile::WriteToFile(const std::string &filePath, IOSystem *pIOHandler) {
+    void XmfFile::WriteToFile(const std::string &filePath, IOSystem *pIOHandler) {
         IOStream *pStream = pIOHandler->Open(filePath, "wb+");
         if (!pStream) {
             throw std::runtime_error((format("Failed to open %1% for writing") % filePath.c_str()).str());
@@ -128,7 +134,7 @@ namespace xmf {
         // pStream is "Helpfully" closed by Assimp's StreamWriter
     }
 
-    void XuMeshFile::WriteToIOStream(IOStream *pStream) {
+    void XmfFile::WriteToIOStream(IOStream *pStream) {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers = CompressBuffers();
 
         header = XmfHeader(numeric_cast<uint8_t>(buffers.size()), numeric_cast<uint8_t>(materials.size()));
@@ -142,7 +148,7 @@ namespace xmf {
         WriteBuffers(pStreamWriter, compressedBuffers);
     }
 
-    std::map<XmfDataBuffer *, std::vector<uint8_t> > XuMeshFile::CompressBuffers() {
+    std::map<XmfDataBuffer *, std::vector<uint8_t> > XmfFile::CompressBuffers() {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > result;
         for (XmfDataBuffer &buffer: buffers) {
             std::vector<uint8_t> &compressedData = result[&buffer];
@@ -160,8 +166,8 @@ namespace xmf {
     }
 
 
-    void XuMeshFile::WriteBufferDescs(StreamWriterLE &pStreamWriter,
-                                      std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
+    void XmfFile::WriteBufferDescs(StreamWriterLE &pStreamWriter,
+                                   std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
         uint32_t dataOffset = 0;
         // TODO kill this
         for (XmfDataBuffer &buffer: buffers) {
@@ -173,8 +179,8 @@ namespace xmf {
         }
     }
 
-    void XuMeshFile::WriteBuffers(StreamWriterLE &pStreamWriter,
-                                  std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
+    void XmfFile::WriteBuffers(StreamWriterLE &pStreamWriter,
+                               std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers) {
         for (XmfDataBuffer &buffer: buffers) {
             std::vector<uint8_t> &compressedData = compressedBuffers[&buffer];
             for (int i = 0; i < compressedData.size(); i++) {
@@ -183,7 +189,7 @@ namespace xmf {
         }
     }
 
-    aiNode *XuMeshFile::ConvertToAiNode(const std::string &name, ConversionContext &context) {
+    aiNode *XmfFile::ConvertToAiNode(const std::string &name, ConversionContext &context) {
         auto *pMeshGroupNode = new aiNode();
         pMeshGroupNode->mName = name;
         try {
@@ -227,7 +233,7 @@ namespace xmf {
     }
 
     aiMesh *
-    XuMeshFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context) {
+    XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
         try {
@@ -242,7 +248,7 @@ namespace xmf {
         return pMesh;
     }
 
-    void XuMeshFile::AllocMeshVertices(aiMesh *pMesh, int numVertices) {
+    void XmfFile::AllocMeshVertices(aiMesh *pMesh, int numVertices) {
         if (numVertices <= 0) {
             throw std::runtime_error("AllocMeshVertices: numVertices must be > 0");
         }
@@ -319,7 +325,7 @@ namespace xmf {
         }
     }
 
-    void XuMeshFile::AllocMeshFaces(aiMesh *pMesh, int numIndices) {
+    void XmfFile::AllocMeshFaces(aiMesh *pMesh, int numIndices) {
         if (numIndices <= 0) {
             throw std::runtime_error("AllocMeshFaces: numIndices must be > 0");
         }
@@ -329,7 +335,7 @@ namespace xmf {
         pMesh->mFaces = new aiFace[numIndices / 3];
     }
 
-    void XuMeshFile::PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices) {
+    void XmfFile::PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices) {
         XmfDataBuffer *pIndexBuffer = GetIndexBuffer();
         if (!pIndexBuffer) {
             throw std::runtime_error("Mesh file has no index buffer");
@@ -413,7 +419,7 @@ namespace xmf {
         pMesh->mNumVertices = numIndices;
     }
 
-    void XuMeshFile::PopulateMeshFaces(aiMesh *pMesh, int numIndices) {
+    void XmfFile::PopulateMeshFaces(aiMesh *pMesh, int numIndices) {
         int index = 0;
         for (int i = 0; i < numIndices / 3; ++i) {
             aiFace &face = pMesh->mFaces[pMesh->mNumFaces++];
@@ -425,8 +431,7 @@ namespace xmf {
     }
 
 
-    std::shared_ptr<XuMeshFile>
-    XuMeshFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
+    std::shared_ptr<XmfFile> XmfFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
         std::vector<aiNode *> meshNodes;
         if (pNode->mNumChildren == 0) {
             meshNodes.push_back(pNode);
@@ -436,7 +441,7 @@ namespace xmf {
             }
         }
 
-        std::shared_ptr<XuMeshFile> pMeshFile = std::make_shared<XuMeshFile>();
+        std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>();
         pMeshFile->GetBuffers().resize(2);
         XmfDataBuffer &vertexBuffer = pMeshFile->GetBuffers()[0];
         XmfDataBuffer &indexBuffer = pMeshFile->GetBuffers()[1];
@@ -462,7 +467,7 @@ namespace xmf {
                         str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
             }
             if (!isCollisionMesh) {
-                XuMeshFile::ExtendVertexDeclaration(pMesh, vertexDecl);
+                XmfFile::ExtendVertexDeclaration(pMesh, vertexDecl);
             }
             vertexBuffer.Description.NumItemsPerSection += pMesh->mNumVertices;
             indexBuffer.Description.NumItemsPerSection += pMesh->mNumFaces * 3;
@@ -470,7 +475,7 @@ namespace xmf {
         if (isCollisionMesh) {
             vertexDecl.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
         }
-        XuMeshFile::ApplyVertexDeclaration(vertexDecl, vertexBuffer);
+        XmfFile::ApplyVertexDeclaration(vertexDecl, vertexBuffer);
         if (vertexBuffer.Description.NumItemsPerSection <= 0xFFFF) {
             indexBuffer.Description.ItemSize = sizeof(uint16_t);
             indexBuffer.Description.Format = 30;
@@ -517,7 +522,7 @@ namespace xmf {
         return pMeshFile;
     }
 
-    void XuMeshFile::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
+    void XmfFile::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
         std::vector<XmfVertexElement> meshDeclaration;
         if (pMesh->mVertices)
             meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
@@ -552,7 +557,7 @@ namespace xmf {
     }
 
     // TODO move me to XmfDataBuffer?
-    void XuMeshFile::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
+    void XmfFile::ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer) {
         if (declaration.size() >
             sizeof(buffer.Description.VertexElements) / sizeof(buffer.Description.VertexElements[0])) {
             throw std::runtime_error("Too many vertex elements in vertex declaration");

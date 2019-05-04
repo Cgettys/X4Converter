@@ -7,7 +7,7 @@
 #include <pugixml.hpp>
 #include <string>
 #include <assimp/scene.h>
-#include <X4ConverterTools/xmf/XuMeshFile.h>
+#include <X4ConverterTools/xmf/XmfFile.h>
 namespace test {
 
     class TestUtil {
@@ -19,9 +19,9 @@ namespace test {
 
         static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
-        static void checkXuMeshFileEquality(xmf::XuMeshFile &lhs, xmf::XuMeshFile &rhs);
+        static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);
 
-        static void checkXmfHeaderEquality(xmf::XuMeshFile &lFile, xmf::XuMeshFile &rFile);
+        static void checkXmfHeaderEquality(xmf::XmfFile &lFile, xmf::XmfFile &rFile);
 
     };
 }

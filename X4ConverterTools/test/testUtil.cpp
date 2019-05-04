@@ -142,14 +142,14 @@ namespace test {
 
     using namespace xmf;
 
-    void TestUtil::checkXuMeshFileEquality(XuMeshFile &lhs, XuMeshFile &rhs) {
+    void TestUtil::checkXuMeshFileEquality(XmfFile &lhs, XmfFile &rhs) {
         checkXmfHeaderEquality(lhs, rhs);
         // TODO write nice equality functions for this
 //            BOOST_TEST( lhs.GetBuffers() == rhs.GetBuffers());
 //            BOOST_TEST( lhs.GetMaterials() == rhs.GetMaterials());
     }
 
-    void TestUtil::checkXmfHeaderEquality(XuMeshFile &lFile, XuMeshFile &rFile) {
+    void TestUtil::checkXmfHeaderEquality(XmfFile &lFile, XmfFile &rFile) {
         XmfHeader lhs = lFile.GetHeader();
         XmfHeader rhs = rFile.GetHeader();
 

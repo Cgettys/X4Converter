@@ -4,7 +4,7 @@
 #include <boost/filesystem.hpp>
 #include <assimp/types.h>
 #include <X4ConverterTools/Conversion.h>
-#include <X4ConverterTools/xmf/XuMeshFile.h>
+#include <X4ConverterTools/xmf/XmfFile.h>
 #include <X4ConverterTools/model/Connection.h>
 
 #include "testUtil.h"
@@ -104,12 +104,14 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         const std::string outputXMLPath = tgtPath + ".out.xml";
         // To prevent cross contamination between runs, remove dae to be safe
         fs::remove(gameBaseFolderPath + daePath);
+        fs::remove(gameBaseFolderPath + outputXMLPath);
         // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
         // TODO as we get further along, start cutting out more and more of this file
         pugi::xml_document doc;
         BOOST_TEST_REQUIRE(doc.load_file((gameBaseFolderPath + inputXMLPath).c_str()).status == pugi::status_ok);
-        auto compNode = doc.child("components").child("component");
-        compNode.remove_child("connections");
+        auto compNode = doc.child("components");
+        compNode.remove_child("component");
+        compNode.remove_child("source");
         BOOST_TEST_REQUIRE(doc.save_file((gameBaseFolderPath + outputXMLPath).c_str()));
 
         BOOST_TEST_CHECKPOINT("Begin test");

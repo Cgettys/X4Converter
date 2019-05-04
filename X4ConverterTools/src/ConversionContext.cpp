@@ -2,6 +2,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <iostream>
 using namespace boost;
 using namespace boost::filesystem;
 
@@ -10,6 +11,7 @@ ConversionContext::ConversionContext(const std::string &gameBaseFolderPath) : ma
 
 }
 
+using namespace model;
 void ConversionContext::AddMaterialsToScene(const std::string &filePath, aiScene *pScene) {
     // Add the materials to the scene
     if (!Materials.empty()) {

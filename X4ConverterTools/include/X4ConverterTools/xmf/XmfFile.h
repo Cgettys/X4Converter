@@ -26,7 +26,7 @@
 
 namespace xmf {
 
-    class XuMeshFile {
+    class XmfFile {
     public:
         // TODO something better that takes into account writing?
         XmfHeader GetHeader() { return header; };
@@ -44,13 +44,13 @@ namespace xmf {
 
         std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
-        int NumMaterials() { return boost::numeric_cast<int>(materials.size()); }
+        int NumMaterials();
 
         void AddMaterial(int firstIndex, int numIndices, const std::string &name);
 
-        static std::shared_ptr<XuMeshFile> ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
+        static std::shared_ptr<XmfFile> ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
 
-        static std::shared_ptr<XuMeshFile> ReadFromIOStream(Assimp::IOStream *pStream);
+        static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);
 
         void WriteToFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
 
@@ -70,7 +70,7 @@ namespace xmf {
         static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 
         // For export:
-        static std::shared_ptr<XuMeshFile> GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
+        static std::shared_ptr<XmfFile> GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
 
         static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
 
