@@ -41,7 +41,7 @@ namespace model {
 
         // TODO figure out a better way
         if (!hasRef) {
-            collisionLod = new CollisionLod(getName(), ctx);
+            collisionLod = std::make_unique<CollisionLod>(getName(), ctx);
 
             for (auto lodNode : lodsNode.children()) {
                 auto lod = VisualLod(lodNode, getName(), ctx);
@@ -51,9 +51,6 @@ namespace model {
 
     }
 
-    Part::~Part() {
-        delete collisionLod;
-    }
 
     aiNode *Part::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
         auto *result = new aiNode(getName());
@@ -86,7 +83,7 @@ namespace model {
                 lod.ConvertFromAiNode(child, ctx);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
-                collisionLod = new CollisionLod(ctx);
+                collisionLod = std::make_unique<CollisionLod>(ctx);
                 collisionLod->ConvertFromAiNode(child, ctx);
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere

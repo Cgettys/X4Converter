@@ -13,8 +13,6 @@ namespace model {
 
         explicit Part(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx);
 
-        ~Part() override;
-
         aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
 
         void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
@@ -23,7 +21,7 @@ namespace model {
 
     private:
         bool hasRef;
-        CollisionLod *collisionLod;
+        std::shared_ptr<CollisionLod> collisionLod;
         std::map<int, VisualLod> lods;
     };
 }
