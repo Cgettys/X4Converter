@@ -186,8 +186,7 @@ namespace xmf {
     }
 
     aiNode *XmfFile::ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx) {
-        auto *pMeshGroupNode = new aiNode();
-        pMeshGroupNode->mName = name;
+        auto *pMeshGroupNode = new aiNode(name);
         try {
             if (GetMaterials().empty()) {
                 aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, ctx);
@@ -327,6 +326,7 @@ namespace xmf {
         if (numIndices % 3) {
             throw std::runtime_error("AllocMeshFaces: numIndices must be a multiple of 3");
         }
+        pMesh->mPrimitiveTypes = aiPrimitiveType_TRIANGLE;
         pMesh->mFaces = new aiFace[numIndices / 3];
     }
 
