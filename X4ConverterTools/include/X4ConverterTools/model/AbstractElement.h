@@ -25,7 +25,7 @@ namespace model {
 
         virtual void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) = 0;
 
-        virtual void ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) = 0;
+        virtual void ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) = 0;
 
     protected:
 

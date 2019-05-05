@@ -1,10 +1,12 @@
+#include <utility>
+
 #include <X4ConverterTools/model/AbstractElement.h>
 #include <vector>
 #include <cstdio>
 #include <iostream>
 
 namespace model {
-    AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(ctx) {
+    AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(std::move(ctx)) {
 
     }
 
@@ -77,8 +79,7 @@ namespace model {
         return parent.append_child(elementName.c_str());
     }
 
-    pugi::xml_node AbstractElement::ChildByAttr(pugi::xml_node parent, std::string elemName, std::string attrName,
-                                                std::string attrVal) {
+    pugi::xml_node AbstractElement::ChildByAttr(pugi::xml_node parent, std::string elemName, std::string attrName, std::string attrVal) {
         auto result = parent.find_child_by_attribute(elemName.c_str(), attrName.c_str(), attrVal.c_str());
         if (!result.empty()) {
             return result;

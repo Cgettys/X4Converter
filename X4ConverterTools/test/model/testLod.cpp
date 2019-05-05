@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             lod.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");
-            lod.ConvertToXml(lodsNode, ctx);
+            lod.ConvertToGameFormat(lodsNode, ctx);
             BOOST_TEST(lodsNode.child("lod").empty() == false);
             BOOST_TEST(lodsNode.child("lod").attribute("index").as_int() == 0);
             delete ainode;
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             lodOne.ConvertFromAiNode(ainodeOne, ctx);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");
-            lodZero.ConvertToXml(lodsNode, ctx);
-            lodOne.ConvertToXml(lodsNode, ctx);
+            lodZero.ConvertToGameFormat(lodsNode, ctx);
+            lodOne.ConvertToGameFormat(lodsNode, ctx);
 
             auto firstChild = lodsNode.first_child();
             auto secondChild = lodsNode.last_child();

@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
             pugi::xml_document doc;
             auto outNode = doc.append_child("connections");
-            conn.ConvertToXml(outNode, ctx);
+            conn.ConvertToGameFormat(outNode, ctx);
 
 
             auto offsetNode = outNode.child("connection").child("offset");
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto outNode = doc.append_child("connections");
 
             auto conn = Connection(node, ctx);
-            conn.ConvertToXml(outNode, ctx);
+            conn.ConvertToGameFormat(outNode, ctx);
 
             auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
             BOOST_TEST(std::string(connNode.attribute("tags").value()) ==

@@ -158,7 +158,7 @@ namespace model {
 
     }
 
-    void Component::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Component::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         // TODO asset.xmf?
         if (std::string(out.name()) != "components") {
             throw std::runtime_error("Component should be under components element");
@@ -166,7 +166,7 @@ namespace model {
         auto compNode = ChildByAttr(out, "component", "name", getName());
         auto connsNode = Child(compNode, "connections");
         for (auto conn : connections) {
-            conn.ConvertToXml(connsNode, ctx);
+            conn.ConvertToGameFormat(connsNode, ctx);
         }
     }
 

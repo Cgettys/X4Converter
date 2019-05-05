@@ -94,7 +94,7 @@ namespace model {
         // TODO more
     }
 
-    void Part::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Part::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "parts") {
             throw std::runtime_error("part must be appended to a parts xml element");
         }
@@ -120,9 +120,9 @@ namespace model {
 
         if (!lods.empty()) {
             auto lodsNode = Child(partNode, "lods");
-            collisionLod->ConvertToXml(lodsNode, ctx); // TODO
+            collisionLod->ConvertToGameFormat(lodsNode, ctx); // TODO
             for (auto lod : lods) {
-                lod.second.ConvertToXml(lodsNode, ctx);
+                lod.second.ConvertToGameFormat(lodsNode, ctx);
             }
         } else {
             partNode.remove_child("lods");

@@ -118,7 +118,7 @@ namespace model {
         }
     }
 
-    void Connection::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Connection::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "connections") {
             throw std::runtime_error("parent of connection must be connections xml element");
         }
@@ -163,7 +163,7 @@ namespace model {
         }
         auto partsNode = Child(node, "parts");
         for (auto part : parts) {
-            part.ConvertToXml(partsNode, ctx);
+            part.ConvertToGameFormat(partsNode, ctx);
         }
 
     }

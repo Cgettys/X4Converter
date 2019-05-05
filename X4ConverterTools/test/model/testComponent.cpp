@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             component.ConvertFromAiNode(node, ctx);
             BOOST_TEST(component.getNumberOfConnections() == 3);
 
-            component.ConvertToXml(outNode, ctx);
+            component.ConvertToGameFormat(outNode, ctx);
 
             auto connsNode = outNode.child("component").child("connections");
             BOOST_TEST(connsNode.find_child_by_attribute("connection", "name", "test_conn_0"));

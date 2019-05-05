@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToXml(node, ctx);
+            part.ConvertToGameFormat(node, ctx);
 
             std::string actualName = node.child("part").attribute("name").value();
             BOOST_TEST(partName == actualName);
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             part.ConvertFromAiNode(node, ctx);
             pugi::xml_document doc;
             auto outNode = doc.append_child("parts");
-            part.ConvertToXml(outNode, ctx);
+            part.ConvertToGameFormat(outNode, ctx);
 
             auto partNode = outNode.child("part");
             std::string ref = partNode.attribute("ref").value();
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             part.ConvertFromAiNode(ainode, ctx);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToXml(node, ctx);
+            part.ConvertToGameFormat(node, ctx);
 
             BOOST_TEST(!node.child("part").child("lods").empty());
         }

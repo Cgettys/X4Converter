@@ -30,7 +30,7 @@ namespace model {
         index = std::stoi(rawName.substr(pos + 4));
     }
 
-    void VisualLod::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void VisualLod::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         if (std::string(out.name()) != "lods") {
             throw std::runtime_error("Lods must be added to a lods node");
         }

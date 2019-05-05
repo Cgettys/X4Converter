@@ -78,7 +78,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     if (!tgtNode) {
         tgtNode = doc.append_child("components");
     }
-    component.ConvertToXml(tgtNode, ctx);
+    component.ConvertToGameFormat(tgtNode, ctx);
     doc.save_file(actualXmlFilePath.c_str());
 
     delete io;

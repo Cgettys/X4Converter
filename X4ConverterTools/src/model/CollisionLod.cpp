@@ -26,7 +26,7 @@ namespace model {
         index = COLLISION_INDEX;
     }
 
-    void CollisionLod::ConvertToXml(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void CollisionLod::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
         // TODO XMF
     }
 }
