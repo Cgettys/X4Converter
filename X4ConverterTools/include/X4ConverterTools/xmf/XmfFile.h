@@ -56,9 +56,10 @@ namespace xmf {
 
         void WriteToIOStream(Assimp::IOStream *pStream);
 
-        aiNode *ConvertToAiNode(const std::string &name, ConversionContext &context);
+        aiNode *ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx);
 
-        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context);
+        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
+                                std::shared_ptr<ConversionContext> context);
 
         //void                            AllocSceneMaterials             ( aiScene* pScene);
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);

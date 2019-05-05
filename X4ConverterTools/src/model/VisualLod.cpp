@@ -21,8 +21,7 @@ namespace model {
     }
 
     aiNode *VisualLod::ConvertToAiNode() {
-        auto result = new aiNode(getName());
-        return result;
+        return xmfFile->ConvertToAiNode(getName(), ctx);
     }
 
     void VisualLod::ConvertFromAiNode(aiNode *node) {
@@ -34,6 +33,7 @@ namespace model {
             throw std::runtime_error("lod lacks index");
         }
         index = std::stoi(rawName.substr(pos + 4));
+        xmfFile = xmf::XmfFile::GenerateMeshFile(ctx->pScene, node, false);
     }
 
     void VisualLod::ConvertToGameFormat(pugi::xml_node out) {

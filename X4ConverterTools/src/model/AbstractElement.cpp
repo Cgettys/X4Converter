@@ -59,7 +59,7 @@ namespace model {
         auto firstSplit = raw.find('|');
         auto secondSplit = raw.rfind('|');
         if (firstSplit == secondSplit || firstSplit == std::string::npos || secondSplit == std::string::npos) {
-            std::cerr << "warning, could not read node" << raw << std::endl;
+            std::cerr << "warning, could not read node: " << raw << std::endl;
             return;
         }
         auto namePart = raw.substr(0, firstSplit);

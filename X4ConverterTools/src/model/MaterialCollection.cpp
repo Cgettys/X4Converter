@@ -10,6 +10,10 @@ namespace model {
     MaterialCollection::MaterialCollection(pugi::xml_node node) {
         _node = node;
         _name = node.attribute("name").value();
+        for (auto matNode : node.children("material")) {
+            auto mat = Material(_name, matNode);
+            _materials[mat.GetName()] = mat;
+        }
     }
 
     Material *MaterialCollection::GetMaterial(const std::string &name) {

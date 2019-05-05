@@ -12,8 +12,6 @@ namespace model {
     public:
         explicit MaterialLibrary(const std::string &gameBaseFolderPath);
 
-        const MaterialCollection &GetCollection(const std::string &name);
-
         Material *GetMaterial(const std::string &dottedName);
 
     private:

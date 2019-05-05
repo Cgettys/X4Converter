@@ -28,23 +28,20 @@ namespace model {
         }
     }
 
-    const MaterialCollection &MaterialLibrary::GetCollection(const std::string &name) {
-        auto it = collections.find(name);
-        if (it == collections.end()) {
-            throw std::runtime_error("Could not find collection: " + name);
-        }
-        const auto &val = it->second;
-        return val;
-    }
+
 
     Material *MaterialLibrary::GetMaterial(const std::string &dottedName) {
+
         std::smatch match;
         std::string regexPattern(R"((\w+)\.(\w+))");
         if (!std::regex_match(dottedName, match, std::regex(regexPattern))) {
             throw std::runtime_error("Could not parse material name: " + dottedName);
         }
 
-        auto collection = GetCollection(match[1]);
-        return collection.GetMaterial(match[2]);
+        auto collIt = collections.find(match[1]);
+        if (collIt == collections.end()) {
+            throw std::runtime_error("Could not find collection: " + match[1].str());
+        }
+        return collIt->second.GetMaterial(match[2]);
     }
 }

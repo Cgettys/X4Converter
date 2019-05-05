@@ -189,29 +189,28 @@ namespace xmf {
         }
     }
 
-    aiNode *XmfFile::ConvertToAiNode(const std::string &name, ConversionContext &context) {
+    aiNode *XmfFile::ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx) {
         auto *pMeshGroupNode = new aiNode();
         pMeshGroupNode->mName = name;
         try {
             if (GetMaterials().empty()) {
-                aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, context);
+                aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, ctx);
 
                 pMeshGroupNode->mMeshes = new uint32_t[1];
-                pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] = numeric_cast<unsigned int>(
-                        context.Meshes.size());
-                context.Meshes.push_back(pMesh);
+                pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] = numeric_cast<unsigned int>(ctx->Meshes.size());
+                ctx->Meshes.push_back(pMesh);
             } else {
                 pMeshGroupNode->mChildren = new aiNode *[NumMaterials()];
 
                 for (XmfMaterial &material : GetMaterials()) {
                     aiMesh *pMesh = ConvertToAiMesh(material.FirstIndex, material.NumIndices,
                                                     name + "X" + replace_all_copy(std::string(material.Name), ".", "X"),
-                                                    context);
+                                                    ctx);
 
-                    auto itMat = context.Materials.find(material.Name);
-                    if (itMat == context.Materials.end()) {
-                        pMesh->mMaterialIndex = numeric_cast<unsigned int>(context.Materials.size());
-                        context.Materials[material.Name] = pMesh->mMaterialIndex;
+                    auto itMat = ctx->Materials.find(material.Name);
+                    if (itMat == ctx->Materials.end()) {
+                        pMesh->mMaterialIndex = numeric_cast<unsigned int>(ctx->Materials.size());
+                        ctx->Materials[material.Name] = pMesh->mMaterialIndex;
                     } else {
                         pMesh->mMaterialIndex = itMat->second;
                     }
@@ -219,8 +218,8 @@ namespace xmf {
                     auto *pMeshNode = new aiNode();
                     pMeshNode->mName = pMesh->mName;
                     pMeshNode->mMeshes = new uint32_t[1];
-                    pMeshNode->mMeshes[pMeshNode->mNumMeshes++] = numeric_cast<unsigned int>(context.Meshes.size());
-                    context.Meshes.push_back(pMesh);
+                    pMeshNode->mMeshes[pMeshNode->mNumMeshes++] = numeric_cast<unsigned int>(ctx->Meshes.size());
+                    ctx->Meshes.push_back(pMesh);
 
                     pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] = pMeshNode;
                 }
@@ -232,8 +231,8 @@ namespace xmf {
         return pMeshGroupNode;
     }
 
-    aiMesh *
-    XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name, ConversionContext &context) {
+    aiMesh *XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
+                                     std::shared_ptr<ConversionContext> ctx) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
         try {

@@ -68,8 +68,8 @@ namespace model {
         return result;
     }
 
-    static std::regex lodRegex("[^|]+\\|lod\\d");
-    static std::regex collisionRegex("[^|]+\\|collision");
+    static std::regex lodRegex("[^-]+\\-lod\\d");
+    static std::regex collisionRegex("[^-]+\\-collision");
 
     void Part::ConvertFromAiNode(aiNode *node) {
         std::string tmp = std::string();

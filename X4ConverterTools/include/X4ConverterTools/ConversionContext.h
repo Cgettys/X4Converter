@@ -12,7 +12,7 @@ class ConversionContext {
 public:
     explicit ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io);
 
-    void AddMaterialsToScene(const std::string &filePath, aiScene *pScene);
+    void PopulateSceneArrays();
 
     void SetSourcePathSuffix(std::string path);
 
@@ -23,6 +23,7 @@ public:
     std::map<std::string, uint32_t> Materials;
     std::vector<aiMesh *> Meshes;
     std::string gameBaseFolderPath;
+    aiScene *pScene;
 protected:
     std::shared_ptr<Assimp::IOSystem> io;
 private:

@@ -34,10 +34,12 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
 
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
+    aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
+    ctx->pScene = pScene;
     model::Component component(doc.root(), ctx);
     aiNode *root = component.ConvertToAiNode();
-    aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     pScene->mRootNode = root;
+    ctx->PopulateSceneArrays();
 
 //    fs::path aniPath(daeFilePath);
 //    aniPath.replace_extension("anixml");

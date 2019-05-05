@@ -35,6 +35,7 @@ if (NOT MINGW)
             #GIT_TAG fix-SceneCombiner-DeepCopy
             #GIT_TAG v4.1.0
             CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_TOOLCHAIN_FILE=
             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/assimp
             -DCMAKE_CXX_FLAGS="-fPIC"

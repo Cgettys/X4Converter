@@ -119,7 +119,6 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
         auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
         // TODO as we get further along, leave in more of this
-        compNode.remove_child("source");
         compNode.remove_child("layers");
 
         auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
