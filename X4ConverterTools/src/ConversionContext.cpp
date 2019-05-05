@@ -132,7 +132,7 @@ void ConversionContext::PopulateSceneArrays() {
         pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
         for (auto &it : Materials) {
             Material *pMaterial = materialLibrary.GetMaterial(it.first);
-            auto pAiMaterial = pMaterial->ConvertToAiMaterial(modelFolderPath, gameBaseFolderPath);
+            auto pAiMaterial = pMaterial->ConvertToAiMaterial(this);
             pScene->mMaterials[it.second] = pAiMaterial;
         }
     }

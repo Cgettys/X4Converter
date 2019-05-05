@@ -4,6 +4,8 @@
 #include <boost/filesystem.hpp>
 #include <assimp/scene.h>
 
+class ConversionContext;
+
 namespace model {
     class Material {
     public:
@@ -13,27 +15,18 @@ namespace model {
 
         const std::string &GetName() { return _name; }
 
-        aiMaterial *ConvertToAiMaterial(const boost::filesystem::path &modelFolderPath,
-                                        const boost::filesystem::path &baseFolderPath);
+        aiMaterial *ConvertToAiMaterial(ConversionContext *ctx);
 
     private:
+
         const std::string
         GetTextureFilePath(const std::string &filePath, const boost::filesystem::path &baseFolderPath) const;
 
         const std::string GetDecompressedTextureFilePath(const std::string &filePath,
                                                          const boost::filesystem::path &baseFolderPath) const;
 
-        void populateDiffuseLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
-                                  const boost::filesystem::path &baseFolderPat);
-
-        void populateSpecularLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
-                                   const boost::filesystem::path &baseFolderPath);
-
-        void populateNormalLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
-                                 const boost::filesystem::path &baseFolderPath);
-
-        void populateEnvironmentLayer(aiMaterial *pAiMaterial, const boost::filesystem::path &modelFolderPath,
-                                      const boost::filesystem::path &baseFolderPath);
+        void PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
+                           ConversionContext *ctx);
 
         std::string _pCollectionName;
         std::string _name;

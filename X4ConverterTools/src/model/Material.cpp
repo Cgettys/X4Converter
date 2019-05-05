@@ -6,6 +6,7 @@
 #include <X4ConverterTools/ConversionContext.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <cstdint>
+
 using namespace boost;
 using namespace boost::algorithm;
 using namespace boost::filesystem;
@@ -53,19 +54,17 @@ namespace model {
         }
     }
 
-    aiMaterial *Material::ConvertToAiMaterial(const path &modelFolderPath, const path &baseFolderPath) {
+    aiMaterial *Material::ConvertToAiMaterial(ConversionContext *ctx) {
         auto pAiMaterial = new aiMaterial();
         std::string nameStr = _pCollectionName + "X" + GetName();
-//    aiString *name = new aiString(nameStr);
         aiString name(nameStr);
         // Explicit constructor new aiString is broken
         pAiMaterial->AddProperty(&name, AI_MATKEY_NAME);
-//    delete name;
-        populateDiffuseLayer(pAiMaterial, modelFolderPath, baseFolderPath);
-        populateSpecularLayer(pAiMaterial, modelFolderPath, baseFolderPath);
-        populateNormalLayer(pAiMaterial, modelFolderPath, baseFolderPath);
-        populateEnvironmentLayer(pAiMaterial, modelFolderPath, baseFolderPath);
-
+        PopulateLayer(pAiMaterial, _diffuseMapFilePath, AI_MATKEY_TEXTURE_DIFFUSE(0), ctx);
+        PopulateLayer(pAiMaterial, _specularMapFilePath, AI_MATKEY_TEXTURE_SPECULAR(0), ctx);
+        PopulateLayer(pAiMaterial, _normalMapFilePath, AI_MATKEY_TEXTURE_NORMALS(0), ctx);
+        PopulateLayer(pAiMaterial, _environmentMapFilePath, AI_MATKEY_TEXTURE_REFLECTION(0), ctx);
+        // TODO what does this do
 //    if (textureFilePath.size() < 1){
 //        std::cerr << "Warning, empty textureFilePath for material"<<std::endl;
 //    }
@@ -80,60 +79,21 @@ namespace model {
     }
 
     void
-    Material::populateDiffuseLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
-        if (!_diffuseMapFilePath.empty()) {
-            std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath, baseFolderPath);
+    Material::PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
+                            ConversionContext *ctx) {
+        if (!path.empty()) {
+            // TODO should GetDecompressedTextureFilePath move?
+            std::string textureFilePath = GetDecompressedTextureFilePath(path, ctx->gameBaseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
-                pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
+                aiString temp(ConversionContext::GetRelativePath(textureFilePath, ctx->gameBaseFolderPath).string());
+                pAiMaterial->AddProperty(&temp, key, type, num);
             } else {
                 // throw std::runtime_error("Could not find Diffuse Texture for Material!");
-                std::cerr << "WARNING: Could not find Diffuse Texture for Material!\n";
+                std::cerr << "WARNING: Could not find Texture for Material!\n";
             }
         }
     }
 
-    void
-    Material::populateSpecularLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
-        if (!_specularMapFilePath.empty()) {
-            std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath, baseFolderPath);
-            if (!textureFilePath.empty()) {
-                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
-                pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
-            } else {
-//            throw std::runtime_error("Could not find Specular Texture for Material!");
-                std::cerr << "WARNING: Could not find Specular Texture for Material!\n";
-            }
-        }
-    }
-
-    void
-    Material::populateNormalLayer(aiMaterial *pAiMaterial, const path &modelFolderPath, const path &baseFolderPath) {
-        if (!_normalMapFilePath.empty()) {
-            std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, baseFolderPath);
-            if (!textureFilePath.empty()) {
-                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
-                pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
-            } else {
-//            throw std::runtime_error("Could not find Normal Texture for Material!");
-                std::cerr << "WARNING: Could not find Normal Texture for Material!\n";
-            }
-        }
-    }
-
-    void Material::populateEnvironmentLayer(aiMaterial *pAiMaterial, const path &modelFolderPath,
-                                            const path &baseFolderPath) {
-        if (!_environmentMapFilePath.empty()) {
-            std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath, baseFolderPath);
-            if (!textureFilePath.empty()) {
-                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
-                pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_REFLECTION(0));
-            } else {
-                std::cerr << "WARNING: Could not find Environment Texture for Material!\n";
-//            throw std::runtime_error("Could not find Environment Texture for Material!");
-            }
-        }
-    }
 
     const std::string
     Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
