@@ -17,8 +17,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
 
         BOOST_AUTO_TEST_CASE(read_lod_name) {
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -26,7 +25,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
 
             auto lod = VisualLod(node, "anim_main", ctx);
-            std::string expectedName = "anim_main|lod0";
+            std::string expectedName = "anim_main-lod0";
             BOOST_TEST(lod.getName() == expectedName);
             auto result = lod.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
@@ -35,8 +34,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(read_lod_no_index) {
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -48,9 +46,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -62,9 +58,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(part_name_from_ainode) {
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
-            std::string lodName = "anim_main|lod0";
+            auto ctx = TestUtil::GetTestContext("TEST");
+            std::string lodName = "anim_main-lod0";
             auto ainode = new aiNode(lodName);
 
             auto lod = VisualLod(ctx);
@@ -75,9 +70,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_one_lod) {
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
-            std::string lodName = "anim_main|lod0";
+            auto ctx = TestUtil::GetTestContext("TEST");
+            std::string lodName = "anim_main-lod0";
             auto ainode = new aiNode(lodName);
 
             auto lod = VisualLod(ctx);
@@ -91,14 +85,13 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_two_lod) {
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
-            std::string lodZeroName = "anim_main|lod0";
+            auto ctx = TestUtil::GetTestContext("TEST");
+            std::string lodZeroName = "anim_main-lod0";
             auto ainodeZero = new aiNode(lodZeroName);
             auto lodZero = VisualLod(ctx);
             lodZero.ConvertFromAiNode(ainodeZero);
 
-            std::string lodOneName = "anim_main|lod1";
+            std::string lodOneName = "anim_main-lod1";
             auto ainodeOne = new aiNode(lodOneName);
             auto lodOne = VisualLod(ctx);
             lodOne.ConvertFromAiNode(ainodeOne);

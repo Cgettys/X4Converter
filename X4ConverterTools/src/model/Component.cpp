@@ -16,6 +16,7 @@ namespace model {
         if (componentNode.empty()) {
             throw std::runtime_error("<component> node not found");
         }
+
         if (componentNode.next_sibling()) {
             std::cerr << "Warning, this file contains more than one component. Ignoring all but the first."
                       << std::endl;
@@ -24,6 +25,15 @@ namespace model {
         if (!componentNode.attribute("name")) {
             throw std::runtime_error("Unnamed component!");
         }
+        if (!componentNode.child("source")) {
+            std::cerr << "source directory not specified" << std::endl;
+        } else {
+            // TODO verify not null
+            std::string ref = componentNode.child("source").attribute("geometry").value();
+            attrs["source"] = ref;
+            ctx->SetSourcePathSuffix(ref);
+        }
+
         for (auto attr: componentNode.attributes()) {
             auto name = std::string(attr.name());
             auto value = std::string(attr.value());
@@ -165,12 +175,17 @@ namespace model {
         }
         auto compNode = ChildByAttr(out, "component", "name", getName());
         auto connsNode = Child(compNode, "connections");
+        for (const auto &attr : attrs) {
+            if (attr.first != "source") {
+                ChildByAttr(compNode, "source", "geometry", attr.second);
+                // TODO compare to output path and confirm if wrong
+                ctx->SetSourcePathSuffix(attr.second);
+            } else {
+                WriteAttr(compNode, attr.first, attr.second);
+            }
+        }
         for (auto conn : connections) {
             conn.ConvertToGameFormat(connsNode);
-        }
-
-        for (const auto &attr : attrs) {
-            WriteAttr(compNode, attr.first, attr.second);
         }
     }
 

@@ -15,14 +15,14 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
     BOOST_AUTO_TEST_SUITE(PartUnitTests)
 
+        // TODO split all these sorta unit tests in half in all files
         BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+            partNode.remove_child("lods");
             BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             auto part = Part(partNode, ctx);
             BOOST_TEST(part.getName() == "anim_main");
@@ -33,10 +33,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+            partNode.remove_child("lods");
             BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             auto part = Part(partNode, ctx);
             auto result = part.ConvertToAiNode();
@@ -51,9 +50,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
@@ -64,9 +61,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
@@ -75,9 +70,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode);
@@ -89,8 +82,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         BOOST_AUTO_TEST_CASE(ainode_to_xml_name) {
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode);
@@ -109,9 +101,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection35']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             auto part = Part(partNode, ctx);
 
@@ -131,9 +121,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto children = new aiNode *[1];
             children[0] = new aiNode(childName);
             node->addChildren(1, children);
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             Part part(ctx);
             part.ConvertFromAiNode(node);
@@ -167,8 +155,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             auto part = Part(partNode, ctx);
 
@@ -192,9 +179,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             ainodeChildren[1] = new aiNode(partName + "|lod1");
             ainodeChildren[2] = new aiNode(partName + "|lod2");
             ainode->addChildren(3, ainodeChildren);
-
-            auto io = std::make_shared<Assimp::DefaultIOSystem>();
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
+            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode);

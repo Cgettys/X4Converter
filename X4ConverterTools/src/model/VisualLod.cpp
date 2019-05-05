@@ -12,8 +12,12 @@ namespace model {
             throw std::runtime_error("VisualLod must have an index attribute!");
         }
         index = node.attribute("index").as_int();
-        setName(str(boost::format("%1%|lod%2%") % partName % index));
-//        xmfFile = xmf::XmfFile::ReadFromIOStream()
+        std::string tmp = str(boost::format("%1%-lod%2%") % partName % index);
+        setName(tmp);
+
+        // TODO better util method of some kind???
+        auto pStream = ctx->GetSourceFile(tmp + ".xmf");
+        xmfFile = xmf::XmfFile::ReadFromIOStream(pStream);
     }
 
     aiNode *VisualLod::ConvertToAiNode() {
@@ -25,7 +29,7 @@ namespace model {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
-        size_t pos = rawName.rfind("|lod");
+        size_t pos = rawName.rfind("-lod");
         if (pos == std::string::npos) {
             throw std::runtime_error("lod lacks index");
         }

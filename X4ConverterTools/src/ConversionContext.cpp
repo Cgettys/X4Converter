@@ -3,6 +3,8 @@
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
+#include <X4ConverterTools/util/PathUtil.h>
+
 using namespace boost;
 using namespace boost::filesystem;
 
@@ -12,6 +14,7 @@ ConversionContext::ConversionContext(const std::string &gameBaseFolderPath, std:
 }
 
 using namespace model;
+
 void ConversionContext::AddMaterialsToScene(const std::string &filePath, aiScene *pScene) {
     // Add the materials to the scene
     if (!Materials.empty()) {
@@ -33,5 +36,29 @@ void ConversionContext::AddMaterialsToScene(const std::string &filePath, aiScene
             pScene->mMaterials[it.second] = pAiMaterial;
         }
     }
+}
+
+void ConversionContext::SetSourcePathSuffix(std::string path) {
+    sourcePathSuffix = path;
+}
+
+std::string ConversionContext::GetSourcePath() {
+    if (sourcePathSuffix.empty()) {
+        throw std::runtime_error("Source path suffix has not been set!");
+    }
+    return PathUtil::MakePlatformSafe(gameBaseFolderPath + "/" + sourcePathSuffix);
+}
+
+// callee frees
+Assimp::IOStream *ConversionContext::GetSourceFile(std::string name, std::string mode) {
+    std::string path = PathUtil::MakePlatformSafe(GetSourcePath() + "/" + name);
+    if (!io->Exists(path)) {
+        throw std::runtime_error("Source file missing: " + name);
+    }
+    auto result = io->Open(path, mode);
+    if (result == nullptr) {
+        throw std::runtime_error("Source file could not be opened: " + name);
+    }
+    return result;
 }
 

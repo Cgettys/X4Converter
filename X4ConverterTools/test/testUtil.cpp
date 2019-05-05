@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "testUtil.h"
 
 #include <set>
@@ -31,6 +33,13 @@ namespace test {
         char *path = std::getenv("X4_UNPACKED_ROOT");
         BOOST_TEST_REQUIRE(path != nullptr);
         return std::string(path);
+    }
+
+    std::shared_ptr<ConversionContext> TestUtil::GetTestContext(std::string geomPath) {
+        auto io = std::make_shared<Assimp::DefaultIOSystem>();
+        auto ctx = std::make_shared<ConversionContext>(GetBasePath(), io);
+        ctx->SetSourcePathSuffix(std::move(geomPath));
+        return ctx;
     }
 
     void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc) {
@@ -82,16 +91,13 @@ namespace test {
         my_walker actualWalk;
         actualDoc->traverse(actualWalk);
         std::set<std::string> expectedMinusActual;
-        std::set_difference(expectedWalk.paths.begin(), expectedWalk.paths.end(), actualWalk.paths.begin(),
-                            actualWalk.paths.end(), std::inserter(expectedMinusActual, expectedMinusActual.begin()));
+        std::set_difference(expectedWalk.paths.begin(), expectedWalk.paths.end(), actualWalk.paths.begin(), actualWalk.paths.end(), std::inserter(expectedMinusActual, expectedMinusActual.begin()));
 
         std::set<std::string> actualMinusExpected;
-        std::set_difference(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(),
-                            expectedWalk.paths.end(), std::inserter(actualMinusExpected, actualMinusExpected.begin()));
+        std::set_difference(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(), expectedWalk.paths.end(), std::inserter(actualMinusExpected, actualMinusExpected.begin()));
 
         std::set<std::string> intersection;
-        std::set_intersection(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(),
-                              expectedWalk.paths.end(), std::inserter(intersection, intersection.begin()));
+        std::set_intersection(actualWalk.paths.begin(), actualWalk.paths.end(), expectedWalk.paths.begin(), expectedWalk.paths.end(), std::inserter(intersection, intersection.begin()));
         BOOST_TEST(expectedMinusActual.size() == 0);
         for (auto &&x : expectedMinusActual) {
             printf("Output was missing path: %s\n", x.c_str());
