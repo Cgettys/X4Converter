@@ -138,7 +138,7 @@ namespace model {
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
-            if (childName.find("class") != std::string::npos) {
+            if (childName.find("class") != std::string::npos || childName.find("source") != std::string::npos) {
                 readAiNodeChild(child);
                 continue;
             } else if (childName.find('*') == std::string::npos) {
@@ -176,7 +176,7 @@ namespace model {
         auto compNode = ChildByAttr(out, "component", "name", getName());
         auto connsNode = Child(compNode, "connections");
         for (const auto &attr : attrs) {
-            if (attr.first != "source") {
+            if (attr.first == "source") {
                 ChildByAttr(compNode, "source", "geometry", attr.second);
                 // TODO compare to output path and confirm if wrong
                 ctx->SetSourcePathSuffix(attr.second);

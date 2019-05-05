@@ -53,10 +53,6 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
         std::cerr << "Failed during export" << std::endl;
         throw std::runtime_error(exporter.GetErrorString());
     }
-
-
-    delete pScene;
-    // pScene is cleaned up by the exporter at the moment for better or for worse
     return true;
 }
 
@@ -70,11 +66,14 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
         std::cerr << "Failed during import" << std::endl;
         throw std::runtime_error(importer->GetErrorString());
     }
-
+    aiScene *myScene;
+    aiCopyScene(pScene, &myScene);
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
+    ctx->pScene = myScene;
     model::Component component(ctx);
-    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0]);
+
+    component.ConvertFromAiNode(myScene->mRootNode->mChildren[0]);
 
     pugi::xml_document doc;
     if (fs::exists(actualXmlFilePath)) {

@@ -61,7 +61,6 @@ namespace xmf {
         aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
                                 std::shared_ptr<ConversionContext> context);
 
-        //void                            AllocSceneMaterials             ( aiScene* pScene);
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);
 
         static void AllocMeshFaces(aiMesh *pMesh, int numIndices);

@@ -460,8 +460,9 @@ namespace xmf {
                 throw std::runtime_error(
                         str(format("Node %s has multiple meshes attached") % pMeshNode->mName.C_Str()));
             }
-            aiMesh *pMesh = pScene->mMeshes[pMeshNode->mMeshes[0]];
-            if (pMesh->mPrimitiveTypes && ~aiPrimitiveType_TRIANGLE) {
+            auto meshIndex = pMeshNode->mMeshes[0];
+            aiMesh *pMesh = pScene->mMeshes[meshIndex];
+            if (pMesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE) {
                 throw std::runtime_error(
                         str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
             }
