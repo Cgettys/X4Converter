@@ -15,26 +15,28 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
     BOOST_AUTO_TEST_SUITE(PartUnitTests)
 
-        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) { 
+        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto part = Part(partNode, ctx);
             BOOST_TEST(part.getName() == "anim_main");
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) { 
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto part = Part(partNode, ctx);
             auto result = part.ConvertToAiNode(ctx);
@@ -43,36 +45,39 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             delete result;
         }
 
-        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) { 
+        BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
             partNode.remove_attribute("name");
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) { 
+        BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(from_ai_node_part_name) { 
+        BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);
@@ -81,10 +86,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_name) { 
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_name) {
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);
@@ -98,13 +104,14 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             delete ainode;
         }
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) { 
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_read_ref) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection35']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto part = Part(partNode, ctx);
 
@@ -117,7 +124,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             delete result;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) { 
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_write_ref) {
             std::string partName = "anim_thruster_06";
             std::string childName = "anim_thruster_06|DO_NOT_EDIT.ref|thruster_ship_s_01.anim_thruster_001";
             auto node = new aiNode(partName);
@@ -125,7 +132,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             children[0] = new aiNode(childName);
             node->addChildren(1, children);
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
             part.ConvertFromAiNode(node, ctx);
@@ -154,12 +162,13 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE(IntegrationTests)
     BOOST_AUTO_TEST_SUITE(PartIntegrationTests)
 
-        BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) { 
+        BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) {
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto partNode = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
             BOOST_TEST_REQUIRE(!partNode.empty());
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto part = Part(partNode, ctx);
 
@@ -175,7 +184,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             delete doc;
         }
 
-        BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) { 
+        BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
             std::string partName = "testpart";
             auto ainode = new aiNode(partName);
             auto ainodeChildren = new aiNode *[3];
@@ -184,7 +193,8 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             ainodeChildren[2] = new aiNode(partName + "|lod2");
             ainode->addChildren(3, ainodeChildren);
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
             part.ConvertFromAiNode(ainode, ctx);

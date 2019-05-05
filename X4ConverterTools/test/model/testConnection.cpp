@@ -18,7 +18,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -34,7 +35,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto node = new aiNode("Connection02");
 
             aiMatrix4x4 tmp(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
@@ -85,7 +87,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -97,7 +100,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection01']").node();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -109,7 +113,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -121,7 +126,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -139,7 +145,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
         BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
             auto ainode = new aiNode("*Connection02*");
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto conn = Connection(ainode, ctx);
             BOOST_TEST(conn.getName() == "Connection02");
@@ -148,7 +155,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto node = new aiNode("*Connection02*");
             auto children = new aiNode *[1];
             std::string tagStr = "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ";

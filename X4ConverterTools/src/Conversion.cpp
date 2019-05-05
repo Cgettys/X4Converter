@@ -1,13 +1,23 @@
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/model/Component.h>
 #include <X4ConverterTools/ConversionContext.h>
+#include <iostream>
+#include <cstdio>
+#include <cstdlib>
+
+#include <boost/filesystem.hpp>
+
+#include <assimp/Importer.hpp>
+#include <assimp/Exporter.hpp>
+#include <assimp/DefaultIOSystem.h>
+#include <assimp/scene.h>
+#include <assimp/SceneCombiner.h>
+#include <pugixml.hpp>
 
 namespace fs = boost::filesystem;
 
 bool
 ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFilePath, const std::string &daeFilePath) {
-
-    Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
     pugi::xml_document doc;
     pugi::xml_parse_result load_result;
     bool relative_paths = false;
@@ -18,15 +28,16 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
         load_result = doc.load_file((gameBaseFolderPath + xmlFilePath).c_str());
         relative_paths = true;
     }
-    if(load_result.status!=pugi::status_ok){
+    if (load_result.status != pugi::status_ok) {
         throw std::runtime_error("xml file could not be opened!");
     }
 
-    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath);
+    auto io = std::make_shared<Assimp::DefaultIOSystem>();
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     model::Component component(doc.root(), ctx);
     aiNode *root = component.ConvertToAiNode(ctx);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
-    pScene->mRootNode=root;
+    pScene->mRootNode = root;
 
 //    fs::path aniPath(daeFilePath);
 //    aniPath.replace_extension("anixml");
@@ -43,7 +54,6 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
 
 
     delete pScene;
-    delete io;
     // pScene is cleaned up by the exporter at the moment for better or for worse
     return true;
 }
@@ -59,9 +69,8 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
         throw std::runtime_error(importer->GetErrorString());
     }
 
-
-    Assimp::IOSystem *io = new Assimp::DefaultIOSystem();
-    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath);
+    auto io = std::make_shared<Assimp::DefaultIOSystem>();
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     model::Component component(ctx);
     component.ConvertFromAiNode(pScene->mRootNode->mChildren[0], ctx);
 
@@ -81,7 +90,6 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     component.ConvertToGameFormat(tgtNode, ctx);
     doc.save_file(actualXmlFilePath.c_str());
 
-    delete io;
     delete importer;
     return true;
 }

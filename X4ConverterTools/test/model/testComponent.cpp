@@ -18,7 +18,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_xml_basic) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->root();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -31,7 +32,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(xml_to_ainode_basic) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->root();
             BOOST_TEST_REQUIRE(!node.empty());
@@ -48,7 +50,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(from_ainode_basic) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto node = new aiNode("ship_arg_s_fighter_01");
 
             auto component = Component(ctx);
@@ -59,7 +62,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
         BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto node = new aiNode("ship_arg_s_fighter_01");
             auto childrenZero = new aiNode *[2];
             childrenZero[0] = new aiNode("*test_conn_0*");

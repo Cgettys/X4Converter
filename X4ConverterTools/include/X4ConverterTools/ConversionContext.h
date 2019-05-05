@@ -5,17 +5,20 @@
 #include <assimp/scene.h>
 
 
+#include <assimp/DefaultIOSystem.h>
 #include "X4ConverterTools/model/MaterialLibrary.h"
 
 class ConversionContext {
 public:
-    explicit ConversionContext(const std::string &gameBaseFolderPath);
+    explicit ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io);
 
     void AddMaterialsToScene(const std::string &filePath, aiScene *pScene);
 
     std::map<std::string, uint32_t> Materials;
     std::vector<aiMesh *> Meshes;
     std::string gameBaseFolderPath;
+protected:
+    std::shared_ptr<Assimp::IOSystem> io;
 private:
 
     model::MaterialLibrary materialLibrary;

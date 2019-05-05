@@ -17,7 +17,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
 
         BOOST_AUTO_TEST_CASE(read_lod_name) {
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -34,7 +35,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(read_lod_no_index) {
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -47,7 +49,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
         BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
 
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -59,7 +62,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(part_name_from_ainode) {
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
@@ -71,7 +75,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_one_lod) {
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             std::string lodName = "anim_main|lod0";
             auto ainode = new aiNode(lodName);
 
@@ -86,7 +91,8 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         }
 
         BOOST_AUTO_TEST_CASE(to_xml_two_lod) {
-            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath());
+            auto io = std::make_shared<Assimp::DefaultIOSystem>();
+            auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
             std::string lodZeroName = "anim_main|lod0";
             auto ainodeZero = new aiNode(lodZeroName);
             auto lodZero = VisualLod(ctx);
