@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto lod = VisualLod(node, "anim_main", ctx);
             std::string expectedName = "anim_main|lod0";
             BOOST_TEST(lod.getName() == expectedName);
-            auto result = lod.ConvertToAiNode(ctx);
+            auto result = lod.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
             delete doc;
             delete result;
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ainode = new aiNode(lodName);
 
             auto lod = VisualLod(ctx);
-            lod.ConvertFromAiNode(ainode, ctx);
+            lod.ConvertFromAiNode(ainode);
             BOOST_TEST(lod.getName() == lodName);
             BOOST_TEST(lod.getIndex() == 0);
             delete ainode;
@@ -81,10 +81,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ainode = new aiNode(lodName);
 
             auto lod = VisualLod(ctx);
-            lod.ConvertFromAiNode(ainode, ctx);
+            lod.ConvertFromAiNode(ainode);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");
-            lod.ConvertToGameFormat(lodsNode, ctx);
+            lod.ConvertToGameFormat(lodsNode);
             BOOST_TEST(lodsNode.child("lod").empty() == false);
             BOOST_TEST(lodsNode.child("lod").attribute("index").as_int() == 0);
             delete ainode;
@@ -96,16 +96,16 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             std::string lodZeroName = "anim_main|lod0";
             auto ainodeZero = new aiNode(lodZeroName);
             auto lodZero = VisualLod(ctx);
-            lodZero.ConvertFromAiNode(ainodeZero, ctx);
+            lodZero.ConvertFromAiNode(ainodeZero);
 
             std::string lodOneName = "anim_main|lod1";
             auto ainodeOne = new aiNode(lodOneName);
             auto lodOne = VisualLod(ctx);
-            lodOne.ConvertFromAiNode(ainodeOne, ctx);
+            lodOne.ConvertFromAiNode(ainodeOne);
             pugi::xml_document doc;
             auto lodsNode = doc.append_child("lods");
-            lodZero.ConvertToGameFormat(lodsNode, ctx);
-            lodOne.ConvertToGameFormat(lodsNode, ctx);
+            lodZero.ConvertToGameFormat(lodsNode);
+            lodOne.ConvertToGameFormat(lodsNode);
 
             auto firstChild = lodsNode.first_child();
             auto secondChild = lodsNode.last_child();

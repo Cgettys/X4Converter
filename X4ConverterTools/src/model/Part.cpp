@@ -52,13 +52,13 @@ namespace model {
     }
 
 
-    aiNode *Part::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
+    aiNode *Part::ConvertToAiNode() {
         auto *result = new aiNode(getName());
         std::vector<aiNode *> children = attrToAiNode();
         if (!hasRef) {
-            children.push_back(collisionLod->ConvertToAiNode(ctx));
+            children.push_back(collisionLod->ConvertToAiNode());
             for (auto lod: lods) {
-                children.push_back(lod.second.ConvertToAiNode(ctx));
+                children.push_back(lod.second.ConvertToAiNode());
             }
         }
 
@@ -71,7 +71,7 @@ namespace model {
     static std::regex lodRegex("[^|]+\\|lod\\d");
     static std::regex collisionRegex("[^|]+\\|collision");
 
-    void Part::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
+    void Part::ConvertFromAiNode(aiNode *node) {
         std::string tmp = std::string();
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
@@ -80,11 +80,11 @@ namespace model {
             // TODO check part names?
             if (regex_match(childName, lodRegex)) {
                 auto lod = VisualLod(ctx);
-                lod.ConvertFromAiNode(child, ctx);
+                lod.ConvertFromAiNode(child);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
                 collisionLod = std::make_unique<CollisionLod>(ctx);
-                collisionLod->ConvertFromAiNode(child, ctx);
+                collisionLod->ConvertFromAiNode(child);
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere
             } else {
@@ -94,7 +94,7 @@ namespace model {
         // TODO more
     }
 
-    void Part::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Part::ConvertToGameFormat(pugi::xml_node out) {
         if (std::string(out.name()) != "parts") {
             throw std::runtime_error("part must be appended to a parts xml element");
         }
@@ -120,9 +120,9 @@ namespace model {
 
         if (!lods.empty()) {
             auto lodsNode = Child(partNode, "lods");
-            collisionLod->ConvertToGameFormat(lodsNode, ctx); // TODO
+            collisionLod->ConvertToGameFormat(lodsNode); // TODO
             for (auto lod : lods) {
-                lod.second.ConvertToGameFormat(lodsNode, ctx);
+                lod.second.ConvertToGameFormat(lodsNode);
             }
         } else {
             partNode.remove_child("lods");

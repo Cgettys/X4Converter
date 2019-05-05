@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             auto part = Part(partNode, ctx);
-            auto result = part.ConvertToAiNode(ctx);
+            auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             delete doc;
             delete result;
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
-            part.ConvertFromAiNode(ainode, ctx);
+            part.ConvertFromAiNode(ainode);
             std::string name = part.getName();
             BOOST_TEST(name == partName);
             delete ainode;
@@ -93,10 +93,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
-            part.ConvertFromAiNode(ainode, ctx);
+            part.ConvertFromAiNode(ainode);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToGameFormat(node, ctx);
+            part.ConvertToGameFormat(node);
 
             std::string actualName = node.child("part").attribute("name").value();
             BOOST_TEST(partName == actualName);
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
             auto part = Part(partNode, ctx);
 
-            auto result = part.ConvertToAiNode(ctx);
+            auto result = part.ConvertToAiNode();
             TestUtil::checkAiNodeName(result, "anim_thruster_06");
             BOOST_TEST_REQUIRE(result->mNumChildren == 1);
             TestUtil::checkAiNodeName(result->mChildren[0],
@@ -136,10 +136,10 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
-            part.ConvertFromAiNode(node, ctx);
+            part.ConvertFromAiNode(node);
             pugi::xml_document doc;
             auto outNode = doc.append_child("parts");
-            part.ConvertToGameFormat(outNode, ctx);
+            part.ConvertToGameFormat(outNode);
 
             auto partNode = outNode.child("part");
             std::string ref = partNode.attribute("ref").value();
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
             auto part = Part(partNode, ctx);
 
-            auto result = part.ConvertToAiNode(ctx);
+            auto result = part.ConvertToAiNode();
             BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
             BOOST_TEST_REQUIRE(result->mNumChildren == 6);
             TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|wreck|anim_main_wreck");
@@ -197,10 +197,10 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
             auto ctx = std::make_shared<ConversionContext>(TestUtil::GetBasePath(), io);
 
             Part part(ctx);
-            part.ConvertFromAiNode(ainode, ctx);
+            part.ConvertFromAiNode(ainode);
             pugi::xml_document doc;
             auto node = doc.append_child("parts");
-            part.ConvertToGameFormat(node, ctx);
+            part.ConvertToGameFormat(node);
 
             BOOST_TEST(!node.child("part").child("lods").empty());
         }

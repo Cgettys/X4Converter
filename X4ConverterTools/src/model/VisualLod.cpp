@@ -13,13 +13,15 @@ namespace model {
         }
         index = node.attribute("index").as_int();
         setName(str(boost::format("%1%|lod%2%") % partName % index));
+//        xmfFile = xmf::XmfFile::ReadFromIOStream()
     }
 
-    aiNode *VisualLod::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
-        return new aiNode(getName());
+    aiNode *VisualLod::ConvertToAiNode() {
+        auto result = new aiNode(getName());
+        return result;
     }
 
-    void VisualLod::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
+    void VisualLod::ConvertFromAiNode(aiNode *node) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
@@ -30,7 +32,7 @@ namespace model {
         index = std::stoi(rawName.substr(pos + 4));
     }
 
-    void VisualLod::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
         if (std::string(out.name()) != "lods") {
             throw std::runtime_error("Lods must be added to a lods node");
         }

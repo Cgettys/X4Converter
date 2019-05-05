@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!node.empty());
 
             auto conn = Connection(node, ctx);
-            auto result = conn.ConvertToAiNode(ctx);
+            auto result = conn.ConvertToAiNode();
             aiMatrix4x4 expectedMatrix(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
                                        aiVector3D(9.411734, -2.738604, -2.866085));
             BOOST_TEST(result->mTransformation.Equal(expectedMatrix));
@@ -59,11 +59,11 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             node->mTransformation.d4 = tmp.d4;
 
             auto conn = Connection(ctx);
-            conn.ConvertFromAiNode(node, ctx);
+            conn.ConvertFromAiNode(node);
 
             pugi::xml_document doc;
             auto outNode = doc.append_child("connections");
-            conn.ConvertToGameFormat(outNode, ctx);
+            conn.ConvertToGameFormat(outNode);
 
 
             auto offsetNode = outNode.child("connection").child("offset");
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             BOOST_TEST_REQUIRE(!node.empty());
 
             auto conn = Connection(node, ctx);
-            auto result = conn.ConvertToAiNode(ctx);
+            auto result = conn.ConvertToAiNode();
             BOOST_TEST_REQUIRE(result->mNumChildren == 2);
 //        BOOST_TEST(result->mChildren[0]->mName); TODO someday
             TestUtil::checkAiNodeName(result->mChildren[0],
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
             auto outNode = doc.append_child("connections");
 
             auto conn = Connection(node, ctx);
-            conn.ConvertToGameFormat(outNode, ctx);
+            conn.ConvertToGameFormat(outNode);
 
             auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
             BOOST_TEST(std::string(connNode.attribute("tags").value()) ==

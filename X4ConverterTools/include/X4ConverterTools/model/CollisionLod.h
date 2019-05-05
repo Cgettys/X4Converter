@@ -16,11 +16,11 @@ namespace model {
 
         ~CollisionLod() override = default;
 
-        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
+        void ConvertFromAiNode(aiNode *node) override;
 
-        void ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
+        void ConvertToGameFormat(pugi::xml_node out) override;
 
-        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
+        aiNode *ConvertToAiNode() override;
 
     };
 

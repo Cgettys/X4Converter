@@ -11,11 +11,11 @@ namespace model {
         setName(str(boost::format("%1%|collision") % partName));
     }
 
-    aiNode *CollisionLod::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
+    aiNode *CollisionLod::ConvertToAiNode() {
         return new aiNode(getName());
     }
 
-    void CollisionLod::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
+    void CollisionLod::ConvertFromAiNode(aiNode *node) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index
@@ -26,7 +26,7 @@ namespace model {
         index = COLLISION_INDEX;
     }
 
-    void CollisionLod::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
         // TODO XMF
     }
 }

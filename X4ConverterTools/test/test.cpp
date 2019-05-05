@@ -106,13 +106,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         fs::remove(gameBaseFolderPath + daePath);
         fs::remove(gameBaseFolderPath + outputXMLPath);
         // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
-        // TODO as we get further along, start cutting out more and more of this file
         pugi::xml_document doc;
-        BOOST_TEST_REQUIRE(doc.load_file((gameBaseFolderPath + inputXMLPath).c_str()).status == pugi::status_ok);
-        auto compNode = doc.child("components");
-        compNode.remove_child("component");
-        compNode.remove_child("source");
-        BOOST_TEST_REQUIRE(doc.save_file((gameBaseFolderPath + outputXMLPath).c_str()));
 
         BOOST_TEST_CHECKPOINT("Begin test");
         bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
@@ -123,6 +117,11 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
         BOOST_TEST_CHECKPOINT("Backward parsing");
         auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
+        // TODO as we get further along, leave in more of this
+        compNode.remove_child("source");
+        compNode.remove_child("layers");
+
         auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
         TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
         BOOST_TEST_CHECKPOINT("Cleanup");

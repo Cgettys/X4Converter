@@ -13,11 +13,11 @@ namespace model {
 
         VisualLod(pugi::xml_node node, std::string partName, std::shared_ptr<ConversionContext> ctx);
 
-        aiNode *ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) override;
+        aiNode *ConvertToAiNode() override;
 
-        void ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) override;
+        void ConvertFromAiNode(aiNode *node) override;
 
-        void ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) override;
+        void ConvertToGameFormat(pugi::xml_node out) override;
 
     private:
 

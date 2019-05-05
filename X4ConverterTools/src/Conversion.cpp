@@ -35,7 +35,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     model::Component component(doc.root(), ctx);
-    aiNode *root = component.ConvertToAiNode(ctx);
+    aiNode *root = component.ConvertToAiNode();
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     pScene->mRootNode = root;
 
@@ -72,7 +72,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     model::Component component(ctx);
-    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0], ctx);
+    component.ConvertFromAiNode(pScene->mRootNode->mChildren[0]);
 
     pugi::xml_document doc;
     if (fs::exists(actualXmlFilePath)) {
@@ -87,7 +87,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     if (!tgtNode) {
         tgtNode = doc.append_child("components");
     }
-    component.ConvertToGameFormat(tgtNode, ctx);
+    component.ConvertToGameFormat(tgtNode);
     doc.save_file(actualXmlFilePath.c_str());
 
     delete importer;

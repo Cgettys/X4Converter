@@ -44,7 +44,7 @@ namespace model {
 
     }
 
-    aiNode *Component::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
+    aiNode *Component::ConvertToAiNode() {
         auto result = new aiNode(getName());
         std::map<std::string, aiNode *> nodes;
         nodes[getName()] = result;
@@ -56,7 +56,7 @@ namespace model {
             if (nodes.count(connName)) {
                 throw std::runtime_error("Duplicate key is not allowed!" + connName);
             }
-            nodes[connName] = conn.ConvertToAiNode(ctx);
+            nodes[connName] = conn.ConvertToAiNode();
 
             // TODO get rid of this getParts somehow
             for (auto part : conn.getParts()) {
@@ -123,7 +123,7 @@ namespace model {
         return fakeRoot;
     }
 
-    void Component::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
+    void Component::ConvertFromAiNode(aiNode *node) {
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
@@ -158,7 +158,7 @@ namespace model {
 
     }
 
-    void Component::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Component::ConvertToGameFormat(pugi::xml_node out) {
         // TODO asset.xmf?
         if (std::string(out.name()) != "components") {
             throw std::runtime_error("Component should be under components element");
@@ -166,7 +166,11 @@ namespace model {
         auto compNode = ChildByAttr(out, "component", "name", getName());
         auto connsNode = Child(compNode, "connections");
         for (auto conn : connections) {
-            conn.ConvertToGameFormat(connsNode, ctx);
+            conn.ConvertToGameFormat(connsNode);
+        }
+
+        for (const auto &attr : attrs) {
+            WriteAttr(compNode, attr.first, attr.second);
         }
     }
 

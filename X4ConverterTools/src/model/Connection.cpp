@@ -59,12 +59,12 @@ namespace model {
 
     Connection::Connection(aiNode *node, std::shared_ptr<ConversionContext> ctx, std::string componentName)
             : AbstractElement(ctx) {
-        ConvertFromAiNode(node, ctx);
+        ConvertFromAiNode(node);
         parentName = std::move(componentName);//Default to component as parent
 
     }
 
-    aiNode *Connection::ConvertToAiNode(std::shared_ptr<ConversionContext> ctx) {
+    aiNode *Connection::ConvertToAiNode() {
         auto result = new aiNode("*" + getName() + "*");
         aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
         // TODO fixme upstream... this sucks
@@ -87,7 +87,7 @@ namespace model {
 
         std::vector<aiNode *> children = attrToAiNode();
         for (auto part : parts) {
-            children.push_back(part.ConvertToAiNode(ctx));
+            children.push_back(part.ConvertToAiNode());
         }
         populateAiNodeChildren(result, children);
         return result;
@@ -98,7 +98,7 @@ namespace model {
     }
 
 
-    void Connection::ConvertFromAiNode(aiNode *node, std::shared_ptr<ConversionContext> ctx) {
+    void Connection::ConvertFromAiNode(aiNode *node) {
         std::string tmp = node->mName.C_Str();
         setName(tmp.substr(1, tmp.size() - 2));
         // TODO check for scaling and error if cfound
@@ -112,13 +112,13 @@ namespace model {
                 readAiNodeChild(child);
             } else {
                 Part part(ctx);
-                part.ConvertFromAiNode(child, ctx);
+                part.ConvertFromAiNode(child);
                 parts.emplace(parts.end(), part);
             }
         }
     }
 
-    void Connection::ConvertToGameFormat(pugi::xml_node out, std::shared_ptr<ConversionContext> ctx) {
+    void Connection::ConvertToGameFormat(pugi::xml_node out) {
         if (std::string(out.name()) != "connections") {
             throw std::runtime_error("parent of connection must be connections xml element");
         }
@@ -163,7 +163,7 @@ namespace model {
         }
         auto partsNode = Child(node, "parts");
         for (auto part : parts) {
-            part.ConvertToGameFormat(partsNode, ctx);
+            part.ConvertToGameFormat(partsNode);
         }
 
     }
