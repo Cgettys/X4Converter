@@ -46,8 +46,6 @@ namespace xmf {
 
         int NumMaterials();
 
-        void AddMaterial(int firstIndex, int numIndices, const std::string &name);
-
         static std::shared_ptr<XmfFile> ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
 
         static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);

@@ -6,8 +6,8 @@
 /* Shows how to use both command line and config file. */
 #include <X4ConverterTools/Conversion.h>
 #include <boost/program_options.hpp>
-#include <X4ConverterTools/util/PathUtil.h>
-
+#include <X4ConverterTools/ConversionContext.h>
+#include <iostream>
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -117,7 +117,7 @@ int main(int ac, char *av[]) {
             // .xml/.xmf -> .dae
             // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
             outFile.replace_extension(".dae");
-            outFile = PathUtil::GetOutputPath(outFile.generic_string());
+            outFile = ConversionContext::GetOutputPath(outFile.generic_string());
             ConvertXmlToDae(gameBaseFolderPath.generic_string(), inFile.generic_string(), outFile.generic_string());
         } else if (action == "exportxmf") {
             // .dae -> .xml/.xmf

@@ -53,7 +53,15 @@ namespace model {
                 lodNode = out.append_child("lod");
             }
             WriteAttr(lodNode, "index", std::to_string(index));
+            // TODO remove old?
             auto matsNode = Child(lodNode, "materials");
+            // TODO write out xmfFile
+            int matIdx = 1;
+            for (auto mat : xmfFile->GetMaterials()) {
+                // TODO ordering
+                auto matNode = ChildByAttr(matsNode, "material", "id", std::to_string(matIdx++));
+                WriteAttr(matNode, "ref", mat.Name);
+            }
         }
     }
 }

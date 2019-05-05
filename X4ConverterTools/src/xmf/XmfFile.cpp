@@ -43,10 +43,6 @@ namespace xmf {
         return boost::numeric_cast<int>(materials.size());
     }
 
-    void XmfFile::AddMaterial(int firstIndex, int numIndices, const std::string &name) {
-        materials.emplace_back(firstIndex, numIndices, name);
-    }
-
     std::shared_ptr<XmfFile> XmfFile::ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler) {
         IOStream *pStream;
         try {
@@ -512,8 +508,11 @@ namespace xmf {
             }
 
             std::cmatch match;
-            if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?X\w+?X(\w+?)X(\w+?))"))) {
-                pMeshFile->AddMaterial(indexOffset, pMesh->mNumFaces * 3, match[1].str() + "." + match[2].str());
+            if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?-\w+?X(\w+?)X(\w+?))"))) {
+                int firstIndex = indexOffset;
+                int numIndices = pMesh->mNumFaces * 3;
+                const std::string &name = match[1].str() + "." + match[2].str();
+                pMeshFile->materials.emplace_back(firstIndex, numIndices, name);
             }
             vertexOffset += pMesh->mNumVertices;
             indexOffset += pMesh->mNumFaces * 3;

@@ -2,7 +2,8 @@
 
 #include <boost/algorithm/string.hpp>
 #include <zlib.h>
-#include <X4ConverterTools/util/PathUtil.h>
+#include <iostream>
+#include <X4ConverterTools/ConversionContext.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <cstdint>
 using namespace boost;
@@ -83,7 +84,7 @@ namespace model {
         if (!_diffuseMapFilePath.empty()) {
             std::string textureFilePath = GetDecompressedTextureFilePath(_diffuseMapFilePath, baseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
+                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
                 pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_DIFFUSE(0));
             } else {
                 // throw std::runtime_error("Could not find Diffuse Texture for Material!");
@@ -97,7 +98,7 @@ namespace model {
         if (!_specularMapFilePath.empty()) {
             std::string textureFilePath = GetDecompressedTextureFilePath(_specularMapFilePath, baseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
+                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
                 pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_SPECULAR(0));
             } else {
 //            throw std::runtime_error("Could not find Specular Texture for Material!");
@@ -111,7 +112,7 @@ namespace model {
         if (!_normalMapFilePath.empty()) {
             std::string textureFilePath = GetDecompressedTextureFilePath(_normalMapFilePath, baseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
+                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
                 pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_NORMALS(0));
             } else {
 //            throw std::runtime_error("Could not find Normal Texture for Material!");
@@ -125,7 +126,7 @@ namespace model {
         if (!_environmentMapFilePath.empty()) {
             std::string textureFilePath = GetDecompressedTextureFilePath(_environmentMapFilePath, baseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(PathUtil::GetRelativePath(textureFilePath, modelFolderPath).string());
+                aiString temp(ConversionContext::GetRelativePath(textureFilePath, modelFolderPath).string());
                 pAiMaterial->AddProperty(&temp, AI_MATKEY_TEXTURE_REFLECTION(0));
             } else {
                 std::cerr << "WARNING: Could not find Environment Texture for Material!\n";
@@ -137,7 +138,7 @@ namespace model {
     const std::string
     Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
         std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
-        filePath = PathUtil::MakePlatformSafe(filePath);
+        filePath = ConversionContext::MakePlatformSafe(filePath);
 
         path textureFilePath(filePath);
         if (!iequals(textureFilePath.extension().string(), ".gz")) {
@@ -179,7 +180,7 @@ namespace model {
     const std::string Material::GetTextureFilePath(const std::string &tgtFilePath, const path &baseFolderPath) const {
         static const char *allowedExtensions[] = {"gz", "dds", "tga", "jpg"};
 
-        std::string filePath = PathUtil::MakePlatformSafe(tgtFilePath);
+        std::string filePath = ConversionContext::MakePlatformSafe(tgtFilePath);
 
         if (filePath.empty()) {
             throw std::runtime_error("Received empty filepath");

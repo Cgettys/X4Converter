@@ -12,7 +12,6 @@ set("LIB_SRCS"
         src/ani/Keyframe.cpp
         src/util/AssimpUtil.cpp
         src/util/DXUtil.cpp
-        src/util/PathUtil.cpp
         src/xmf/XmfDataBuffer.cpp
         src/xmf/XmfDataBufferDesc.cpp
         src/xmf/XmfMaterial.cpp
