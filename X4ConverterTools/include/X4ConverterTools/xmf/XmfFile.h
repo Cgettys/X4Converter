@@ -46,11 +46,7 @@ namespace xmf {
 
         int NumMaterials();
 
-        static std::shared_ptr<XmfFile> ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
-
         static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);
-
-        void WriteToFile(const std::string &filePath, Assimp::IOSystem *pIOHandler);
 
         void WriteToIOStream(Assimp::IOStream *pStream);
 

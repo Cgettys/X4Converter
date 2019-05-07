@@ -43,18 +43,6 @@ namespace xmf {
         return boost::numeric_cast<int>(materials.size());
     }
 
-    std::shared_ptr<XmfFile> XmfFile::ReadFromFile(const std::string &filePath, Assimp::IOSystem *pIOHandler) {
-        IOStream *pStream;
-        try {
-            pStream = pIOHandler->Open(filePath, "rb");
-            auto result = XmfFile::ReadFromIOStream(pStream);
-//        pIOHandler->Close(pStream);
-            return result;
-        } catch (...) {
-            throw;
-        }
-    }
-
     std::shared_ptr<XmfFile> XmfFile::ReadFromIOStream(IOStream *pStream) {
         if (!pStream) {
             throw std::runtime_error("pStream may not be null!");
@@ -121,14 +109,6 @@ namespace xmf {
         }
     }
 
-    void XmfFile::WriteToFile(const std::string &filePath, IOSystem *pIOHandler) {
-        IOStream *pStream = pIOHandler->Open(filePath, "wb+");
-        if (!pStream) {
-            throw std::runtime_error((format("Failed to open %1% for writing") % filePath.c_str()).str());
-        }
-        WriteToIOStream(pStream);
-        // pStream is "Helpfully" closed by Assimp's StreamWriter
-    }
 
     void XmfFile::WriteToIOStream(IOStream *pStream) {
         std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers = CompressBuffers();
@@ -186,7 +166,8 @@ namespace xmf {
     }
 
     aiNode *XmfFile::ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx) {
-        auto *pMeshGroupNode = new aiNode(name);
+        auto *pMeshGroupNode = new aiNode();
+        pMeshGroupNode->mName = name;
         try {
             if (GetMaterials().empty()) {
                 aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, ctx);
@@ -230,6 +211,7 @@ namespace xmf {
                                      std::shared_ptr<ConversionContext> ctx) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
+
         try {
             AllocMeshVertices(pMesh, numIndices);
             AllocMeshFaces(pMesh, numIndices);

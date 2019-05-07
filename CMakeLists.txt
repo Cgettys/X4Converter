@@ -32,6 +32,8 @@ if (NOT MINGW)
     ExternalProject_Add(assimp
             PREFIX external
             GIT_REPOSITORY https://github.com/assimp/assimp.git
+            #            GIT_REPOSITORY https://github.com/Cgettys/assimp.git
+            #            GIT_TAG collada-use-mesh-names
             #GIT_TAG fix-SceneCombiner-DeepCopy
             #GIT_TAG v4.1.0
             CMAKE_ARGS

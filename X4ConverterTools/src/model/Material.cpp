@@ -78,14 +78,20 @@ namespace model {
         return pAiMaterial;
     }
 
-    void
-    Material::PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
-                            ConversionContext *ctx) {
+    // TODO automate:
+    // Decompress a second time
+    // wine '/home/cg/Desktop/X4/DirectXTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
+    // Flatten
+    // wine '/home/cg/Desktop/X4/DirectXTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
+    void Material::PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
+                                 ConversionContext *ctx) {
         if (!path.empty()) {
             // TODO should GetDecompressedTextureFilePath move?
+            // TODO how to do the relative path with stuff
             std::string textureFilePath = GetDecompressedTextureFilePath(path, ctx->gameBaseFolderPath);
             if (!textureFilePath.empty()) {
-                aiString temp(ConversionContext::GetRelativePath(textureFilePath, ctx->gameBaseFolderPath).string());
+                aiString temp("../../../" +
+                              ConversionContext::GetRelativePath(textureFilePath, ctx->gameBaseFolderPath).string());
                 pAiMaterial->AddProperty(&temp, key, type, num);
             } else {
                 // throw std::runtime_error("Could not find Diffuse Texture for Material!");

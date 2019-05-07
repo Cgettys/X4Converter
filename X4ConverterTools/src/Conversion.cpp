@@ -48,7 +48,9 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
 
     auto actualDaeFilePath = relative_paths ? gameBaseFolderPath + daeFilePath : daeFilePath;
     Assimp::Exporter exporter;
-    aiReturn result = exporter.Export(pScene, "collada", actualDaeFilePath);
+//    Assimp::ExportProperties props;
+//    props.SetPropertyBool("COLLADA_EXPORT_USE_MESH_NAMES",true);
+    aiReturn result = exporter.Export(pScene, "collada", actualDaeFilePath);//, 0, &props);
     if (result != aiReturn_SUCCESS) {
         std::cerr << "Failed during export" << std::endl;
         throw std::runtime_error(exporter.GetErrorString());

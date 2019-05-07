@@ -22,6 +22,7 @@ ConversionContext::ConversionContext(const std::string &gameBaseFolderPath, std:
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <X4ConverterTools/types.h>
+#include <X4ConverterTools/util/AssimpUtil.h>
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -144,6 +145,9 @@ void ConversionContext::PopulateSceneArrays() {
         for (auto &meshIt : Meshes) {
             pScene->mMeshes[meshCount++] = meshIt;
         }
+    }
+    for (int i = 0; i < pScene->mNumMeshes; ++i) {
+        AssimpUtil::MergeVertices(pScene->mMeshes[i]);
     }
 }
 

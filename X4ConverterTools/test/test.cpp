@@ -129,5 +129,65 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
     }
 
+    BOOST_AUTO_TEST_CASE(bridge) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/interiors/bridges/bridge_arg_xl_01";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+
+    }
+
+    BOOST_AUTO_TEST_CASE(multimat) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_m/ship_arg_m_trans_container_01";
+        // TODO lowercase hatch name in code instead of the hack
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+
+    }
 BOOST_AUTO_TEST_SUITE_END()
 
