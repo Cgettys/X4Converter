@@ -63,5 +63,7 @@ namespace model {
                 WriteAttr(matNode, "ref", mat.Name);
             }
         }
+        auto stream = ctx->GetSourceFile(getName() + ".out.xmf", "wb");
+        xmfFile->WriteToIOStream(stream);
     }
 }

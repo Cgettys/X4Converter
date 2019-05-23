@@ -22,6 +22,13 @@ namespace model {
 
         aiNode *ConvertToAiNode() override;
 
+    private:
+
+        void CalculateSizeAndCenter(aiNode *pCollisionNode);
+
+
+        aiVector3D maxDim;
+        aiVector3D center;
     };
 
 }

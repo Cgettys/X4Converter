@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
+#include <X4ConverterTools/util/FormatUtil.h>
 
 namespace model {
     AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(std::move(ctx)) {
@@ -89,6 +90,26 @@ namespace model {
         return result;
     }
 
+    // TODO corresponding read functions
+    // TODO make these static and use static import/ refactor into a util class
+    void AbstractElement::WriteAttrXYZ(pugi::xml_node target, aiVector3D val) {
+        WriteAttr(target, "x", val.x);
+        WriteAttr(target, "y", val.y);
+        WriteAttr(target, "z", val.z);
+    }
+
+    void AbstractElement::WriteAttrQuat(pugi::xml_node target, aiQuaternion val) {
+        // NB: weird XML ordering for consistency with game files
+        WriteAttr(target, "qx", val.x);
+        WriteAttr(target, "qy", val.y);
+        WriteAttr(target, "qz", val.z);
+        WriteAttr(target, "qw", val.w);
+    }
+
+    void AbstractElement::WriteAttr(pugi::xml_node target, std::string name, float val) {
+        std::string strVal = util::FormatUtil::formatFloat(val);
+        WriteAttr(target, name, strVal);
+    }
 
     void AbstractElement::WriteAttr(pugi::xml_node target, std::string name, std::string val) {
         auto attr = target.attribute(name.c_str());
@@ -97,6 +118,7 @@ namespace model {
         }
         attr.set_value(val.c_str());
     }
+
 
     aiNode *AbstractElement::GenerateAttrNode(const std::string &key, const std::string &value) {
         return new aiNode(name + "|" + key + "|" + value);

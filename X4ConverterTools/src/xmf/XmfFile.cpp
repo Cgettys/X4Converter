@@ -553,6 +553,4 @@ namespace xmf {
         buffer.Description.ItemSize = declarationSize;
         buffer.Description.DenormalizeVertexDeclaration();
     }
-
-
 }

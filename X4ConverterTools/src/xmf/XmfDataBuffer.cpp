@@ -11,7 +11,8 @@ namespace xmf {
 
     XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) {
         Description = XmfDataBufferDesc(reader);
-        std::cout << Description.validate();
+        Description.validate();
+//        std::cout <<
         AllocData();
     }
 
@@ -57,6 +58,9 @@ namespace xmf {
     }
 
     void XmfDataBuffer::Write(Assimp::StreamWriterLE &writer) {
+        for (auto b : _data) {
+            writer << b;
+        }
 // TODO
     }
 

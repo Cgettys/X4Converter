@@ -120,7 +120,7 @@ namespace model {
 
         if (!lods.empty()) {
             auto lodsNode = Child(partNode, "lods");
-            collisionLod->ConvertToGameFormat(lodsNode); // TODO
+            collisionLod->ConvertToGameFormat(partNode);
             for (auto lod : lods) {
                 lod.second.ConvertToGameFormat(lodsNode);
             }

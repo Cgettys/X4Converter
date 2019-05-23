@@ -165,7 +165,7 @@ std::string ConversionContext::GetSourcePath() {
 // callee frees
 Assimp::IOStream *ConversionContext::GetSourceFile(std::string name, std::string mode) {
     std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + name);
-    if (!io->Exists(path)) {
+    if (!io->Exists(path) && mode != "wb") {
         throw std::runtime_error("Source file missing: " + name);
     }
     auto result = io->Open(path, mode);

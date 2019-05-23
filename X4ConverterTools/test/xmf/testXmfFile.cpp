@@ -6,8 +6,11 @@
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/xmf/XmfHeader.h>
 #include <X4ConverterTools/xmf/XmfFile.h>
+#include <boost/filesystem.hpp>
 #include "../testUtil.h"
 
+using namespace boost;
+namespace fs = boost::filesystem;
 using namespace Assimp;
 using namespace xmf;
 using namespace test;
@@ -61,3 +64,36 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
     BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
+
+
+BOOST_AUTO_TEST_SUITE(ValidateData)
+
+    BOOST_AUTO_TEST_CASE(xmf_struct_correctness) { // NOLINT(cert-err58-cpp)
+        // TODO mock reading & writing to memory - would be faster & good form
+        // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
+        const fs::path basePath = fs::path(std::getenv("X4_UNPACKED_ROOT"));
+        fs::recursive_directory_iterator iter(basePath);
+        IOSystem *io = new DefaultIOSystem();
+        for (const auto &x : iter) {
+            const fs::path &filePath = x.path();
+            if (filePath.has_extension() && iequals(filePath.extension().generic_string(), ".xmf") &&
+                !iends_with(filePath.filename().generic_string(), ".out.xmf")) {
+//                std::cout << filePath << std::endl;
+
+                auto sourceStream = io->Open(filePath.generic_string(), "rb");
+                try {
+                    auto file = XmfFile::ReadFromIOStream(sourceStream);
+                    std::cout << filePath.c_str() << std::endl;
+                } catch (std::runtime_error &e) {
+                    std::string error = str(format("Filepath: %1% Exception:\n %2%\n") % filePath.c_str() % e.what());
+                    // Change to BOOST_CHECK_MESSAGE if you want all the files violating the structure
+                    BOOST_REQUIRE_MESSAGE(false, error);
+                }
+            }
+        }
+        // To make a confusing warning go away
+        BOOST_REQUIRE_MESSAGE(true, "No files should have errors");
+        delete io;
+    }
+
+BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

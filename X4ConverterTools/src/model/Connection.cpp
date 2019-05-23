@@ -137,19 +137,14 @@ namespace model {
         auto offsetNode = Child(node, "offset");
         if (!offsetPosZero) {
             auto posNode = Child(offsetNode, "position");
-            WriteAttr(posNode, "x", FormatUtil::formatFloat(offsetPos.x));
-            WriteAttr(posNode, "y", FormatUtil::formatFloat(offsetPos.y));
-            WriteAttr(posNode, "z", FormatUtil::formatFloat(offsetPos.z));
+            WriteAttrXYZ(posNode, offsetPos);
         } else {
             offsetNode.remove_child("position");
         }
+        // TODO uitl method to check if zero
         if (!offsetRotZero) {
             auto quatNode = Child(offsetNode, "quaternion");
-            // NB: weird XML ordering
-            WriteAttr(quatNode, "qx", FormatUtil::formatFloat(offsetRot.x));
-            WriteAttr(quatNode, "qy", FormatUtil::formatFloat(offsetRot.y));
-            WriteAttr(quatNode, "qz", FormatUtil::formatFloat(offsetRot.z));
-            WriteAttr(quatNode, "qw", FormatUtil::formatFloat(offsetRot.w));
+            WriteAttrQuat(quatNode, offsetRot);
         } else {
             offsetNode.remove_child("quaternion");
         }

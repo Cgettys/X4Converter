@@ -43,6 +43,12 @@ namespace model {
         virtual pugi::xml_node
         ChildByAttr(pugi::xml_node parent, std::string elemName, std::string attrName, std::string attrVal);
 
+        virtual void WriteAttrXYZ(pugi::xml_node target, aiVector3D val);
+
+        virtual void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
+
+        virtual void WriteAttr(pugi::xml_node target, std::string name, float val);
+
         virtual void WriteAttr(pugi::xml_node target, std::string name, std::string val);
 
         std::map<std::string, std::string> attrs;
