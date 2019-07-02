@@ -5,6 +5,7 @@
 #include "Lod.h"
 #include "CollisionLod.h"
 #include "VisualLod.h"
+#include "Light.h"
 
 namespace model {
     class Part : public AbstractElement {
@@ -23,6 +24,7 @@ namespace model {
         bool hasRef;
         std::shared_ptr<CollisionLod> collisionLod;
         std::map<int, VisualLod> lods;
+        std::map<std::string, Light> lights;
     };
 }
 

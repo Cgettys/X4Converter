@@ -38,22 +38,42 @@ namespace model {
 
         virtual void readAiNodeChild(aiNode *source);
 
-        virtual pugi::xml_node Child(pugi::xml_node parent, std::string elementName);
+        void ReadOffset(pugi::xml_node target);
 
-        virtual pugi::xml_node
-        ChildByAttr(pugi::xml_node parent, std::string elemName, std::string attrName, std::string attrVal);
+        void ApplyOffsetToAiNode(aiNode *target);
 
-        virtual void WriteAttrXYZ(pugi::xml_node target, aiVector3D val);
+        void WriteOffset(pugi::xml_node target);
 
-        virtual void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
+        static pugi::xml_node Child(pugi::xml_node parent, const std::string &elementName);
 
-        virtual void WriteAttr(pugi::xml_node target, std::string name, float val);
+        static pugi::xml_node
+        ChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
+                    const std::string &attrVal);
 
-        virtual void WriteAttr(pugi::xml_node target, std::string name, std::string val);
+
+        static aiColor3D ReadAttrRGB(pugi::xml_node target);
+
+        static void WriteAttrRGB(pugi::xml_node target, aiColor3D val);
+
+        static aiVector3D ReadAttrXYZ(pugi::xml_node target);
+
+        static void WriteAttrXYZ(pugi::xml_node target, aiVector3D val);
+
+        static aiQuaternion ReadAttrQuat(pugi::xml_node target);
+
+        static void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
+
+        static void WriteAttr(pugi::xml_node target, std::string name, float val);
+
+        static void WriteAttr(pugi::xml_node target, std::string name, std::string val);
 
         std::map<std::string, std::string> attrs;
 
         std::shared_ptr<ConversionContext> ctx;
+    protected:
+
+        aiVector3D offsetPos;
+        aiQuaternion offsetRot;
     private:
 
         std::string name;

@@ -38,9 +38,16 @@ public:
     std::vector<aiMesh *> Meshes;
     std::string gameBaseFolderPath;
     aiScene *pScene;
+
+    std::vector<aiLight *> GetLights();
+
+    aiLight *GetLight(std::string name);
+
+    void AddLight(aiLight *light);
 protected:
     std::shared_ptr<Assimp::IOSystem> io;
 private:
     std::string sourcePathSuffix;
     model::MaterialLibrary materialLibrary;
+    std::map<std::string, aiLight *> lights;
 };

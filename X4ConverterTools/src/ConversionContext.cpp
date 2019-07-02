@@ -164,14 +164,27 @@ std::string ConversionContext::GetSourcePath() {
 
 // callee frees
 Assimp::IOStream *ConversionContext::GetSourceFile(std::string name, std::string mode) {
-    std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + name);
+    std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + algorithm::to_lower_copy(name));
     if (!io->Exists(path) && mode != "wb") {
         throw std::runtime_error("Source file missing: " + name);
     }
+
     auto result = io->Open(path, mode);
     if (result == nullptr) {
         throw std::runtime_error("Source file could not be opened: " + name);
     }
     return result;
+}
+
+void ConversionContext::AddLight(aiLight *light) {
+    std::string name = light->mName.C_Str();
+    if (lights[name]) {
+        throw std::runtime_error("Duplicated light name: " + name);
+    }
+    lights.insert(std::pair<std::string, aiLight *>(name, light));
+}
+
+aiLight *ConversionContext::GetLight(std::string name) {
+    return lights[name];
 }
 

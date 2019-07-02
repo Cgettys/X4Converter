@@ -52,6 +52,15 @@ namespace model {
             connections.emplace_back(connectionNode, ctx, getName());
         }
 
+        auto layersNode = componentNode.child("layers");
+        if (layersNode.empty()) {
+            std::cerr << "Warning, <layers> node not found";
+        }
+        auto layerNode = layersNode.child("layer");
+        if (layerNode.next_sibling()) {
+            std::cerr << "Warning, this file contains more than one layer. Ignoring all but the first." << std::endl;
+        }
+
     }
 
     aiNode *Component::ConvertToAiNode() {

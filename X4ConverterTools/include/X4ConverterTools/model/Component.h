@@ -4,6 +4,7 @@
 #include <vector>
 #include "AbstractElement.h"
 #include "Connection.h"
+#include "Layer.h"
 
 namespace model {
 
@@ -23,7 +24,7 @@ namespace model {
 
     protected:
         std::vector<Connection> connections;
-
+        Layer layer;
         void recurseOnChildren(aiNode *child, std::shared_ptr<ConversionContext> ctx);
     };
 

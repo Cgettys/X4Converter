@@ -97,6 +97,7 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
     BOOST_AUTO_TEST_CASE(xml_hard) {
         // TODO refactor all the io...
+        // TODO test /assets/units/size_m/ship_arg_m_bomber_02.xml as well
         const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
         const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
         const std::string inputXMLPath = tgtPath + ".xml";
@@ -119,16 +120,45 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
         auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
         auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
         // TODO as we get further along, leave in more of this
-        compNode.remove_child("layers");
+        //compNode.remove_child("layers");
 
         auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
         TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
         BOOST_TEST_CHECKPOINT("Cleanup");
         delete expectedDoc;
         delete actualDoc;
-
     }
 
+    BOOST_AUTO_TEST_CASE(xml_hard_2) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_m/ship_arg_m_bomber_02";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        fs::remove(gameBaseFolderPath + outputXMLPath);
+        // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
+        pugi::xml_document doc;
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
+
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+    }
     BOOST_AUTO_TEST_CASE(bridge) {
         // TODO refactor all the io...
         const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();

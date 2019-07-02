@@ -30,7 +30,5 @@ namespace model {
     private:
         std::string parentName;
         std::vector<Part> parts;
-        aiVector3D offsetPos;
-        aiQuaternion offsetRot;
     };
 }
