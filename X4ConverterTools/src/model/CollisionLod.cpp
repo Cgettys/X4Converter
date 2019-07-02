@@ -28,7 +28,7 @@ namespace model {
             throw std::runtime_error("this is not a collision mesh");
         }
         index = COLLISION_INDEX;
-        xmfFile = xmf::XmfFile::GenerateMeshFile(ctx->pScene, node, true);
+        xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, true);
         CalculateSizeAndCenter(node);
     }
 
@@ -38,7 +38,7 @@ namespace model {
 
         aiVector3D lowerBound;
         aiVector3D upperBound;
-        aiMesh *pCollisionMesh = ctx->pScene->mMeshes[pCollisionNode->mMeshes[0]];
+        aiMesh *pCollisionMesh = ctx->GetMesh(pCollisionNode->mMeshes[0]);
         for (int i = 0; i < pCollisionMesh->mNumVertices; ++i) {
             aiVector3D &position = pCollisionMesh->mVertices[i];
             if (i == 0) {

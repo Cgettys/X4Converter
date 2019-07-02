@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
         BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
             auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
             auto pScene = new aiScene();
-            ctx->pScene = pScene;
+            ctx->SetScene(pScene);
             auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
             auto node = doc->select_node(
                     "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[@index='0']").node();
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             ctx->PopulateSceneArrays();
             delete doc;
             ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
-            ctx->pScene = pScene;
+            ctx->SetScene(pScene);
 
             auto lodBackward = VisualLod(ctx);
             auto outDoc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");

@@ -24,7 +24,9 @@ namespace model {
         bool hasRef;
         std::shared_ptr<CollisionLod> collisionLod;
         std::map<int, VisualLod> lods;
-        std::map<std::string, Light> lights;
+        std::vector<Light> lights;
+
+        void handleAiLights(aiNode *node);
     };
 }
 

@@ -1,7 +1,8 @@
 #include "X4ConverterTools/model/Component.h"
-
+#include <boost/algorithm/string.hpp>
 #include <iostream>
 
+using namespace boost::algorithm;
 namespace model {
 
     Component::Component(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
@@ -148,11 +149,15 @@ namespace model {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
             if (childName.find("class") != std::string::npos || childName.find("source") != std::string::npos) {
+                // TODO improve me to not risk accidental matches
                 readAiNodeChild(child);
                 continue;
             } else if (childName.find('*') == std::string::npos) {
                 std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
                           << std::endl;
+            } else if (starts_with(childName, "layer")) {
+                layers.emplace_back(child, ctx);
+
             } else {
                 connections.emplace_back(child, ctx);
                 recurseOnChildren(child, ctx);

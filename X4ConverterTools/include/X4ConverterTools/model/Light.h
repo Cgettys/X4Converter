@@ -5,14 +5,16 @@
 
 namespace model {
     enum LightKind {
-        arealight, omni
+        arealight, omni, box
     };
 
     class Light : public AbstractElement {
     public:
         explicit Light(std::shared_ptr<ConversionContext> ctx);
 
-        explicit Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx);
+        explicit Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string parentName);
+
+        explicit Light(aiNode *node, std::shared_ptr<ConversionContext> ctx);
 
         aiNode *ConvertToAiNode() override;
 

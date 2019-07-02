@@ -171,10 +171,7 @@ namespace xmf {
         try {
             if (GetMaterials().empty()) {
                 aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, ctx);
-
-                pMeshGroupNode->mMeshes = new uint32_t[1];
-                pMeshGroupNode->mMeshes[pMeshGroupNode->mNumMeshes++] = numeric_cast<unsigned int>(ctx->Meshes.size());
-                ctx->Meshes.push_back(pMesh);
+                ctx->AddMesh(pMeshGroupNode, pMesh);
             } else {
                 pMeshGroupNode->mChildren = new aiNode *[NumMaterials()];
 
@@ -193,9 +190,7 @@ namespace xmf {
 
                     auto *pMeshNode = new aiNode();
                     pMeshNode->mName = pMesh->mName;
-                    pMeshNode->mMeshes = new uint32_t[1];
-                    pMeshNode->mMeshes[pMeshNode->mNumMeshes++] = numeric_cast<unsigned int>(ctx->Meshes.size());
-                    ctx->Meshes.push_back(pMesh);
+                    ctx->AddMesh(pMeshNode, pMesh);
 
                     pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] = pMeshNode;
                 }
@@ -408,7 +403,8 @@ namespace xmf {
     }
 
 
-    std::shared_ptr<XmfFile> XmfFile::GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh) {
+    std::shared_ptr<XmfFile>
+    XmfFile::GenerateMeshFile(std::shared_ptr<ConversionContext> ctx, aiNode *pNode, bool isCollisionMesh) {
         std::vector<aiNode *> meshNodes;
         if (pNode->mNumChildren == 0) {
             meshNodes.push_back(pNode);
@@ -439,7 +435,7 @@ namespace xmf {
                         str(format("Node %s has multiple meshes attached") % pMeshNode->mName.C_Str()));
             }
             auto meshIndex = pMeshNode->mMeshes[0];
-            aiMesh *pMesh = pScene->mMeshes[meshIndex];
+            aiMesh *pMesh = ctx->GetMesh(meshIndex);
             if (pMesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE) {
                 throw std::runtime_error(
                         str(format("Mesh %s contains nontriangular polygons") % pMeshNode->mName.C_Str()));
@@ -469,7 +465,7 @@ namespace xmf {
         int vertexOffset = 0;
         int indexOffset = 0;
         for (aiNode *pMeshNode: meshNodes) {
-            aiMesh *pMesh = pScene->mMeshes[pMeshNode->mMeshes[0]];
+            aiMesh *pMesh = ctx->GetMesh(pMeshNode->mMeshes[0]);
             for (int i = 0; i < pMesh->mNumVertices; ++i) {
                 for (XmfVertexElement &vertexElem: vertexDecl) {
                     pVertex += vertexElem.WriteVertexElement(pMesh, i, pVertex);

@@ -8,14 +8,18 @@ namespace model {
 
     }
 
-    Light::Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
-        setName(node.attribute("name").value());
+    Light::Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string parentName) : AbstractElement(
+            ctx) {
+        std::string tmp = str(boost::format("%1%-light%2%") % parentName % node.attribute("name").value());;
+        setName(tmp);
         ReadOffset(node);
-        std::string kind = node.value();
-        if (kind.compare("arealight") == 0) {
+        std::string kind = node.name();
+        if (kind == "arealight") {
             lightKind = arealight;
-        } else if (kind.compare("ommi") == 0) {
+        } else if (kind == "omni") {
             lightKind = omni;
+        } else if (kind == "box") {
+            lightKind = box;
         } else {
             throw std::runtime_error("Unknown light type:" + kind);
         }
@@ -30,6 +34,11 @@ namespace model {
         specularIntensity = node.attribute("specularintensity").as_float(0.0f);
         trigger = node.attribute("trigger").as_bool(false);
         intensity = node.attribute("intensity").as_float(0.0f);
+        // TODO animation
+    }
+
+    Light::Light(aiNode *node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+        ConvertFromAiNode(node);
     }
 
     aiNode *Light::ConvertToAiNode() {
@@ -52,6 +61,14 @@ namespace model {
             case omni:
                 result->mType = aiLightSource_POINT;
                 break;
+            case box:
+                result->mType = aiLightSource_AREA;
+                // TODO wth is this
+                result->mSize = area;
+                result->mUp = aiVector3D(0, 0, 1); // TODO figure this out
+                result->mDirection = offsetRot.Rotate(result->mUp); // TODO checkme
+
+                break;
         }
         ctx->AddLight(result);
         auto node = new aiNode();
@@ -63,26 +80,47 @@ namespace model {
     void Light::ConvertFromAiNode(aiNode *node) {
         std::string name = node->mName.C_Str();
         setName(name);// TODO template method out this stuff?
-        auto light = ctx->GetLight(name);
-        offsetPos = light->mPosition;
-        color = light->mColorSpecular;// TODO is this the best choice?
-        // TODO reconstruct vector for mDirection
-        switch (light->mType) {
-            case aiLightSource_AREA:
-                lightKind = arealight;
-                area = light->mSize;
-                break;
-            case aiLightSource_POINT:
-                lightKind = omni;
-                break;
-            default:
-                auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
-                throw std::runtime_error(err);
-        }
+//        auto light = ctx->GetLight(name);
+//        offsetPos = light->mPosition;
+//        color = light->mColorSpecular;// TODO is this the best choice?
+//        // TODO reconstruct vector for mDirection
+//        switch (light->mType) {
+//            case aiLightSource_AREA:
+//                lightKind = arealight;
+//                area = light->mSize;
+//                break;
+//            case aiLightSource_POINT:
+//                lightKind = omni;
+//                break;
+//            default:
+//                auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
+//                throw std::runtime_error(err);
+//        }
     }
 
     void Light::ConvertToGameFormat(pugi::xml_node out) {
-        WriteOffset(out);
-        WriteAttrRGB(out, color);
+        auto name = getName();
+        size_t pos = name.rfind("-light");
+        if (pos == std::string::npos) {
+            throw std::runtime_error("light name couldn't be parsed");
+        }
+        name = name.substr(pos + 6);
+        std::string nodeType;
+        switch (lightKind) {
+            case arealight:
+                nodeType = "arealight";
+                break;
+            case omni:
+                nodeType = "omni";
+                break;
+            case box:
+                nodeType = "box";
+                break;
+        }
+
+        auto lightNode = ChildByAttr(out, nodeType, "name", name);
+        WriteOffset(lightNode);
+        WriteAttrRGB(lightNode, color);
     }
+
 }

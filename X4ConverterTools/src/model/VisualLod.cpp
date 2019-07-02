@@ -33,7 +33,7 @@ namespace model {
             throw std::runtime_error("lod lacks index");
         }
         index = std::stoi(rawName.substr(pos + 4));
-        xmfFile = xmf::XmfFile::GenerateMeshFile(ctx->pScene, node, false);
+        xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, false);
     }
 
     void VisualLod::ConvertToGameFormat(pugi::xml_node out) {

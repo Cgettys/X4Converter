@@ -64,7 +64,8 @@ namespace xmf {
         static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 
         // For export:
-        static std::shared_ptr<XmfFile> GenerateMeshFile(const aiScene *pScene, aiNode *pNode, bool isCollisionMesh);
+        static std::shared_ptr<XmfFile>
+        GenerateMeshFile(std::shared_ptr<ConversionContext> ctx, aiNode *pNode, bool isCollisionMesh);
 
         static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
 

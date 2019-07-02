@@ -35,19 +35,21 @@ public:
     Assimp::IOStream *GetSourceFile(std::string name, std::string mode = "rb");
 
     std::map<std::string, uint32_t> Materials;
-    std::vector<aiMesh *> Meshes;
     std::string gameBaseFolderPath;
-    aiScene *pScene;
 
-    std::vector<aiLight *> GetLights();
+    void SetScene(aiScene *pScene);
 
+    aiMesh *GetMesh(int meshIndex);
     aiLight *GetLight(std::string name);
 
+    void AddMesh(aiNode *parentNode, aiMesh *mesh);
     void AddLight(aiLight *light);
 protected:
     std::shared_ptr<Assimp::IOSystem> io;
-private:
+    aiScene *pScene;
+    std::vector<aiMesh *> meshes;
     std::string sourcePathSuffix;
     model::MaterialLibrary materialLibrary;
     std::map<std::string, aiLight *> lights;
+
 };

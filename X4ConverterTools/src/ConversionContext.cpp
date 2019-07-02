@@ -137,17 +137,32 @@ void ConversionContext::PopulateSceneArrays() {
             pScene->mMaterials[it.second] = pAiMaterial;
         }
     }
-    int meshCount = 0;
     // Add the meshes to the scene
-    if (!Meshes.empty()) {
-        pScene->mNumMeshes = numeric_cast<unsigned int>(Meshes.size());
-        pScene->mMeshes = new aiMesh *[pScene->mNumMeshes];
-        for (auto &meshIt : Meshes) {
-            pScene->mMeshes[meshCount++] = meshIt;
+    if (!meshes.empty()) {
+        auto meshCount = numeric_cast<unsigned int>(meshes.size());
+        pScene->mNumMeshes = meshCount;
+        pScene->mMeshes = new aiMesh *[meshCount];
+
+        int meshIdx = 0;
+        for (auto &meshIt : meshes) {
+            pScene->mMeshes[meshIdx++] = meshIt;
         }
     }
     for (int i = 0; i < pScene->mNumMeshes; ++i) {
         AssimpUtil::MergeVertices(pScene->mMeshes[i]);
+    }
+    if (!lights.empty()) {
+        auto lightCount = numeric_cast<unsigned int>(lights.size());
+        pScene->mLights = new aiLight *[lightCount];
+
+        for (auto &lightIt : lights) {
+            if (lightIt.second == nullptr) {
+                continue;
+                // TODO figure out where nullptr ones come from
+            }
+            pScene->mLights[pScene->mNumLights++] = lightIt.second;
+        }
+
     }
 }
 
@@ -185,6 +200,36 @@ void ConversionContext::AddLight(aiLight *light) {
 }
 
 aiLight *ConversionContext::GetLight(std::string name) {
-    return lights[name];
+    if (lights.count(name)) {
+        return lights[name];
+    }
+    throw std::runtime_error("Could not find light of name:" + name);
 }
+
+void ConversionContext::SetScene(aiScene *pScene) {
+    ConversionContext::pScene = pScene;
+    for (int i = 0; i < pScene->mNumLights; i++) {
+        ConversionContext::AddLight(pScene->mLights[i]);
+    }
+    for (int i = 0; i < pScene->mNumMeshes; i++) {
+        meshes.emplace_back(pScene->mMeshes[i]);
+    }
+}
+
+void ConversionContext::AddMesh(aiNode *parentNode, aiMesh *pMesh) {
+    if (parentNode->mNumMeshes != 0) {
+        throw std::runtime_error("Node had mesh when it should have been empty!");
+    }
+    parentNode->mNumMeshes = 1;
+    parentNode->mMeshes = new uint32_t[1];
+    parentNode->mMeshes[0] = numeric_cast<unsigned int>(meshes.size());
+
+    meshes.push_back(pMesh);
+}
+
+aiMesh *ConversionContext::GetMesh(int meshIndex) {
+    return meshes[meshIndex];
+}
+
+
 

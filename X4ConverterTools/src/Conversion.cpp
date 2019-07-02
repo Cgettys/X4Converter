@@ -35,7 +35,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
-    ctx->pScene = pScene;
+    ctx->SetScene(pScene);
     model::Component component(doc.root(), ctx);
     aiNode *root = component.ConvertToAiNode();
     pScene->mRootNode = root;
@@ -63,6 +63,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     auto actualDaeFilePath = fs::exists(daeFilePath) ? daeFilePath : gameBaseFolderPath + daeFilePath;
     auto actualXmlFilePath = fs::exists(xmlFilePath) ? xmlFilePath : gameBaseFolderPath + xmlFilePath;
     auto *importer = new Assimp::Importer();
+    importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
     const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);
     if (!pScene) {
         std::cerr << "Failed during import" << std::endl;
@@ -72,7 +73,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     aiCopyScene(pScene, &myScene);
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
     auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
-    ctx->pScene = myScene;
+    ctx->SetScene(myScene);
     model::Component component(ctx);
 
     component.ConvertFromAiNode(myScene->mRootNode->mChildren[0]);

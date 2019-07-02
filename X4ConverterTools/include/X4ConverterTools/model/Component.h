@@ -24,7 +24,7 @@ namespace model {
 
     protected:
         std::vector<Connection> connections;
-        Layer layer;
+        std::vector<Layer> layers;
         void recurseOnChildren(aiNode *child, std::shared_ptr<ConversionContext> ctx);
     };
 

@@ -39,6 +39,14 @@ namespace model {
             throw std::runtime_error("ref should not contain lods");
         }
 
+        // TODO common with Layer
+        auto lightsNode = node.child("lights");
+        if (!lightsNode.empty()) {
+            for (auto lightNode: lightsNode.children()) {
+                lights.emplace_back(lightNode, ctx, getName());
+            }
+        }
+
         // TODO figure out a better way
         if (!hasRef) {
             collisionLod = std::make_unique<CollisionLod>(getName(), ctx);
@@ -60,25 +68,36 @@ namespace model {
             for (auto lod: lods) {
                 children.push_back(lod.second.ConvertToAiNode());
             }
+            auto lightResult = new aiNode();
+            lightResult->mName = getName() + "-lights";
+            // TODO should really add a Lights object or something
+            std::vector<aiNode *> lightChildren;
+            for (auto light: lights) {
+                lightChildren.push_back(light.ConvertToAiNode());
+            }
+            populateAiNodeChildren(lightResult, lightChildren);
+            children.push_back(lightResult);
         }
 
         populateAiNodeChildren(result, children);
-
-
         return result;
     }
 
     static std::regex lodRegex("[^-]+\\-lod\\d");
     static std::regex collisionRegex("[^-]+\\-collision");
 
+
     void Part::ConvertFromAiNode(aiNode *node) {
-        std::string tmp = std::string();
-        setName(node->mName.C_Str());
+        std::string name = node->mName.C_Str();
+        setName(name);
+
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
             // TODO check part names?
-            if (regex_match(childName, lodRegex)) {
+            if (childName == name + "-lights") {
+                handleAiLights(child);
+            } else if (regex_match(childName, lodRegex)) {
                 auto lod = VisualLod(ctx);
                 lod.ConvertFromAiNode(child);
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
@@ -94,6 +113,12 @@ namespace model {
         // TODO more
     }
 
+    void Part::handleAiLights(aiNode *node) {
+        for (int i = 0; i < node->mNumChildren; i++) {
+            auto child = node->mChildren[i];
+            lights.emplace_back(child, ctx);
+        }
+    }
     void Part::ConvertToGameFormat(pugi::xml_node out) {
         if (std::string(out.name()) != "parts") {
             throw std::runtime_error("part must be appended to a parts xml element");
@@ -126,6 +151,13 @@ namespace model {
             }
         } else {
             partNode.remove_child("lods");
+        }
+
+        if (!lights.empty()) {
+            auto lightsNode = Child(out, "lights");
+            for (auto light : lights) {
+                light.ConvertToGameFormat(lightsNode);
+            }
         }
         // TODO out more
     }
