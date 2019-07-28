@@ -162,7 +162,6 @@ void ConversionContext::PopulateSceneArrays() {
             }
             pScene->mLights[pScene->mNumLights++] = lightIt.second;
         }
-
     }
 }
 
@@ -178,15 +177,19 @@ std::string ConversionContext::GetSourcePath() {
 }
 
 // callee frees
-Assimp::IOStream *ConversionContext::GetSourceFile(std::string name, std::string mode) {
+Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, std::string mode) {
     std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + algorithm::to_lower_copy(name));
     if (!io->Exists(path) && mode != "wb") {
-        throw std::runtime_error("Source file missing: " + name);
+        throw std::runtime_error("File missing: " + name);
     }
 
     auto result = io->Open(path, mode);
     if (result == nullptr) {
-        throw std::runtime_error("Source file could not be opened: " + name);
+        if (mode == "wb") {
+            throw std::runtime_error("File could not be opened or created: " + name);
+        } else {
+            throw std::runtime_error("File could not be opened: " + name);
+        }
     }
     return result;
 }
@@ -199,8 +202,12 @@ void ConversionContext::AddLight(aiLight *light) {
     lights.insert(std::pair<std::string, aiLight *>(name, light));
 }
 
-aiLight *ConversionContext::GetLight(std::string name) {
-    if (lights.count(name)) {
+bool ConversionContext::CheckLight(const std::string &name) {
+    return lights.count(name) > 0;
+}
+
+aiLight *ConversionContext::GetLight(const std::string &name) {
+    if (CheckLight(name)) {
         return lights[name];
     }
     throw std::runtime_error("Could not find light of name:" + name);

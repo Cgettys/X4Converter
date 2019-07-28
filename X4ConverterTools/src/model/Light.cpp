@@ -1,5 +1,6 @@
 #include "X4ConverterTools/model/Light.h"
 #include <boost/format.hpp>
+#include <iostream>
 
 using namespace boost;
 namespace model {
@@ -51,6 +52,8 @@ namespace model {
         result->mColorDiffuse = color;
         result->mColorSpecular = color;
         result->mColorAmbient = color;
+        auto node = new aiNode();
+        node->mName = getName();
         switch (lightKind) {
             case arealight:
                 result->mType = aiLightSource_AREA;
@@ -62,6 +65,7 @@ namespace model {
                 result->mType = aiLightSource_POINT;
                 break;
             case box:
+                return node;
                 result->mType = aiLightSource_AREA;
                 // TODO wth is this
                 result->mSize = area;
@@ -71,8 +75,6 @@ namespace model {
                 break;
         }
         ctx->AddLight(result);
-        auto node = new aiNode();
-        node->mName = getName();
         // TODO other stuff here
         return node;
     }
@@ -80,22 +82,28 @@ namespace model {
     void Light::ConvertFromAiNode(aiNode *node) {
         std::string name = node->mName.C_Str();
         setName(name);// TODO template method out this stuff?
-//        auto light = ctx->GetLight(name);
-//        offsetPos = light->mPosition;
-//        color = light->mColorSpecular;// TODO is this the best choice?
-//        // TODO reconstruct vector for mDirection
-//        switch (light->mType) {
-//            case aiLightSource_AREA:
-//                lightKind = arealight;
-//                area = light->mSize;
-//                break;
-//            case aiLightSource_POINT:
-//                lightKind = omni;
-//                break;
-//            default:
-//                auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
-//                throw std::runtime_error(err);
-//        }
+        if (!ctx->CheckLight(name)) {
+            std::cerr << "Warning, could not find light by name:" + name << std::endl;
+            node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
+            return;
+        }
+        auto light = ctx->GetLight(name);
+        offsetPos = light->mPosition;
+        color = light->mColorSpecular;// TODO is this the best choice?
+        // TODO reconstruct vector for mDirection
+        switch (light->mType) {
+            case aiLightSource_AREA:
+                lightKind = arealight;
+                area = light->mSize;
+                break;
+            case aiLightSource_POINT:
+                lightKind = omni;
+                break;
+            default:
+                auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
+                throw std::runtime_error(err);
+        }
+
     }
 
     void Light::ConvertToGameFormat(pugi::xml_node out) {
@@ -116,9 +124,17 @@ namespace model {
             case box:
                 nodeType = "box";
                 break;
+            default:
+                nodeType = "unknown";
+                break;
         }
 
         auto lightNode = ChildByAttr(out, nodeType, "name", name);
+        if (lightKind == arealight) {
+            WriteAttr(lightNode, "areax", area.x);
+            WriteAttr(lightNode, "areay", area.y);
+        }
+
         WriteOffset(lightNode);
         WriteAttrRGB(lightNode, color);
     }

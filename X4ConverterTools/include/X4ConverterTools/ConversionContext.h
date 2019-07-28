@@ -32,7 +32,7 @@ public:
 
     std::string GetSourcePath();
 
-    Assimp::IOStream *GetSourceFile(std::string name, std::string mode = "rb");
+    Assimp::IOStream *GetSourceFile(const std::string &name, std::string mode = "rb");
 
     std::map<std::string, uint32_t> Materials;
     std::string gameBaseFolderPath;
@@ -40,10 +40,14 @@ public:
     void SetScene(aiScene *pScene);
 
     aiMesh *GetMesh(int meshIndex);
-    aiLight *GetLight(std::string name);
+
+    aiLight *GetLight(const std::string &name);
 
     void AddMesh(aiNode *parentNode, aiMesh *mesh);
     void AddLight(aiLight *light);
+
+    bool CheckLight(const std::string &name);
+
 protected:
     std::shared_ptr<Assimp::IOSystem> io;
     aiScene *pScene;

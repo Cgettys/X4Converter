@@ -65,7 +65,7 @@ namespace model {
 
         static void WriteAttr(pugi::xml_node target, std::string name, float val);
 
-        static void WriteAttr(pugi::xml_node target, std::string name, std::string val);
+        static void WriteAttr(pugi::xml_node target, const std::string &name, std::string val);
 
         std::map<std::string, std::string> attrs;
 

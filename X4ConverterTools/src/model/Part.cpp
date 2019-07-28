@@ -154,7 +154,7 @@ namespace model {
         }
 
         if (!lights.empty()) {
-            auto lightsNode = Child(out, "lights");
+            auto lightsNode = Child(partNode, "lights");
             for (auto light : lights) {
                 light.ConvertToGameFormat(lightsNode);
             }

@@ -16,6 +16,13 @@ namespace model {
     }
 
     void AbstractElement::setName(std::string n) {
+        // TODO Verify exact limit
+        // E.g.
+        // "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_carrier_01_data"
+        // cuts off to "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_"
+        if (n.length() > 63) {
+            throw std::runtime_error("Name too long, blender will cut it off!");
+        }
         name = std::move(n);
     }
 
@@ -106,8 +113,8 @@ namespace model {
     }
 
     aiQuaternion AbstractElement::ReadAttrQuat(pugi::xml_node target) {
-        return {target.attribute("qw").as_float(), target.attribute("qx").as_float(), target.attribute("qy").as_float(),
-                target.attribute("qz").as_float()};
+        return aiQuaternion{target.attribute("qw").as_float(), target.attribute("qx").as_float(),
+                            target.attribute("qy").as_float(), target.attribute("qz").as_float()};
     }
 
     void AbstractElement::WriteAttrQuat(pugi::xml_node target, aiQuaternion val) {
@@ -123,7 +130,7 @@ namespace model {
         WriteAttr(target, name, strVal);
     }
 
-    void AbstractElement::WriteAttr(pugi::xml_node target, std::string name, std::string val) {
+    void AbstractElement::WriteAttr(pugi::xml_node target, const std::string &name, std::string val) {
         auto attr = target.attribute(name.c_str());
         if (attr.empty()) {
             attr = target.append_attribute(name.c_str());
@@ -201,11 +208,14 @@ namespace model {
     }
 
     aiColor3D AbstractElement::ReadAttrRGB(pugi::xml_node target) {
-        return aiColor3D();
+        return aiColor3D(target.attribute("r").as_float(0.0), target.attribute("g").as_float(0.0),
+                         target.attribute("b").as_float(0.0));
     }
 
     void AbstractElement::WriteAttrRGB(pugi::xml_node target, aiColor3D val) {
-
+        WriteAttr(target, "r", val.r);
+        WriteAttr(target, "g", val.g);
+        WriteAttr(target, "b", val.b);
     }
 
 

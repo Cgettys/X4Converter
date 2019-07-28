@@ -56,7 +56,7 @@ namespace ani {
             }
         }
         if (descs.size() != header.getNumAnims()) {
-            s.append(str(format("Expected %1% descriptoins but only read %2%") % descs.size() % header.getNumAnims()));
+            s.append(str(format("Expected %1% descriptions but only read %2%") % descs.size() % header.getNumAnims()));
         }
 
         return s;
