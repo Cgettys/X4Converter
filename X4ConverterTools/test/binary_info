@@ -1,0 +1,178 @@
+Header:
+byte magic[4]             = "XUMF"  // Xu Mesh File 0x00 - 0x03 / 00 - 16
+byte version              = 3       // 0x04
+byte bBigEndian           = 0       // 0x05
+byte dataBufferDescOffset = 0x40    // file offset of first data buffer desc 0x06
+byte pad                            // 0x07 [Maybe padding?]
+byte numDataBuffers       = 2       // one vertex buffer, one index buffer 0x08
+byte dataBufferDescSize   = 0xBC    // size of one data buffer desc 0x09
+byte numAttributeRanges   = 1       // 0x0A
+byte attributeRangeSize   = 0x88    // size of one attribute range 0x0B
+byte pad[10]                        // 0x0C - 0x15 [Not actually padding]
+int32 primitiveType       = 4       // D3DPRIMITIVETYPE; determines how the index buffer is used to draw polygons. 4 = triangle list 0x16
+
+byte pad[dataBufferDescOffset-0x1A] // 0x17 - 0x40
+col_idx    0 1  2 3  4 5  6 7  8 9  A B  C D  E F
+00000000: 5855 4d46 0300 4000 02bc 0088 0000 6a00  XUMF..@.......j.
+00000010: 0000 2c01 0000 0400 0000 0000 0000 0000  ..,.............
+00000020: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000030: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+
+
+DataBufferDesc[numDataBuffers]      // describes a DirectX 9 vertex or index buffer
+
+    int32 type                      // 0x1E -> index buffer, otherwise vertex buffer
+                                    // for vertex buffers with numVertexElements = 0, indicates the usage of a single implicit element:
+                                    //   type    D3DDECLUSAGE
+                                    //   0, 1    POSITION
+                                    //   2, 3    NORMAL
+                                    //   4       TANGENT
+                                    //   5       BINORMAL
+                                    //   8       COLOR
+                                    //   20      PSIZE
+                                    //   others  TEXCOORD
+
+    int32 usageIndex                // for vertex buffers with numVertexElements = 0, indicates the usage index of the single implicit element
+    int32 dataOffset                // file offset = dataBufferDescOffset + numDataBuffers*dataBufferDescSize + numAttributeRanges*attributeRangeSize + dataOffset
+    int32 bCompressed               // if 1, the data is compressed using zlib's compress() function and can be uncompressed with uncompress()
+    byte pad[4]
+    int32 format                    // for index buffers, this is the index format: 0x1E -> 16-bit indices, otherwise 32-bit indices.
+                                    // for vertex buffers with numVertexElements = 0, this is the type (D3DDECLTYPE) of the single implicit element
+                                    // otherwise 0x20
+
+    int32 compressedDataSize        // equal to uncompressed size if bCompressed = 0
+    int32 itemsPerSection           // number of vertices/indices
+    int32 itemSize                  // size in bytes of a single vertex/index
+    int32 numSections = 1
+    byte pad[16]
+    int32 numVertexElements         // for the vertex buffer, number of elements in the DirectX vertex declaration. May be 0,
+                                    // in which case a single declaration is built using the preceding fields.
+
+    VertexDeclElement[16]           // fixed size array, only the first numVertexElements items are used. each item is mapped to a D3DVERTEXELEMENT9
+        int32 type                  // D3DDECLTYPE
+        byte usage                  // D3DDECLUSAGE
+        byte usageIndex
+        byte pad[2]
+
+00000040: 0000 0000 0000 0000 0000 0000 0100 0000  ................
+00000050: 0000 0000 0200 0000 aa04 0000 6a00 0000  ............j...
+00000060: 0c00 0000 0100 0000 0000 00c0 b05a 0fc0  .............Z..
+00000070: 0000 00c0 b05a 0f40 0000 0000 0000 0000  .....Z.@........
+00000080: 0000 0000 0000 0000 2000 0000 0000 0000  ........ .......
+00000090: 0000 0000 0000 0000 4080 4b00 0000 0000  ........@.K.....
+000000a0: 0000 0000 0000 0000 0000 4800 0000 0000  ..........H.....
+000000b0: 1000 0000 0000 0000 20f6 e00d 0000 0000  ........ .......
+000000c0: 0200 0000 0000 0000 98de 975a ff7f 0000  ...........Z....
+000000d0: 4821 8e3f 0000 0000 0000 0000 ff7f 0000  H!.?............
+000000e0: 1000 0000 0000 0000 0000 0000 0000 0000  ................
+000000f0: 4080 4b00 0000 0000 e8c0 040e 1e00 0000  @.K.............
+00000100: 0000 0000 aa04 0000 0100 0000 0000 0000  ................
+00000110: 1f00 0000 6e01 0000 2c01 0000 0400 0000  ....n...,.......
+00000120: 0100 0000 0000 0000 0000 0000 0000 0000  ................
+00000130: 0040 5a40 0000 0000 0000 0000 f0e6 fd58  .@Z@...........X
+00000140: 0000 0000 0000 1800 0000 0000 0000 0000  ................
+00000150: 0000 0000 0000 0000 0000 0000 4000 0000  ............@...
+00000160: 0000 0000 c00c 1800 0000 0000 3700 0000  ............7...
+00000170: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000180: 0000 0000 4000 0000 0000 0000 0000 0000  ....@...........
+00000190: 0000 0000 4080 4b00 0000 0000 0000 0000  ....@.K.........
+000001a0: 0000 0000 0000 4800 0000 0000 3700 0000  ......H.....7...
+000001b0: 0000 0000 90f5 e00d 78da 25d2 8f53 d375  ........x.%..S.u
+000001c0: 1cc7 f105 6c68 a88c 9863 e29a 6387 a873  ....lh...c..c..s
+000001d0: fb8a 0257 11df 7dde d22e c933 0e08 1707  ...W..}....3....
+000001e0: 8203 3922 2532 3236 e72f 4424 22b4 9944  ..9"%226./D$"..D
+000001f0: 969d 7add 4021 4a0e b5b0 68ef f721 222a  ..z.@!J...h..!"*
+00000200: bf04 e4a8 50f0 c775 1dbf 0c9a f23b fb56  ....P..u.....;.V
+00000210: 7fc1 fb7d 8fd7 53be 6386 b9ed 8e87 22c3  ...}..S.c.....".
+00000220: 494c 38df ca4e e5bf 0331 d51f 61cf a939  IL8..N...1..a..9
+00000230: 5631 980a d2ca fb68 4e69 6785 b76d 0021  V1.....hNig..m.!
+00000240: b7d0 6b6c 92c5 cd1a 01be f0c1 91d2 9bec  ..kl............
+00000250: c992 1450 ffd0 e74c 95cd b0a6 b7e2 40f1  ...P...L......@.
+00000260: 8a1d 376c 6b65 06db 0e10 25ee c336 7cc2  ..7lke....%..6|.
+00000270: 9cc7 c320 6fcd 493e b3f4 3a2b ab8b 06aa  ... o.I>..:+....
+00000280: 4e34 ec2b 9f64 6da3 9100 2f4c 387b 636f  N4.+.dm.../L8{co
+00000290: 32c3 c22d 9057 57e3 8c7f 7b9c 5571 0a88  2..-.WW...{.Uq..
+000002a0: b95c c1de 335e 6515 6bd6 0284 d5b1 cc54  .\..3^e.k......T
+000002b0: 178b 3bb6 1cd4 6506 d614 798d a91c 0690  ..;...e...y.....
+000002c0: d6a7 b281 ce47 2c27 6b1e 444d 4fb1 1b79  .....G,'k.DMO..y
+000002d0: 0d8c 0b09 80c0 b362 38ed 39ce 0cc3 8b81  .......b8.9.....
+000002e0: ced7 b2dc 5f1b 59d3 030e 7ab5 8d2c 7c72  ...._.Y...z..,|r
+000002f0: 98a5 478d b150 4b10 1c89 41d6 a9f4 8113  ..G..PK...A.....
+00000300: d31c e83e 78c4 d41a 0928 64ee 90b7 b481  ...>x....(d.....
+00000310: 0df6 ab20 dde9 0559 5b38 327f e640 51ff  ... ...Y[82..@Q.
+00000320: 7abe be60 1883 6c16 12fd f83e 6f9b 08a5  z..`..l....>o...
+00000330: e683 0ea4 2c3d 7574 4b48 f021 c714 47d7  ....,=utKH.!..G.
+00000340: 2f0d 62e8 0617 53b6 06c1 955b 23a8 7ad3  /.b...S....[#.z.
+00000350: 13aa 25ee 10bd 0371 5da1 1a44 f15e f0a0  ..%....q]..D.^..
+00000360: fd27 2c5b e00b 2ee1 aeec e551 dc9f 341f  .',[.......Q..4.
+00000370: ac9e 336c ede2 3194 ec96 8334 ed02 ab56  ..3l..1....4...V
+00000380: 5ec1 b4bb 6ba0 46f8 39e4 3e62 a75d 03cd  ^...k.F.9.>b.]..
+00000390: 5d62 c83d 3c86 89fb 1460 4f3e c78a 652e  ]b.=<....`O>..e.
+000003a0: 4ccb 5f0e 311b d7b3 5f52 9af0 a81b 0391  L._.1..._R......
+000003b0: 641b 6b38 7905 fd07 d742 82ee 32eb 564d  d.k8y....B..2.VM
+000003c0: e00d 7918 881a bfe1 bf3d 3e85 d1be 9120  ..y......=>....
+000003d0: 92bb 9c7b 7c5a 30f1 7412 a82d 354e 6bd9  ...{|Z0.t..-5Nk.
+000003e0: 7534 9c8d 16f6 4d36 04fe 3d85 e160 04b5  u4....M6..=..`..
+000003f0: e239 ccae 9dc5 4fa3 6221 b3ca 8eab bddb  .9....O.b!......
+00000400: 71ba 693b 9c71 1cc0 d23d 2db8 ae25 1906  q.i;.q...=-..%..
+00000410: aa07 9cf5 da39 741e 7a03 a40f bec2 dcb1  .....9t.z.......
+00000420: a758 7cc0 0cd2 150f 71d1 ec2d acf8 6d37  .X|.....q..-..m7
+00000430: accc e942 c3c1 766c 7b9a 0531 b212 1cec  ...B..vl{..1....
+00000440: 5491 ede2 2a12 9d31 f1bf 6f53 5377 5438  T...*..1..oSSwT8
+00000450: a53b f434 7b44 4725 1bc4 e4c1 f454 b56c  .;.4{DG%.....T.l
+00000460: 1595 c4cd 27d1 0d33 efef a624 7941 2c6d  ....'..3...$yA,m
+00000470: b2e8 6997 db08 e65c b450 f08b 2fe1 f6ca  ..i....\.P../...
+00000480: 1052 a81c 78e2 683d 6eea d090 7356 4b79  .R..x.h=n...sVKy
+00000490: 1f97 a2aa 9ca3 7338 87d6 824a dce8 f2a2  ......s8...J....
+000004a0: f04b 4944 ab01 7b9a 83a9 39a9 1c07 0a02  .KID..{...9.....
+000004b0: d14c 0194 f6b9 9660 a506 4d39 3a1a fd5a  .L.....`..M9:..Z
+000004c0: 4c35 4f02 30e8 674f 2a16 6f25 d1fc d7f9  L5O.0.gO*.o%....
+000004d0: 5add 10d6 76e6 d2b9 ba6b 1869 0da5 9a08  Z...v....k.i....
+000004e0: 07ba 16cc a367 ef68 2863 5a4b d220 772a  .....g.h(cZK. w*
+000004f0: 7bcc 515f f91c ca3c 9e21 b74f bc69 b42a  {.Q_...<.!.O.i.*
+00000500: 9ea2 7cfa b0e2 da10 6627 58e8 62ee 422a  ..|.....f'X.b.B*
+00000510: bdeb 4da4 d94c 0fbb fda8 cdc3 97be 4bc9  ..M..L........K.
+00000520: a0c9 243d 25dc f323 e3ce 0812 fd61 e20b  ..$=%..#.....a..
+00000530: edfe e43a c2d3 cea5 1a9c 952a a9af 3f82  ...:.......*..?.
+00000540: 8a96 7c88 f264 0e22 7609 ed5d 05fe dda2  ..|..d."v..]....
+00000550: 6126 b70a ed5d feaf 3d30 0aed b508 ed8d  a&...]..=0......
+00000560: f748 60bc cb46 93d3 1cc5 75a9 c078 41b0  .H`..F....u..xA.
+00000570: 2d36 f1f9 e96a 58f7 5a38 7594 eb49 7b54  -6...jX.Z8u..I{T
+00000580: 0755 af8a a9d7 a0a7 9e65 aba0 2156 b0bd  .U.......e..!V..
+00000590: 64e6 17b9 2bc1 7628 96fe b4ea 6985 6484  d...+.v(....i.d.
+000005a0: 65d4 5a08 04db acca 10d8 fbbc 0307 04db  e.Z.............
+000005b0: ef3b 34b0 7746 4b75 822d 57ce 4191 730e  .;4.wFKu.-W.A.s.
+000005c0: ed82 6dfe 632f 305d 4822 910e b0bb 3918  ..m.c/0]H"....9.
+000005d0: 1aff b53d 1c88 9d14 00f2 322d 7508 b685  ...=......2-u...
+000005e0: 393a 5820 d8aa 2702 50ee f484 1e77 c1f6  9:X ..'.P....w..
+000005f0: af4d 7c76 f010 abe8 c8a5 22c1 d668 0d05  .M|v......"..h..
+00000600: a960 3b29 d8ee bfa3 01d9 d4ff b68d 8f39  .`;)...........9
+00000610: 0874 cca1 8760 6bb4 7b83 a432 9e56 0ab6  .t...`k.{..2.V..
+00000620: 6137 8758 9ac9 42bd 826d 75bf 370c ab37  a7.X..B..mu.7..7
+00000630: 93f4 b61f a589 7d41 b335 8312 92f5 3478  ......}A.5....4x
+00000640: cf0f 06b2 05db 7613 af38 e60f 8525 3ca9  ......v..8...%<.
+00000650: 951a fcd2 4709 e6bb 1194 27d8 fe03 ca4f  ....G.....'....O
+00000660: 5a90 78da 4dd0 0553 4241 1885 61bb bbbb  Z.x.M..SBA..a...
+00000670: bb03 54a4 5340 4c94 1090 16ef ffff 039e  ..T.S@L.........
+00000680: 1d5f 662e 33cf ece5 7cbb df46 57c7 ffaf  ._f.3...|..FW...
+00000690: 13dd d225 7dd2 23bd e827 1b92 0119 c430  ...%}.#..'.....0
+000006a0: d998 8cc8 28c6 c9a6 6442 2631 4d36 2733  ....(...dB&1M6'3
+000006b0: 328b 79b2 1559 9535 ac93 6dc8 a66c 619b  2.y..Y.5..m..la.
+000006c0: 6c47 7665 0ffb 6407 7228 4738 263b 9153  lGve..d.r(G8&;.S
+000006d0: 39c3 39d9 855c ca15 aec9 a272 234b 0893  9.9..\.....r#K..
+000006e0: c5c5 2911 3899 1792 07ea 468c 6c51 5ce2  ..).8.....F.lQ\.
+000006f0: 4590 cc2f 6ef1 2040 1664 de23 99a9 ddc3  E../n. @.d.#....
+00000700: 4776 cbe8 c302 5990 7549 71d0 2f60 5be3  Gv....Y.uIq./`[.
+00000710: e02c 21ce 1763 2f17 6789 70c7 28fb b633  .,!..c/.g.p.(..3
+00000720: 33a6 c8a2 bc45 9833 79b8 afb9 fb32 12b6  3....E.3y....2..
+00000730: 7732 e31d 7bc5 e997 208b d32f c21b fa39  w2..{... ../...9
+00000740: 7f0a 6e5b e625 4bf2 df0f 0799 973d 528c  ..n[.%K......=R.
+00000750: 11be 6b52 9117 a4c9 9a52 9577 c634 df65  ..kR.....R.w.4.e
+00000760: a953 371a 64cf f22d 5fc8 9015 a524 79e4  .S7.d..-_....$y.
+00000770: c8cc dc5f e69a 7a41 b2c8 937d c813 b582  ..._..zA...}....
+00000780: 2d33 6b5b ac7f 232b a148 96a1 771d 65b2  -3k[..#+.H..w.e.
+00000790: 1cfd 6ba8 9299 d1b2 d5b3 bc4b 8579 79ee  ..k........K.yy.
+000007a0: fb23 af68 9099 77f9 e4bb 4eaf f6dc 26b5  .#.h..w...N...&.
+000007b0: 1a6f 58e5 8c39 f6b3 b847 91d1 e2dc 2dee  .oX..9...G....-.
+000007c0: 51b4 d55a d42c dbbd 2c7a fe01 c2c6 4c71  Q..Z.,..,z....Lq

@@ -1,122 +1,223 @@
-#define BOOST_TEST_MODULE test
+#define BOOST_TEST_MODULE AllTests
 
-#include "pugixml.hpp"
-#include <set>
-#include <algorithm>
-#include <vector>
 #include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 #include <assimp/types.h>
-#include <assimp/IOStream.hpp>
-#include <assimp/IOSystem.hpp>
-#include <assimp/DefaultIOSystem.h>
-#include <X4ConverterTools/API.h>
-#include <X4ConverterTools/Types.h>
-#include <X4ConverterTools/Xmf/XuMeshFile.h>
+#include <X4ConverterTools/Conversion.h>
+#include <X4ConverterTools/xmf/XmfFile.h>
+#include <X4ConverterTools/model/Connection.h>
+
+#include "testUtil.h"
+
+namespace fs = boost::filesystem;
 using namespace Assimp;
-BOOST_AUTO_TEST_SUITE( test_suite1 )
-
-BOOST_AUTO_TEST_CASE( test_xmf ) {
-	// TODO do we want to mock reading & writing to memory - would be faster & good form
-	// See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
-	const std::string basePath =
-			"/home/cg/Desktop/X4/unpacked/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
-	const std::string testFile = basePath + ".xmf";
-	const std::string resultsFile = basePath + ".out.xmf";
-	IOSystem* io = new DefaultIOSystem();
-	std::shared_ptr<XuMeshFile> meshFile = XuMeshFile::ReadFromFile(testFile,
-			io);
-	meshFile->WriteToFile(resultsFile, io);
-	IOStream* expectedStream = io->Open(testFile, "rb");
-	IOStream* actualStream = io->Open(resultsFile, "rb");
-	size_t expectedLen = expectedStream->FileSize();
-	size_t actualLen = actualStream->FileSize();
-	std::vector<byte> expected(expectedLen);
-	std::vector<byte> actual(actualLen);
-	//	 Directly read the data into the vector & make sure we got it one go)
-	BOOST_TEST(
-			expectedLen == expectedStream->Read(&expected[0],sizeof(byte),expectedLen));
-	BOOST_TEST(
-			actualLen == actualStream->Read(&actual[0],sizeof(byte),actualLen));
-
-//	actualStream->Seek(0,aiOrigin_SET);
-//	XmfHeader actualHeader = XuMeshFile::ReadHeader(actualStream);
-	io->Close(expectedStream);
-	io->Close(actualStream);
-	BOOST_TEST(expected == actual);
-}
-
-BOOST_AUTO_TEST_CASE( test_xml ) {
-	// TODO refactor all the io...
-	const std::string gameBaseFolderPath = "/home/cg/Desktop/X4/unpacked/";
-	const std::string inputXMLPath = gameBaseFolderPath
-			+ "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.xml";
-	const std::string daePath =
-			gameBaseFolderPath
-					+ "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.dae";
-	const std::string outputXMLPath =
-			gameBaseFolderPath
-					+ "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.xml";
-
-	char szError[256];
-	bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(),
-			inputXMLPath.c_str(), daePath.c_str(), szError, sizeof(szError));
-	BOOST_TEST(forwardSuccess);
-	bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(),
-			daePath.c_str(), outputXMLPath.c_str(), szError, sizeof(szError));
-	BOOST_TEST(backwardSuccess);
-
-	pugi::xml_document expectedDoc;
-	pugi::xml_parse_result expectedResult = expectedDoc.load_file(
-			inputXMLPath.c_str());
-	pugi::xml_document actualDoc;
-	pugi::xml_parse_result actualResult = actualDoc.load_file(
-			outputXMLPath.c_str());
-	//https://pugixml.org/docs/manual.html#access.walker
-	// See also: https://stackoverflow.com/a/29599648
-	struct my_walker: pugi::xml_tree_walker {
-		std::set<std::string> paths;
-		virtual bool for_each(pugi::xml_node& node) {
-			std::string path = node.path();
-//			std::cout << path << std::endl;
-			// Duplicate element == BAD
-//			BOOST_TEST(!paths.count(path));
-			paths.insert(path);
-			return true; // continue traversal
-		}
-	};
-	my_walker expectedWalk;
-	expectedDoc.traverse(expectedWalk);
-	my_walker actualWalk;
-	actualDoc.traverse(actualWalk);
-	std::set<std::string> expectedMinusActual;
-	std::set_difference(expectedWalk.paths.begin(),expectedWalk.paths.end(),
-			actualWalk.paths.begin(),	actualWalk.paths.end(),
-			std::inserter(expectedMinusActual, expectedMinusActual.begin()));
-
-	std::set<std::string> actualMinusExpected;
-	std::set_difference(actualWalk.paths.begin(), actualWalk.paths.end(),
-			expectedWalk.paths.begin(), expectedWalk.paths.end(),
-			std::inserter(actualMinusExpected, actualMinusExpected.begin()));
-
-	std::set<std::string> intersection;
-	std::set_intersection(actualWalk.paths.begin(), actualWalk.paths.end(),
-			expectedWalk.paths.begin(), expectedWalk.paths.end(),
-			std::inserter(intersection, intersection.begin()));
-	BOOST_TEST(expectedMinusActual.size() == 0);
-//	for (auto&& x : expectedMinusActual){
-//		printf("Output was missing path: %s\n",x.c_str());
-//	}
-	BOOST_TEST(actualMinusExpected.size() == 0);
-//	for (auto&& x : actualMinusExpected){
-//		printf("Output has extra path: %s\n",x.c_str());
-//	}
-
-//	for (auto&& x : intersection){
+using namespace test;
+BOOST_AUTO_TEST_SUITE(IntegrationTests)
+// TODO tests for changing stuff
+//    BOOST_AUTO_TEST_CASE(ojump_xr_file) {        // TODO refactor all the io...
+//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
+//        const std::string tgtPath = "extensions/DOR_XR_ORIGINAL/assets/units/size_xl/units_size_xl_red_destroyer";
+//        const std::string inputXMLPath = gameBaseFolderPath + tgtPath + ".xml";
+//        const std::string daePath = gameBaseFolderPath + tgtPath + ".out.dae";
+//        const std::string outputXMLPath = gameBaseFolderPath + tgtPath + ".out.xml";
+//        // To prevent cross contamination between runs, remove dae to be safe
+//        fs::remove(daePath);
+//        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+//        fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
 //
-//	}
+//        BOOST_TEST_CHECKPOINT("Begin test");
+//        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), inputXMLPath.c_str(), daePath.c_str());
+//        BOOST_TEST(forwardSuccess);
+//        BOOST_TEST_CHECKPOINT("Forward parsing");
+//        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
+//        BOOST_TEST(backwardSuccess);
+//
+//        BOOST_TEST_CHECKPOINT("Backward parsing");
+//        pugi::xml_document expectedDoc;
+//        pugi::xml_parse_result expectedResult = expectedDoc.load_file(inputXMLPath.c_str());
+//
+//        pugi::xml_document actualDoc;
+//        pugi::xml_parse_result actualResult = actualDoc.load_file(outputXMLPath.c_str());
+    //    CompareXMLFiles(expectedDoc, actualDoc);
+//        BOOST_TEST_CHECKPOINT("Cleanup");
+//    }
+    // TODO fixme
+//    BOOST_AUTO_TEST_CASE(ojump_file) {
+//        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath()+"/";
+//        const std::string tgtPath = "extensions/DOR/assets/units/size_xl/units_size_xl_cargo_hauler_2";
+//        const std::string inputXMLPath = gameBaseFolderPath +tgtPath + ".xml";
+//        const std::string daePath = gameBaseFolderPath +tgtPath+ "_modified.dae";
+//        const std::string outputXMLPath = gameBaseFolderPath +tgtPath +"_modified.xml";
+//        const std::string daeOutPath = gameBaseFolderPath +tgtPath+ "_modified.out.dae";
+//        // To prevent cross contamination between runs, remove dae to be safe
+//        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+//        fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+//
+//        BOOST_TEST_CHECKPOINT("Backward parsing");
+//        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath.c_str(), daePath.c_str(), outputXMLPath.c_str());
+//        BOOST_TEST(backwardSuccess);
+//
+////        // TODO why did this start seg-faulting?
+//        BOOST_TEST_CHECKPOINT("Forward parsing");
+//        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath.c_str(), outputXMLPath.c_str(),daeOutPath.c_str());
+//        BOOST_TEST(forwardSuccess);
+//
+//
+//}
 
+    BOOST_AUTO_TEST_CASE(xml) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
 
-}
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
 
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+
+    }
+
+    BOOST_AUTO_TEST_CASE(xml_hard) {
+        // TODO refactor all the io...
+        // TODO test /assets/units/size_m/ship_arg_m_bomber_02.xml as well
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        fs::remove(gameBaseFolderPath + outputXMLPath);
+        // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
+        pugi::xml_document doc;
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
+        // TODO as we get further along, leave in more of this
+        //compNode.remove_child("layers");
+
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+    }
+
+    BOOST_AUTO_TEST_CASE(xml_hard_2) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_m/ship_arg_m_bomber_02";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        fs::remove(gameBaseFolderPath + outputXMLPath);
+        // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
+        pugi::xml_document doc;
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
+
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+    }
+    BOOST_AUTO_TEST_CASE(bridge) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/interiors/bridges/bridge_arg_xl_01";
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+
+    }
+
+    BOOST_AUTO_TEST_CASE(multimat) {
+        // TODO refactor all the io...
+        const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
+        const std::string tgtPath = "/assets/units/size_m/ship_arg_m_trans_container_01";
+        // TODO lowercase hatch name in code instead of the hack
+        const std::string inputXMLPath = tgtPath + ".xml";
+        const std::string daePath = tgtPath + ".out.dae";
+        const std::string outputXMLPath = tgtPath + ".out.xml";
+        // To prevent cross contamination between runs, remove dae to be safe
+        fs::remove(gameBaseFolderPath + daePath);
+        // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
+        fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
+                      fs::copy_option::overwrite_if_exists);
+
+        BOOST_TEST_CHECKPOINT("Begin test");
+        bool forwardSuccess = ConvertXmlToDae(gameBaseFolderPath, inputXMLPath, daePath);
+        BOOST_TEST(forwardSuccess);
+        BOOST_TEST_CHECKPOINT("Forward parsing");
+        bool backwardSuccess = ConvertDaeToXml(gameBaseFolderPath, daePath, outputXMLPath);
+        BOOST_TEST(backwardSuccess);
+
+        BOOST_TEST_CHECKPOINT("Backward parsing");
+        auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+        auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
+        TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
+        BOOST_TEST_CHECKPOINT("Cleanup");
+        delete expectedDoc;
+        delete actualDoc;
+
+    }
 BOOST_AUTO_TEST_SUITE_END()
 

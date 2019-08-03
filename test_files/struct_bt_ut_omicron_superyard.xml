@@ -1,0 +1,2765 @@
+﻿<?xml version="1.0"?>
+<components xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://utnas/~unitrader/XRebirthxsds/component.xsd">
+  <component name="struct_bt_UT_Omicron_Superyard" class="station">
+    <source geometry="Extensions\utcac_ext_player_hq\assets\structures\build_trees\struct_bt_UT_Omicron_Superyard_data"/>
+    <layers>
+      <layer>
+        <waypoints>
+          <!-- Masstraffic around the Drone Productions - To be re-located because of Admin Tower Redesign - ->
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_A0" tags="sizeLevel1 typedock end " x="200" y="875" z="500" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_A1" tags="sizeLevel1 typenormal " x="400" y="875" z="500" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_A0"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_B0" tags="sizeLevel1 typedock end " x="-430" y="875" z="150" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_B1" tags="sizeLevel1 typenormal " x="-430" y="875" z="350" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_B0"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_C0" tags="sizeLevel1 typedock end " x="-200" y="875" z="-700" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_C1" tags="sizeLevel1 typenormal" x="-400" y="875" z="-700" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_C0"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_D0" tags="sizeLevel1 typedock end " x="430" y="875" z="-150" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_D1" tags="sizeLevel1 typenormal " x="430" y="875" z="-350" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_D0"/>
+            </links>
+          </waypoint>
+          
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_E0" tags="sizeLevel1 typedock start " x="-240" y="940" z="1040" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_E1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_E1" tags="sizeLevel1 typenormal " x="-400" y="940" z="1040" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_2"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_F0" tags="sizeLevel1 typedock start " x="-970" y="940" z="-230" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_F1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_F1" tags="sizeLevel1 typenormal " x="-970" y="940" z="-360" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_4"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_C1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_G0" tags="sizeLevel1 typedock start " x="240" y="940" z="-1230" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_G1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_G1" tags="sizeLevel1 typenormal " x="400" y="940" z="-1230" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_6"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_D1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_H0" tags="sizeLevel1 typedock start " x="970" y="940" z="230" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_H1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_Dock_H1" tags="sizeLevel1 typenormal " x="970" y="940" z="360" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_8"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_A1"/>
+            </links>
+          </waypoint>
+          
+          <waypoint name="Waypoint_Admin_Tower_Rotary_1" tags="typenormal sizeLevel1 " x="100" y="1100" z="1200" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_2"/>
+              <link ref="Waypoint_Admin_Tower_Up_5"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_2" tags="typenormal sizeLevel1 " x="-840" y="1100" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_3"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_B1"/>
+              <link ref="Waypoint_Main_Alley_N25"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_3" tags="typenormal sizeLevel1 " x="-1000" y="1100" z="100" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_4"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_4" tags="typenormal sizeLevel1 " x="-840" y="1100" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_5"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_C1"/>
+              <link ref="Waypoint_Admin_Tower_Down_6"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_5" tags="typenormal sizeLevel1 " x="-100" y="1130" z="-1250" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_6"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_6" tags="typenormal sizeLevel1 " x="840" y="1100" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_7"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_D1"/>
+              <link ref="Waypoint_Main_Alley_S25"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_7" tags="typenormal sizeLevel1 " x="1200" y="1100" z="-100" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_8"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Rotary_8" tags="typenormal sizeLevel1 " x="840" y="1100" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_1"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_A1"/>
+            </links>
+          </waypoint>
+          
+          <!- - Docks at Admin Tower- ->
+          <waypoint name="Waypoint_Admin_Tower_Dock_A0" tags="sizeLevel1 typedock start end" x="270" y="6535" z="-130" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_A1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_A1" tags="sizeLevel1 typenormal" x="850" y="6535" z="-130" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_A0"/>
+              <link ref="Waypoint_Admin_Tower_Down_1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_B0" tags="sizeLevel1 typedock start" x="140" y="-3260" z="-240" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_B1" tags="sizeLevel1 typenormal" x="140" y="-3260"  z="-850" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_C0" tags="sizeLevel1 typedock end" x="-65" y="3825" z="-420" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_C1" tags="sizeLevel1 typenormal" x="-65" y="3825" z="-600" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_C0"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_D0" tags="sizeLevel1 typedock start" x="-65" y="3250" z="240" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_D1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_D1" tags="sizeLevel1 typenormal" x="-65" y="3250"  z="850" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_3"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_E0" tags="sizeLevel1 typedock end" x="-60" y="-3820" z="420" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Dock_E1" tags="sizeLevel1 typenormal" x="-60" y="-3820" z="600" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_E0"/>
+            </links>
+          </waypoint>
+          
+          <!- - Way around the Tower Up - ->
+          <waypoint name="Waypoint_Admin_Tower_Up_1" tags="sizeLevel1 typenormal" x="840" y="-2500" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_2" tags="sizeLevel1 typenormal" x="1250" y="-1500" z="0" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_3"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_3" tags="sizeLevel1 typenormal" x="840" y="-500" z="950" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_4"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_4" tags="sizeLevel1 typenormal" x="0" y="400" z="1300" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_2"/>
+              <link ref="Waypoint_Admin_Tower_Up_5"/>
+              <link ref="Waypoint_Main_Alley_N25"/>
+            </links>
+          </waypoint>
+          <!- - Dronedock Ring - ->
+          <waypoint name="Waypoint_Admin_Tower_Up_5" tags="sizeLevel1 typenormal" x="-840" y="1500" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_6"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_6" tags="sizeLevel1 typenormal" x="-1250" y="2500" z="0" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_7"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_7" tags="sizeLevel1 typenormal" x="-840" y="3500" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_8"/>
+              <link ref="Waypoint_Admin_Tower_Dock_C1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_8" tags="sizeLevel1 typenormal" x="0" y="4500" z="-1200" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Up_9"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Up_9" tags="sizeLevel1 typenormal" x="840" y="5500" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_A1"/>
+            </links>
+          </waypoint>
+          
+          <!- - Way around the Tower Down - ->
+          <waypoint name="Waypoint_Admin_Tower_Down_1" tags="sizeLevel1 typenormal" x="840" y="5500" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_2" tags="sizeLevel1 typenormal" x="0" y="4500" z="1200" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_3"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_3" tags="sizeLevel1 typenormal" x="-840" y="3500" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_4"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_4" tags="sizeLevel1 typenormal" x="-1150" y="2500" z="0" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_5"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_5" tags="sizeLevel1 typenormal" x="-840" y="1500" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Rotary_5"/>
+              <link ref="Waypoint_Admin_Tower_Rotary_Dock_C1"/>
+            </links>
+          </waypoint>
+          <!- - Dronedock Ring - ->
+          <waypoint name="Waypoint_Admin_Tower_Down_6" tags="sizeLevel1 typenormal" x="0" y="500" z="-1200" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_7"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_7" tags="sizeLevel1 typenormal" x="840" y="-500" z="-840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_8"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_8" tags="sizeLevel1 typenormal" x="1150" y="-1500" z="0" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Down_9"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Admin_Tower_Down_9" tags="sizeLevel1 typenormal" x="840" y="-2500" z="840" >
+            <links>
+              <link ref="Waypoint_Admin_Tower_Dock_E1"/>
+            </links>
+          </waypoint>
+          -->
+          <!-- Radar A -->
+          <waypoint name="Waypoint_Radar_A_Dock_A0" tags="sizeLevel1 typedock start" x="18000" y="-80" z="-350" >
+            <links>
+              <link ref="Waypoint_Radar_A_Dock_A1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_A_Dock_A1" tags="sizeLevel1 typenormal" x="18000" y="-80" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S42"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_A_Dock_B0" tags="sizeLevel1 typedock end start" x="18350" y="-80" z="30" >
+            <links>
+              <link ref="Waypoint_Radar_A_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_A_Dock_B1" tags="sizeLevel1 typenormal" x="19000" y="-80" z="30" >
+            <links>
+              <link ref="Waypoint_Radar_A_Dock_B0"/>
+              <link ref="Waypoint_Main_Alley_N04"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_A_Dock_C0" tags="sizeLevel1 typedock end" x="18000" y="-80" z="350" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_A_Dock_C1" tags="sizeLevel1 typenormal" x="18000" y="-80" z="650" >
+            <links>
+              <link ref="Waypoint_Radar_A_Dock_C0"/>
+            </links>
+          </waypoint>
+          
+          <!-- Radar B -->
+          <waypoint name="Waypoint_Radar_B_Dock_A0" tags="sizeLevel1 typedock start" x="-18000" y="-80" z="350" >
+            <links>
+              <link ref="Waypoint_Radar_B_Dock_A1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_B_Dock_A1" tags="sizeLevel1 typenormal" x="-18000" y="-80" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N42"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_B_Dock_B0" tags="sizeLevel1 typedock end start" x="-18350" y="-80" z="-30" >
+            <links>
+              <link ref="Waypoint_Radar_B_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_B_Dock_B1" tags="sizeLevel1 typenormal" x="-19000" y="-80" z="-30" >
+            <links>
+              <link ref="Waypoint_Radar_B_Dock_B0"/>
+              <link ref="Waypoint_Main_Alley_S04"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_B_Dock_C0" tags="sizeLevel1 typedock end" x="-18000" y="-80" z="-350" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Radar_B_Dock_C1" tags="sizeLevel1 typenormal" x="-18000" y="-80" z="-650" >
+            <links>
+              <link ref="Waypoint_Radar_B_Dock_C0"/>
+            </links>
+          </waypoint>
+          
+          <!-- Main Alley North -->
+          <!--waypoint name="Waypoint_Main_Alley_N00" tags="typenormal sizeLevel1" x="22000" y="300" z="-2000" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N01"/>
+            </links>
+          </waypoint-->
+          <waypoint name="Waypoint_Main_Alley_N01" tags="typenormal sizeLevel1 blocklink start" x="22000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N02"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N02" tags="typenormal sizeLevel1" x="21000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N03"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N03" tags="typenormal sizeLevel1" x="20000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N04"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N04" tags="typenormal sizeLevel1 " x="19000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N05"/>
+              <link ref="Waypoint_Radar_A_Dock_C1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N05" tags="typenormal sizeLevel1 " x="18000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N06"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N06" tags="typenormal sizeLevel1 " x="17000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N07"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N07" tags="typenormal sizeLevel1 " x="16000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N08"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N08" tags="typenormal sizeLevel1 " x="15000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N09"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N09" tags="typenormal sizeLevel1 " x="14000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N10"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N10" tags="typenormal sizeLevel1 " x="13000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N11"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N11" tags="typenormal sizeLevel1 " x="12000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N12"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N12" tags="typenormal sizeLevel1 " x="11000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N13"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N13" tags="typenormal sizeLevel1 " x="10000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N14"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N14" tags="typenormal sizeLevel1 " x="8700" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N15"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N15" tags="typenormal sizeLevel1 " x="8000" y="200" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N16"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N16" tags="typenormal sizeLevel1 " x="7000" y="0" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N17"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N17" tags="typenormal sizeLevel1 " x="6000" y="150" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N18" tags="typenormal sizeLevel1 " x="5000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N19"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N19" tags="typenormal sizeLevel1 " x="4000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N20"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N20" tags="typenormal sizeLevel1 " x="3000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N21"/>
+              <link ref="Waypoint_HoL_Dock_Ring_6"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N21" tags="typenormal sizeLevel1 " x="2000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N22"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N22" tags="typenormal sizeLevel1 " x="1000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N23"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N23" tags="typenormal sizeLevel1 " x="-0" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N24"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N24" tags="typenormal sizeLevel1 " x="-1000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N25"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N25" tags="typenormal sizeLevel1 " x="-2000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N26"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N26" tags="typenormal sizeLevel1 " x="-3000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N27"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N27" tags="typenormal sizeLevel1 " x="-4000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N28"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N28" tags="typenormal sizeLevel1 " x="-5000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N29"/>
+              <link ref="Waypoint_Teladi_Ring_30"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N29" tags="typenormal sizeLevel1 " x="-6000" y="150" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N30"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N30" tags="typenormal sizeLevel1 " x="-7000" y="0" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N31"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N31" tags="typenormal sizeLevel1 " x="-8000" y="150" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N32"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N32" tags="typenormal sizeLevel1 " x="-9000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N33"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N33" tags="typenormal sizeLevel1 " x="-10000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N34"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N34" tags="typenormal sizeLevel1 " x="-11000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N35"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N35" tags="typenormal sizeLevel1 " x="-12000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N36"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N36" tags="typenormal sizeLevel1 " x="-13000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N37"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N37" tags="typenormal sizeLevel1 " x="-14000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N38"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N38" tags="typenormal sizeLevel1 " x="-15000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N39"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N39" tags="typenormal sizeLevel1 " x="-16000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N40"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N40" tags="typenormal sizeLevel1 " x="-17000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N41"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N41" tags="typenormal sizeLevel1 " x="-18000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N42"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N42" tags="typenormal sizeLevel1 " x="-19000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N43"/>
+              <link ref="Waypoint_Main_Alley_S04"/>
+              <link ref="Waypoint_Radar_B_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N43" tags="typenormal sizeLevel1 " x="-21000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N44"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_N44" tags="typenormal sizeLevel1 blocklink end" x="-22000" y="350" z="650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S01"/>
+            </links>
+          </waypoint>
+          <!--waypoint name="Waypoint_Main_Alley_N45" tags="typenormal sizeLevel1" x="-22000" y="400" z="-2000" >
+            <links>
+            </links>
+          </waypoint-->
+          
+          <!-- Main Alley South -->
+          <!--waypoint name="Waypoint_Main_Alley_S00" tags="typenormal sizeLevel1 start" x="-22000" y="300" z="2000" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S01"/>
+            </links>
+          </waypoint-->
+          <waypoint name="Waypoint_Main_Alley_S01" tags="typenormal sizeLevel1 blocklink start" x="-22000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S02"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S02" tags="typenormal sizeLevel1" x="-21000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S03"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S03" tags="typenormal sizeLevel1" x="-20000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S04"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S04" tags="typenormal sizeLevel1 " x="-19000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S05"/>
+              <link ref="Waypoint_Radar_B_Dock_C1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S05" tags="typenormal sizeLevel1 " x="-18000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S06"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S06" tags="typenormal sizeLevel1 " x="-17000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S07"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S07" tags="typenormal sizeLevel1 " x="-16000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S08"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S08" tags="typenormal sizeLevel1 " x="-15000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S09"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S09" tags="typenormal sizeLevel1 " x="-14000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S10"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S10" tags="typenormal sizeLevel1 " x="-13000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S11"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S11" tags="typenormal sizeLevel1 " x="-12000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S12"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S12" tags="typenormal sizeLevel1 " x="-11000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S13"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S13" tags="typenormal sizeLevel1 " x="-10000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S14"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S14" tags="typenormal sizeLevel1 " x="-8700" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S15"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S15" tags="typenormal sizeLevel1 " x="-8000" y="200" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S16"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S16" tags="typenormal sizeLevel1 " x="-7000" y="0" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S17"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S17" tags="typenormal sizeLevel1 " x="-6000" y="150" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S18" tags="typenormal sizeLevel1 " x="-5000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S19"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S19" tags="typenormal sizeLevel1 " x="-4000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S20"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S20" tags="typenormal sizeLevel1 " x="-3000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S21"/>
+              <link ref="Waypoint_HoL_Dock_Ring_3"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S21" tags="typenormal sizeLevel1 " x="-2000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S22"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S22" tags="typenormal sizeLevel1 " x="-1000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S23"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S23" tags="typenormal sizeLevel1 " x="0" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S24"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S24" tags="typenormal sizeLevel1 " x="1000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S25"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S25" tags="typenormal sizeLevel1 " x="2000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S26"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S26" tags="typenormal sizeLevel1 " x="3000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S27"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S27" tags="typenormal sizeLevel1 " x="4000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S28"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S28" tags="typenormal sizeLevel1 " x="5000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S29"/>
+              <link ref="Waypoint_Teladi_Ring_12"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S29" tags="typenormal sizeLevel1 " x="6000" y="150" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S30"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S30" tags="typenormal sizeLevel1 " x="7000" y="0" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S31"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S31" tags="typenormal sizeLevel1 " x="8000" y="150" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S32"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S32" tags="typenormal sizeLevel1 " x="9000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S33"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S33" tags="typenormal sizeLevel1 " x="10000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S34"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S34" tags="typenormal sizeLevel1 " x="11000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S35"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S35" tags="typenormal sizeLevel1 " x="12000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S36"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S36" tags="typenormal sizeLevel1 " x="13000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S37"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S37" tags="typenormal sizeLevel1 " x="14000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S38"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S38" tags="typenormal sizeLevel1 " x="15000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S39"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S39" tags="typenormal sizeLevel1 " x="16000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S40"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S40" tags="typenormal sizeLevel1 " x="17000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S41"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S41" tags="typenormal sizeLevel1 " x="18000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S42"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S42" tags="typenormal sizeLevel1 " x="19000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S43"/>
+              <link ref="Waypoint_Main_Alley_N04"/>
+              <link ref="Waypoint_Radar_A_Dock_B1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S43" tags="typenormal sizeLevel1 " x="21000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_S44"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Main_Alley_S44" tags="typenormal sizeLevel1 blocklink end" x="22000" y="350" z="-650" >
+            <links>
+              <link ref="Waypoint_Main_Alley_N01"/>
+            </links>
+          </waypoint>
+          <!--waypoint name="Waypoint_Main_Alley_S45" tags="typenormal sizeLevel1 end" x="22000" y="400" z="2000" >
+            <links>
+            </links>
+          </waypoint-->
+          
+          <!-- Teladi Ring - Mass Traffic is supposed to move with it -->
+          <waypoint name="Waypoint_Teladi_Ring_01" tags="typenormal sizeLevel1 speed_faster" x="1198" y="800" z="6795" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_02"/>
+              <link ref="Waypoint_Teladi_Ring_startland_03"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_02" tags="typenormal sizeLevel1 speed_faster" x="2359" y="800" z="6483" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_03"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_03" tags="typenormal sizeLevel1 speed_faster" x="3450" y="800" z="5975" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_04"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_04" tags="typenormal sizeLevel1 speed_faster" x="4435" y="800" z="5285" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_05"/>
+              <link ref="Waypoint_Teladi_Ring_startland_06"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_05" tags="typenormal sizeLevel1 speed_faster" x="5285" y="800" z="4435" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_06"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_06" tags="typenormal sizeLevel1 speed_faster" x="5975" y="800" z="3450" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_07"/>
+              <link ref="Waypoint_Main_Alley_N18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_07" tags="typenormal sizeLevel1 speed_faster" x="6483" y="800" z="2359" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_08"/>
+              <link ref="Waypoint_Teladi_Ring_startland_09"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_08" tags="typenormal sizeLevel1 speed_faster" x="6795" y="800" z="1198" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_09"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_09" tags="typenormal sizeLevel1 speed_faster" x="6900" y="800" z="0" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_10"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_10" tags="typenormal sizeLevel1 speed_faster" x="6795" y="800" z="-1198" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_11"/>
+              <link ref="Waypoint_Teladi_Ring_startland_12"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_11" tags="typenormal sizeLevel1 speed_faster" x="6483" y="800" z="-2359" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_12"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_12" tags="typenormal sizeLevel1 speed_faster" x="5975" y="800" z="-3450" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_13"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_13" tags="typenormal sizeLevel1 speed_faster" x="5285" y="800" z="-4435" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_14"/>
+              <link ref="Waypoint_Teladi_Ring_startland_15"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_14" tags="typenormal sizeLevel1 speed_faster" x="4435" y="800" z="-5285" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_15"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_15" tags="typenormal sizeLevel1 speed_faster" x="3450" y="800" z="-5975" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_16"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_16" tags="typenormal sizeLevel1 speed_faster" x="2359" y="800" z="-6483" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_17"/>
+              <link ref="Waypoint_Teladi_Ring_startland_18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_17" tags="typenormal sizeLevel1 speed_faster" x="1198" y="800" z="-6795" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_18" tags="typenormal sizeLevel1 speed_faster" x="0" y="800" z="-6900" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_19"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_19" tags="typenormal sizeLevel1 speed_faster" x="-1198" y="800" z="-6795" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_20"/>
+              <link ref="Waypoint_Teladi_Ring_startland_21"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_20" tags="typenormal sizeLevel1 speed_faster" x="-2359" y="800" z="-6483" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_21"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_21" tags="typenormal sizeLevel1 speed_faster" x="-3450" y="800" z="-5975" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_22"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_22" tags="typenormal sizeLevel1 speed_faster" x="-4435" y="800" z="-5285" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_23"/>
+              <link ref="Waypoint_Teladi_Ring_startland_24"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_23" tags="typenormal sizeLevel1 speed_faster" x="-5285" y="800" z="-4435" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_24"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_24" tags="typenormal sizeLevel1 speed_faster" x="-5975" y="800" z="-3450" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_25"/>
+              <link ref="Waypoint_Main_Alley_S18"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_25" tags="typenormal sizeLevel1 speed_faster" x="-6483" y="800" z="-2359" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_26"/>
+              <link ref="Waypoint_Teladi_Ring_startland_27"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_26" tags="typenormal sizeLevel1 speed_faster" x="-6795" y="800" z="-1198" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_27"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_27" tags="typenormal sizeLevel1 speed_faster" x="-6900" y="800" z="-0" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_28"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_28" tags="typenormal sizeLevel1 speed_faster" x="-6795" y="800" z="1198" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_29"/>
+              <link ref="Waypoint_Teladi_Ring_startland_30"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_29" tags="typenormal sizeLevel1 speed_faster" x="-6483" y="800" z="2359" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_30"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_30" tags="typenormal sizeLevel1 speed_faster" x="-5975" y="800" z="3450" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_31"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_31" tags="typenormal sizeLevel1 speed_faster" x="-5285" y="800" z="4435" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_32"/>
+              <link ref="Waypoint_Teladi_Ring_startland_33"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_32" tags="typenormal sizeLevel1 speed_faster" x="-4435" y="800" z="5285" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_33"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_33" tags="typenormal sizeLevel1 speed_faster" x="-3450" y="800" z="5975" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_34"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_34" tags="typenormal sizeLevel1 speed_faster" x="-2359" y="800" z="6483" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_35"/>
+              <link ref="Waypoint_Teladi_Ring_startland_36"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_35" tags="typenormal sizeLevel1 speed_faster" x="-1198" y="800" z="6795" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_36"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_36" tags="typenormal sizeLevel1 speed_faster" x="-0" y="800" z="6900" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_01"/>
+            </links>
+          </waypoint>
+          <!-- Ring Starting and Landing (happens over the whole Ring) -->
+          <waypoint name="Waypoint_Teladi_Ring_startland_03" tags="typedock sizeLevel1 end start speed_faster" x="3576" y="800" z="6193" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_05"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_06" tags="typedock sizeLevel1 end start speed_faster" x="6196" y="800" z="3577" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_08"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_09" tags="typedock sizeLevel1 end start speed_faster" x="7158" y="800" z="0" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_11"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_12" tags="typedock sizeLevel1 end start speed_faster" x="6201" y="800" z="-3580" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_14"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_15" tags="typedock sizeLevel1 end start speed_faster" x="3582" y="800" z="-6204" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_17"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_18" tags="typedock sizeLevel1 end start speed_faster" x="0" y="800" z="-7167" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_20"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_21" tags="typedock sizeLevel1 end start speed_faster" x="-3585" y="800" z="-6209" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_23"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_24" tags="typedock sizeLevel1 end start speed_faster" x="-6212" y="800" z="-3586" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_26"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_27" tags="typedock sizeLevel1 end start speed_faster" x="-7176" y="800" z="-0" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_29"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_30" tags="typedock sizeLevel1 end start speed_faster" x="-6217" y="800" z="3589" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_32"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_33" tags="typedock sizeLevel1 end start speed_faster" x="-3591" y="800" z="6219" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_35"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_Teladi_Ring_startland_36" tags="typedock sizeLevel1 end start speed_faster" x="-0" y="800" z="7185" >
+            <links>
+              <link ref="Waypoint_Teladi_Ring_02"/>
+            </links>
+          </waypoint>
+          <!-- HoL Docka - Masstraffic above Main Dock Ring -->
+          <!-- HoL Docks on Bottom of Station -->
+          <waypoint name="Waypoint_HoL_Dock_Ring_1" tags="typenormal sizeLevel1" x="-1400" y="-3900" z="800" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_Ring_2" tags="typenormal sizeLevel1" x="-1400" y="-3900" z="-800" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_3"/>
+              <link ref="Waypoint_HoL_Dock_land_3_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_Ring_3" tags="typenormal sizeLevel1" x="0" y="-3900" z="-1600" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_4"/>
+              <link ref="Waypoint_Main_Alley_S26"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_Ring_4" tags="typenormal sizeLevel1" x="1400" y="-3900" z="-800" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_5"/>
+              <link ref="Waypoint_HoL_Dock_land_2_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_Ring_5" tags="typenormal sizeLevel1" x="1400" y="-3900" z="800" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_6"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_Ring_6" tags="typenormal sizeLevel1" x="0" y="-3900" z="1600" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_1"/>
+              <link ref="Waypoint_Main_Alley_N26"/>
+            </links>
+          </waypoint>
+          <!-- Docking Points at bottom -->
+          <waypoint name="Waypoint_HoL_Dock_start_1_1" tags="typedock sizeLevel1 start" x="178" y="-4165" z="-310" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_start_1_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_start_1_2" tags="typenormal sizeLevel1" x="-540" y="-4080" z="920" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_land_2_1" tags="typedock sizeLevel1 end" x="-360" y="-4165" z="0" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_land_2_2" tags="typenormal sizeLevel1" x="1070" y="-4080" z="0" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_land_2_1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_land_3_1" tags="typedock sizeLevel1 end" x="178" y="-4165" z="310" >
+            <links>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_land_3_2" tags="typenormal sizeLevel1" x="-540" y="-4080" z="-920" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_land_3_1"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_start_4_1" tags="typedock sizeLevel1 start" x="227" y="-3835" z="-290" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_start_4_2"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_start_4_2" tags="typenormal sizeLevel1" x="227" y="-3835" z="-700" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_start_4_3"/>
+            </links>
+          </waypoint>
+          <waypoint name="Waypoint_HoL_Dock_start_4_3" tags="typenormal sizeLevel1" x="430" y="-3935" z="-920" >
+            <links>
+              <link ref="Waypoint_HoL_Dock_Ring_4"/>
+            </links>
+          </waypoint>
+        </waypoints>
+        <lights/>
+      </layer>
+    </layers>
+    <connections>
+      <connection name="container" tags="contents" value="0" optional="0"/>
+      <connection name="position" tags="position" value="1" optional="1"/>
+      <connection name="space" tags="station">
+        <offset/>
+      </connection>
+      <connection name="connection_controlroom01" tags="room  defence">
+        <offset/>
+      </connection>
+      
+      <!-- 1400m bridge - bridge; 1230m bridge - platform ; 1700m bridge down - platform ; 1550m - bridge - bridge down
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+      -->
+      
+      <connection name="Connection_Structure_Main_Bridge_00" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-17010" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_01" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-15610" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_A1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-14380" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_02" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-13150" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_03" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-11750" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_04" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-10350" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_B1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-9120" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_05" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-7890" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_06" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-6490" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_07" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-5090" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_C1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-3860" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_08" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-2630" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_09" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-1230" y="0" z="0"/>
+        </offset>
+      </connection>
+      <!-- Admin & Logistica Block -->
+      <connection name="Connection_Structure_Main_Bridge_10" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="1230" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_11" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="2630" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_D1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="3860" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_12" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="5090" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_13" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="6490" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_14" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="7890" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_E1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="9120" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_15" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="10350" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_16" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="11750" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_17" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="13150" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_F1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="14380" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_18" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="15610" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Bridge_19" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="17010" y="0" z="0"/>
+        </offset>
+      </connection>
+      
+      <!-- Cargo Holders under Main Structure (Expanded through various Extensions - Container is 775m long -->
+      <connection name="Connection_Storage_East_01" group="stationGroup" tags="storage">
+        <offset>
+          <position x="660" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_02" group="stationGroup" tags="storage">
+        <offset>
+          <position x="1545" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_03" group="stationGroup" tags="storage">
+        <offset>
+          <position x="2430" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_04" group="stationGroup" tags="storage">
+        <offset>
+          <position x="3315" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_05" group="stationGroup" tags="storage">
+        <offset>
+          <position x="4200" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_06" group="stationGroup" tags="storage">
+        <offset>
+          <position x="5085" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_07" group="stationGroup" tags="storage">
+        <offset>
+          <position x="5970" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_08" group="stationGroup" tags="storage">
+        <offset>
+          <position x="6855" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_09" group="stationGroup" tags="storage">
+        <offset>
+          <position x="7740" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_10" group="stationGroup" tags="storage">
+        <offset>
+          <position x="8625" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_11" group="stationGroup" tags="storage">
+        <offset>
+          <position x="9510" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_12" group="stationGroup" tags="storage">
+        <offset>
+          <position x="10395" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_13" group="stationGroup" tags="storage">
+        <offset>
+          <position x="11280" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_14" group="stationGroup" tags="storage">
+        <offset>
+          <position x="12165" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_15" group="stationGroup" tags="storage">
+        <offset>
+          <position x="13050" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_16" group="stationGroup" tags="storage">
+        <offset>
+          <position x="13935" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_17" group="stationGroup" tags="storage">
+        <offset>
+          <position x="14820" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <!--connection name="Connection_Storage_East_18" group="stationGroup" tags="storage">
+        <offset>
+          <position x="15595" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_19" group="stationGroup" tags="storage">
+        <offset>
+          <position x="16480" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_20" group="stationGroup" tags="storage">
+        <offset>
+          <position x="17365" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_21" group="stationGroup" tags="storage">
+        <offset>
+          <position x="18250" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_22" group="stationGroup" tags="storage">
+        <offset>
+          <position x="16825" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_23" group="stationGroup" tags="storage">
+        <offset>
+          <position x="17600" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_24" group="stationGroup" tags="storage">
+        <offset>
+          <position x="2875" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_25" group="stationGroup" tags="storage">
+        <offset>
+          <position x="3650" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_26" group="stationGroup" tags="storage">
+        <offset>
+          <position x="4425" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_27" group="stationGroup" tags="storage">
+        <offset>
+          <position x="5200" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_28" group="stationGroup" tags="storage">
+        <offset>
+          <position x="5975" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_East_29" group="stationGroup" tags="storage">
+        <offset>
+          <position x="6750" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection-->
+      
+      <!-- Cargo Holders under Main Structure (Expanded through various Extensions - Container is 775m long -->
+      <connection name="Connection_Storage_West_01" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-660" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_02" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-1545" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_03" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-2430" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_04" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-3315" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_05" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-4200" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_06" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-5085" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_07" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-5970" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_08" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-6855" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_09" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-7740" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_10" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-8625" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_11" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-9510" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_12" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-10395" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_13" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-11280" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_14" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-12165" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_15" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-13050" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_16" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-13935" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_17" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-14820" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <!--connection name="Connection_Storage_West_18" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-15705" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_19" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-16480" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_20" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-17365" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_21" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-18250" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_22" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-16825" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_23" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-17600" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_24" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-2875" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_25" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-3650" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_26" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-4425" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_27" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-5200" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_28" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-5975" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Storage_West_29" group="stationGroup" tags="storage">
+        <offset>
+          <position x="-6750" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection-->
+      
+      
+      <!-- Admin & Logistics Block -->
+      <connection name="Connection_Admin_3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="6300" z="-170"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Playerdock_Admin" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="7375" z="-500"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>      
+			<connection name="Connection_Admin_Weaponplatform_A1" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="0" y="7000" z="2000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+				</offset>
+			</connection>      
+			<connection name="Connection_Admin_Weaponplatform_A2" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="1750" y="7000" z="1000"/>
+          <quaternion qx="0.5" qy="0" qz="0.8660254037844387" qw="0"/>
+				</offset>
+			</connection>      
+			<connection name="Connection_Admin_Weaponplatform_A3" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="1750" y="7000" z="-1000"/>
+          <quaternion qx="0" qy="0.8660254037844387" qz="0" qw="0.5"/>
+				</offset>
+			</connection>      
+			<connection name="Connection_Admin_Weaponplatform_A4" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="0" y="7000" z="-2000"/>
+          <quaternion qx="1" qy="0" qz="0" qw="0"/>
+				</offset>
+			</connection>      
+			<connection name="Connection_Admin_Weaponplatform_A5" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-1750" y="7000" z="-1000"/>
+          <quaternion qx="0" qy="0.8660254037844387" qz="0" qw="-0.5"/>
+				</offset>
+			</connection>      
+			<connection name="Connection_Admin_Weaponplatform_A6" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-1750" y="7000" z="1000"/>
+          <quaternion qx="0.5" qy="0" qz="-0.8660254037844387" qw="0"/>
+				</offset>
+			</connection>
+      <connection name="Connection_Admin_2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="6300" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_1_Logistics" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="4200" z="0"/>
+        </offset>
+      </connection>
+			<connection name="Connection_Admin_1_Logistics_TradePort_1" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="389" y="4200" z="389"/>
+          <quaternion qx="0" qy="0.3826834323650898" qz="0" qw="0.9238795325112867"/>
+				</offset>
+			</connection>
+      <connection name="Connection_Admin_1_Logistics_TradePort_2" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="389" y="4200" z="-389"/>
+          <quaternion qx="0" qy="0.9238795325112867" qz="0" qw="0.3826834323650898"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Admin_1_Logistics_TradePort_3" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-389" y="4200" z="-389"/>
+          <quaternion qx="0" qy="-0.9238795325112867" qz="0" qw="0.3826834323650898"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Admin_1_Logistics_TradePort_4" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-389" y="4200" z="389"/>
+          <quaternion qx="0" qy="-0.3826834323650898" qz="0" qw="0.9238795325112867"/>
+				</offset>
+			</connection>
+      <connection name="Connection_Admin_1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="2100" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Drones_A" group="stationGroup" tags="production">
+        <offset>
+          <position x="0" y="1400" z="1010"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Playerdock_Drones" group="stationGroup" tags="production">
+        <offset>
+          <position x="70" y="1450" z="1290"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Drones_B" group="stationGroup" tags="production">
+        <offset>
+          <position x="990" y="1400" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_URV-Launcher_Drones_B" group="stationGroup" tags="production">
+        <offset>
+          <position x="1580" y="1300" z="100"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Playerdock_Repair" group="stationGroup" tags="production">
+        <offset>
+          <position x="1270" y="1450" z="-70"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Drones_C" group="stationGroup" tags="production">
+        <offset>
+          <position x="0" y="1400" z="-1010"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Playerdock_Trade" group="stationGroup" tags="production">
+        <offset>
+          <position x="-70" y="1450" z="-1300"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Drones_D" group="stationGroup" tags="production">
+        <offset>
+          <position x="-990" y="1400" z="0"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_URV-Launcher_Drones_D" group="stationGroup" tags="production">
+        <offset>
+          <position x="-1580" y="1300" z="-100"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Playerdock_Shiptrader_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="-1270" y="1450" z="70"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+
+      <connection name="Connection_Admin_0" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="0" z="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Smallships_M" group="stationGroup" tags="production">
+        <offset>
+          <position x="0" y="118.5" z="710"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_Production_Smallships_S" group="stationGroup" tags="production">
+        <offset>
+          <position x="0" y="118.5" z="-710"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Admin_-1" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="0" y="-2100" z="0"/>
+        </offset>
+      </connection>
+      
+      <!-- XL Shipyard Block A -->
+      <connection name="Connection_Structure_Main_Dock_A2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-14380" y="-90" z="-1690"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_A3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-14380" y="-200" z="-3580"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_A4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-14380" y="-200" z="-4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_A_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="-14380" y="-1420" z="-2220"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_A_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-14380" y="-1420" z="-2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_A_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-12760" y="-1210" z="-700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_A_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="-14380" y="118.5" z="710"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      
+      
+      <!-- XL Shipyard Block B -->
+      <connection name="Connection_Structure_Main_Dock_B2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-9120" y="-90" z="1690"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_B3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-9120" y="-200" z="3580"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_B4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-9120" y="-200" z="4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_B_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="-9120" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_B_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-9120" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_B_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-7500" y="-1210" z="700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_B_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="-9120" y="118.5" z="-710"/>
+        </offset>
+      </connection>
+      
+      <!-- XL Shipyard Block C -->
+      <connection name="Connection_Structure_Main_Dock_C2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-3860" y="-90" z="-1690"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_C3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-3860" y="-200" z="-3580"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_C4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-3860" y="-200" z="-4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_C_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="-3860" y="-1420" z="-2220"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_C_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-3860" y="-1420" z="-2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_C_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="-2240" y="-1210" z="-700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_C_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="-3860" y="118.5" z="710"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+
+      <!-- XL Shipyard Block D -->
+      <connection name="Connection_Structure_Main_Dock_D2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="3860" y="-90" z="1690"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_D3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="3860" y="-200" z="3580"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_D4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="3860" y="-200" z="4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_D_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="3860" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_D_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="3860" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_D_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="2240" y="-1210" z="700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_D_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="3860" y="118.5" z="-710"/>
+        </offset>
+      </connection>
+      
+      <!-- XL Shipyard Block E -->
+      <connection name="Connection_Structure_Main_Dock_E2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="9120" y="-90" z="-1690"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_E3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="9120" y="-200" z="-3580"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_E4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="9120" y="-200" z="-4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_E_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="9120" y="-1420" z="-2220"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_E_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="9120" y="-1420" z="-2220"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_E_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="7500" y="-1210" z="-700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_E_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="9120" y="118.5" z="710"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+        </offset>
+      </connection>
+      
+      <!-- XL Shipyard Block F -->
+      <connection name="Connection_Structure_Main_Dock_F2" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="14380" y="-90" z="1690"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_F3" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="14380" y="-200" z="3580"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Main_Dock_F4" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="14380" y="-200" z="4790"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_F_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+          <position x="14380" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_F_Ring" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="14380" y="-1420" z="2220"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_F_Playerdock_Shiptrader" group="stationGroup" tags="destructible">
+        <offset>
+          <position x="12760" y="-1210" z="700"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_F_Production_Smallships" group="stationGroup" tags="production">
+        <offset>
+          <position x="14380" y="118.5" z="-710"/>
+        </offset>
+      </connection>
+      
+      <!-- Radar & Defense -->
+      <connection name="Connection_Structure_Defense_Radar_A" group="stationGroup" tags="radar">
+        <offset>
+          <position x="18020" y="-250" z="0"/>
+          <quaternion qx="0" qy="-0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_Defense_Radar_B" group="stationGroup" tags="radar">
+        <offset>
+          <position x="-18020" y="-250" z="0"/>
+          <quaternion qx="0" qy="0.7071067811865475" qz="0" qw="0.7071067811865475"/>
+        </offset>
+      </connection>
+      
+      
+			<connection name="Connection_Structure_Defense_Weaponplatform_A1" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="20500" y="40" z="2500"/>
+          <quaternion qx="0" qy="0.3826834323650898" qz="0" qw="0.9238795325112867"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_A2" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="20500" y="40" z="-2500"/>
+          <quaternion qx="0" qy="0.9238795325112867" qz="0" qw="0.38268343236508984"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_A3" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="20500" y="-40" z="2500"/>
+          <quaternion qx="-0.3826834323650898" qy="0" qz="-0.9238795325112867" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_A4" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="20500" y="-40" z="-2500"/>
+          <quaternion qx="-0.9238795325112867" qy="0" qz="-0.38268343236508984" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_B1" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-20500" y="40" z="2500"/>
+          <quaternion qx="0" qy="0.3826834323650898" qz="0" qw="-0.9238795325112867"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_B2" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-20500" y="40" z="-2500"/>
+          <quaternion qx="0" qy="0.9238795325112867" qz="0" qw="-0.3826834323650898"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_B3" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-20500" y="-40" z="2500"/>
+          <quaternion qx="-0.3826834323650898" qy="0" qz="0.9238795325112867" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Structure_Defense_Weaponplatform_B4" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-20500" y="-40" z="-2500"/>
+          <quaternion qx="-0.9238795325112867" qy="0" qz="0.38268343236508984" qw="0"/>
+				</offset>
+			</connection>
+      
+      <!-- ################### -->
+      <!-- Teladi Overwatch Ring stuff-->
+      <!-- Ring outer Structure -->
+      <connection name="Connection_Teladi_Ring_Center" group="stationGroup" tags="production">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+					<quaternion qx="-0.7071067811865475" qy="-0" qz="-0" qw="0.7071067811865476"/> <!--0 / -90 / 0 ???-->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Column_1" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="45" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Column_2" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="135" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Column_3" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="-135" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Column_4" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="-45" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Hull_1" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="0" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Hull_2" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="120" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Hull_3" group="stationGroup" tags="destructible">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+				  <rotation yaw="-120" pitch="90" roll="0"/>
+				</offset>
+			</connection>
+			<!-- Radar, Energy Productions and related supports -->
+			<connection name="Connection_Teladi_Ring_Radar_Center" group="stationGroup" tags="production">
+				<offset>
+					<position x="0" y="5414" z="0"/>
+					<quaternion qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Radar" group="stationGroup" tags="radar">
+				<offset>
+					<position x="0" y="5744" z="0"/>
+					<quaternion qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
+				</offset>
+			</connection>
+      <connection name="Connection_Teladi_Ring_Fab_Energy_1_Bridge" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="75" y="2700" z="7268.346"/>
+					<quaternion qx="0.36682805" qy="-0.36682805" qz="-0.60451395" qw="-0.60451395"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Fab_Energy_1" group="stationGroup" tags="production">
+				<offset>
+					<position x="-18" y="1510" z="8250"/>
+					<quaternion qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
+				</offset>
+			</connection>
+      <connection name="Connection_Teladi_Ring_Fab_Energy_2_Bridge" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="-75" y="2700" z="-7268.346"/>
+					<quaternion qx="-0.60451395" qy="-0.60451395" qz="-0.36682805" qw="0.36682805"/>
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Ring_Fab_Energy_2" group="stationGroup" tags="production">
+				<offset>
+					<position x="-18" y="1510" z="-8350"/>
+					<quaternion qx="-0.5" qy="0.5" qz="0.5" qw="0.5"/>
+				</offset>
+			</connection>
+			<!-- Inner Ring Animation and Parts -->
+			<connection name="Connection_Teladi_Inner_Ring_Animation_Center" tags="part animation nocollision  ">
+				<offset>
+				  <position x="0" y="800" z="0"/>
+					<quaternion qx="-0.7071067811865475" qy="-0" qz="-0" qw="-0.7071067811865476"/> <!--0 / -90 / 0 ???-->
+				</offset>
+				<animations>
+					<animation name="loop" start="1" end="20000"/>
+				</animations>
+				<parts>
+					<part name="anim_to_ring">
+						<lods>
+							<lod index="0">
+								<materials>
+									<material id="1" ref="generic.generic_p1_alphatexture"/>
+								</materials>
+							</lod>
+						</lods>
+						<size>
+							<max x="42.42641" y="42.42641" z="30"/>
+							<center x="0" y="0" z="0"/>
+						</size>
+						<size_raw>
+							<max x="30" y="30" z="30"/>
+							<center x="0" y="0" z="0"/>
+						</size_raw>
+					</part>
+				</parts>
+				<waypoints/>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_01" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="-0.4999996" qw="-0.8660257"/> <!--0 / 60 / 0 ???-->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_02" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="0.9659258" qw="0.2588191"/> <!-- 0 / -30 / 0 ???? -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_03" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+				<!--- 0 / 0 / 0 -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_04" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="0.9659258" qw="-0.2588191"/><!-- 0 / -30 / 0 -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_05" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="-0.5" qw="0.8660254"/> <!-- 0 / -60 / 0 ???? -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_06" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="0.7071069" qw="-0.7071066"/> <!--0 / -90 / 0 ????-->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_07" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="-0.8660254" qw="0.5"/> <!-- -180 / -60 / -180 -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_08" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="0.2588192" qw="-0.9659258"/> <!-- -180  / -30 / -180 -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_09" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="1" qw="0"/> <!-- -180  / 0 / 0 ?????-->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_10" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="-0.2588192" qw="-0.9659258"/> <!-- -180  / -30 / -180 ???-->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_11" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="-0.8660257" qw="-0.4999996"/> <!--180 / 60 / 180 -->
+				</offset>
+			</connection>
+			<connection name="Connection_Teladi_Inner_Ring_12" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+					<quaternion qx="-0" qy="-0" qz="0.7071066" qw="0.7071069"/> <!--0 / 90 / 0-->
+				</offset>
+			</connection>
+      <connection name="Connection_Teladi_Inner_Ring_Playerdock_01" tags="destructible iklink" group="stationGroup" parent="anim_to_ring">
+				<offset>
+				  <position x="0" y="0" z="0"/>
+				</offset>
+			</connection>
+			<!-- Additional Teladi Docks -->
+      <connection name="Connection_Structure_XL_Dock_G_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+					<position x="0" y="1500" z="9000"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Structure_XL_Dock_H_Buildmodule" group="stationGroup" tags="buildmodule">
+        <offset>
+					<position x="0" y="1500" z="-9000"/>
+					<quaternion qx="-0" qy="-0.7071067811865475" qz="-0" qw="-0.7071067811865476"/>
+        </offset>
+      </connection>
+      
+      <!-- HoL Warehouse/TC HQ Stuff -->
+			<connection name="Connection_HoL_Center" group="stationGroup" tags="destructible">
+				<offset>
+					<position x="0" y="-4132" z="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_1" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+					<quaternion qx="0" qy="0.5" qz="0" qw="0.8660254"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_2" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+					<quaternion qx="0" qy="0.8660254" qz="0" qw="0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_3" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+					<quaternion qx="-0" qy="1" qz="-0" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_4" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+					<quaternion qx="-0" qy="0.8660254" qz="-0" qw="-0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_5" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+					<quaternion qx="-0" qy="0.5" qz="-0" qw="-0.8660254"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_6" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-4200" z="0"/>
+        </offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_01" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="1708" y="-4160" z="2998"/>
+          <rotation yaw="-60" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_02" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="1742" y="-4160" z="2978"/>
+          <rotation yaw="120" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_03" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="3450" y="-4160" z="20"/>
+          <rotation yaw="0" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_04" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="3450" y="-4160" z="-20"/>
+          <rotation yaw="180" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_05" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="1742" y="-4160" z="-2978"/>
+          <rotation yaw="60" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_06" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="1708" y="-4160" z="-2998"/>
+          <rotation yaw="240" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_07" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-1708" y="-4160" z="-2998"/>
+          <rotation yaw="120" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_08" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-1742" y="-4160" z="-2978"/>
+          <rotation yaw="300" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_09" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-3450" y="-4160" z="-20"/>
+          <rotation yaw="180" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_10" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-3450" y="-4160" z="20"/>
+          <rotation yaw="0" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_11" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-1742" y="-4160" z="2978"/>
+          <rotation yaw="240" pitch="0" roll="10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_TradePort_12" group="stationGroup" tags="tradeofferdock">
+				<offset>
+          <position x="-1708" y="-4160" z="2998"/>
+          <rotation yaw="60" pitch="0" roll="-10"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-4350" z="430"/>
+					<quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_1.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-4980" z="430"/>
+					<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_1.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-5960" z="430"/>
+					<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_1.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-6940" z="430"/>
+					<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-4350" z="-430"/>
+					<quaternion qx="0" qy="0.8660254" qz="0" qw="-0.5"/>
+				</offset>
+			</connection>
+      <connection name="Connection_HoL_Harbour_Tower_2.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-5000" z="-430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_2.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-5850" z="-430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_2.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-6700" z="-430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_2.4" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-7550" z="-430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_2.5" group="stationGroup" tags="storage">
+				<offset>
+					<position x="744" y="-8400" z="-430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-4350" z="-860"/>
+					<quaternion qx="-0" qy="0.5" qz="-0" qw="-0.8660254"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_3.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-5200" z="-860"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_3.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-6450" z="-860"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_3.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-7700" z="-860"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_4" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-4350" z="-430"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_4.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-4980" z="-430"/>
+					<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_4.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-5960" z="-430"/>
+					<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_4.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-6940" z="-430"/>
+					wa<quaternion qx="0.6123724356957945" qy="0.35355339059327373" qz="-0.3535533905932737"  qw="0.6123724356957946"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-4350" z="430"/>
+					<quaternion qx="0" qy="0.5" qz="0" qw="0.8660254"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-5000" z="430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-5850" z="430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-6700" z="430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5.4" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-7550" z="430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_5.5" group="stationGroup" tags="storage">
+				<offset>
+					<position x="-744" y="-8400" z="430"/>
+					<quaternion  qx="0.7071067811865475" qy="0"  qz="0"  qw="0.7071067811865475"/>sw
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_6" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-4350" z="860"/>
+					<quaternion qx="0" qy="0.8660254" qz="0" qw="0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_6.1" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-5200" z="860"/>
+					<quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_6.2" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-6450" z="860"/>
+					<quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harbour_Tower_6.3" group="stationGroup" tags="storage">
+				<offset>
+					<position x="0" y="-7700" z="860"/>
+					<quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+      <connection name="Connection_HoL_Harobour_Tower_Radar" group="stationGroup" tags="radar">
+        <offset>
+          <position x="0" y="-8050" z="3060"/>
+          <quaternion qx="1" qy="0" qz="0" qw="0"/>
+        </offset>
+      </connection>
+			<connection name="Connection_HoL_Harobour_Tower_Radar_Bridge_1" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-7380" z="0"/>
+					<quaternion qx="0" qy="0.8660254" qz="0" qw="-0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harobour_Tower_Radar_Bridge_2" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-8400" z="0"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harobour_Tower_Radar_Bridge_3" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-9000" z="0"/>
+					<quaternion qx="0" qy="0.8660254" qz="0" qw="0.5"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harobour_Tower_Radar_Bridge_4" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-8225" z="0"/>
+					<quaternion qx="0.7071067811865476" qy="0" qz="0" qw="0.7071067811865476"/>
+				</offset>
+			</connection>
+			<connection name="Connection_HoL_Harobour_Tower_Radar_Bridge_5" group="stationGroup" tags="destructible">
+				<offset>
+          <position x="0" y="-8400" z="1900"/>
+          <quaternion qx="0" qy="1" qz="0" qw="0"/>
+				</offset>
+			</connection>
+      
+      <!-- Temporary Stuff -->
+      
+      
+      <connection name="Connection_test_01" group="stationGroup" tags="production">
+        <offset>
+          <position x="-20000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_02" group="stationGroup" tags="production">
+        <offset>
+          <position x="-18000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_03" group="stationGroup" tags="production">
+        <offset>
+          <position x="-16000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_04" group="stationGroup" tags="production">
+        <offset>
+          <position x="-14000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_05" group="stationGroup" tags="production">
+        <offset>
+          <position x="-12000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_06" group="stationGroup" tags="production">
+        <offset>
+          <position x="-10000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_07" group="stationGroup" tags="production">
+        <offset>
+          <position x="-8000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_08" group="stationGroup" tags="production">
+        <offset>
+          <position x="-6000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_09" group="stationGroup" tags="production">
+        <offset>
+          <position x="-4000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_test_10" group="stationGroup" tags="production">
+        <offset>
+          <position x="-2000" y="0" z="8000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      
+      <!--connection name="Connection_Production_fusionreactor" group="stationGroup" tags="production">
+        <offset>
+          <position x="-8000" y="7000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Production_holtzmanfieldgenerator" group="stationGroup" tags="production">
+        <offset>
+          <position x="-6000" y="7000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Production_plasmaflowregulator" group="stationGroup" tags="production">
+        <offset>
+          <position x="-4000" y="7000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      
+      <connection name="Connection_Production_bioopticwiring" group="stationGroup" tags="production">
+        <offset>
+          <position x="20000" y="5000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>      
+      <connection name="Connection_Production_foodrations" group="stationGroup" tags="production">
+        <offset>
+          <position x="18000" y="5000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Production_microchips" group="stationGroup" tags="production">
+        <offset>
+          <position x="16000" y="5000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection>
+      <connection name="Connection_Production_scanningarray" group="stationGroup" tags="production">
+        <offset>
+          <position x="14000" y="5000" z="5000"/>
+          <quaternion qx="0" qy="0" qz="0" qw="1"/>
+        </offset>
+      </connection-->
+      
+      </connections>
+  </component>
+</components>
