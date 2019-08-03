@@ -4,23 +4,27 @@
 #include <vector>
 #include <cstdio>
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <X4ConverterTools/util/FormatUtil.h>
 
 namespace model {
+    using std::string;
     AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(std::move(ctx)) {
 
     }
 
-    std::string AbstractElement::getName() {
+    string AbstractElement::getName() {
         return name;
     }
 
-    void AbstractElement::setName(std::string n) {
+    void AbstractElement::setName(string n) {
         // TODO Verify exact limit
         // E.g.
         // "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_carrier_01_data"
         // cuts off to "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_"
-        if (n.length() > 63) {
+        // Hard limit is 63? but we need some characters to do attribute stuff
+        if (n.length() > 45) {
             throw std::runtime_error("Name too long, blender will cut it off!");
         }
         name = std::move(n);
@@ -30,7 +34,7 @@ namespace model {
     std::vector<aiNode *> AbstractElement::attrToAiNode() {
         std::vector<aiNode *> children;
         for (const auto &attr : attrs) {
-            children.push_back(GenerateAttrNode(attr.first, attr.second));
+            GenerateAttrNode(children, attr.first, attr.second);
         }
         return children;
     }
@@ -53,7 +57,7 @@ namespace model {
         target->mNumChildren = newCount;
         auto old = target->mChildren;
         target->mChildren = arr;
-        for (int i = 0; i < newCount; i++) {
+        for (auto i = 0; i < newCount; i++) {
             auto child = arr[i];
             child->mParent = target;
 
@@ -61,12 +65,43 @@ namespace model {
         delete[] old;
     }
 
+    void AbstractElement::readMultiObjectAttr(aiNode *parent, const string &namePart, const string &tagPart,
+                                              const string &valPart) {
+        //source.
+        std::cout << "Re-assembling multi-object attribute: " << namePart << "|" << tagPart << std::endl;
+        auto count = std::atoi(valPart.substr(1).c_str());
+        string val;
+        for (auto i = 1; i <= count + 1; i++) {
+            std::stringstream ss;
+            ss << namePart << "|" << tagPart << "#" << std::to_string(i) << "|";
+            auto soughtName = ss.str();
+            for (int j = 0; j < parent->mNumChildren; j++) {
+                auto child = parent->mChildren[j];
+                std::string childName = child->mName.C_Str();
+                if (childName.find(soughtName) != string::npos) {
+                    if (i != count + 1) {
+                        // Error because we don't know how many extra parts there are
+                        throw std::runtime_error(
+                                "Found extra part #" + std::to_string(i) + "For name: " + namePart + " and key: " +
+                                tagPart);
+                    }
+                    val += childName.substr(soughtName.size());
+                    break;
+                }
+            }
+            if (i != count + 1) {
+                // Warning because they may have accidentally deleted something
+                std::cerr << "Could not find part #" << i << "For name: " << namePart << " and key: " << tagPart
+                          << std::endl;
+            }
+        }
+    }
 
-    void AbstractElement::readAiNodeChild(aiNode *source) {
-        std::string raw = source->mName.C_Str();
+    void AbstractElement::readAiNodeChild(aiNode *parent, aiNode *source) {
+        string raw = source->mName.C_Str();
         auto firstSplit = raw.find('|');
         auto secondSplit = raw.rfind('|');
-        if (firstSplit == secondSplit || firstSplit == std::string::npos || secondSplit == std::string::npos) {
+        if (firstSplit == secondSplit || firstSplit == string::npos || secondSplit == string::npos) {
             std::cerr << "warning, could not read node: " << raw << std::endl;
             return;
         }
@@ -76,10 +111,25 @@ namespace model {
         if (namePart != name) {
             std::cerr << "Warning, name of element was " + name + " but tag was for name: " + namePart << std::endl;
         }
-        attrs[tagPart] = valPart;
+
+        bool tagContainsPound = tagPart.find('#') == string::npos;
+        bool valContainsPound = valPart.find('#') == string::npos;
+        if (!tagContainsPound && !valContainsPound) {
+            attrs[tagPart] = valPart;
+        }
+        if (tagContainsPound && !valContainsPound) {
+            readMultiObjectAttr(parent, namePart, tagPart, valPart);
+        }
+        if (!tagContainsPound && valContainsPound) {
+            std::cout << "Part of multi-object: " << raw << std::endl;
+        }
+
+        if (tagContainsPound && valContainsPound) {
+            std::cerr << "Likely Malformed tag: " << raw << std::endl;
+        }
     }
 
-    pugi::xml_node AbstractElement::Child(pugi::xml_node parent, const std::string &elementName) {
+    pugi::xml_node AbstractElement::AddChild(pugi::xml_node parent, const string &elementName) {
         auto result = parent.child(elementName.c_str());
         if (!result.empty()) {
             return result;
@@ -88,8 +138,8 @@ namespace model {
     }
 
     pugi::xml_node
-    AbstractElement::ChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
-                                 const std::string &attrVal) {
+    AbstractElement::AddChildByAttr(pugi::xml_node parent, const string &elemName, const string &attrName,
+                                    const string &attrVal) {
         auto result = parent.find_child_by_attribute(elemName.c_str(), attrName.c_str(), attrVal.c_str());
         if (!result.empty()) {
             return result;
@@ -125,12 +175,12 @@ namespace model {
         WriteAttr(target, "qw", val.w);
     }
 
-    void AbstractElement::WriteAttr(pugi::xml_node target, std::string name, float val) {
-        std::string strVal = util::FormatUtil::formatFloat(val);
+    void AbstractElement::WriteAttr(pugi::xml_node target, const string &name, float val) {
+        string strVal = util::FormatUtil::formatFloat(val);
         WriteAttr(target, name, strVal);
     }
 
-    void AbstractElement::WriteAttr(pugi::xml_node target, const std::string &name, std::string val) {
+    void AbstractElement::WriteAttr(pugi::xml_node target, const string &name, const string &val) {
         auto attr = target.attribute(name.c_str());
         if (attr.empty()) {
             attr = target.append_attribute(name.c_str());
@@ -138,23 +188,50 @@ namespace model {
         attr.set_value(val.c_str());
     }
 
-    aiNode *AbstractElement::GenerateAttrNode(const std::string &key, const std::string &value) {
-        return new aiNode(name + "|" + key + "|" + value);
+    void AbstractElement::GenerateAttrNode(std::vector<aiNode *> children, const string &key, const string &value) {
+        auto rep = name + "|" + key + "|" + value;
+        // TODO make magic numbers constants
+        if (rep.size() > 63) {
+            if (name.size() + key.size() > 55) {
+                throw std::runtime_error("Cannot handle name: " + name + "key: " + key + ", too long to split up!");
+            }
+            std::cout << "Forming multi-object attribute, Name: " << name << " Key: " << key << std::endl;
+            auto base = name + "|" + key;
+            auto piece_len = 60 - base.size();
+            auto piece_count = ceil((double) value.size() / piece_len);
+            auto flag_attr = base + "|#" + std::to_string(piece_count);
+            if (flag_attr.size() > 63) {
+                throw std::runtime_error("Flag attr string too long to import into blender!");
+            }
+            children.emplace_back(new aiNode(flag_attr));
+            for (int i = 0; i < piece_count; i++) {
+                auto piece = value.substr(i * piece_len, piece_len);
+                std::stringstream ss;
+                ss << base << "#" << i << "|" << piece;
+                auto result = ss.str();
+                if (result.size() > 63) {
+                    throw std::runtime_error("Piece string too long to import into blender!");
+                }
+                children.emplace_back(new aiNode(result));
+            }
+        } else {
+            children.emplace_back(new aiNode(rep));
+        }
     }
 
     void AbstractElement::WriteOffset(pugi::xml_node target) {
         bool offsetPosZero = offsetPos.Equal(aiVector3D());
         bool offsetRotZero = offsetRot.Equal(aiQuaternion());
-        auto offsetNode = Child(target, "offset");
+        auto offsetNode = AddChild(target, "offset");
         if (!offsetPosZero) {
-            auto posNode = Child(offsetNode, "position");
+            auto posNode = AddChild(offsetNode, "position");
             WriteAttrXYZ(posNode, offsetPos);
         } else {
             offsetNode.remove_child("position");
         }
         // TODO util method to check if zero
         if (!offsetRotZero) {
-            auto quatNode = Child(offsetNode, "quaternion");
+            auto quatNode = AddChild(offsetNode, "quaternion");
             WriteAttrQuat(quatNode, offsetRot);
         } else {
             offsetNode.remove_child("quaternion");
@@ -212,7 +289,7 @@ namespace model {
                          target.attribute("b").as_float(0.0));
     }
 
-    void AbstractElement::WriteAttrRGB(pugi::xml_node target, aiColor3D val) {
+    void AbstractElement::WriteAttrRGB(pugi::xml_node target, const aiColor3D &val) {
         WriteAttr(target, "r", val.r);
         WriteAttr(target, "g", val.g);
         WriteAttr(target, "b", val.b);

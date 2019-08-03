@@ -58,10 +58,21 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     return true;
 }
 
+std::string
+PrependIfNecessary(const std::string &gameBaseFolderPath, const std::string &filePath, const std::string &ext) {
+    if (!gameBaseFolderPath.empty() && filePath.find(gameBaseFolderPath) == std::string::npos) {
+        std::cout << "Prepending " << gameBaseFolderPath << " to path " << filePath << std::endl;
+        return gameBaseFolderPath + filePath;
+    }
+
+    std::cout << "Using " << ext << " at " << filePath << std::endl;
+    return filePath;
+}
+
 bool
 ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFilePath, const std::string &xmlFilePath) {
-    auto actualDaeFilePath = fs::exists(daeFilePath) ? daeFilePath : gameBaseFolderPath + daeFilePath;
-    auto actualXmlFilePath = fs::exists(xmlFilePath) ? xmlFilePath : gameBaseFolderPath + xmlFilePath;
+    std::string actualDaeFilePath = PrependIfNecessary(gameBaseFolderPath, daeFilePath, ".dae");
+    std::string actualXmlFilePath = PrependIfNecessary(gameBaseFolderPath, xmlFilePath, ".xml");
     auto *importer = new Assimp::Importer();
     importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
     const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);

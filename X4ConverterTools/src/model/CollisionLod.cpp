@@ -64,11 +64,11 @@ namespace model {
     void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
         // TODO handle no collision mesh
         if (maxDim != aiVector3D(0, 0, 0) || center != aiVector3D(0, 0, 0)) {
-            auto sizeNode = Child(out, "size");
+            auto sizeNode = AddChild(out, "size");
 
-            auto maxNode = Child(sizeNode, "max");
+            auto maxNode = AddChild(sizeNode, "max");
             WriteAttrXYZ(maxNode, maxDim);
-            auto centerNode = Child(sizeNode, "center");
+            auto centerNode = AddChild(sizeNode, "center");
             WriteAttrXYZ(centerNode, center);
         } else {
             out.remove_child("size");

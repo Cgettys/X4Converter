@@ -31,7 +31,7 @@ namespace model {
         } else {
             // TODO verify not null
             std::string ref = componentNode.child("source").attribute("geometry").value();
-            attrs["source"] = ref;
+            attrs["src"] = ref;
             ctx->SetSourcePathSuffix(ref);
         }
 
@@ -148,9 +148,9 @@ namespace model {
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
             std::string childName = child->mName.C_Str();
-            if (childName.find("class") != std::string::npos || childName.find("source") != std::string::npos) {
+            if (childName.find("class") != std::string::npos || childName.find("src") != std::string::npos) {
                 // TODO improve me to not risk accidental matches
-                readAiNodeChild(child);
+                readAiNodeChild(node, child);
                 continue;
             } else if (childName.find('*') == std::string::npos) {
                 std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
@@ -187,11 +187,11 @@ namespace model {
         if (std::string(out.name()) != "components") {
             throw std::runtime_error("Component should be under components element");
         }
-        auto compNode = ChildByAttr(out, "component", "name", getName());
-        auto connsNode = Child(compNode, "connections");
+        auto compNode = AddChildByAttr(out, "component", "name", getName());
+        auto connsNode = AddChild(compNode, "connections");
         for (const auto &attr : attrs) {
-            if (attr.first == "source") {
-                ChildByAttr(compNode, "source", "geometry", attr.second);
+            if (attr.first == "src") {
+                AddChildByAttr(compNode, "source", "geometry", attr.second);
                 // TODO compare to output path and confirm if wrong
                 ctx->SetSourcePathSuffix(attr.second);
             } else {

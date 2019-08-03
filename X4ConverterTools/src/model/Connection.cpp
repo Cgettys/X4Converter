@@ -73,7 +73,7 @@ namespace model {
             auto child = node->mChildren[i];
             auto childName = std::string(child->mName.C_Str());
             if (childName.find('|') != std::string::npos) {
-                readAiNodeChild(child);
+                readAiNodeChild(node, child);
             } else {
                 Part part(ctx);
                 part.ConvertFromAiNode(child);
@@ -86,7 +86,7 @@ namespace model {
         if (std::string(out.name()) != "connections") {
             throw std::runtime_error("parent of connection must be connections xml element");
         }
-        auto node = ChildByAttr(out, "connection", "name", getName());
+        auto node = AddChildByAttr(out, "connection", "name", getName());
 
         if (!parentName.empty()) {
             WriteAttr(node, "parent", parentName);
@@ -102,7 +102,7 @@ namespace model {
         if (parts.empty()) {
             return;
         }
-        auto partsNode = Child(node, "parts");
+        auto partsNode = AddChild(node, "parts");
         for (auto part : parts) {
             part.ConvertToGameFormat(partsNode);
         }

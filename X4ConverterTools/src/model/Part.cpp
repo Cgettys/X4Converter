@@ -107,7 +107,7 @@ namespace model {
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere
             } else {
-                readAiNodeChild(child);
+                readAiNodeChild(node, child);
             }
         }
         // TODO more
@@ -124,7 +124,7 @@ namespace model {
             throw std::runtime_error("part must be appended to a parts xml element");
         }
 
-        auto partNode = ChildByAttr(out, "part", "name", getName());
+        auto partNode = AddChildByAttr(out, "part", "name", getName());
 
 
         // Note the return statement! referenced parts don't get LODS!!!
@@ -144,7 +144,7 @@ namespace model {
         }
 
         if (!lods.empty()) {
-            auto lodsNode = Child(partNode, "lods");
+            auto lodsNode = AddChild(partNode, "lods");
             collisionLod->ConvertToGameFormat(partNode);
             for (auto lod : lods) {
                 lod.second.ConvertToGameFormat(lodsNode);
@@ -154,7 +154,7 @@ namespace model {
         }
 
         if (!lights.empty()) {
-            auto lightsNode = Child(partNode, "lights");
+            auto lightsNode = AddChild(partNode, "lights");
             for (auto light : lights) {
                 light.ConvertToGameFormat(lightsNode);
             }

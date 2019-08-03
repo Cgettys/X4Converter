@@ -72,7 +72,7 @@ namespace model {
             throw std::runtime_error("layer was passed incorrect node to write to!");
         }
         if (!lights.empty()) {
-            auto lightsNode = Child(out, "lights");
+            auto lightsNode = AddChild(out, "lights");
             for (auto light : lights) {
                 light.ConvertToGameFormat(lightsNode);
             }

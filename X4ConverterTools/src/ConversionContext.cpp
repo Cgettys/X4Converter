@@ -166,6 +166,7 @@ void ConversionContext::PopulateSceneArrays() {
 }
 
 void ConversionContext::SetSourcePathSuffix(std::string path) {
+    std::cout << "Source path suffix set: " << path << std::endl;
     sourcePathSuffix = std::move(path);
 }
 

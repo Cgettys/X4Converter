@@ -129,7 +129,7 @@ namespace model {
                 break;
         }
 
-        auto lightNode = ChildByAttr(out, nodeType, "name", name);
+        auto lightNode = AddChildByAttr(out, nodeType, "name", name);
         if (lightKind == arealight) {
             WriteAttr(lightNode, "areax", area.x);
             WriteAttr(lightNode, "areay", area.y);

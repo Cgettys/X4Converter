@@ -36,7 +36,10 @@ namespace model {
         virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
 
 
-        virtual void readAiNodeChild(aiNode *source);
+        void readMultiObjectAttr(aiNode *parent, const std::string &namePart, const std::string &tagPart,
+                                 const std::string &valPart);
+
+        virtual void readAiNodeChild(aiNode *parent, aiNode *source);
 
         void ReadOffset(pugi::xml_node target);
 
@@ -44,16 +47,16 @@ namespace model {
 
         void WriteOffset(pugi::xml_node target);
 
-        static pugi::xml_node Child(pugi::xml_node parent, const std::string &elementName);
+        static pugi::xml_node AddChild(pugi::xml_node parent, const std::string &elementName);
 
         static pugi::xml_node
-        ChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
-                    const std::string &attrVal);
+        AddChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
+                       const std::string &attrVal);
 
 
         static aiColor3D ReadAttrRGB(pugi::xml_node target);
 
-        static void WriteAttrRGB(pugi::xml_node target, aiColor3D val);
+        static void WriteAttrRGB(pugi::xml_node target, const aiColor3D &val);
 
         static aiVector3D ReadAttrXYZ(pugi::xml_node target);
 
@@ -63,9 +66,9 @@ namespace model {
 
         static void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
 
-        static void WriteAttr(pugi::xml_node target, std::string name, float val);
+        static void WriteAttr(pugi::xml_node target, const std::string &name, float val);
 
-        static void WriteAttr(pugi::xml_node target, const std::string &name, std::string val);
+        static void WriteAttr(pugi::xml_node target, const std::string &name, const std::string &val);
 
         std::map<std::string, std::string> attrs;
 
@@ -78,7 +81,7 @@ namespace model {
 
         std::string name;
 
-        aiNode *GenerateAttrNode(const std::string &key, const std::string &value);
+        void GenerateAttrNode(std::vector<aiNode *> children, const std::string &key, const std::string &value);
 
     };
 
