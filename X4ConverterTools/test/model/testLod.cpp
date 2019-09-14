@@ -26,7 +26,6 @@ BOOST_AUTO_TEST_CASE(read_lod_name) {
   BOOST_TEST(lod.getName() == expectedName);
   auto result = lod.ConvertToAiNode(pugi::xml_node());
   BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
-  delete doc;
   delete result;
 }
 
@@ -39,7 +38,6 @@ BOOST_AUTO_TEST_CASE(read_lod_no_index) {
   node.remove_attribute("index");
 
   BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
@@ -49,7 +47,6 @@ BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   BOOST_TEST_REQUIRE(!node.empty());
   BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
@@ -64,7 +61,6 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   auto lodForward = VisualLod(node, "anim_main", ctx);
   auto forwardResult = lodForward.ConvertToAiNode(pugi::xml_node());
   ctx->PopulateSceneArrays();
-  delete doc;
   ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
   ctx->SetScene(pScene);
 
@@ -83,7 +79,6 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "1"));
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "2"));
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "3"));
-  delete outDoc;
 }
 // TODO fixme
 //        BOOST_AUTO_TEST_CASE(part_name_from_ainode) {

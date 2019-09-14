@@ -20,11 +20,11 @@ class XmfDataBufferDesc : public IXmf {
 
   std::string validate();
 
-  [[nodiscard]] uint64_t GetCompressedDataSize() const {
+  [[nodiscard]] uint32_t GetCompressedDataSize() const {
     return CompressedDataSize;
   }
 
-  [[nodiscard]] uint64_t GetUncompressedDataSize() const {
+  [[nodiscard]] uint32_t GetUncompressedDataSize() const {
     return NumSections * NumItemsPerSection * ItemSize;
   }
 
@@ -49,7 +49,7 @@ class XmfDataBufferDesc : public IXmf {
   uint8_t _pad0[4] = {0, 0, 0, 0};
   uint32_t Format;
   uint32_t CompressedDataSize;
-  int ItemSize;
+  uint32_t ItemSize;
   uint32_t NumSections;
   uint8_t _pad1[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 

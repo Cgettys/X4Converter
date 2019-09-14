@@ -16,15 +16,13 @@ XmfHeader::XmfHeader(uint8_t numDataBuffers, uint8_t numMaterials) {
   Magic[2] = 'M';
   Magic[3] = 'F';
   Version = 3;
-  IsBigEndian = (uint8_t) false;
-  SizeOfHeader = 0x40;
+  IsBigEndian = static_cast<uint8_t>(false);
+  SizeOfHeader = XmfHeader::kExpectedBinarySize;
   reserved0 = 0x00;
   NumDataBuffers = numDataBuffers;
-  // TODO fixme
   DataBufferDescSize = XmfDataBufferDesc::kExpectedBinarySize;
   NumMaterials = numMaterials;
-  MaterialSize = sizeof(XmfMaterial);
-  // TODO
+  MaterialSize = XmfMaterial::kExpectedBinarySize;
 
   Culling_CW = static_cast<uint8_t>(false);
   RightHand = static_cast<uint8_t>(false);
@@ -131,11 +129,17 @@ std::string XmfHeader::validate() const {
     valid = false;
   }
   if (DataBufferDescSize != XmfDataBufferDesc::kExpectedBinarySize) {
-    ss << "\tERROR: Data Buffer Desc is Wrong Length!" << endl;
+    ss << "\tERROR: Data Buffer Desc Size is Wrong.";
+    ss << " Expected: " << std::to_string(XmfDataBufferDesc::kExpectedBinarySize);
+    ss << " Actual:" << DataBufferDescSize;
+    ss << endl;
     valid = false;
   }
   if (MaterialSize != XmfMaterial::kExpectedBinarySize) {
-    ss << "\tERROR: Data Buffer Desc is Wrong Length!" << endl;
+    ss << "\tERROR: Material Size is Wrong.";
+    ss << " Expected: " << std::to_string(XmfMaterial::kExpectedBinarySize);
+    ss << " Actual: " << MaterialSize;
+    ss << endl;
     valid = false;
   }
 

@@ -20,9 +20,9 @@ void TestUtil::checkAiNodeName(aiNode *node, std::string name) {
   BOOST_TEST(name == std::string(actualName));
 }
 
-pugi::xml_document *TestUtil::GetXmlDocument(std::string path) {
+std::unique_ptr<pugi::xml_document> TestUtil::GetXmlDocument(std::string path) {
   std::string fullPath = GetBasePath() + path;
-  auto doc = new pugi::xml_document();
+  auto doc = std::make_unique<pugi::xml_document>();
   pugi::xml_parse_result result = doc->load_file(fullPath.c_str());
   BOOST_TEST_REQUIRE(result.status == pugi::status_ok);
   return doc;

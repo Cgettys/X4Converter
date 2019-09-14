@@ -88,10 +88,7 @@ BOOST_AUTO_TEST_CASE(xml) {
   BOOST_TEST_CHECKPOINT("Backward parsing");
   auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
-  BOOST_TEST_CHECKPOINT("Cleanup");
-  delete expectedDoc;
-  delete actualDoc;
+  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 
 }
 
@@ -123,10 +120,7 @@ BOOST_AUTO_TEST_CASE(xml_hard) {
   //compNode.remove_child("layers");
 
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
-  BOOST_TEST_CHECKPOINT("Cleanup");
-  delete expectedDoc;
-  delete actualDoc;
+  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 }
 
 BOOST_AUTO_TEST_CASE(xml_hard_2) {
@@ -154,10 +148,7 @@ BOOST_AUTO_TEST_CASE(xml_hard_2) {
   auto compNode = expectedDoc->select_node("//components/component[@name='ship_gen_s_fighter_01']").node();
 
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
-  BOOST_TEST_CHECKPOINT("Cleanup");
-  delete expectedDoc;
-  delete actualDoc;
+  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 }
 BOOST_AUTO_TEST_CASE(bridge) {
   // TODO refactor all the io...
@@ -182,10 +173,7 @@ BOOST_AUTO_TEST_CASE(bridge) {
   BOOST_TEST_CHECKPOINT("Backward parsing");
   auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
-  BOOST_TEST_CHECKPOINT("Cleanup");
-  delete expectedDoc;
-  delete actualDoc;
+  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 
 }
 
@@ -213,10 +201,7 @@ BOOST_AUTO_TEST_CASE(multimat) {
   BOOST_TEST_CHECKPOINT("Backward parsing");
   auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  TestUtil::CompareXMLFiles(expectedDoc, actualDoc);
-  BOOST_TEST_CHECKPOINT("Cleanup");
-  delete expectedDoc;
-  delete actualDoc;
+  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 
 }
 BOOST_AUTO_TEST_SUITE_END()

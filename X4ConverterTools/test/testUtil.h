@@ -14,7 +14,7 @@ class TestUtil {
  public:
   static void checkAiNodeName(aiNode *node, std::string name);
 
-  static pugi::xml_document *GetXmlDocument(std::string path);
+  static std::unique_ptr<pugi::xml_document> GetXmlDocument(std::string path);
 
   static std::string GetBasePath();
 

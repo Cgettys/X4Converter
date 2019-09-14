@@ -6,7 +6,6 @@
 #include <assimp/scene.h>
 
 #include <string>
-#include <regex>
 
 using namespace boost;
 using namespace boost::filesystem;
@@ -27,12 +26,10 @@ MaterialLibrary::MaterialLibrary(const std::string &gameBaseFolderPath) : _gameB
     collections[collectionName] = MaterialCollection(collection);
   }
 }
-
 Material *MaterialLibrary::GetMaterial(const std::string &dottedName) {
 
   std::smatch match;
-  std::string regexPattern(R"((\w+)\.(\w+))");
-  if (!std::regex_match(dottedName, match, std::regex(regexPattern))) {
+  if (!std::regex_match(dottedName, match, materialPattern)) {
     throw std::runtime_error("Could not parse material name: " + dottedName);
   }
 

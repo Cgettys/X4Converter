@@ -27,7 +27,6 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
   aiMatrix4x4 expectedMatrix(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
                              aiVector3D(9.411734, -2.738604, -2.866085));
   BOOST_TEST(result->mTransformation.Equal(expectedMatrix));
-  delete doc;
   delete result;
 }
 
@@ -88,7 +87,6 @@ BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
 
   auto conn = Connection(node, ctx);
   BOOST_TEST(conn.getName() == "Connection02");
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
@@ -100,7 +98,6 @@ BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
 
   auto conn = Connection(node, ctx, "ship_arg_s_fighter_01");
   BOOST_TEST(conn.getParentName() == "ship_arg_s_fighter_01");
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
@@ -112,7 +109,6 @@ BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
 
   auto conn = Connection(node, ctx);
   BOOST_TEST(conn.getParentName() == "anim_main");
-  delete doc;
 }
 BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
   auto ainode = new aiNode("*Connection02*");

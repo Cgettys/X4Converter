@@ -6,32 +6,35 @@ namespace xmf {
 XmfMaterial::XmfMaterial() {
   FirstIndex = 0;
   NumIndices = 0;
-  memset(Name, 0, sizeof(Name));
 }
 
-XmfMaterial::XmfMaterial(int firstIndex, int numIndices, const std::string &name) {
-  if (name.size() >= sizeof(Name))
+XmfMaterial::XmfMaterial(uint32_t firstIndex, uint32_t numIndices, std::string name) {
+  if (name.size() >= kMaxStrLen) {
     throw std::runtime_error(str(format("Material name %s is too long") % name));
-
+  }
+  strncpy(Name, name.c_str(), name.size());
   FirstIndex = firstIndex;
   NumIndices = numIndices;
-  memset(Name, 0, sizeof(Name));
-  memcpy(Name, name.c_str(), name.size());
 }
 
 XmfMaterial::XmfMaterial(Assimp::StreamReaderLE &reader) {
-  reader >> FirstIndex;
-  reader >> NumIndices;
-  for (char &c : Name) {
-    reader >> c;
-  }
-
+  ReadBinaryImpl(reader);
 }
 
-void XmfMaterial::Write(Assimp::StreamWriterLE &writer) {
+void XmfMaterial::ReadBinary(Assimp::StreamReaderLE &reader) {
+  ReadBinaryImpl(reader);
+}
+
+void XmfMaterial::ReadBinaryImpl(Assimp::StreamReaderLE &reader) {
+  reader >> FirstIndex;
+  reader >> NumIndices;
+  reader.CopyAndAdvance(Name, kMaxStrLen);
+}
+
+void XmfMaterial::WriteBinary(Assimp::StreamWriterLE &writer) const {
   writer << FirstIndex;
   writer << NumIndices;
-  for (char &c : Name) {
+  for (auto &c : Name) {
     writer << c;
   }
 }

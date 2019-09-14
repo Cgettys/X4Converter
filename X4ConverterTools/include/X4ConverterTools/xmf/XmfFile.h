@@ -26,6 +26,7 @@ namespace xmf {
 
 class XmfFile {
  public:
+  using Ptr = std::shared_ptr<XmfFile>;
   // TODO something better that takes into account writing?
   XmfHeader GetHeader() { return header; };
 
@@ -43,7 +44,7 @@ class XmfFile {
 
   int NumMaterials();
 
-  static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);
+  static XmfFile::Ptr ReadFromIOStream(Assimp::IOStream *pStream);
 
   void WriteToIOStream(Assimp::IOStream *pStream);
 
@@ -61,8 +62,7 @@ class XmfFile {
   static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 
   // For export:
-  static std::shared_ptr<XmfFile>
-  GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool isCollisionMesh);
+  static XmfFile::Ptr GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool isCollisionMesh);
 
   static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
 

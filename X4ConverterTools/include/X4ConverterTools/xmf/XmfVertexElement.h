@@ -11,8 +11,8 @@
 
 namespace xmf {
 class XmfVertexElement : public IXmf {
-
  public:
+  using Vec = std::vector<XmfVertexElement>;
   XmfVertexElement();
 
   XmfVertexElement(D3DDECLTYPE type, D3DDECLUSAGE usage, uint8_t usageIndex = 0);

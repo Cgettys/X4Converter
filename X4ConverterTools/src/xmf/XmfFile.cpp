@@ -114,12 +114,12 @@ void XmfFile::WriteToIOStream(IOStream *pStream) {
   std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers = CompressBuffers();
 
   header = XmfHeader(numeric_cast<uint8_t>(buffers.size()), numeric_cast<uint8_t>(materials.size()));
-  auto pStreamWriter = StreamWriterLE(pStream, false);
+  auto pStreamWriter = StreamWriterLE(pStream);
   header.Write(pStreamWriter);
 
   WriteBufferDescs(pStreamWriter, compressedBuffers);
   for (XmfMaterial &material: materials) {
-    material.Write(pStreamWriter);
+    material.WriteBinary(pStreamWriter);
   }
   WriteBuffers(pStreamWriter, compressedBuffers);
 }

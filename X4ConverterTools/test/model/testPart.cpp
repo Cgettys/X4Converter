@@ -25,7 +25,6 @@ BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
 
   auto part = Part(partNode, ctx);
   BOOST_TEST(part.getName() == "anim_main");
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
@@ -39,7 +38,6 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
   auto part = Part(partNode, ctx);
   auto result = part.ConvertToAiNode(pugi::xml_node());
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
-  delete doc;
   delete result;
 }
 
@@ -52,7 +50,6 @@ BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)");
 
   BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
@@ -63,7 +60,6 @@ BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)");
 
   BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
@@ -167,7 +163,6 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) {
   TestUtil::checkAiNodeName(result->mChildren[3], "anim_main|lod1");
   TestUtil::checkAiNodeName(result->mChildren[4], "anim_main|lod2");
   TestUtil::checkAiNodeName(result->mChildren[5], "anim_main|lod3");
-  delete doc;
 }
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
