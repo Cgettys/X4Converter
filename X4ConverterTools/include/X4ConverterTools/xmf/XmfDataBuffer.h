@@ -8,29 +8,29 @@
 #include "IXmf.h"
 
 namespace xmf {
-    class XmfDataBuffer : public IXmf {
-    public:
-        XmfDataBuffer();
+class XmfDataBuffer : public IXmf {
+ public:
+  XmfDataBuffer();
 
-        XmfDataBufferDesc Description;
+  XmfDataBufferDesc Description;
 
-        explicit XmfDataBuffer(Assimp::StreamReaderLE &descReader);
+  explicit XmfDataBuffer(Assimp::StreamReaderLE &descReader);
 
-        void ReadBinary(Assimp::StreamReaderLE &reader) override;
+  void ReadBinary(Assimp::StreamReaderLE &reader) override;
 
-        void WriteBinary(Assimp::StreamWriterLE &writer) const override;
+  void WriteBinary(Assimp::StreamWriterLE &writer) const override;
 
-        bool IsIndexBuffer() const;
+  bool IsIndexBuffer() const;
 
-        bool IsVertexBuffer() const;
+  bool IsVertexBuffer() const;
 
-        uint8_t *GetData();
+  uint8_t *GetData();
 
-        D3DFORMAT GetIndexFormat();
+  D3DFORMAT GetIndexFormat();
 
-        void AllocData();
+  void AllocData();
 
-    private:
-        std::vector<uint8_t> _data;
-    };
+ private:
+  std::vector<uint8_t> _data;
+};
 }

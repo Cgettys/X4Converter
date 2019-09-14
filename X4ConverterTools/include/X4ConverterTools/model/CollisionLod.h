@@ -6,30 +6,29 @@
 
 namespace model {
 
-    const static int COLLISION_INDEX = -1;
+const static int COLLISION_INDEX = -1;
 
-    class CollisionLod : public Lod {
-    public:
-        explicit CollisionLod(ConversionContext::Ptr ctx);
+class CollisionLod : public Lod {
+ public:
+  explicit CollisionLod(ConversionContext::Ptr ctx);
 
-        explicit CollisionLod(std::string partName, ConversionContext::Ptr ctx);
+  explicit CollisionLod(std::string partName, ConversionContext::Ptr ctx);
 
-        ~CollisionLod() override = default;
+  ~CollisionLod() override = default;
 
-        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
-        void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) override;
 
-        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-    private:
+ private:
 
-        void CalculateSizeAndCenter(aiNode *pCollisionNode);
+  void CalculateSizeAndCenter(aiNode *pCollisionNode);
 
-
-        aiVector3D maxDim;
-        aiVector3D center;
-    };
+  aiVector3D maxDim;
+  aiVector3D center;
+};
 
 }
 

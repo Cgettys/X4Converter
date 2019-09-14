@@ -6,36 +6,34 @@
 
 // TODO check/warn on used unknowns
 namespace ani {
-    class Header {
-    public:
-        Header();
+class Header {
+ public:
+  Header();
 
-        explicit Header(Assimp::StreamReaderLE &reader);
+  explicit Header(Assimp::StreamReaderLE &reader);
 
-        std::string validate();// Debug method - throws exception if invalid, else returns human readable string
-    protected:
-    public:
-        int getNumAnims() const;
+  std::string validate();// Debug method - throws exception if invalid, else returns human readable string
+ protected:
+ public:
+  int getNumAnims() const;
 
-        void setNumAnims(int NumAnims);
+  void setNumAnims(int NumAnims);
 
-        int getKeyOffsetBytes() const;
+  int getKeyOffsetBytes() const;
 
+  int getVersion() const;
 
-        int getVersion() const;
+  void setVersion(int Version);
 
-        void setVersion(int Version);
+  int getPadding() const;
 
-        int getPadding() const;
+  void setPadding(int Padding);
 
-        void setPadding(int Padding);
+ protected:
+  int NumAnims = 0;
+  int KeyOffsetBytes = 16;
+  int Version = 1;
+  int Padding = 0;
 
-    protected:
-        int NumAnims = 0;
-        int KeyOffsetBytes = 16;
-        int Version = 1;
-        int Padding = 0;
-
-
-    };
+};
 }

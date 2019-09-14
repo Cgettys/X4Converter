@@ -7,22 +7,22 @@
 #include <pugixml.hpp>
 
 namespace model {
-    class MaterialCollection {
-    public:
-        MaterialCollection();
+class MaterialCollection {
+ public:
+  MaterialCollection();
 
-        ~MaterialCollection() = default;
+  ~MaterialCollection() = default;
 
-        explicit MaterialCollection(pugi::xml_node node);
+  explicit MaterialCollection(pugi::xml_node node);
 
-        Material *GetMaterial(const std::string &name);
+  Material *GetMaterial(const std::string &name);
 
-        const std::string &GetName() const { return _name; }
+  const std::string &GetName() const { return _name; }
 
-    private:
+ private:
 
-        std::string _name;
-        pugi::xml_node _node;
-        std::map<std::string, Material> _materials;
-    };
+  std::string _name;
+  pugi::xml_node _node;
+  std::map<std::string, Material> _materials;
+};
 }

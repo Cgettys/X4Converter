@@ -10,20 +10,20 @@
 #include <X4ConverterTools/xmf/XmfFile.h>
 namespace test {
 
-    class TestUtil {
-    public:
-        static void checkAiNodeName(aiNode *node, std::string name);
+class TestUtil {
+ public:
+  static void checkAiNodeName(aiNode *node, std::string name);
 
-        static pugi::xml_document* GetXmlDocument(std::string path);
+  static pugi::xml_document *GetXmlDocument(std::string path);
 
-        static std::string GetBasePath();
+  static std::string GetBasePath();
 
-        static ConversionContext::Ptr GetTestContext(std::string geomPath);
-        static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
+  static ConversionContext::Ptr GetTestContext(std::string geomPath);
+  static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
-        static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);
+  static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);
 
-        static void checkXmfHeaderEquality(xmf::XmfFile &lFile, xmf::XmfFile &rFile);
+  static void checkXmfHeaderEquality(xmf::XmfFile &lFile, xmf::XmfFile &rFile);
 
-    };
+};
 }

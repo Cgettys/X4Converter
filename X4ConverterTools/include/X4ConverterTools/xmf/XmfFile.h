@@ -8,7 +8,6 @@
 #include <string>
 #include <vector>
 
-
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
@@ -16,7 +15,6 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
-
 
 #include <X4ConverterTools/ConversionContext.h>
 #include "XmfHeader.h"
@@ -26,70 +24,69 @@
 
 namespace xmf {
 
-    class XmfFile {
-    public:
-        // TODO something better that takes into account writing?
-        XmfHeader GetHeader() { return header; };
+class XmfFile {
+ public:
+  // TODO something better that takes into account writing?
+  XmfHeader GetHeader() { return header; };
 
-        std::vector<XmfDataBuffer> &GetBuffers() { return buffers; };
+  std::vector<XmfDataBuffer> &GetBuffers() { return buffers; };
 
-        XmfDataBuffer *GetIndexBuffer();
+  XmfDataBuffer *GetIndexBuffer();
 
-        std::vector<XmfVertexElement> GetVertexDeclaration();
+  std::vector<XmfVertexElement> GetVertexDeclaration();
 
+  int NumVertices();
 
-        int NumVertices();
+  int NumIndices();
 
-        int NumIndices();
+  std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
-        std::vector<XmfMaterial> &GetMaterials() { return materials; };
+  int NumMaterials();
 
-        int NumMaterials();
+  static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);
 
-        static std::shared_ptr<XmfFile> ReadFromIOStream(Assimp::IOStream *pStream);
+  void WriteToIOStream(Assimp::IOStream *pStream);
 
-        void WriteToIOStream(Assimp::IOStream *pStream);
+  aiNode *ConvertToAiNode(const std::string &name, const ConversionContext::Ptr &ctx);
 
-        aiNode *ConvertToAiNode(const std::string &name, ConversionContext::Ptr ctx);
+  aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
+                          const ConversionContext::Ptr &context);
 
-        aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                ConversionContext::Ptr context);
+  void AllocMeshVertices(aiMesh *pMesh, int numVertices);
 
-        void AllocMeshVertices(aiMesh *pMesh, int numVertices);
+  static void AllocMeshFaces(aiMesh *pMesh, int numIndices);
 
-        static void AllocMeshFaces(aiMesh *pMesh, int numIndices);
+  void PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices);
 
-        void PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices);
+  static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 
-        static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
+  // For export:
+  static std::shared_ptr<XmfFile>
+  GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool isCollisionMesh);
 
-        // For export:
-        static std::shared_ptr<XmfFile>
-        GenerateMeshFile(ConversionContext::Ptr ctx, aiNode *pNode, bool isCollisionMesh);
+  static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
 
-        static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
+  static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
 
-        static void ApplyVertexDeclaration(std::vector<XmfVertexElement> &declaration, XmfDataBuffer &buffer);
+ private:
 
-    private:
+  void ReadBufferDescs(Assimp::StreamReaderLE &pStreamReader);
 
-        void ReadBufferDescs(Assimp::StreamReaderLE &pStreamReader);
+  void ReadBuffers(Assimp::StreamReaderLE &pStream);
 
-        void ReadBuffers(Assimp::StreamReaderLE &pStream);
+  std::string Validate();
 
-        void Validate();
+  std::map<XmfDataBuffer *, std::vector<uint8_t> > CompressBuffers();
 
-        std::map<XmfDataBuffer *, std::vector<uint8_t> > CompressBuffers();
+  void WriteBufferDescs(Assimp::StreamWriterLE &pStreamWriter,
+                        std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
 
-        void WriteBufferDescs(Assimp::StreamWriterLE &pStreamWriter,
-                              std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
+  void WriteBuffers(Assimp::StreamWriterLE &pStreamWriter,
+                    std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
 
-        void WriteBuffers(Assimp::StreamWriterLE &pStreamWriter,
-                          std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
-
-        XmfHeader header;
-        std::vector<XmfDataBuffer> buffers;
-        std::vector<XmfMaterial> materials;
-    };
+  XmfHeader header;
+  std::vector<XmfDataBuffer> buffers;
+  std::vector<XmfMaterial> materials;
+};
 
 }

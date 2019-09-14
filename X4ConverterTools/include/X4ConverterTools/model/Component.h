@@ -8,25 +8,25 @@
 
 namespace model {
 
-    class Component : public AbstractElement {
-    public:
-        explicit Component(ConversionContext::Ptr ctx);
+class Component : public AbstractElement {
+ public:
+  explicit Component(ConversionContext::Ptr ctx);
 
-        explicit Component(pugi::xml_node node, ConversionContext::Ptr ctx);
+  explicit Component(pugi::xml_node node, ConversionContext::Ptr ctx);
 
-        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
-        void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) override;
 
-        unsigned long getNumberOfConnections();
+  unsigned long getNumberOfConnections();
 
-    protected:
-        std::vector<Connection> connections;
-        std::vector<Layer> layers;
+ protected:
+  std::vector<Connection> connections;
+  std::vector<Layer> layers;
 
-        void recurseOnChildren(aiNode *child, ConversionContext::Ptr ctx);
-    };
+  void recurseOnChildren(aiNode *child, ConversionContext::Ptr ctx);
+};
 
 }

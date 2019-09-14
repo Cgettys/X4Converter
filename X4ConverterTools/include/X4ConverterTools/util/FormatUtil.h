@@ -11,10 +11,10 @@
 
 namespace util {
 
-    class FormatUtil {
-    public:
-        static std::string formatFloat(float f) {
-            return str(boost::format("%.8e") % f);
-        }
-    };
+class FormatUtil {
+ public:
+  static std::string formatFloat(float f) {
+    return str(boost::format("%.8e") % f);
+  }
+};
 }

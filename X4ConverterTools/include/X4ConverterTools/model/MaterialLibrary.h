@@ -6,16 +6,16 @@
 #include <X4ConverterTools/types.h>
 
 namespace model {
-    class MaterialLibrary {
-        friend Material;
+class MaterialLibrary {
+  friend Material;
 
-    public:
-        explicit MaterialLibrary(const std::string &gameBaseFolderPath);
+ public:
+  explicit MaterialLibrary(const std::string &gameBaseFolderPath);
 
-        Material *GetMaterial(const std::string &dottedName);
+  Material *GetMaterial(const std::string &dottedName);
 
-    private:
-        std::string _gameBaseFolderPath;
-        std::map<std::string, MaterialCollection> collections;
-    };
+ private:
+  std::string _gameBaseFolderPath;
+  std::map<std::string, MaterialCollection> collections;
+};
 }

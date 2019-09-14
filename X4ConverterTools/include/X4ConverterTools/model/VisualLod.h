@@ -7,21 +7,21 @@
 
 namespace model {
 
-    class VisualLod : public Lod {
-    public:
-        explicit VisualLod(ConversionContext::Ptr ctx);
+class VisualLod : public Lod {
+ public:
+  explicit VisualLod(ConversionContext::Ptr ctx);
 
-        VisualLod(pugi::xml_node node, std::string partName, ConversionContext::Ptr ctx);
+  VisualLod(pugi::xml_node node, std::string partName, ConversionContext::Ptr ctx);
 
-        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
-        void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) override;
 
-    private:
+ private:
 
-    };
+};
 
 }
 

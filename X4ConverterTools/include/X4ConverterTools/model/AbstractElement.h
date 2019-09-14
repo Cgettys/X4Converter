@@ -10,79 +10,76 @@
 #include <X4ConverterTools/ConversionContext.h>
 
 namespace model {
-    class AbstractElement {
-    public:
-        explicit AbstractElement(ConversionContext::Ptr ctx);
+class AbstractElement {
+ public:
+  explicit AbstractElement(ConversionContext::Ptr ctx);
 
-        virtual ~AbstractElement() = default;
+  virtual ~AbstractElement() = default;
 
-        std::string getName();
+  std::string getName();
 
-        void setName(std::string n);
+  void setName(std::string n);
 
-        virtual aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) = 0;
+  virtual aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) = 0;
 
-        virtual void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) = 0;
+  virtual void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) = 0;
 
-        virtual void ConvertToGameFormat(pugi::xml_node out) = 0;
+  virtual void ConvertToGameFormat(pugi::xml_node out) = 0;
 
-    protected:
+ protected:
 
-        // TODO template pattern?
-        // TODO refactor me please....
-        virtual std::vector<aiNode *> attrToAiNode();
+  // TODO template pattern?
+  // TODO refactor me please....
+  virtual std::vector<aiNode *> attrToAiNode();
 
-        virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
+  virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
 
+  void readMultiObjectAttr(aiNode *parent, const std::string &namePart, const std::string &tagPart,
+                           const std::string &valPart);
 
-        void readMultiObjectAttr(aiNode *parent, const std::string &namePart, const std::string &tagPart,
-                                 const std::string &valPart);
+  virtual void readAiNodeChild(aiNode *parent, aiNode *source);
 
-        virtual void readAiNodeChild(aiNode *parent, aiNode *source);
+  void ReadOffset(pugi::xml_node target);
 
-        void ReadOffset(pugi::xml_node target);
+  void ApplyOffsetToAiNode(aiNode *target);
 
-        void ApplyOffsetToAiNode(aiNode *target);
+  void WriteOffset(pugi::xml_node target);
 
-        void WriteOffset(pugi::xml_node target);
+  static pugi::xml_node AddChild(pugi::xml_node parent, const std::string &elementName);
 
-        static pugi::xml_node AddChild(pugi::xml_node parent, const std::string &elementName);
+  static pugi::xml_node
+  AddChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
+                 const std::string &attrVal);
 
-        static pugi::xml_node
-        AddChildByAttr(pugi::xml_node parent, const std::string &elemName, const std::string &attrName,
-                       const std::string &attrVal);
+  static aiColor3D ReadAttrRGB(pugi::xml_node target);
 
+  static void WriteAttrRGB(pugi::xml_node target, const aiColor3D &val);
 
-        static aiColor3D ReadAttrRGB(pugi::xml_node target);
+  static aiVector3D ReadAttrXYZ(pugi::xml_node target);
 
-        static void WriteAttrRGB(pugi::xml_node target, const aiColor3D &val);
+  static void WriteAttrXYZ(pugi::xml_node target, aiVector3D val);
 
-        static aiVector3D ReadAttrXYZ(pugi::xml_node target);
+  static aiQuaternion ReadAttrQuat(pugi::xml_node target);
 
-        static void WriteAttrXYZ(pugi::xml_node target, aiVector3D val);
+  static void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
 
-        static aiQuaternion ReadAttrQuat(pugi::xml_node target);
+  static void WriteAttr(pugi::xml_node target, const std::string &name, float val);
 
-        static void WriteAttrQuat(pugi::xml_node target, aiQuaternion val);
+  static void WriteAttr(pugi::xml_node target, const std::string &name, const std::string &val);
 
-        static void WriteAttr(pugi::xml_node target, const std::string &name, float val);
+  std::map<std::string, std::string> attrs;
 
-        static void WriteAttr(pugi::xml_node target, const std::string &name, const std::string &val);
+  ConversionContext::Ptr ctx;
+ protected:
 
-        std::map<std::string, std::string> attrs;
+  aiVector3D offsetPos;
+  aiQuaternion offsetRot;
+ private:
 
-        ConversionContext::Ptr ctx;
-    protected:
+  std::string name;
 
-        aiVector3D offsetPos;
-        aiQuaternion offsetRot;
-    private:
+  void GenerateAttrNode(std::vector<aiNode *> &children, const std::string &key, const std::string &value);
 
-        std::string name;
-
-        void GenerateAttrNode(std::vector<aiNode *> &children, const std::string &key, const std::string &value);
-
-    };
-
+};
 
 }

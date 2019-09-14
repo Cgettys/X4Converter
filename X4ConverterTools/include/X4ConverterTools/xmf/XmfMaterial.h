@@ -5,18 +5,19 @@
 #include <boost/format.hpp>
 
 namespace xmf {
-    class XmfMaterial {
-    public:
-        XmfMaterial();
+class XmfMaterial {
+ public:
+  constexpr const static uint8_t kExpectedBinarySize = 0x88;
+  XmfMaterial();
 
-        XmfMaterial(int firstIndex, int numIndices, const std::string &name);
+  XmfMaterial(int firstIndex, int numIndices, const std::string &name);
 
-        explicit XmfMaterial(Assimp::StreamReaderLE &reader);
+  explicit XmfMaterial(Assimp::StreamReaderLE &reader);
 
-        void Write(Assimp::StreamWriterLE &writer);
+  void Write(Assimp::StreamWriterLE &writer);
 
-        int FirstIndex;
-        int NumIndices;
-        char Name[128];
-    };
+  int FirstIndex;
+  int NumIndices;
+  char Name[128];
+};
 }

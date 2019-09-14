@@ -9,26 +9,26 @@
 #include "Light.h"
 #include <X4ConverterTools/ani/AnimFile.h>
 namespace model {
-    class Part : public AbstractElement {
-    public:
-        explicit Part(ConversionContext::Ptr ctx);
+class Part : public AbstractElement {
+ public:
+  explicit Part(ConversionContext::Ptr ctx);
 
-        explicit Part(pugi::xml_node node, const ConversionContext::Ptr &ctx);
+  explicit Part(pugi::xml_node node, const ConversionContext::Ptr &ctx);
 
-        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
-        void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) override;
 
-    private:
-        bool hasRef;
-        bool hasAnimation;
-        std::shared_ptr<CollisionLod> collisionLod;
-        std::map<int, VisualLod> lods;
-        std::vector<Light> lights;
-        std::optional<ani::AnimFile> animation;
-        void handleAiLights(aiNode *node);
-    };
+ private:
+  bool hasRef;
+  bool hasAnimation;
+  std::shared_ptr<CollisionLod> collisionLod;
+  std::map<int, VisualLod> lods;
+  std::vector<Light> lights;
+  std::optional<ani::AnimFile> animation;
+  void handleAiLights(aiNode *node);
+};
 }
 
