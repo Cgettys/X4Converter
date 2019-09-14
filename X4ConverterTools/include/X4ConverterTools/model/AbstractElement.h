@@ -12,8 +12,7 @@
 namespace model {
     class AbstractElement {
     public:
-        explicit AbstractElement(std::shared_ptr<ConversionContext> ctx);
-
+        explicit AbstractElement(ConversionContext::Ptr ctx);
 
         virtual ~AbstractElement() = default;
 
@@ -21,9 +20,9 @@ namespace model {
 
         void setName(std::string n);
 
-        virtual aiNode *ConvertToAiNode() = 0;
+        virtual aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) = 0;
 
-        virtual void ConvertFromAiNode(aiNode *node) = 0;
+        virtual void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) = 0;
 
         virtual void ConvertToGameFormat(pugi::xml_node out) = 0;
 
@@ -72,7 +71,7 @@ namespace model {
 
         std::map<std::string, std::string> attrs;
 
-        std::shared_ptr<ConversionContext> ctx;
+        ConversionContext::Ptr ctx;
     protected:
 
         aiVector3D offsetPos;
@@ -81,7 +80,7 @@ namespace model {
 
         std::string name;
 
-        void GenerateAttrNode(std::vector<aiNode *> children, const std::string &key, const std::string &value);
+        void GenerateAttrNode(std::vector<aiNode *> &children, const std::string &key, const std::string &value);
 
     };
 

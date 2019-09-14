@@ -6,7 +6,7 @@
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <X4ConverterTools/util/FormatUtil.h>
-
+#include <sstream>
 using namespace boost;
 using namespace Assimp;
 using namespace util;
@@ -56,108 +56,111 @@ namespace ani {
 
     std::string Keyframe::validate() {
         bool valid = true;
-        std::string ret = "\tKeyFrame: \n";
+        std::stringstream ret;
+        ret << "\tKeyFrame: \n";
 
-        ret.append(str(format("\t\tValue: (%1%, %2%, %3%)\n") % ValueX % ValueY % ValueZ));
+        // TODO finish making use of stringstream
+        ret << str(format("\t\tValue: (%1%, %2%, %3%)\n") % ValueX % ValueY % ValueZ);
 
-        ret.append(str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") % InterpolationX % InterpolationY %
-                       InterpolationZ));
+        ret << str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") % InterpolationX % InterpolationY %
+                   InterpolationZ);
 
 
         if (!checkInterpolationType(InterpolationX)) {
             valid = false;
-            ret.append("\t\tInterpolationX is not handled by the converter at present\n");
+            ret << "\t\tInterpolationX is not handled by the converter at present\n";
         }
         if (!checkInterpolationType(InterpolationY)) {
             valid = false;
-            ret.append("\t\tInterpolationY is not handled by the converter at present\n");
+            ret << "\t\tInterpolationY is not handled by the converter at present\n";
         }
         if (!checkInterpolationType(InterpolationZ)) {
             valid = false;
-            ret.append("\t\tInterpolationX is not handled by the converter at present\n");
+            ret << "\t\tInterpolationX is not handled by the converter at present\n";
         }
-        ret.append(str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
-                       getInterpolationTypeName(InterpolationX) % getInterpolationTypeName(InterpolationY) %
-                       getInterpolationTypeName(InterpolationZ)));
+        ret << str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
+                   getInterpolationTypeName(InterpolationX) % getInterpolationTypeName(InterpolationY) %
+                   getInterpolationTypeName(InterpolationZ));
 
 
-        ret.append(str(format("\t\tTime: %1%\n") % Time));
+        ret << str(format("\t\tTime: %1%\n") % Time);
 
-        ret.append(str(format("\t\tCPX1: (%1%, %2%)\n") % CPX1x % CPX1y));
-        ret.append(str(format("\t\tCPX2: (%1%, %2%)\n") % CPX2x % CPX2y));
+        ret << str(format("\t\tCPX1: (%1%, %2%)\n") % CPX1x % CPX1y);
+        ret << str(format("\t\tCPX2: (%1%, %2%)\n") % CPX2x % CPX2y);
 
-        ret.append(str(format("\t\tCPY1: (%1%, %2%)\n") % CPY1x % CPY1y));
-        ret.append(str(format("\t\tCPY2: (%1%, %2%)\n") % CPY2x % CPY2y));
+        ret << str(format("\t\tCPY1: (%1%, %2%)\n") % CPY1x % CPY1y);
+        ret << str(format("\t\tCPY2: (%1%, %2%)\n") % CPY2x % CPY2y);
 
-        ret.append(str(format("\t\tCPZ1: (%1%, %2%)\n") % CPZ1x % CPZ1y));
-        ret.append(str(format("\t\tCPZ2: (%1%, %2%)\n") % CPZ2x % CPZ2y));
+        ret << str(format("\t\tCPZ1: (%1%, %2%)\n") % CPZ1x % CPZ1y);
+        ret << str(format("\t\tCPZ2: (%1%, %2%)\n") % CPZ2x % CPZ2y);
 
-        ret.append(str(format("\t\tTens: %1% Cont: %2% Bias: %3%\n") % Tens % Cont % Bias));
-        ret.append(str(format("\t\tEaseIn: %1% EaseOut: %2%\n") % EaseIn % EaseOut));
+        ret << str(format("\t\tTens: %1% Cont: %2% Bias: %3%\n") % Tens % Cont % Bias);
+        ret << str(format("\t\tEaseIn: %1% EaseOut: %2%\n") % EaseIn % EaseOut);
 
-        ret.append(str(format("\t\tDeriv: %1%\n") % Deriv));
+        ret << str(format("\t\tDeriv: %1%\n") % Deriv);
 
-        ret.append(str(format("\t\tDerivIn:  (%1%, %2%, %3%)\n") % DerivInX % DerivInY % DerivInZ));
-        ret.append(str(format("\t\tDerivOut: (%1%, %2%, %3%)\n") % DerivOutX % DerivOutY % DerivOutZ));
+        ret << str(format("\t\tDerivIn:  (%1%, %2%, %3%)\n") % DerivInX % DerivInY % DerivInZ);
+        ret << str(format("\t\tDerivOut: (%1%, %2%, %3%)\n") % DerivOutX % DerivOutY % DerivOutZ);
 
-        ret.append(str(format("\t\tAngleKey: %1%\n") % AngleKey));
+        ret << str(format("\t\tAngleKey: %1%\n") % AngleKey);
         // Wrong
+        // TODO what exactly was I checking here again?
         float comp = std::numeric_limits<float>::min();
         if (InterpolationX == 2) {
             if (std::abs(CPX1x) > comp || std::abs(CPX1y) > comp | std::abs(CPX2x) > comp || std::abs(CPX2y) > comp) {
-                ret.append("Interpolation Type for X was 2, but CP were not!\n");
+                ret << "Interpolation Type for X was 2, but CP were not!\n";
                 valid = false;
             }
         }
         if (InterpolationY == 2) {
             if (std::abs(CPY1x) > comp || std::abs(CPY1y) > comp || std::abs(CPY2x) > comp || std::abs(CPY2y) > comp) {
-                ret.append("Interpolation Type for Y was  2, but CP were not!\n");
+                ret << "Interpolation Type for Y was  2, but CP were not!\n";
                 valid = false;
             }
         }
         if (InterpolationZ == 2) {
             if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
-                ret.append("Interpolation Type for Z was 2, but CP were not!\n");
+                ret << "Interpolation Type for Z was 2, but CP were not!\n";
                 valid = false;
             }
         }
 
 
         if (Tens != 0) {
-            ret.append("Unsupported parameter: Tens");
+            ret << "Unsupported parameter: Tens";
             valid = false;
         }
 
         if (Cont != 0) {
-            ret.append("Unsupported parameter: Cont");
+            ret << "Unsupported parameter: Cont";
             valid = false;
         }
 
         if (Bias != 0) {
-            ret.append("Unsupported parameter: Bias");
+            ret << "Unsupported parameter: Bias";
             valid = false;
         }
 
         if (EaseIn != 0) {
-            ret.append("Unsupported parameter: EaseIn");
+            ret << "Unsupported parameter: EaseIn";
             valid = false;
         }
 
         if (EaseOut != 0) {
-            ret.append("Unsupported parameter: EaseOut");
+            ret << "Unsupported parameter: EaseOut";
             valid = false;
         }
 
         if (Deriv != 0 || DerivInX != 0 || DerivInY != 0 || DerivInZ != 0 || DerivOutX != 0 || DerivOutY != 0 ||
             DerivOutZ != 0) {
-            ret.append("Unsupported parameter(s): Deriv...");
+            ret << "Unsupported parameter(s): Deriv...";
             valid = false;
         }
 
         if (!valid) {
-            throw std::runtime_error(ret);
+            throw std::runtime_error(ret.str());
         }
-        return ret;
+        return ret.str();
     }
 
     bool Keyframe::checkInterpolationType(InterpolationType type) {

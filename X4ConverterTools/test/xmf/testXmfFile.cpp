@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_SUITE(ValidateData)
         // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
         const fs::path basePath = fs::path(std::getenv("X4_UNPACKED_ROOT"));
         fs::recursive_directory_iterator iter(basePath);
-        IOSystem *io = new DefaultIOSystem();
+        std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
         for (const auto &x : iter) {
             const fs::path &filePath = x.path();
             if (filePath.has_extension() && iequals(filePath.extension().generic_string(), ".xmf") &&
@@ -93,7 +93,6 @@ BOOST_AUTO_TEST_SUITE(ValidateData)
         }
         // To make a confusing warning go away
         BOOST_REQUIRE_MESSAGE(true, "No files should have errors");
-        delete io;
     }
 
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

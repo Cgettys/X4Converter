@@ -25,8 +25,9 @@ namespace model {
         const std::string GetDecompressedTextureFilePath(const std::string &filePath,
                                                          const boost::filesystem::path &baseFolderPath) const;
 
-        void PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
-                           ConversionContext *ctx);
+        void
+        PopulateLayer(aiMaterial *pAiMaterial, const std::string &path, const char *key, aiTextureType type, int num,
+                      ConversionContext *ctx);
 
         std::string _pCollectionName;
         std::string _name;

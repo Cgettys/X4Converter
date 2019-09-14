@@ -5,14 +5,15 @@
 #include <X4ConverterTools/model/CollisionLod.h>
 #include <X4ConverterTools/model/VisualLod.h>
 #include <regex>
+#include <utility>
 
 namespace model {
-    Part::Part(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+    Part::Part(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
         hasRef = false;
         collisionLod = nullptr;
     }
 
-    Part::Part(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+    Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
         if (std::string(node.name()) != "part") {
             throw std::runtime_error("XML element must be a <part> element!");
         }
@@ -60,20 +61,20 @@ namespace model {
     }
 
 
-    aiNode *Part::ConvertToAiNode() {
+    aiNode *Part::ConvertToAiNode(pugi::xml_node intermediateXml) {
         auto *result = new aiNode(getName());
         std::vector<aiNode *> children = attrToAiNode();
         if (!hasRef) {
-            children.push_back(collisionLod->ConvertToAiNode());
+            children.push_back(collisionLod->ConvertToAiNode(pugi::xml_node()));
             for (auto lod: lods) {
-                children.push_back(lod.second.ConvertToAiNode());
+                children.push_back(lod.second.ConvertToAiNode(pugi::xml_node()));
             }
             auto lightResult = new aiNode();
             lightResult->mName = getName() + "-lights";
             // TODO should really add a Lights object or something
             std::vector<aiNode *> lightChildren;
             for (auto light: lights) {
-                lightChildren.push_back(light.ConvertToAiNode());
+                lightChildren.push_back(light.ConvertToAiNode(pugi::xml_node()));
             }
             populateAiNodeChildren(lightResult, lightChildren);
             children.push_back(lightResult);
@@ -87,7 +88,7 @@ namespace model {
     static std::regex collisionRegex("[^-]+\\-collision");
 
 
-    void Part::ConvertFromAiNode(aiNode *node) {
+    void Part::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string name = node->mName.C_Str();
         setName(name);
 
@@ -99,11 +100,11 @@ namespace model {
                 handleAiLights(child);
             } else if (regex_match(childName, lodRegex)) {
                 auto lod = VisualLod(ctx);
-                lod.ConvertFromAiNode(child);
+                lod.ConvertFromAiNode(child, pugi::xml_node());
                 lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
             } else if (regex_match(childName, collisionRegex)) {
                 collisionLod = std::make_unique<CollisionLod>(ctx);
-                collisionLod->ConvertFromAiNode(child);
+                collisionLod->ConvertFromAiNode(child, pugi::xml_node());
             } else if (childName.find('*') != std::string::npos) {
                 // Ignore connection, handled elsewhere
             } else {

@@ -37,7 +37,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
     aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
     ctx->SetScene(pScene);
     model::Component component(doc.root(), ctx);
-    aiNode *root = component.ConvertToAiNode();
+    aiNode *root = component.ConvertToAiNode(pugi::xml_node());
     pScene->mRootNode = root;
     ctx->PopulateSceneArrays();
 
@@ -73,7 +73,7 @@ bool
 ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFilePath, const std::string &xmlFilePath) {
     std::string actualDaeFilePath = PrependIfNecessary(gameBaseFolderPath, daeFilePath, ".dae");
     std::string actualXmlFilePath = PrependIfNecessary(gameBaseFolderPath, xmlFilePath, ".xml");
-    auto *importer = new Assimp::Importer();
+    auto importer = std::make_unique<Assimp::Importer>();
     importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
     const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);
     if (!pScene) {
@@ -87,7 +87,7 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     ctx->SetScene(myScene);
     model::Component component(ctx);
 
-    component.ConvertFromAiNode(myScene->mRootNode->mChildren[0]);
+    component.ConvertFromAiNode(myScene->mRootNode->mChildren[0], pugi::xml_node());
 
     pugi::xml_document doc;
     if (fs::exists(actualXmlFilePath)) {
@@ -105,7 +105,6 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
     component.ConvertToGameFormat(tgtNode);
     doc.save_file(actualXmlFilePath.c_str());
 
-    delete importer;
     return true;
 }
 

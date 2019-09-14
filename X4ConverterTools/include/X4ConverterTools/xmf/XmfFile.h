@@ -50,10 +50,10 @@ namespace xmf {
 
         void WriteToIOStream(Assimp::IOStream *pStream);
 
-        aiNode *ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx);
+        aiNode *ConvertToAiNode(const std::string &name, ConversionContext::Ptr ctx);
 
         aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                std::shared_ptr<ConversionContext> context);
+                                ConversionContext::Ptr context);
 
         void AllocMeshVertices(aiMesh *pMesh, int numVertices);
 
@@ -65,7 +65,7 @@ namespace xmf {
 
         // For export:
         static std::shared_ptr<XmfFile>
-        GenerateMeshFile(std::shared_ptr<ConversionContext> ctx, aiNode *pNode, bool isCollisionMesh);
+        GenerateMeshFile(ConversionContext::Ptr ctx, aiNode *pNode, bool isCollisionMesh);
 
         static void ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration);
 

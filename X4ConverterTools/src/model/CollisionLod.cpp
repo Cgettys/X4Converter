@@ -4,9 +4,9 @@
 
 namespace model {
     // Not really a LOD but it makes more sense if we pretend
-    CollisionLod::CollisionLod(std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {}
+    CollisionLod::CollisionLod(ConversionContext::Ptr ctx) : Lod(ctx) {}
 
-    CollisionLod::CollisionLod(std::string partName, std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {
+    CollisionLod::CollisionLod(std::string partName, ConversionContext::Ptr ctx) : Lod(ctx) {
         index = COLLISION_INDEX;
         std::string name = str(boost::format("%1%-collision") % partName);
         setName(name);
@@ -14,12 +14,12 @@ namespace model {
         xmfFile = xmf::XmfFile::ReadFromIOStream(pStream);
     }
 
-    aiNode *CollisionLod::ConvertToAiNode() {
+    aiNode *CollisionLod::ConvertToAiNode(pugi::xml_node intermediateXml) {
         // TODO push up
         return xmfFile->ConvertToAiNode(getName(), ctx);
     }
 
-    void CollisionLod::ConvertFromAiNode(aiNode *node) {
+    void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index

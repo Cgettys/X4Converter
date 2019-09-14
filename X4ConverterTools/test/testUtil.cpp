@@ -35,7 +35,7 @@ namespace test {
         return std::string(path);
     }
 
-    std::shared_ptr<ConversionContext> TestUtil::GetTestContext(std::string geomPath) {
+    ConversionContext::Ptr TestUtil::GetTestContext(std::string geomPath) {
         auto io = std::make_shared<Assimp::DefaultIOSystem>();
         auto ctx = std::make_shared<ConversionContext>(GetBasePath(), io);
         ctx->SetSourcePathSuffix(std::move(geomPath));

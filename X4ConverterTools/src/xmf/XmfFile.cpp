@@ -165,7 +165,7 @@ namespace xmf {
         }
     }
 
-    aiNode *XmfFile::ConvertToAiNode(const std::string &name, std::shared_ptr<ConversionContext> ctx) {
+    aiNode *XmfFile::ConvertToAiNode(const std::string &name, ConversionContext::Ptr ctx) {
         auto *pMeshGroupNode = new aiNode();
         pMeshGroupNode->mName = name;
         try {
@@ -203,7 +203,7 @@ namespace xmf {
     }
 
     aiMesh *XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                     std::shared_ptr<ConversionContext> ctx) {
+                                     ConversionContext::Ptr ctx) {
         auto *pMesh = new aiMesh();
         pMesh->mName = name;
 
@@ -404,7 +404,7 @@ namespace xmf {
 
 
     std::shared_ptr<XmfFile>
-    XmfFile::GenerateMeshFile(std::shared_ptr<ConversionContext> ctx, aiNode *pNode, bool isCollisionMesh) {
+    XmfFile::GenerateMeshFile(ConversionContext::Ptr ctx, aiNode *pNode, bool isCollisionMesh) {
         std::vector<aiNode *> meshNodes;
         if (pNode->mNumChildren == 0) {
             meshNodes.push_back(pNode);

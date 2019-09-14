@@ -5,11 +5,11 @@
 using namespace boost;
 namespace model {
     // TODO composition or subclass isntead of this mess
-    Light::Light(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+    Light::Light(ConversionContext::Ptr ctx) : AbstractElement(ctx) {
 
     }
 
-    Light::Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string parentName) : AbstractElement(
+    Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName) : AbstractElement(
             ctx) {
         std::string tmp = str(boost::format("%1%-light%2%") % parentName % node.attribute("name").value());;
         setName(tmp);
@@ -38,11 +38,11 @@ namespace model {
         // TODO animation
     }
 
-    Light::Light(aiNode *node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
-        ConvertFromAiNode(node);
+    Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+        ConvertFromAiNode(node, pugi::xml_node());
     }
 
-    aiNode *Light::ConvertToAiNode() {
+    aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
         auto result = new aiLight();
         result->mName = getName();
         // TODO axes?
@@ -79,7 +79,7 @@ namespace model {
         return node;
     }
 
-    void Light::ConvertFromAiNode(aiNode *node) {
+    void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string name = node->mName.C_Str();
         setName(name);// TODO template method out this stuff?
         if (!ctx->CheckLight(name)) {

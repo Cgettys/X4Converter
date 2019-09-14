@@ -1,9 +1,9 @@
 #include "X4ConverterTools/model/VisualLod.h"
 
 namespace model {
-    VisualLod::VisualLod(std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {}
+    VisualLod::VisualLod(ConversionContext::Ptr ctx) : Lod(ctx) {}
 
-    VisualLod::VisualLod(pugi::xml_node node, std::string partName, std::shared_ptr<ConversionContext> ctx) : Lod(ctx) {
+    VisualLod::VisualLod(pugi::xml_node node, std::string partName, ConversionContext::Ptr ctx) : Lod(ctx) {
 
         if (std::string(node.name()) != "lod") {
             throw std::runtime_error("XML element must be a <lod> element!");
@@ -20,11 +20,11 @@ namespace model {
         xmfFile = xmf::XmfFile::ReadFromIOStream(pStream);
     }
 
-    aiNode *VisualLod::ConvertToAiNode() {
+    aiNode *VisualLod::ConvertToAiNode(pugi::xml_node intermediateXml) {
         return xmfFile->ConvertToAiNode(getName(), ctx);
     }
 
-    void VisualLod::ConvertFromAiNode(aiNode *node) {
+    void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string rawName = node->mName.C_Str();
         setName(rawName);
         // Parse out the index

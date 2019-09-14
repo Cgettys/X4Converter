@@ -63,13 +63,6 @@ namespace ani {
     }
 
     void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const {
-        std::cout << "Writing animations!" << std::endl;
-        pugi::xml_node dataNode = tgtNode.append_child("data");
-        for (const AnimDesc &desc : descs) {
-//            if (desc.SafeSubName.compare(0, sizeof("landinggears_activating"), "landinggears_activating") == 0) {
-            desc.WriteIntermediateRepr(dataNode);
-        }
-        pugi::xml_node outMetaNode = tgtNode.append_child("metadata");
 
         // TODO integrate into Component?
         // TODO validate non-overlap
@@ -85,41 +78,51 @@ namespace ani {
             throw std::runtime_error("File has no <component> element");
         }
 
-        pugi::xpath_node_set partNodes = componentNode.select_nodes("connections/connection");
-        for (auto comp : partNodes) {
+        pugi::xpath_node_set connections = componentNode.select_nodes("connections/connection");
+        for (auto conn : connections) {
             // TODO what if multiple parts?
-            //std::string name = partNode.node().attribute("name").value();
-            pugi::xml_node partNode = comp.node().child("parts").child("part");
-            std::string name = partNode.attribute("name").value();
+            HandleConnection(tgtNode, conn.node());
+
+        }
+        std::cout << "Writing animations!" << std::endl;
+        pugi::xml_node dataNode = tgtNode.append_child("data");
+        for (const AnimDesc &desc : descs) {
+            desc.WriteIntermediateRepr(dataNode);
+        }
 
 
-            pugi::xpath_node_set animMetas = comp.node().select_nodes("animations/animation");
-            if (animMetas.empty()) {
-                continue;
+    }
+
+    void AnimFile::HandleConnection(pugi::xml_node tgtNode, const pugi::xml_node conn) const {
+        pugi::xml_node partNode = conn.child("parts").child("part");
+        std::string name = partNode.attribute("name").value();
+
+        pugi::xpath_node_set animMetas = conn.select_nodes("animations/animation");
+        if (animMetas.empty()) {
+            return;
+        }
+        pugi::xml_node outMetaNode = tgtNode.append_child("metadata");
+        pugi::xml_node outConnNode = outMetaNode.append_child("connection");
+        outConnNode.append_attribute("name").set_value(name.c_str());
+
+        for (auto animEntry : animMetas) {
+            auto animMeta = animEntry.node();
+            // TODO what about the hidden ones?
+            // TODO deal with parts vs components
+            pugi::xml_node outAnimNode = outConnNode.append_child("animation");
+            outAnimNode.append_attribute("subname").set_value(animMeta.attribute("name").as_string());
+            pugi::xml_node outFrameNode = outAnimNode.append_child("frames");
+            outFrameNode.append_attribute("start").set_value(animMeta.attribute("start").as_int());
+            outFrameNode.append_attribute("end").set_value(animMeta.attribute("end").as_int());
+        }
+        // TODO cleaner way?
+        if (!partNode.child("pivot").empty() && !partNode.child("pivot").child("offset").empty() &&
+            !partNode.child("pivot").child("offset").child("position").empty()) {
+            std::cout << "Wrote pivot " << std::endl;
+            auto outPivotNode = outConnNode.append_child("pivot_position_offset");
+            for (auto attr : partNode.child("pivot").child("offset").child("position").attributes()) {
+                outPivotNode.append_attribute(attr.name()).set_value(attr.value());
             }
-            pugi::xml_node outConnNode = outMetaNode.append_child("connection");
-            outConnNode.append_attribute("name").set_value(name.c_str());
-
-            for (auto animEntry : animMetas) {
-                auto animMeta = animEntry.node();
-                // TODO what about the hidden ones?
-                // TODO deal with parts vs components
-                pugi::xml_node outAnimNode = outConnNode.append_child("animation");
-                outAnimNode.append_attribute("subname").set_value(animMeta.attribute("name").as_string());
-                pugi::xml_node outFrameNode = outAnimNode.append_child("frames");
-                outFrameNode.append_attribute("start").set_value(animMeta.attribute("start").as_int());
-                outFrameNode.append_attribute("end").set_value(animMeta.attribute("end").as_int());
-            }
-            // TODO cleaner way?
-            if (!partNode.child("pivot").empty() && !partNode.child("pivot").child("offset").empty() &&
-                !partNode.child("pivot").child("offset").child("position").empty()) {
-                std::cout << "Wrote pivot " << std::endl;
-                auto outPivotNode = outConnNode.append_child("pivot_position_offset");
-                for (auto attr : partNode.child("pivot").child("offset").child("position").attributes()) {
-                    outPivotNode.append_attribute(attr.name()).set_value(attr.value());
-                }
-            }
-
         }
 
     }
@@ -141,7 +144,7 @@ namespace ani {
     }
 
     void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node) {
-
+        // TODO
     }
 
 }

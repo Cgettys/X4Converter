@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <vector>
 #include <assimp/scene.h>
 
@@ -10,6 +11,7 @@
 
 class ConversionContext {
 public:
+    using Ptr = std::shared_ptr<ConversionContext>;
     explicit ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io);
 
     static boost::filesystem::path

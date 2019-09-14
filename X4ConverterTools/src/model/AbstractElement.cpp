@@ -10,7 +10,8 @@
 
 namespace model {
     using std::string;
-    AbstractElement::AbstractElement(std::shared_ptr<ConversionContext> ctx) : ctx(std::move(ctx)) {
+
+    AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
 
     }
 
@@ -57,7 +58,7 @@ namespace model {
         target->mNumChildren = newCount;
         auto old = target->mChildren;
         target->mChildren = arr;
-        for (auto i = 0; i < newCount; i++) {
+        for (auto i = 0UL; i < newCount; i++) {
             auto child = arr[i];
             child->mParent = target;
 
@@ -75,15 +76,17 @@ namespace model {
             std::stringstream ss;
             ss << namePart << "|" << tagPart << "#" << std::to_string(i) << "|";
             auto soughtName = ss.str();
-            for (int j = 0; j < parent->mNumChildren; j++) {
+            for (auto j = 0; j < parent->mNumChildren; j++) {
                 auto child = parent->mChildren[j];
                 std::string childName = child->mName.C_Str();
                 if (childName.find(soughtName) != string::npos) {
                     if (i != count + 1) {
                         // Error because we don't know how many extra parts there are
-                        throw std::runtime_error(
-                                "Found extra part #" + std::to_string(i) + "For name: " + namePart + " and key: " +
-                                tagPart);
+                        std::stringstream err;
+                        err << "Found extra part #" << std::to_string(i);
+                        err << "For name: " << namePart;
+                        err << " and key: " << tagPart;
+                        throw std::runtime_error(err.str());
                     }
                     val += childName.substr(soughtName.size());
                     break;
@@ -188,7 +191,7 @@ namespace model {
         attr.set_value(val.c_str());
     }
 
-    void AbstractElement::GenerateAttrNode(std::vector<aiNode *> children, const string &key, const string &value) {
+    void AbstractElement::GenerateAttrNode(std::vector<aiNode *> &children, const string &key, const string &value) {
         auto rep = name + "|" + key + "|" + value;
         // TODO make magic numbers constants
         if (rep.size() > 63) {

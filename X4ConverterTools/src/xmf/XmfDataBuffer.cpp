@@ -16,7 +16,7 @@ namespace xmf {
         AllocData();
     }
 
-    void XmfDataBuffer::Read(Assimp::StreamReaderLE &reader) {
+    void XmfDataBuffer::ReadBinary(Assimp::StreamReaderLE &reader) {
         std::vector<uint8_t> compressedData;
         // TODO
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
@@ -57,7 +57,7 @@ namespace xmf {
         }
     }
 
-    void XmfDataBuffer::Write(Assimp::StreamWriterLE &writer) {
+    void XmfDataBuffer::WriteBinary(Assimp::StreamWriterLE &writer) const {
         for (auto b : _data) {
             writer << b;
         }

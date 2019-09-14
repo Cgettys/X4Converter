@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             auto lod = VisualLod(node, "anim_main", ctx);
             std::string expectedName = "anim_main-lod0";
             BOOST_TEST(lod.getName() == expectedName);
-            auto result = lod.ConvertToAiNode();
+            auto result = lod.ConvertToAiNode(pugi::xml_node());
             BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
             delete doc;
             delete result;
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
 
 
             auto lodForward = VisualLod(node, "anim_main", ctx);
-            auto forwardResult = lodForward.ConvertToAiNode();
+            auto forwardResult = lodForward.ConvertToAiNode(pugi::xml_node());
             ctx->PopulateSceneArrays();
             delete doc;
             ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests)
             outNode.remove_child("lod");
             outNode.remove_child("lod");
             outNode.remove_child("lod");
-            lodBackward.ConvertFromAiNode(forwardResult);
+            lodBackward.ConvertFromAiNode(forwardResult, pugi::xml_node());
             lodBackward.ConvertToGameFormat(outNode);
 
             auto matsNode = outNode.find_child_by_attribute("lod", "index", "0").child("materials");

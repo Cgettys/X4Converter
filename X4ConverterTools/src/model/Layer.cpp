@@ -4,11 +4,11 @@
 
 using namespace boost;
 namespace model {
-    Layer::Layer(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+    Layer::Layer(ConversionContext::Ptr ctx) : AbstractElement(ctx) {
 
     }
 
-    Layer::Layer(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, int id) : AbstractElement(ctx) {
+    Layer::Layer(pugi::xml_node node, ConversionContext::Ptr ctx, int id) : AbstractElement(ctx) {
         layerId = id;
         setName(str(format("layer%d") % layerId));
         auto lightsNode = node.child("lights");
@@ -19,11 +19,11 @@ namespace model {
         }
     }
 
-    model::Layer::Layer(aiNode *node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
-        ConvertFromAiNode(node);
+    model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+        ConvertFromAiNode(node, pugi::xml_node());
     }
 
-    aiNode *Layer::ConvertToAiNode() {
+    aiNode *Layer::ConvertToAiNode(pugi::xml_node intermediateXml) {
         auto result = new aiNode();
         result->mName = getName();
 
@@ -32,7 +32,7 @@ namespace model {
         // TODO should really add a Lights object or something
         std::vector<aiNode *> lightChildren;
         for (auto light: lights) {
-            lightChildren.push_back(light.ConvertToAiNode());
+            lightChildren.push_back(light.ConvertToAiNode(pugi::xml_node()));
         }
         populateAiNodeChildren(lightResult, lightChildren);
 
@@ -42,7 +42,7 @@ namespace model {
         return result;
     }
 
-    void Layer::ConvertFromAiNode(aiNode *node) {
+    void Layer::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string name = node->mName.C_Str();
         setName(name);
         // TODO abstract out some of the shared logic with Component

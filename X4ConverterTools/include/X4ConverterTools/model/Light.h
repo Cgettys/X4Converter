@@ -10,15 +10,15 @@ namespace model {
 
     class Light : public AbstractElement {
     public:
-        explicit Light(std::shared_ptr<ConversionContext> ctx);
+        explicit Light(ConversionContext::Ptr ctx);
 
-        explicit Light(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string parentName);
+        explicit Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName);
 
-        explicit Light(aiNode *node, std::shared_ptr<ConversionContext> ctx);
+        explicit Light(aiNode *node, ConversionContext::Ptr ctx);
 
-        aiNode *ConvertToAiNode() override;
+        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-        void ConvertFromAiNode(aiNode *node) override;
+        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
         void ConvertToGameFormat(pugi::xml_node out) override;
 

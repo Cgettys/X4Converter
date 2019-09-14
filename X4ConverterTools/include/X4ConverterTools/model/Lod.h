@@ -6,7 +6,7 @@
 namespace model {
     class Lod : public AbstractElement {
     public:
-        explicit Lod(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
+        explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
 
         ~Lod() override = default;
         int getIndex() {

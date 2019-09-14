@@ -8,16 +8,16 @@
 namespace model {
     class Connection : public AbstractElement {
     public:
-        Connection(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
+        Connection(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
 
-        explicit Connection(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx,
+        explicit Connection(pugi::xml_node node, ConversionContext::Ptr ctx,
                             std::string componentName = "");
 
-        explicit Connection(aiNode *node, std::shared_ptr<ConversionContext> ctx, std::string componentName = "");
+        explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");
 
-        aiNode *ConvertToAiNode() override;
+        aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
-        void ConvertFromAiNode(aiNode *node) override;
+        void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
         void ConvertToGameFormat(pugi::xml_node out) override;
 

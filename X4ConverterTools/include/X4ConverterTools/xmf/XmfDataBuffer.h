@@ -5,9 +5,10 @@
 #include <assimp/StreamWriter.h>
 #include <X4ConverterTools/types.h>
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>
+#include "IXmf.h"
 
 namespace xmf {
-    class XmfDataBuffer {
+    class XmfDataBuffer : public IXmf {
     public:
         XmfDataBuffer();
 
@@ -15,8 +16,9 @@ namespace xmf {
 
         explicit XmfDataBuffer(Assimp::StreamReaderLE &descReader);
 
-        void Read(Assimp::StreamReaderLE &reader); // Used to read in the binary data
-        void Write(Assimp::StreamWriterLE &writer);
+        void ReadBinary(Assimp::StreamReaderLE &reader) override;
+
+        void WriteBinary(Assimp::StreamWriterLE &writer) const override;
 
         bool IsIndexBuffer() const;
 

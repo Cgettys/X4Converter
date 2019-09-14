@@ -5,9 +5,9 @@
 using namespace boost::algorithm;
 namespace model {
 
-    Component::Component(std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {}
+    Component::Component(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
 
-    Component::Component(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx) : AbstractElement(ctx) {
+    Component::Component(pugi::xml_node node, ConversionContext::Ptr ctx) : AbstractElement(ctx) {
         auto componentsNode = node.child("components");
         if (componentsNode.empty()) {
             throw std::runtime_error("<components> node not found");
@@ -64,7 +64,7 @@ namespace model {
 
     }
 
-    aiNode *Component::ConvertToAiNode() {
+    aiNode *Component::ConvertToAiNode(pugi::xml_node intermediateXml) {
         auto result = new aiNode(getName());
         std::map<std::string, aiNode *> nodes;
         nodes[getName()] = result;
@@ -76,10 +76,10 @@ namespace model {
             if (nodes.count(connName)) {
                 throw std::runtime_error("Duplicate key is not allowed!" + connName);
             }
-            nodes[connName] = conn.ConvertToAiNode();
+            nodes[connName] = conn.ConvertToAiNode(pugi::xml_node());
 
             // TODO get rid of this getParts somehow
-            for (auto part : conn.getParts()) {
+            for (auto &part : conn.getParts()) {
                 std::string partName = part.getName();
                 if (nodes.count(partName)) {
                     throw std::runtime_error("Duplicate key is not allowed!" + partName);
@@ -143,7 +143,7 @@ namespace model {
         return fakeRoot;
     }
 
-    void Component::ConvertFromAiNode(aiNode *node) {
+    void Component::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         setName(node->mName.C_Str());
         for (int i = 0; i < node->mNumChildren; i++) {
             auto child = node->mChildren[i];
@@ -165,7 +165,7 @@ namespace model {
         }
     }
 
-    void Component::recurseOnChildren(aiNode *tgt, std::shared_ptr<ConversionContext> ctx) {
+    void Component::recurseOnChildren(aiNode *tgt, ConversionContext::Ptr ctx) {
         std::string tgtName = tgt->mName.C_Str();
         bool is_connection = tgtName.find('*') != std::string::npos;
         for (int i = 0; i < tgt->mNumChildren; i++) {

@@ -31,6 +31,8 @@ namespace ani {
 
         void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const;
 
+        void HandleConnection(pugi::xml_node tgtNode, pugi::xml_node conn) const;
+
         void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node);
 
     protected:

@@ -33,23 +33,26 @@ namespace model {
             std::string value = propertie.node().attribute("value").value();
 
             if (type == "BitMap") {
-                if (name == "diffuse_map")
+                if (name == "diffuse_map") {
                     _diffuseMapFilePath = value;
-                else if (name == "specular_map")
+                } else if (name == "specular_map") {
                     _specularMapFilePath = value;
-                else if (name == "normal_map")
+                } else if (name == "normal_map") {
                     _normalMapFilePath = value;
-                else if (name == "environment_map")
+                } else if (name == "environment_map") {
                     _environmentMapFilePath = value;
+                }
             } else if (type == "Float") {
-                if (name == "diffuseStr")
-                    _diffuseStrength = numeric_cast<float>(stof(value));
-                else if (name == "normalStr")
-                    _normalStrength = numeric_cast<float>(stof(value));
-                else if (name == "specularStr")
-                    _specularStrength = numeric_cast<float>(stof(value));
-                else if (name == "environmentStr")
-                    _environmentStrength = numeric_cast<float>(stof(value));
+                auto strength = numeric_cast<float>(stof(value));
+                if (name == "diffuseStr") {
+                    _diffuseStrength = strength;
+                } else if (name == "normalStr") {
+                    _normalStrength = strength;
+                } else if (name == "specularStr") {
+                    _specularStrength = strength;
+                } else if (name == "environmentStr") {
+                    _environmentStrength = strength;
+                }
             }
         }
     }
@@ -83,7 +86,8 @@ namespace model {
     // wine '/home/cg/Desktop/X4/DirectXTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
     // Flatten
     // wine '/home/cg/Desktop/X4/DirectXTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
-    void Material::PopulateLayer(aiMaterial *pAiMaterial, std::string path, const char *key, aiTextureType type, int num,
+    void Material::PopulateLayer(aiMaterial *pAiMaterial, const std::string &path, const char *key, aiTextureType type,
+                                 int num,
                                  ConversionContext *ctx) {
         if (!path.empty()) {
             // TODO should GetDecompressedTextureFilePath move?

@@ -9,7 +9,7 @@
 using namespace util;
 namespace model {
 
-    Connection::Connection(pugi::xml_node node, std::shared_ptr<ConversionContext> ctx, std::string componentName)
+    Connection::Connection(pugi::xml_node node, ConversionContext::Ptr ctx, std::string componentName)
             : AbstractElement(ctx) {
 
         if (!node.attribute("name")) {
@@ -38,20 +38,20 @@ namespace model {
         }
     }
 
-    Connection::Connection(aiNode *node, std::shared_ptr<ConversionContext> ctx, std::string componentName)
+    Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName)
             : AbstractElement(ctx) {
-        ConvertFromAiNode(node);
+        ConvertFromAiNode(node, pugi::xml_node());
         // TODO does this do the offset?
         parentName = std::move(componentName);//Default to component as parent
 
     }
 
-    aiNode *Connection::ConvertToAiNode() {
+    aiNode *Connection::ConvertToAiNode(pugi::xml_node intermediateXml) {
         auto result = new aiNode("*" + getName() + "*");
         ApplyOffsetToAiNode(result);
         std::vector<aiNode *> children = attrToAiNode();
-        for (auto part : parts) {
-            children.push_back(part.ConvertToAiNode());
+        for (auto &part : parts) {
+            children.push_back(part.ConvertToAiNode(pugi::xml_node()));
         }
         populateAiNodeChildren(result, children);
         return result;
@@ -62,7 +62,7 @@ namespace model {
     }
 
 
-    void Connection::ConvertFromAiNode(aiNode *node) {
+    void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
         std::string tmp = node->mName.C_Str();
         setName(tmp.substr(1, tmp.size() - 2));
         // TODO check for scaling and error if cfound
@@ -76,7 +76,7 @@ namespace model {
                 readAiNodeChild(node, child);
             } else {
                 Part part(ctx);
-                part.ConvertFromAiNode(child);
+                part.ConvertFromAiNode(child, pugi::xml_node());
                 parts.emplace(parts.end(), part);
             }
         }
@@ -103,7 +103,7 @@ namespace model {
             return;
         }
         auto partsNode = AddChild(node, "parts");
-        for (auto part : parts) {
+        for (auto &part : parts) {
             part.ConvertToGameFormat(partsNode);
         }
 

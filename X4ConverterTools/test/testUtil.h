@@ -18,7 +18,7 @@ namespace test {
 
         static std::string GetBasePath();
 
-        static std::shared_ptr<ConversionContext> GetTestContext(std::string geomPath);
+        static ConversionContext::Ptr GetTestContext(std::string geomPath);
         static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
         static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);
