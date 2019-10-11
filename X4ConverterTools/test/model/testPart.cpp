@@ -39,6 +39,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
   auto result = part.ConvertToAiNode(pugi::xml_node());
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
   delete result;
+
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) {

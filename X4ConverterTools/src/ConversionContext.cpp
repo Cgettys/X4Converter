@@ -211,13 +211,13 @@ aiLight *ConversionContext::GetLight(const std::string &name) {
   throw std::runtime_error("Could not find light of name:" + name);
 }
 
-void ConversionContext::SetScene(aiScene *pScene) {
-  ConversionContext::pScene = pScene;
-  for (int i = 0; i < pScene->mNumLights; i++) {
-    ConversionContext::AddLight(pScene->mLights[i]);
+void ConversionContext::SetScene(aiScene *scene) {
+  ConversionContext::pScene = scene;
+  for (auto i = 0U; i < scene->mNumLights; i++) {
+    ConversionContext::AddLight(scene->mLights[i]);
   }
-  for (int i = 0; i < pScene->mNumMeshes; i++) {
-    meshes.emplace_back(pScene->mMeshes[i]);
+  for (auto i = 0U; i < scene->mNumMeshes; i++) {
+    meshes.emplace_back(scene->mMeshes[i]);
   }
 }
 
@@ -234,6 +234,13 @@ void ConversionContext::AddMesh(aiNode *parentNode, aiMesh *pMesh) {
 
 aiMesh *ConversionContext::GetMesh(int meshIndex) {
   return meshes[meshIndex];
+}
+
+ConversionContext::~ConversionContext() {
+  if (pScene != nullptr) {
+    ConversionContext::PopulateSceneArrays();
+    delete pScene;
+  }
 }
 
 

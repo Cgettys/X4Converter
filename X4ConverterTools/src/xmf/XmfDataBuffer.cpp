@@ -17,41 +17,34 @@ XmfDataBuffer::XmfDataBuffer(Assimp::StreamReaderLE &reader) {
 }
 
 void XmfDataBuffer::ReadBinary(Assimp::StreamReaderLE &reader) {
-  std::vector<uint8_t> compressedData;
   // TODO
 //    if (reader.GetCurrentPos()- baseFileOffset != Description.DataOffset) {
 //        throw std::runtime_error("Mismatching buffer data offset");
 //    }
-  if (reader.GetRemainingSize() < Description.GetCompressedDataSize()) {
+  auto compressed_size = Description.GetCompressedDataSize();
+  auto uncompressed_size = Description.GetUncompressedDataSize();
+  if (reader.GetRemainingSize() < compressed_size) {
     throw std::runtime_error(".xmf file is too small, not enough data left");
   }
   if (!Description.IsCompressed()) {
-    if (Description.GetCompressedDataSize() != Description.GetUncompressedDataSize()) {
-      throw std::runtime_error("Noncompressed buffer has invalid size");
+    if (compressed_size != uncompressed_size) {
+      throw std::runtime_error("Uncompressed buffer has invalid size");
     }
-    uint8_t b = 0;
-    for (int i = 0; i < Description.GetUncompressedDataSize(); i++) {
-      reader >> b;
-      compressedData.emplace_back(b);
-    }
+    reader.CopyAndAdvance(GetData(), uncompressed_size);
   } else {
-
     uint8_t b = 0;
-    auto compressedDataSize = numeric_cast<unsigned long>(Description.GetCompressedDataSize());
-    for (int i = 0; i < compressedDataSize; i++) {
-      reader >> b;
-      compressedData.emplace_back(b);
-    }
+    std::vector<uint8_t> compressed_data(compressed_size);
+    reader.CopyAndAdvance(compressed_data.data(), compressed_size);
 
-    auto uncompressedSize = numeric_cast<unsigned long>(Description.GetUncompressedDataSize());
-    _data.reserve(uncompressedSize);
-    int status = uncompress(GetData(), &uncompressedSize, compressedData.data(), compressedDataSize);
+    auto compressed_size_tmp = numeric_cast<unsigned long>(compressed_size);
+    auto uncompressed_size_tmp = numeric_cast<unsigned long>(uncompressed_size);
+    int status = uncompress(GetData(), &uncompressed_size_tmp, compressed_data.data(), compressed_size_tmp);
 
     if (status != Z_OK) {
       throw std::runtime_error("Failed to decompress data buffer");
     }
-    // Note that the second parameter of uncompress is both Input and output
-    if (uncompressedSize != Description.GetUncompressedDataSize()) {
+// Note that the second parameter of uncompress is both Input and output
+    if (uncompressed_size_tmp != uncompressed_size) {
       throw std::runtime_error("Decompression did not return enough data");
     }
   }

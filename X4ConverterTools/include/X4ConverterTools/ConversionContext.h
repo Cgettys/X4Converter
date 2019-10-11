@@ -12,7 +12,7 @@ class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
   explicit ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io);
-
+  ~ConversionContext();
   static boost::filesystem::path
   GetRelativePath(const boost::filesystem::path &filePath, const boost::filesystem::path &relativeToFolderPath);
 
@@ -36,7 +36,7 @@ class ConversionContext {
   std::map<std::string, uint32_t> Materials;
   std::string gameBaseFolderPath;
 
-  void SetScene(aiScene *pScene);
+  void SetScene(aiScene *scene);
 
   aiMesh *GetMesh(int meshIndex);
 
