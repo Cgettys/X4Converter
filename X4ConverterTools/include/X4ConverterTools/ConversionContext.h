@@ -31,14 +31,14 @@ class ConversionContext {
 
   std::string GetSourcePath();
 
-  Assimp::IOStream *GetSourceFile(const std::string &name, std::string mode = "rb");
+  Assimp::IOStream *GetSourceFile(const std::string &name, const std::string &mode = "rb");
 
   std::map<std::string, uint32_t> Materials;
   std::string gameBaseFolderPath;
 
   void SetScene(aiScene *scene);
 
-  aiMesh *GetMesh(int meshIndex);
+  aiMesh *GetMesh(size_t meshIndex);
 
   aiLight *GetLight(const std::string &name);
 
@@ -46,10 +46,10 @@ class ConversionContext {
   void AddLight(aiLight *light);
 
   bool CheckLight(const std::string &name);
-
+  bool ShouldConvertGeometry() { return false; }
  protected:
   std::shared_ptr<Assimp::IOSystem> io;
-  aiScene *pScene;
+  aiScene *pScene{};
   std::vector<aiMesh *> meshes;
   std::string sourcePathSuffix;
   model::MaterialLibrary materialLibrary;

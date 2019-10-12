@@ -8,6 +8,10 @@ using namespace Assimp;
 using namespace boost;
 using util::DXUtil;
 namespace xmf {
+
+XmfFile::XmfFile(ConversionContext::Ptr ctx) : ctx{std::move(ctx)} {
+
+}
 XmfDataBuffer *XmfFile::GetIndexBuffer() {
   for (auto &_buffer : buffers) {
     if (_buffer.IsIndexBuffer())
@@ -43,12 +47,16 @@ int XmfFile::NumMaterials() {
   return boost::numeric_cast<int>(materials.size());
 }
 
-std::shared_ptr<XmfFile> XmfFile::ReadFromIOStream(IOStream *pStream) {
+XmfFile::Ptr XmfFile::ReadFromFile(const std::string &name, const ConversionContext::Ptr &ctx) {
+  auto pStream = ctx->GetSourceFile(name);
+  return xmf::XmfFile::ReadFromIOStream(pStream, ctx);
+}
+XmfFile::Ptr XmfFile::ReadFromIOStream(IOStream *pStream, const ConversionContext::Ptr &ctx) {
   if (!pStream) {
     throw std::runtime_error("pStream may not be null!");
   }
   try {
-    std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>();
+    std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>(ctx);
 
     if (pStream->FileSize() < 16) {
       throw std::runtime_error(".xmf file is too small (< 16 bytes)");
@@ -110,6 +118,11 @@ std::string XmfFile::Validate() {
   return result;
 }
 
+void XmfFile::WriteToFile(const std::string &name) {
+  auto stream = ctx->GetSourceFile(name, "wb");
+  WriteToIOStream(stream);
+}
+
 void XmfFile::WriteToIOStream(IOStream *pStream) {
   std::map<XmfDataBuffer *, std::vector<uint8_t> > compressedBuffers = CompressBuffers();
 
@@ -164,20 +177,19 @@ void XmfFile::WriteBuffers(StreamWriterLE &pStreamWriter,
   }
 }
 
-aiNode *XmfFile::ConvertToAiNode(const std::string &name, const ConversionContext::Ptr &ctx) {
+aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
   auto *pMeshGroupNode = new aiNode();
   pMeshGroupNode->mName = name;
   try {
     if (GetMaterials().empty()) {
-      aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name, ctx);
+      aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name);
       ctx->AddMesh(pMeshGroupNode, pMesh);
     } else {
       pMeshGroupNode->mChildren = new aiNode *[NumMaterials()];
 
       for (XmfMaterial &material : GetMaterials()) {
         aiMesh *pMesh = ConvertToAiMesh(material.FirstIndex, material.NumIndices,
-                                        name + "X" + replace_all_copy(std::string(material.Name), ".", "X"),
-                                        ctx);
+                                        name + "X" + replace_all_copy(std::string(material.Name), ".", "X"));
 
         auto itMat = ctx->Materials.find(material.Name);
         if (itMat == ctx->Materials.end()) {
@@ -201,8 +213,7 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name, const ConversionContex
   return pMeshGroupNode;
 }
 
-aiMesh *XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                                 const ConversionContext::Ptr &ctx) {
+aiMesh *XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name) {
   auto *pMesh = new aiMesh();
   pMesh->mName = name;
 
@@ -410,7 +421,7 @@ XmfFile::GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool
     }
   }
 
-  std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>();
+  std::shared_ptr<XmfFile> pMeshFile = std::make_shared<XmfFile>(ctx);
   pMeshFile->GetBuffers().resize(2);
   XmfDataBuffer &vertexBuffer = pMeshFile->GetBuffers()[0];
   XmfDataBuffer &indexBuffer = pMeshFile->GetBuffers()[1];

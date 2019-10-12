@@ -27,6 +27,7 @@ namespace xmf {
 class XmfFile {
  public:
   using Ptr = std::shared_ptr<XmfFile>;
+  explicit XmfFile(ConversionContext::Ptr ctx);
   // TODO something better that takes into account writing?
   XmfHeader GetHeader() { return header; };
 
@@ -43,15 +44,15 @@ class XmfFile {
   std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
   int NumMaterials();
+  static XmfFile::Ptr ReadFromFile(const std::string &name, const ConversionContext::Ptr &ctx);
+  static XmfFile::Ptr ReadFromIOStream(Assimp::IOStream *pStream, const ConversionContext::Ptr &ctx);
 
-  static XmfFile::Ptr ReadFromIOStream(Assimp::IOStream *pStream);
-
+  void WriteToFile(const std::string &name);
   void WriteToIOStream(Assimp::IOStream *pStream);
 
-  aiNode *ConvertToAiNode(const std::string &name, const ConversionContext::Ptr &ctx);
+  aiNode *ConvertToAiNode(const std::string &name);
 
-  aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name,
-                          const ConversionContext::Ptr &context);
+  aiMesh *ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name);
 
   void AllocMeshVertices(aiMesh *pMesh, int numVertices);
 
@@ -83,7 +84,7 @@ class XmfFile {
 
   void WriteBuffers(Assimp::StreamWriterLE &pStreamWriter,
                     std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
-
+  ConversionContext::Ptr ctx;
   XmfHeader header;
   std::vector<XmfDataBuffer> buffers;
   std::vector<XmfMaterial> materials;

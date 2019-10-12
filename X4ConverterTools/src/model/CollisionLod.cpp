@@ -1,22 +1,18 @@
 #include "X4ConverterTools/model/CollisionLod.h"
 #include <iostream>
 #include <boost/format.hpp>
+#include <utility>
 
 namespace model {
 // Not really a LOD but it makes more sense if we pretend
-CollisionLod::CollisionLod(ConversionContext::Ptr ctx) : Lod(ctx) {}
+CollisionLod::CollisionLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
 
-CollisionLod::CollisionLod(std::string partName, ConversionContext::Ptr ctx) : Lod(ctx) {
+CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &ctx) : Lod(ctx) {
   index = COLLISION_INDEX;
   std::string name = str(boost::format("%1%-collision") % partName);
   setName(name);
   auto pStream = ctx->GetSourceFile(name + ".xmf");
-  xmfFile = xmf::XmfFile::ReadFromIOStream(pStream);
-}
-
-aiNode *CollisionLod::ConvertToAiNode(pugi::xml_node intermediateXml) {
-  // TODO push up
-  return xmfFile->ConvertToAiNode(getName(), ctx);
+  xmfFile = xmf::XmfFile::ReadFromIOStream(pStream, ctx);
 }
 
 void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
@@ -39,7 +35,7 @@ void CollisionLod::CalculateSizeAndCenter(aiNode *pCollisionNode) {
   aiVector3D lowerBound;
   aiVector3D upperBound;
   aiMesh *pCollisionMesh = ctx->GetMesh(pCollisionNode->mMeshes[0]);
-  for (int i = 0; i < pCollisionMesh->mNumVertices; ++i) {
+  for (size_t i = 0; i < pCollisionMesh->mNumVertices; ++i) {
     aiVector3D &position = pCollisionMesh->mVertices[i];
     if (i == 0) {
       lowerBound = position;
@@ -75,8 +71,6 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
     out.remove_child("size_raw");
   }
   // TODO size raw???
-
-  auto stream = ctx->GetSourceFile(getName() + ".out.xmf", "wb");
-  xmfFile->WriteToIOStream(stream);
+  xmfFile->WriteToFile(getName() + ".out.xmf");
 }
 }

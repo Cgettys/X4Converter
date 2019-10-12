@@ -12,15 +12,13 @@ class CollisionLod : public Lod {
  public:
   explicit CollisionLod(ConversionContext::Ptr ctx);
 
-  explicit CollisionLod(std::string partName, ConversionContext::Ptr ctx);
+  explicit CollisionLod(std::string partName, const ConversionContext::Ptr &ctx);
 
   ~CollisionLod() override = default;
 
   void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
   void ConvertToGameFormat(pugi::xml_node out) override;
-
-  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
  private:
 

@@ -4,28 +4,20 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
 #include <X4ConverterTools/ConversionContext.h>
-
+#include <string>
+#include <boost/predef.h>
+#include <boost/algorithm/string.hpp>
+#include <utility>
+#include <boost/filesystem.hpp>
+#include <X4ConverterTools/types.h>
+#include <X4ConverterTools/util/AssimpUtil.h>
 using namespace boost;
 using namespace boost::filesystem;
 
 ConversionContext::ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io)
-    : materialLibrary(gameBaseFolderPath), gameBaseFolderPath(gameBaseFolderPath), io(io) {
+    : materialLibrary(gameBaseFolderPath), gameBaseFolderPath(gameBaseFolderPath), io(std::move(io)) {
 
 }
-
-#include <X4ConverterTools/ConversionContext.h>
-
-#include <string>
-#include <iostream>
-#include <boost/predef.h>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/format.hpp>
-#include <X4ConverterTools/types.h>
-#include <X4ConverterTools/util/AssimpUtil.h>
-
-using namespace boost;
-using namespace boost::filesystem;
 
 std::string ConversionContext::MakePlatformSafe(const std::string &filePath) {
   if (filePath.empty()) {
@@ -91,11 +83,11 @@ path ConversionContext::GetRelativePath(const path &filePath, const path &relati
         relativeToFolderPath.c_str()));
   }
   path result;
-  for (int i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
+  for (size_t i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
     result /= "..";
   }
 
-  for (int i = differenceStart; i < filePathParts.size() - 1; ++i) {
+  for (size_t i = differenceStart; i < filePathParts.size() - 1; ++i) {
     result /= filePathParts[i];
   }
 
@@ -145,7 +137,7 @@ void ConversionContext::PopulateSceneArrays() {
       pScene->mMeshes[meshIdx++] = meshIt;
     }
   }
-  for (int i = 0; i < pScene->mNumMeshes; ++i) {
+  for (auto i = 0U; i < pScene->mNumMeshes; ++i) {
     AssimpUtil::MergeVertices(pScene->mMeshes[i]);
   }
   if (!lights.empty()) {
@@ -174,14 +166,13 @@ std::string ConversionContext::GetSourcePath() {
   return ConversionContext::MakePlatformSafe(gameBaseFolderPath + "/" + sourcePathSuffix);
 }
 
-// callee frees
-Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, std::string mode) {
+Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, const std::string &mode) {
   std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + algorithm::to_lower_copy(name));
   if (!io->Exists(path) && mode != "wb") {
     throw std::runtime_error("File missing: " + name);
   }
 
-  auto result = io->Open(path, mode);
+  Assimp::IOStream *result = io->Open(path, mode);
   if (result == nullptr) {
     if (mode == "wb") {
       throw std::runtime_error("File could not be opened or created: " + name);
@@ -232,14 +223,14 @@ void ConversionContext::AddMesh(aiNode *parentNode, aiMesh *pMesh) {
   meshes.push_back(pMesh);
 }
 
-aiMesh *ConversionContext::GetMesh(int meshIndex) {
-  return meshes[meshIndex];
+aiMesh *ConversionContext::GetMesh(size_t meshIndex) {
+  return meshes.at(meshIndex);
 }
 
 ConversionContext::~ConversionContext() {
   if (pScene != nullptr) {
     ConversionContext::PopulateSceneArrays();
-    delete pScene;
+//    delete pScene;
   }
 }
 

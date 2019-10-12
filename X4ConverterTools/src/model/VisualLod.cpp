@@ -1,9 +1,11 @@
 #include "X4ConverterTools/model/VisualLod.h"
 
-namespace model {
-VisualLod::VisualLod(ConversionContext::Ptr ctx) : Lod(ctx) {}
+#include <utility>
 
-VisualLod::VisualLod(pugi::xml_node node, std::string partName, ConversionContext::Ptr ctx) : Lod(ctx) {
+namespace model {
+VisualLod::VisualLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
+
+VisualLod::VisualLod(pugi::xml_node node, std::string partName, const ConversionContext::Ptr &ctx) : Lod(ctx) {
 
   if (std::string(node.name()) != "lod") {
     throw std::runtime_error("XML element must be a <lod> element!");
@@ -14,15 +16,9 @@ VisualLod::VisualLod(pugi::xml_node node, std::string partName, ConversionContex
   index = node.attribute("index").as_int();
   std::string tmp = str(boost::format("%1%-lod%2%") % partName % index);
   setName(tmp);
-
-  // TODO better util method of some kind???
-  auto pStream = ctx->GetSourceFile(tmp + ".xmf");
-  xmfFile = xmf::XmfFile::ReadFromIOStream(pStream);
+  xmfFile = xmf::XmfFile::ReadFromFile(tmp + ".xmf", ctx);
 }
 
-aiNode *VisualLod::ConvertToAiNode(pugi::xml_node intermediateXml) {
-  return xmfFile->ConvertToAiNode(getName(), ctx);
-}
 
 void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
   std::string rawName = node->mName.C_Str();
@@ -63,7 +59,6 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
       WriteAttr(matNode, "ref", mat.Name);
     }
   }
-  auto stream = ctx->GetSourceFile(getName() + ".out.xmf", "wb");
-  xmfFile->WriteToIOStream(stream);
+  xmfFile->WriteToFile(getName() + ".out.xmf");
 }
 }

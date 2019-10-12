@@ -27,23 +27,24 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
       "/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-lod0";
   const std::string testFile = basePath + ".xmf";
   const std::string resultsFile = basePath + ".out.xmf";
-  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
-  IOStream *sourceStream = io->Open(testFile, "rb");
-  IOStream *outStream = io->Open(resultsFile, "wb");
-  XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream);
+  auto ctx = TestUtil::GetTestContext(basePath);
+  auto sourceStream = ctx->GetSourceFile(testFile, "rb");
+  auto outStream = ctx->GetSourceFile(resultsFile, "wb");
+  XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);
   meshFile->WriteToIOStream(outStream);
   BOOST_TEST_CHECKPOINT("Read/Write complete");
 
+  // TODO do this bit in memory
   // Reset stream to start
-  IOStream *resultStream = io->Open(resultsFile, "rb");
-  sourceStream = io->Open(testFile, "rb");
+  auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
+  sourceStream = ctx->GetSourceFile(testFile, "rb");
 
   size_t sourceLen = sourceStream->FileSize();
   size_t resultLen = resultStream->FileSize();
   std::vector<uint8_t> sourceBytes(sourceLen);
   std::vector<uint8_t> resultByte(resultLen);
   // First layer of checks - Read the result in again - is it equal to what it just wrote out
-  XmfFile::Ptr reloadedFile = XmfFile::ReadFromIOStream(resultStream);
+  XmfFile::Ptr reloadedFile = XmfFile::ReadFromIOStream(resultStream, ctx);
 
   TestUtil::checkXuMeshFileEquality(*meshFile, *reloadedFile);
   //	 Directly read the data into the vector & make sure we got it one go)
@@ -53,7 +54,6 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
 //        BOOST_TEST(
 //                actualLen == resultStream->Read(&actual[0], sizeof(byte), actualLen));
 
-  io->Close(sourceStream);
 }
 BOOST_AUTO_TEST_CASE(xmf_collision) {
 
@@ -64,23 +64,24 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
       "/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
   const std::string testFile = basePath + ".xmf";
   const std::string resultsFile = basePath + ".out.xmf";
-  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
-  IOStream *sourceStream = io->Open(testFile, "rb");
-  IOStream *outStream = io->Open(resultsFile, "wb");
-  XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream);
+  auto ctx = TestUtil::GetTestContext(basePath);
+  auto sourceStream = ctx->GetSourceFile(testFile, "rb");
+  auto outStream = ctx->GetSourceFile(resultsFile, "wb");
+  XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);
   meshFile->WriteToIOStream(outStream);
   BOOST_TEST_CHECKPOINT("Read/Write complete");
 
   // Reset stream to start
-  IOStream *resultStream = io->Open(resultsFile, "rb");
-  sourceStream = io->Open(testFile, "rb");
+  // TODO memory stream
+  auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
+  sourceStream = ctx->GetSourceFile(testFile, "rb");
 
   size_t sourceLen = sourceStream->FileSize();
   size_t resultLen = resultStream->FileSize();
   std::vector<uint8_t> sourceBytes(sourceLen);
   std::vector<uint8_t> resultByte(resultLen);
   // First layer of checks - Read the result in again - is it equal to what it just wrote out
-  XmfFile::Ptr reloadedFile = XmfFile::ReadFromIOStream(resultStream);
+  XmfFile::Ptr reloadedFile = XmfFile::ReadFromIOStream(resultStream, ctx);
 
   TestUtil::checkXuMeshFileEquality(*meshFile, *reloadedFile);
   //	 Directly read the data into the vector & make sure we got it one go)
@@ -90,7 +91,6 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
 //        BOOST_TEST(
 //                actualLen == resultStream->Read(&actual[0], sizeof(byte), actualLen));
 
-  io->Close(sourceStream);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(xmf_struct_correctness) { // NOLINT(cert-err58-cpp)
 
       auto sourceStream = io->Open(filePath.generic_string(), "rb");
       try {
-        auto file = XmfFile::ReadFromIOStream(sourceStream);
+        auto file = XmfFile::ReadFromIOStream(sourceStream, nullptr);//TODO not the null demon
         std::cout << filePath.c_str() << std::endl;
       } catch (std::runtime_error &e) {
         std::string error = str(format("Filepath: %1% Exception:\n %2%\n") % filePath.c_str() % e.what());

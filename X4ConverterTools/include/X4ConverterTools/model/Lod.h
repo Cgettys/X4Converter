@@ -8,7 +8,12 @@ class Lod : public AbstractElement {
  public:
   explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
 
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override {
+    return xmfFile->ConvertToAiNode(getName());
+  }
+
   ~Lod() override = default;
+
   int getIndex() {
     return index;
   }

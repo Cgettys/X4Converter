@@ -3,8 +3,6 @@
 #include <utility>
 #include <vector>
 #include <map>
-#include <iostream>
-#include <X4ConverterTools/util/FormatUtil.h>
 
 using namespace util;
 namespace model {
@@ -39,7 +37,7 @@ Connection::Connection(pugi::xml_node node, ConversionContext::Ptr ctx, std::str
 }
 
 Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName)
-    : AbstractElement(ctx) {
+    : AbstractElement(std::move(ctx)) {
   ConvertFromAiNode(node, pugi::xml_node());
   // TODO does this do the offset?
   parentName = std::move(componentName);//Default to component as parent

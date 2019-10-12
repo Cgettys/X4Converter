@@ -11,9 +11,7 @@ class VisualLod : public Lod {
  public:
   explicit VisualLod(ConversionContext::Ptr ctx);
 
-  VisualLod(pugi::xml_node node, std::string partName, ConversionContext::Ptr ctx);
-
-  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  VisualLod(pugi::xml_node node, std::string partName, const ConversionContext::Ptr &ctx);
 
   void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
 
