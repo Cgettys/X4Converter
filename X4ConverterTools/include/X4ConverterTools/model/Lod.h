@@ -9,6 +9,9 @@ class Lod : public AbstractElement {
   explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
 
   aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override {
+    if (!ctx->ShouldConvertGeometry()) {
+      throw std::runtime_error("Should not be converting in this mode.");
+    }
     return xmfFile->ConvertToAiNode(getName());
   }
 

@@ -11,7 +11,10 @@
 class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
-  explicit ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io);
+  explicit ConversionContext(const std::string &gameBaseFolderPath,
+                             std::shared_ptr<Assimp::IOSystem> io,
+                             bool convert,
+                             bool test);
   ~ConversionContext();
   static boost::filesystem::path
   GetRelativePath(const boost::filesystem::path &filePath, const boost::filesystem::path &relativeToFolderPath);
@@ -46,8 +49,10 @@ class ConversionContext {
   void AddLight(aiLight *light);
 
   bool CheckLight(const std::string &name);
-  bool ShouldConvertGeometry() { return false; }
+  bool ShouldConvertGeometry() { return should_convert };
  protected:
+  bool test;
+  bool should_convert;
   std::shared_ptr<Assimp::IOSystem> io;
   aiScene *pScene{};
   std::vector<aiMesh *> meshes;

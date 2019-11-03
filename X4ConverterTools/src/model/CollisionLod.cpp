@@ -11,8 +11,9 @@ CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &c
   index = COLLISION_INDEX;
   std::string name = str(boost::format("%1%-collision") % partName);
   setName(name);
-  auto pStream = ctx->GetSourceFile(name + ".xmf");
-  xmfFile = xmf::XmfFile::ReadFromIOStream(pStream, ctx);
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile = xmf::XmfFile::ReadFromFile(name + ".xmf", ctx);
+  }
 }
 
 void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
@@ -24,37 +25,44 @@ void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXm
     throw std::runtime_error("this is not a collision mesh");
   }
   index = COLLISION_INDEX;
-  xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, true);
-  CalculateSizeAndCenter(node);
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, true);
+    CalculateSizeAndCenter(node);
+  }
 }
 
 void CollisionLod::CalculateSizeAndCenter(aiNode *pCollisionNode) {
-  if (pCollisionNode->mNumMeshes == 0)
-    return;
+  auto numMeshes = pCollisionNode->mNumMeshes;
+  if (numMeshes != 1) {
+    std::stringstream ss;
+    ss << "Warning, collision " << getName() << " has " << numMeshes << " meshes. Should have one." << std::endl;
+    throw std::runtime_error(ss.str());
+  }
 
-  aiVector3D lowerBound;
-  aiVector3D upperBound;
   aiMesh *pCollisionMesh = ctx->GetMesh(pCollisionNode->mMeshes[0]);
-  for (size_t i = 0; i < pCollisionMesh->mNumVertices; ++i) {
-    aiVector3D &position = pCollisionMesh->mVertices[i];
-    if (i == 0) {
-      lowerBound = position;
-      upperBound = position;
-    } else {
-      lowerBound.x = std::min(lowerBound.x, position.x);
-      lowerBound.y = std::min(lowerBound.y, position.y);
-      lowerBound.z = std::min(lowerBound.z, position.z);
+  auto numVertices = pCollisionMesh->mNumVertices;
+  if (numVertices == 0) {
+    std::stringstream ss;
+    ss << "Warning, collision " << getName() << " has an empty mesh." << std::endl;
+    throw std::runtime_error(ss.str());
+  }
 
-      upperBound.x = std::max(upperBound.x, position.x);
-      upperBound.y = std::max(upperBound.y, position.y);
-      upperBound.z = std::max(upperBound.z, position.z);
-    }
+  aiVector3D lowerBound = pCollisionMesh->mVertices[0];
+  aiVector3D upperBound = pCollisionMesh->mVertices[0];
+  for (size_t i = 1; i < numVertices; ++i) {
+    aiVector3D &position = pCollisionMesh->mVertices[i];
+    lowerBound.x = std::min(lowerBound.x, position.x);
+    lowerBound.y = std::min(lowerBound.y, position.y);
+    lowerBound.z = std::min(lowerBound.z, position.z);
+
+    upperBound.x = std::max(upperBound.x, position.x);
+    upperBound.y = std::max(upperBound.y, position.y);
+    upperBound.z = std::max(upperBound.z, position.z);
   }
 
   // TODO flip axes if necessary
-  maxDim = aiVector3D((upperBound.x - lowerBound.x) / 2.0f, (upperBound.y - lowerBound.y) / 2.0f,
-                      (upperBound.z - lowerBound.z) / 2.0f);
-  center = aiVector3D(lowerBound.x + maxDim.x, lowerBound.y + maxDim.y, lowerBound.z + maxDim.z);
+  maxDim = (upperBound - lowerBound) / 2.0f;
+  center = lowerBound + maxDim;
 }
 
 void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
@@ -71,6 +79,9 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
     out.remove_child("size_raw");
   }
   // TODO size raw???
-  xmfFile->WriteToFile(getName() + ".out.xmf");
+
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile->WriteToFile(getName() + ".out.xmf");
+  }
 }
 }

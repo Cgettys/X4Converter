@@ -19,7 +19,7 @@ class AssimpUtil {
     bool operator==(const VertexInfo &other) const;
   };
 };
-
+// TODO is this ok form?
 namespace std {
 template<>
 class hash<aiVector3D> : public unary_function<aiVector3D, size_t> {
