@@ -26,6 +26,8 @@ int main(int ac, char *av[]) {
     std::string target;
     std::string ext_dir;
     std::string config_file;
+    bool test;
+    bool migrate;
     // allowed only on command line
     po::options_description generic("Generic options");
     generic.add_options()("version,v", "print version string")("help", "produce help message");
@@ -39,13 +41,12 @@ int main(int ac, char *av[]) {
     // allowed both on command line and in
     // config file
     po::options_description config("Configuration");
-    config.add_options()("action", po::value<std::string>(&action), action_string)("datdir",
-                                                                                   po::value<std::string>(&dat_dir),
-                                                                                   "path where unpacked catalog files can be found")(
-        "target", po::value<std::string>(&target), "target .xml/.xac/.dae file")("config",
-                                                                                 po::value<std::string>(
-                                                                                     &config_file),
-                                                                                 "path to config file");
+    config.add_options()("action", po::value<std::string>(&action), action_string)
+        ("datdir", po::value<std::string>(&dat_dir), "path where unpacked catalog files can be found")
+        ("target", po::value<std::string>(&target), "target .xml/.xac/.dae file")
+        ("config", po::value<std::string>(&config_file), "path to config file")
+        ("test", po::value<bool>(&test), "use .out extensions to prevent overwriting")
+        ("migrate", po::value<bool>(&migrate), "XR->X4; Do not convert geometry. WIP/Not working");
 //		("extdir", po::value<std::string>(&ext_dir), "path to folder where extensions are stored")
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config);
@@ -112,19 +113,24 @@ int main(int ac, char *av[]) {
       return 1;
     }
 
+    auto io = std::make_shared<Assimp::DefaultIOSystem>();
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
     fs::path outFile(inFile);
     if (action == "importxmf") {
-      // .xml/.xmf -> .dae
-      // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
-      outFile.replace_extension(".dae");
-      outFile = ConversionContext::GetOutputPath(outFile.generic_string());
-      ConvertXmlToDae(gameBaseFolderPath.generic_string(), inFile.generic_string(), outFile.generic_string());
+      // .xml/.xmf -> .dae //
+      // TODO better way to do extension and path handling / generate a Config object to ease integration testing.o
+      outFile = outFile.replace_extension(".dae");
+      ConvertXmlToDae(ctx,
+                      inFile.generic_string(),
+                      outFile.generic_string());
     } else if (action == "exportxmf") {
       // .dae -> .xml/.xmf
       // .out.xml not necessary because already is .out.dae & .dae is the "extension"
       outFile.replace_extension(".xml");
       std::cout << outFile << std::endl;
-      ConvertDaeToXml(gameBaseFolderPath.generic_string(), inFile.generic_string(), outFile.generic_string());
+      ConvertDaeToXml(ctx,
+                      inFile.generic_string(),
+                      outFile.generic_string());
 
     } else {
       printf("Unknown action.\n\n");

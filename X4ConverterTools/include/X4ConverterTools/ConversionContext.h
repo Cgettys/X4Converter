@@ -13,8 +13,8 @@ class ConversionContext {
   using Ptr = std::shared_ptr<ConversionContext>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
                              std::shared_ptr<Assimp::IOSystem> io,
-                             bool convert,
-                             bool test);
+                             bool is_migration,
+                             bool is_test);
   ~ConversionContext();
   static boost::filesystem::path
   GetRelativePath(const boost::filesystem::path &filePath, const boost::filesystem::path &relativeToFolderPath);
@@ -27,7 +27,7 @@ class ConversionContext {
 
   static boost::filesystem::path MakeGameSafe(const boost::filesystem::path &filePath);
 
-  static std::string GetOutputPath(const std::string &inputPath);
+  std::string GetOutputPath(const std::string &inputPath);
   void PopulateSceneArrays();
 
   void SetSourcePathSuffix(std::string path);
@@ -49,7 +49,8 @@ class ConversionContext {
   void AddLight(aiLight *light);
 
   bool CheckLight(const std::string &name);
-  bool ShouldConvertGeometry() { return should_convert };
+  bool ShouldConvertGeometry() { return should_convert; };
+
  protected:
   bool test;
   bool should_convert;

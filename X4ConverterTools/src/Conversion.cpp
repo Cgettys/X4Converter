@@ -1,6 +1,5 @@
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/model/Component.h>
-#include <X4ConverterTools/ConversionContext.h>
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -13,28 +12,27 @@
 #include <assimp/scene.h>
 #include <assimp/SceneCombiner.h>
 #include <pugixml.hpp>
-
 namespace fs = boost::filesystem;
 
 bool
-ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFilePath, const std::string &daeFilePath) {
+ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePath, const std::string &daeFilePath) {
+
   pugi::xml_document doc;
   pugi::xml_parse_result load_result;
+
+  // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
   bool relative_paths = false;
   if (fs::exists(xmlFilePath)) {
     load_result = doc.load_file((xmlFilePath).c_str());
-  } else if (fs::exists(gameBaseFolderPath + xmlFilePath)) {
+  } else if (fs::exists(ctx->gameBaseFolderPath + xmlFilePath)) {
     std::cout << "Paths appear to be relative" << std::endl;
-    load_result = doc.load_file((gameBaseFolderPath + xmlFilePath).c_str());
+    load_result = doc.load_file((ctx->gameBaseFolderPath + xmlFilePath).c_str());
     relative_paths = true;
   }
   if (load_result.status != pugi::status_ok) {
     throw std::runtime_error("xml file could not be opened!");
   }
-
-  auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
-  aiScene *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
+  auto *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
   ctx->SetScene(pScene);
   model::Component component(doc.root(), ctx);
   aiNode *root = component.ConvertToAiNode(pugi::xml_node());
@@ -46,7 +44,7 @@ ConvertXmlToDae(const std::string &gameBaseFolderPath, const std::string &xmlFil
 //    pugi::xml_document animdoc;
 //    pugi::xml_node rt = animdoc.root().append_child("root");
 
-  auto actualDaeFilePath = relative_paths ? gameBaseFolderPath + daeFilePath : daeFilePath;
+  auto actualDaeFilePath = relative_paths ? ctx->gameBaseFolderPath + daeFilePath : daeFilePath;
   Assimp::Exporter exporter;
 //    Assimp::ExportProperties props;
 //    props.SetPropertyBool("COLLADA_EXPORT_USE_MESH_NAMES",true);
@@ -70,9 +68,11 @@ PrependIfNecessary(const std::string &gameBaseFolderPath, const std::string &fil
 }
 
 bool
-ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFilePath, const std::string &xmlFilePath) {
-  std::string actualDaeFilePath = PrependIfNecessary(gameBaseFolderPath, daeFilePath, ".dae");
-  std::string actualXmlFilePath = PrependIfNecessary(gameBaseFolderPath, xmlFilePath, ".xml");
+ConvertDaeToXml(const ConversionContext::Ptr &ctx, const std::string &daeFilePath, const std::string &xmlFilePath) {
+  // TODO make better
+  std::string actualDaeFilePath = PrependIfNecessary(ctx->gameBaseFolderPath, daeFilePath, ".dae");
+  std::string actualXmlFilePath = PrependIfNecessary(ctx->gameBaseFolderPath, xmlFilePath, ".xml");
+
   auto importer = std::make_unique<Assimp::Importer>();
   importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
   const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);
@@ -82,8 +82,6 @@ ConvertDaeToXml(const std::string &gameBaseFolderPath, const std::string &daeFil
   }
   aiScene *myScene;
   aiCopyScene(pScene, &myScene);
-  auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
   ctx->SetScene(myScene);
   model::Component component(ctx);
 

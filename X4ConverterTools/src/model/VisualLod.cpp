@@ -16,9 +16,11 @@ VisualLod::VisualLod(pugi::xml_node node, std::string partName, const Conversion
   index = node.attribute("index").as_int();
   std::string tmp = str(boost::format("%1%-lod%2%") % partName % index);
   setName(tmp);
-  xmfFile = xmf::XmfFile::ReadFromFile(tmp + ".xmf", ctx);
-}
 
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile = xmf::XmfFile::ReadFromFile(tmp + ".xmf", ctx);
+  }
+}
 
 void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
   std::string rawName = node->mName.C_Str();
@@ -29,7 +31,9 @@ void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) 
     throw std::runtime_error("lod lacks index");
   }
   index = std::stoi(rawName.substr(pos + 4));
-  xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, false);
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, false);
+  }
 }
 
 void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
@@ -59,6 +63,9 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
       WriteAttr(matNode, "ref", mat.Name);
     }
   }
-  xmfFile->WriteToFile(getName() + ".out.xmf");
+
+  if (ctx->ShouldConvertGeometry()) {
+    xmfFile->WriteToFile(getName() + ".out.xmf");
+  }
 }
 }

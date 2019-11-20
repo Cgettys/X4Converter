@@ -36,10 +36,15 @@ std::string TestUtil::GetBasePath() {
 }
 
 ConversionContext::Ptr TestUtil::GetTestContext(std::string geomPath) {
+  return GetTestContext(geomPath, false);
+}
+
+ConversionContext::Ptr TestUtil::GetTestContext(std::string geomPath, bool migrate) {
   auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(GetBasePath(), io);
+  auto ctx = std::make_shared<ConversionContext>(GetBasePath(), io, migrate, true);
   ctx->SetSourcePathSuffix(std::move(geomPath));
   return ctx;
+
 }
 
 void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc) {

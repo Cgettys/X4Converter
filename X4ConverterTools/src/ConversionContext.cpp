@@ -12,10 +12,18 @@
 #include <X4ConverterTools/types.h>
 #include <X4ConverterTools/util/AssimpUtil.h>
 using namespace boost;
-using namespace boost::filesystem;
+namespace fs = boost::filesystem;
 
-ConversionContext::ConversionContext(const std::string &gameBaseFolderPath, std::shared_ptr<Assimp::IOSystem> io)
-    : materialLibrary(gameBaseFolderPath), gameBaseFolderPath(gameBaseFolderPath), io(std::move(io)) {
+// TODO materialLibrary should be passed in
+ConversionContext::ConversionContext(const std::string &gameBaseFolderPath,
+                                     std::shared_ptr<Assimp::IOSystem> io,
+                                     bool is_migration,
+                                     bool is_test) :
+    materialLibrary(gameBaseFolderPath),
+    gameBaseFolderPath(gameBaseFolderPath),
+    test(is_test),
+    should_convert(!is_migration),
+    io(std::move(io)) {
 
 }
 
@@ -27,7 +35,7 @@ std::string ConversionContext::MakePlatformSafe(const std::string &filePath) {
   std::string result(filePath);
 
   std::string preferredSep;
-  preferredSep.append(1, path::preferred_separator);
+  preferredSep.append(1, fs::path::preferred_separator);
   //TODO check for C://?
   algorithm::replace_all(result, "\\", preferredSep);
   algorithm::replace_all(result, "/", preferredSep);
@@ -43,15 +51,15 @@ std::string ConversionContext::MakeGameSafe(const std::string &filePath) {
   return result;
 }
 
-path ConversionContext::MakePlatformSafe(const path &filePath) {
-  return path(MakePlatformSafe(filePath.string()));
+fs::path ConversionContext::MakePlatformSafe(const fs::path &filePath) {
+  return fs::path(MakePlatformSafe(filePath.string()));
 }
 
-path ConversionContext::MakeGameSafe(const path &filePath) {
-  return path(MakeGameSafe(filePath.string()));
+fs::path ConversionContext::MakeGameSafe(const fs::path &filePath) {
+  return fs::path(MakeGameSafe(filePath.string()));
 }
 
-path ConversionContext::GetRelativePath(const path &filePath, const path &relativeToFolderPath) {
+fs::path ConversionContext::GetRelativePath(const fs::path &filePath, const fs::path &relativeToFolderPath) {
   if (filePath.is_relative()) {
     throw std::runtime_error("filePath is already relative");
   }
@@ -82,7 +90,7 @@ path ConversionContext::GetRelativePath(const path &filePath, const path &relati
     throw std::runtime_error(str(format("Paths do not have a common root %1% %2%") % filePath.c_str() %
         relativeToFolderPath.c_str()));
   }
-  path result;
+  fs::path result;
   for (size_t i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
     result /= "..";
   }
@@ -97,17 +105,17 @@ path ConversionContext::GetRelativePath(const path &filePath, const path &relati
 }
 
 std::string ConversionContext::GetOutputPath(const std::string &inputPath) {
+  if (test) {
+    std::cout << "Using test paths" << std::endl;
+    fs::path p(inputPath);
+    std::string ext = ".out";
+    ext.append(p.extension().string());
+    p.replace_extension(ext);
+    return p.generic_string();
+  } else {
+    return inputPath;
+  }
 
-#ifdef X4ConverterTools_TEST
-  std::cout << "Using test paths" << std::endl;
-  path p(inputPath);
-  std::string ext = ".out";
-  ext.append(p.extension().string());
-  p.replace_extension(ext);
-  return p.generic_string();
-#else
-  return inputPath;
-#endif
 }
 
 using namespace model;
@@ -117,7 +125,7 @@ using namespace model;
 void ConversionContext::PopulateSceneArrays() {
   // Add the materials to the scene
   if (!Materials.empty()) {
-    std::string modelFolderPath = path(gameBaseFolderPath).parent_path().string();
+    std::string modelFolderPath = fs::path(gameBaseFolderPath).parent_path().string();
     pScene->mNumMaterials = numeric_cast<unsigned int>(Materials.size());
     pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
     for (auto &it : Materials) {
@@ -167,9 +175,10 @@ std::string ConversionContext::GetSourcePath() {
 }
 
 Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, const std::string &mode) {
+
   std::string path = ConversionContext::MakePlatformSafe(GetSourcePath() + "/" + algorithm::to_lower_copy(name));
   if (!io->Exists(path) && mode != "wb") {
-    throw std::runtime_error("File missing: " + name);
+    throw std::runtime_error("File missing: " + name + " Looked at: " + path);
   }
 
   Assimp::IOStream *result = io->Open(path, mode);

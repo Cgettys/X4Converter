@@ -23,11 +23,10 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-  const std::string basePath = TestUtil::GetBasePath() +
-      "/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-lod0";
-  const std::string testFile = basePath + ".xmf";
-  const std::string resultsFile = basePath + ".out.xmf";
-  auto ctx = TestUtil::GetTestContext(basePath);
+  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/");
+  const std::string tgt = "fx_licence-lod0";
+  const std::string testFile = tgt + ".xmf";
+  const std::string resultsFile = tgt + ".out.xmf";
   auto sourceStream = ctx->GetSourceFile(testFile, "rb");
   auto outStream = ctx->GetSourceFile(resultsFile, "wb");
   XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);
@@ -60,11 +59,10 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-  const std::string basePath = TestUtil::GetBasePath() +
-      "/extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/fx_licence-collision";
-  const std::string testFile = basePath + ".xmf";
-  const std::string resultsFile = basePath + ".out.xmf";
-  auto ctx = TestUtil::GetTestContext(basePath);
+  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data");
+  const std::string tgt = "fx_licence-collision";
+  const std::string testFile = tgt + ".xmf";
+  const std::string resultsFile = tgt + ".out.xmf";
   auto sourceStream = ctx->GetSourceFile(testFile, "rb");
   auto outStream = ctx->GetSourceFile(resultsFile, "wb");
   XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);

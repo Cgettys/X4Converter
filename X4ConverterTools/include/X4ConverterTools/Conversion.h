@@ -1,9 +1,8 @@
 #pragma once
 
 #include <string>
+#include <X4ConverterTools/ConversionContext.h>
 
-bool ConvertXmlToDae(const std::string &pszGameBaseFolderPath, const std::string &pszXmlFilePath,
-                     const std::string &pszDaeFilePath);
+bool ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePath, const std::string &daeFilePath);
 
-bool ConvertDaeToXml(const std::string &pszGameBaseFolderPath, const std::string &pszDaeFilePath,
-                     const std::string &pszXmlFilePath);
+bool ConvertDaeToXml(const ConversionContext::Ptr &ctx, const std::string &daeFilePath, const std::string &xmlFilePath);
