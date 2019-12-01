@@ -18,8 +18,10 @@ class TestUtil {
 
   static std::string GetBasePath();
 
-  static ConversionContext::Ptr GetTestContext(std::string geomPath);
-  static ConversionContext::Ptr GetTestContext(std::string geomPath, bool migrate);
+  static ConversionContext::Ptr GetTestContext();
+  // TODO figure out a way around truthiness
+  // Prefer the above form for integration testing; this is used for unit testing below the component level
+  static ConversionContext::Ptr GetTestContext(std::string geomPath, bool convert = true);
   static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
   static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);

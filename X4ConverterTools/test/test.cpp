@@ -78,13 +78,13 @@ BOOST_AUTO_TEST_CASE(xml) {
   fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
                 fs::copy_option::overwrite_if_exists);
 
-  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto ctx = TestUtil::GetTestContext();
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  ctx = TestUtil::GetTestContext(tgtPath);
-  bool backwardSuccess = ConvertDaeToXml(ctx, daePath, outputXMLPath);
+  auto ctx2  = TestUtil::GetTestContext();
+  bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
   BOOST_TEST_CHECKPOINT("Backward parsing");
@@ -107,14 +107,14 @@ BOOST_AUTO_TEST_CASE(xml_hard) {
   fs::remove(gameBaseFolderPath + outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
-  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto ctx = TestUtil::GetTestContext();
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  ctx = TestUtil::GetTestContext(tgtPath);
-  bool backwardSuccess = ConvertDaeToXml(ctx, daePath, outputXMLPath);
+  auto ctx2 = TestUtil::GetTestContext();
+  bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
   BOOST_TEST_CHECKPOINT("Backward parsing");
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(xml_hard_2) {
   fs::remove(gameBaseFolderPath + outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
-  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto ctx = TestUtil::GetTestContext();
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
@@ -167,14 +167,14 @@ BOOST_AUTO_TEST_CASE(bridge) {
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
   fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
                 fs::copy_option::overwrite_if_exists);
-  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto ctx = TestUtil::GetTestContext();
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  ctx = TestUtil::GetTestContext(tgtPath);
-  bool backwardSuccess = ConvertDaeToXml(ctx, daePath, outputXMLPath);
+  auto ctx2 = TestUtil::GetTestContext();
+  bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
   BOOST_TEST_CHECKPOINT("Backward parsing");
@@ -197,14 +197,14 @@ BOOST_AUTO_TEST_CASE(multimat) {
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
   fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
                 fs::copy_option::overwrite_if_exists);
-  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto ctx = TestUtil::GetTestContext();
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  ctx = TestUtil::GetTestContext(tgtPath);
-  bool backwardSuccess = ConvertDaeToXml(ctx, daePath, outputXMLPath);
+  auto ctx2 = TestUtil::GetTestContext();
+  bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
   BOOST_TEST_CHECKPOINT("Backward parsing");

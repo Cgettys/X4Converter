@@ -17,12 +17,12 @@ namespace fs = boost::filesystem;
 // TODO materialLibrary should be passed in
 ConversionContext::ConversionContext(const std::string &gameBaseFolderPath,
                                      std::shared_ptr<Assimp::IOSystem> io,
-                                     bool is_migration,
+                                     bool convert,
                                      bool is_test) :
     materialLibrary(gameBaseFolderPath),
     gameBaseFolderPath(gameBaseFolderPath),
     test(is_test),
-    should_convert(!is_migration),
+    should_convert(convert),
     io(std::move(io)) {
 
 }

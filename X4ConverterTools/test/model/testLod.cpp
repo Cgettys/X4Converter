@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   auto lodForward = VisualLod(node, "anim_main", ctx);
   auto forwardResult = lodForward.ConvertToAiNode(pugi::xml_node());
   ctx->PopulateSceneArrays();
-  ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
-  ctx->SetScene(pScene);
+  auto ctx2 = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
+  ctx2->SetScene(pScene);
 
-  auto lodBackward = VisualLod(ctx);
+  auto lodBackward = VisualLod(ctx2);
   auto outDoc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto outNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods").node();

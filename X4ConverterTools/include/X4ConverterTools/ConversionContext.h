@@ -13,7 +13,7 @@ class ConversionContext {
   using Ptr = std::shared_ptr<ConversionContext>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
                              std::shared_ptr<Assimp::IOSystem> io,
-                             bool is_migration,
+                             bool convert,
                              bool is_test);
   ~ConversionContext();
   static boost::filesystem::path
