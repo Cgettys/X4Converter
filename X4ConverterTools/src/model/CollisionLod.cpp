@@ -70,8 +70,8 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
   // TODO handle no collision mesh
   if (!AssimpUtil::IsZero(maxDim) || !AssimpUtil::IsZero(center)) {
     auto sizeNode = xml::AddChild(out, "size");
-    xml::WriteChildXYZ("max", sizeNode, maxDim);
-    xml::WriteChildXYZ("center", sizeNode, center);
+    xml::WriteChildXYZ("max", sizeNode, maxDim, true);
+    xml::WriteChildXYZ("center", sizeNode, center, true);
   } else {
     out.remove_child("size");
     out.remove_child("size_raw");
@@ -79,7 +79,7 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
   // TODO size raw???
 
   if (ctx->ShouldConvertGeometry()) {
-    xmfFile->WriteToFile(getName() + ".out.xmf");
+    xmfFile->WriteToFile(ctx->GetOutputPath(getName() + ".xmf"));
   }
 }
 }

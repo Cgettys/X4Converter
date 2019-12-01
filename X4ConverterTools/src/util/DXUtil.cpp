@@ -52,15 +52,10 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
     case D3DDECLTYPE_FLOAT3:
     case D3DDECLTYPE_FLOAT4:
       // TODO do we see D3DDECLTYPE_FLOAT4?
-      return aiVector3D(pFP[0],
-                        pFP[1],
-                        pFP[2]);
+      return aiVector3D(pFP[0], pFP[1], pFP[2]);
 
     case D3DDECLTYPE_D3DCOLOR:
-      // TODO umm does this happen
-      return aiVector3D((numeric_cast<float>(pAttribute[2]) / kUINT8Scale) * 2.0f - 1.0f,
-                        (numeric_cast<float>(pAttribute[1]) / kUINT8Scale) * 2.0f - 1.0f,
-                        (numeric_cast<float>(pAttribute[0]) / kUINT8Scale) * 2.0f - 1.0f);
+      return aiVector3D(pAttribute[2], pAttribute[1], pAttribute[0]) / kUINT8Scale;
 
     case D3DDECLTYPE_SHORT2:
       return aiVector3D(pINT16[0], pINT16[1], 0.0f);
@@ -69,23 +64,16 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
       return aiVector3D(pINT16[0], pINT16[1], pINT16[2]);
 
     case D3DDECLTYPE_SHORT2N:
-      return aiVector3D(numeric_cast<float>(pINT16[0]) / kINT16Scale,
-                        numeric_cast<float>(pINT16[1]) / kINT16Scale,
-                        0.0f);
+      return aiVector3D(pINT16[0] / kINT16Scale, pINT16[1] / kINT16Scale, 0.0f);
 
     case D3DDECLTYPE_SHORT4N:
-      return aiVector3D(numeric_cast<float>(pINT16[0]) / kINT16Scale,
-                        numeric_cast<float>(pINT16[1]) / kINT16Scale,
-                        numeric_cast<float>(pINT16[2]) / kINT16Scale);
+      return aiVector3D(pINT16[0] / kINT16Scale, pINT16[1] / kINT16Scale, pINT16[2] / kINT16Scale);
 
     case D3DDECLTYPE_USHORT2N:
-      return aiVector3D(numeric_cast<float>(pUINT16[0]) / kUINT16Scale,
-                        numeric_cast<float>(pUINT16[1]) / kUINT16Scale, 0.0f);
+      return aiVector3D(pUINT16[0] / kUINT16Scale, pUINT16[1] / kUINT16Scale, 0.0f);
 
     case D3DDECLTYPE_USHORT4N:
-      return aiVector3D(numeric_cast<float>(pUINT16[0]) / kUINT16Scale,
-                        numeric_cast<float>(pUINT16[1]) / kUINT16Scale,
-                        numeric_cast<float>(pUINT16[2]) / kUINT16Scale);
+      return aiVector3D(pUINT16[0] / kUINT16Scale, pUINT16[1] / kUINT16Scale, pUINT16[2] / kUINT16Scale);
 
     case D3DDECLTYPE_FLOAT16_2:
       return aiVector3D(pHFP[0], pHFP[1], 0.0f);
@@ -99,9 +87,9 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
   }
 }
 
-aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYPE type) {
-  auto *pFP = reinterpret_cast<float *>(pAttribute);
-  auto *pHFP = reinterpret_cast<half_float::half *>(pAttribute);
+aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttr, D3DDECLTYPE type) {
+  auto *pFP = reinterpret_cast<float *>(pAttr);
+  auto *pHFP = reinterpret_cast<half_float::half *>(pAttr);
   switch (type) {
     case D3DDECLTYPE_FLOAT3:
       return aiColor4D(pFP[0], pFP[1], pFP[2], 1.0f);
@@ -110,7 +98,7 @@ aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYP
     case D3DDECLTYPE_FLOAT16_4:
       return aiColor4D(pHFP[0], pHFP[1], pHFP[2], pHFP[3]);
     case D3DDECLTYPE_D3DCOLOR:
-      return aiColor4D(pFP[2] / kUINT8Scale, pFP[1] / kUINT8Scale, pFP[0] / kUINT8Scale, pFP[3] / kUINT8Scale);
+      return aiColor4D(pAttr[2] / kUINT8Scale, pAttr[1] / kUINT8Scale, pAttr[0] / kUINT8Scale, pAttr[3] / kUINT8Scale);
     default:
       throw std::runtime_error("Unsupported vertex element type for colors");
   }
@@ -135,7 +123,6 @@ int DXUtil::WriteAiVector3DToVertexAttribute(aiVector3D vector, D3DDECLTYPE type
       pFP[2] = vector.z;
       break;
     case D3DDECLTYPE_FLOAT4:
-      // TODO how do we end up needing this case?
       pFP[0] = vector.x;
       pFP[1] = vector.y;
       pFP[2] = vector.z;
@@ -143,10 +130,9 @@ int DXUtil::WriteAiVector3DToVertexAttribute(aiVector3D vector, D3DDECLTYPE type
       break;
 
     case D3DDECLTYPE_D3DCOLOR:
-      // TODO check this math it seems a bit dodgy / unsymmetric
-      pAttribute[2] = numeric_cast<uint8_t>((vector.x + 1.0f) / 2.0f * kUINT8Scale);
-      pAttribute[1] = numeric_cast<uint8_t>((vector.y + 1.0f) / 2.0f * kUINT8Scale);
-      pAttribute[0] = numeric_cast<uint8_t>((vector.z + 1.0f) / 2.0f * kUINT8Scale);
+      pAttribute[2] = numeric_cast<uint8_t>(vector.x * kUINT8Scale);
+      pAttribute[1] = numeric_cast<uint8_t>(vector.y * kUINT8Scale);
+      pAttribute[0] = numeric_cast<uint8_t>(vector.z * kUINT8Scale);
       pAttribute[3] = 0;
       break;
 
@@ -175,15 +161,15 @@ int DXUtil::WriteAiVector3DToVertexAttribute(aiVector3D vector, D3DDECLTYPE type
       break;
 
     case D3DDECLTYPE_USHORT2N:
-      pUINT16[0] = (uint16_t) (vector.x * kUINT16Scale);
-      pUINT16[1] = (uint16_t) (vector.y * kUINT16Scale);
+      pUINT16[0] = numeric_cast<uint16_t>(vector.x * kUINT16Scale);
+      pUINT16[1] = numeric_cast<uint16_t>(vector.y * kUINT16Scale);
       break;
 
     case D3DDECLTYPE_USHORT4N:
-      pUINT16[0] = (uint16_t) (vector.x * kUINT16Scale);
-      pUINT16[1] = (uint16_t) (vector.y * kUINT16Scale);
-      pUINT16[2] = (uint16_t) (vector.z * kUINT16Scale);
-      ((uint16_t *) pAttribute)[3] = 0;
+      pUINT16[0] = numeric_cast<uint16_t>(vector.x * kUINT16Scale);
+      pUINT16[1] = numeric_cast<uint16_t>(vector.y * kUINT16Scale);
+      pUINT16[2] = numeric_cast<uint16_t>(vector.z * kUINT16Scale);
+      pUINT16[3] = 0;
       break;
 
     case D3DDECLTYPE_FLOAT16_2:

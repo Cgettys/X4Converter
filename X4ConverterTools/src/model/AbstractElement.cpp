@@ -3,6 +3,7 @@
 #include <X4ConverterTools/model/AbstractElement.h>
 #include <vector>
 #include <iostream>
+#include <boost/numeric/conversion/cast.hpp>
 
 namespace model {
 using std::string;
@@ -137,7 +138,7 @@ void AbstractElement::GenerateAttrNode(std::vector<aiNode *> &children, const st
     std::cout << "Forming multi-object attribute, Name: " << name << " Key: " << key << std::endl;
     auto base = name + "|" + key;
     auto piece_len = 60 - base.size();
-    auto piece_count = ceil((double) value.size() / piece_len);
+    int piece_count = ceil(boost::numeric_cast<double>(value.size()) / piece_len);
     auto flag_attr = base + "|#" + std::to_string(piece_count);
     if (flag_attr.size() > 63) {
       throw std::runtime_error("Flag attr string too long to import into blender!");

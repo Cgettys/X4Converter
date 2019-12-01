@@ -60,8 +60,8 @@ static void WriteAttrXYZ(xml_node &target, aiVector3D &val) {
   WriteAttr(target, "z", val.z);
 }
 
-static void WriteChildXYZ(const string &name, xml_node &parent, aiVector3D &val) {
-  if (!AssimpUtil::IsZero(val)) {
+static void WriteChildXYZ(const string &name, xml_node &parent, aiVector3D &val, bool write_if_zero = false) {
+  if (!AssimpUtil::IsZero(val) || write_if_zero) {
     auto node = xml::AddChild(parent, name);
     xml::WriteAttrXYZ(node, val);
   } else {

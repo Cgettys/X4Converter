@@ -60,8 +60,10 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
     int matIdx = 1;
     for (auto mat : xmfFile->GetMaterials()) {
       // TODO ordering
+      // TODO debug source of uninit.
       auto matNode = xml::AddChildByAttr(matsNode, "material", "id", std::to_string(matIdx++));
-      xml::WriteAttr(matNode, "ref", mat.Name);
+      std::string matName{mat.Name};
+      xml::WriteAttr(matNode, "ref", matName);
     }
   }
 

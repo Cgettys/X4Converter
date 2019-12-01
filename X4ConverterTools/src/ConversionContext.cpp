@@ -145,15 +145,17 @@ void ConversionContext::PopulateSceneArrays() {
       pScene->mMeshes[meshIdx++] = meshIt;
     }
   }
-  for (auto i = 0U; i < pScene->mNumMeshes; ++i) {
-    AssimpUtil::MergeVertices(pScene->mMeshes[i]);
-  }
+  // TODO figure out what this is supposed to do and if necessary fix it
+//  for (auto i = 0U; i < pScene->mNumMeshes; ++i) {
+//    AssimpUtil::MergeVertices(pScene->mMeshes[i]);
+//  }
   if (!lights.empty()) {
     auto lightCount = numeric_cast<unsigned int>(lights.size());
     pScene->mLights = new aiLight *[lightCount];
 
     for (auto &lightIt : lights) {
       if (lightIt.second == nullptr) {
+
         continue;
         // TODO figure out where nullptr ones come from
       }
@@ -185,13 +187,12 @@ Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, cons
   if (result == nullptr) {
     std::string human_readable_op;
     if (mode == "wb") {
-      human_readable_op = "writing";
+      throw std::runtime_error("File could not be opened for writing: " + name + " Path used: " + path);
     } else if (mode == "rb") {
-      human_readable_op = "reading";
+      throw std::runtime_error("File could not be opened for reading: " + name + " Path used: " + path);
     } else {
-      human_readable_op = "other (mode =" + mode + ")";
+      throw std::runtime_error("File could not be opened for " + mode + ": " + name + " Path used: " + path);
     }
-    throw std::runtime_error("File could not be opened for " + human_readable_op + ": " + name + " Path used: " + path);
   }
   return result;
 }

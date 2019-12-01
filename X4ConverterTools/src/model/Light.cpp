@@ -57,14 +57,17 @@ aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
   auto node = new aiNode();
   node->mName = getName();
   switch (lightKind) {
-    case arealight:result->mType = aiLightSource_AREA;
+    case arealight:
+      result->mType = aiLightSource_AREA;
       result->mSize = area;
       result->mUp = aiVector3D(0, 0, 1); // TODO figure this out
       result->mDirection = offsetRot.Rotate(result->mUp); // TODO checkme
       break;
-    case omni:result->mType = aiLightSource_POINT;
+    case omni:
+      result->mType = aiLightSource_POINT;
       break;
-    case box:return node;
+    case box:
+      return node;
       result->mType = aiLightSource_AREA;
       // TODO wth is this
       result->mSize = area;

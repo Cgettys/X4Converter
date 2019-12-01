@@ -36,12 +36,11 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
   // TODO do this bit in memory
   // Reset stream to start
   auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
-  sourceStream = ctx->GetSourceFile(testFile, "rb");
 
-  size_t sourceLen = sourceStream->FileSize();
-  size_t resultLen = resultStream->FileSize();
-  std::vector<uint8_t> sourceBytes(sourceLen);
-  std::vector<uint8_t> resultByte(resultLen);
+//  size_t sourceLen = sourceStream->FileSize();
+//  size_t resultLen = resultStream->FileSize();
+//  std::vector<uint8_t> sourceBytes(sourceLen);
+//  std::vector<uint8_t> resultByte(resultLen);
   // First layer of checks - Read the result in again - is it equal to what it just wrote out
   XmfFile::Ptr reloadedFile = XmfFile::ReadFromIOStream(resultStream, ctx);
 
@@ -52,7 +51,6 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
 //                sourceLen == sourceStream->Read(&expected[0], sizeof(byte), expectedLen));
 //        BOOST_TEST(
 //                actualLen == resultStream->Read(&actual[0], sizeof(byte), actualLen));
-
 }
 BOOST_AUTO_TEST_CASE(xmf_collision) {
 
