@@ -6,8 +6,9 @@
 
 using namespace util;
 namespace model {
+namespace xml = util::xml;
 
-Connection::Connection(pugi::xml_node node, ConversionContext::Ptr ctx, std::string componentName)
+Connection::Connection(pugi::xml_node node, const ConversionContext::Ptr &ctx, std::string componentName)
     : AbstractElement(ctx) {
 
   if (!node.attribute("name")) {
@@ -83,14 +84,14 @@ void Connection::ConvertToGameFormat(pugi::xml_node out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
-  auto node = AddChildByAttr(out, "connection", "name", getName());
+  auto node = xml::AddChildByAttr(out, "connection", "name", getName());
 
   if (!parentName.empty()) {
-    WriteAttr(node, "parent", parentName);
+    xml::WriteAttr(node, "parent", parentName);
   }
 
   for (const auto &pair : attrs) {
-    WriteAttr(node, pair.first, pair.second);
+    xml::WriteAttr(node, pair.first, pair.second);
   }
 
   WriteOffset(node);
@@ -98,7 +99,7 @@ void Connection::ConvertToGameFormat(pugi::xml_node out) {
   if (parts.empty()) {
     return;
   }
-  auto partsNode = AddChild(node, "parts");
+  auto partsNode = xml::AddChild(node, "parts");
   for (auto &part : parts) {
     part.ConvertToGameFormat(partsNode);
   }

@@ -1,16 +1,8 @@
-//
-// Created by cg on 4/29/19.
-//
-
-#pragma once
-
-#include <string>
-
+#ifndef X4CONVERTER_X4CONVERTERTOOLS_INCLUDE_X4CONVERTERTOOLS_UTIL_FORMATUTIL_H_
+#define X4CONVERTER_X4CONVERTERTOOLS_INCLUDE_X4CONVERTERTOOLS_UTIL_FORMATUTIL_H_
 #include <boost/format.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-
+#include <cstring>
 namespace util {
-
 class FormatUtil {
  public:
   static std::string formatFloat(float f) {
@@ -18,3 +10,4 @@ class FormatUtil {
   }
 };
 }
+#endif //X4CONVERTER_X4CONVERTERTOOLS_INCLUDE_X4CONVERTERTOOLS_UTIL_FORMATUTIL_H_

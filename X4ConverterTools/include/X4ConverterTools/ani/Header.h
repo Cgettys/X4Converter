@@ -15,17 +15,17 @@ class Header {
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
  protected:
  public:
-  int getNumAnims() const;
+  [[nodiscard]] int getNumAnims() const;
 
   void setNumAnims(int NumAnims);
 
-  int getKeyOffsetBytes() const;
+  [[nodiscard]] int getKeyOffsetBytes() const;
 
-  int getVersion() const;
+  [[nodiscard]] int getVersion() const;
 
   void setVersion(int Version);
 
-  int getPadding() const;
+  [[nodiscard]] int getPadding() const;
 
   void setPadding(int Padding);
 

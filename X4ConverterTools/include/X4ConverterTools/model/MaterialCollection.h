@@ -17,7 +17,7 @@ class MaterialCollection {
 
   Material *GetMaterial(const std::string &name);
 
-  const std::string &GetName() const { return _name; }
+  [[nodiscard]] const std::string &GetName() const { return _name; }
 
  private:
 

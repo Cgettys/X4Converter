@@ -183,11 +183,15 @@ Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, cons
 
   Assimp::IOStream *result = io->Open(path, mode);
   if (result == nullptr) {
+    std::string human_readable_op;
     if (mode == "wb") {
-      throw std::runtime_error("File could not be opened or created: " + name);
+      human_readable_op = "writing";
+    } else if (mode == "rb") {
+      human_readable_op = "reading";
     } else {
-      throw std::runtime_error("File could not be opened: " + name);
+      human_readable_op = "other (mode =" + mode + ")";
     }
+    throw std::runtime_error("File could not be opened for " + human_readable_op + ": " + name + " Path used: " + path);
   }
   return result;
 }

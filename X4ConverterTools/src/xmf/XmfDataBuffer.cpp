@@ -32,7 +32,6 @@ void XmfDataBuffer::ReadBinary(Assimp::StreamReaderLE &reader) {
     }
     reader.CopyAndAdvance(GetData(), uncompressed_size);
   } else {
-    uint8_t b = 0;
     std::vector<uint8_t> compressed_data(compressed_size);
     reader.CopyAndAdvance(compressed_data.data(), compressed_size);
 

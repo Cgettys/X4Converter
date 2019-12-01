@@ -30,20 +30,21 @@ std::vector<XmfVertexElement> XmfFile::GetVertexDeclaration() {
   return result;
 }
 
-int XmfFile::NumVertices() {
+uint32_t XmfFile::NumVertices() {
   for (auto &_buffer : buffers) {
-    if (_buffer.IsVertexBuffer())
+    if (_buffer.IsVertexBuffer()) {
       return _buffer.Description.NumItemsPerSection;
+    }
   }
-  return 0;
+  return 0U;
 }
 
-int XmfFile::NumIndices() {
+uint32_t XmfFile::NumIndices() {
   XmfDataBuffer *pIndexBuffer = GetIndexBuffer();
-  return pIndexBuffer != nullptr ? pIndexBuffer->Description.NumItemsPerSection : 0;
+  return pIndexBuffer != nullptr ? pIndexBuffer->Description.NumItemsPerSection : 0U;
 }
 
-int XmfFile::NumMaterials() {
+uint32_t XmfFile::NumMaterials() {
   return boost::numeric_cast<int>(materials.size());
 }
 
@@ -316,7 +317,7 @@ void XmfFile::AllocMeshFaces(aiMesh *pMesh, int numIndices) {
   pMesh->mFaces = new aiFace[numIndices / 3];
 }
 
-void XmfFile::PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices) {
+void XmfFile::PopulateMeshVertices(aiMesh *pMesh, uint32_t firstIndex, uint32_t numIndices) {
   XmfDataBuffer *pIndexBuffer = GetIndexBuffer();
   if (!pIndexBuffer) {
     throw std::runtime_error("Mesh file has no index buffer");
@@ -346,14 +347,15 @@ void XmfFile::PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIn
       XmfVertexElement &elem = buffer.Description.VertexElements[elemIdx];
       auto elemType = (D3DDECLTYPE) elem.Type;
 
-      for (size_t vertexIdxIdx = firstIndex; vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {
+      for (uint32_t vertexIdxIdx = firstIndex; vertexIdxIdx < firstIndex + numIndices; ++vertexIdxIdx) {
         int vertexIdx = (indexFormat == D3DFMT_INDEX16 ? ((uint16_t *) pIndexes)[vertexIdxIdx]
                                                        : ((int *) pIndexes)[vertexIdxIdx]);
-        if (vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection)
+        if (vertexIdx < 0 || vertexIdx >= buffer.Description.NumItemsPerSection) {
           throw std::runtime_error("PopulateMeshVertices: invalid index");
+        }
 
         uint8_t *pVertexElemData = pVertexBuffer + vertexIdx * declarationSize + elemOffset;
-        unsigned int localVertexIdx = vertexIdxIdx - firstIndex;
+        auto localVertexIdx = numeric_cast<uint32_t>(vertexIdxIdx - firstIndex);
         switch (elem.Usage) {
           case D3DDECLUSAGE_POSITION: {
             aiVector3D position = DXUtil::ConvertVertexAttributeToAiVector3D(pVertexElemData, elemType);

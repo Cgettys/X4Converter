@@ -4,13 +4,13 @@
 #include <X4ConverterTools/types.h>
 #include <unordered_map>
 #include <assimp/scene.h>
-
 #include <boost/numeric/conversion/cast.hpp>
 
 class AssimpUtil {
  public:
   static void MergeVertices(aiMesh *pMesh);
-
+  static bool IsZero(aiVector3D &vec);
+  static bool IsZero(aiQuaternion &quat);
   struct VertexInfo {
     aiVector3D Position;
     aiVector3D Normal;

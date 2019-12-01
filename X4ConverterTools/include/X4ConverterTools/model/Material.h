@@ -19,15 +19,18 @@ class Material {
 
  private:
 
-  const std::string
-  GetTextureFilePath(const std::string &filePath, const boost::filesystem::path &baseFolderPath) const;
+  [[nodiscard]] static std::string GetTextureFilePath(const std::string &filePath,
+                                                      const boost::filesystem::path &baseFolderPath);
 
-  const std::string GetDecompressedTextureFilePath(const std::string &filePath,
-                                                   const boost::filesystem::path &baseFolderPath) const;
+  [[nodiscard]] std::string GetDecompressedTextureFilePath(const std::string &filePath,
+                                                           const boost::filesystem::path &baseFolderPath) const;
 
-  void
-  PopulateLayer(aiMaterial *pAiMaterial, const std::string &path, const char *key, aiTextureType type, int num,
-                ConversionContext *ctx);
+  void PopulateLayer(aiMaterial *pAiMaterial,
+                     const std::string &path,
+                     const char *key,
+                     aiTextureType type,
+                     uint32_t num,
+                     ConversionContext *ctx);
 
   std::string _pCollectionName;
   std::string _name;

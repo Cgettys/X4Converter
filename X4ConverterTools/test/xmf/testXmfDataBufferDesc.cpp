@@ -3,7 +3,6 @@
 #include <boost/test/unit_test.hpp>
 #include <assimp/types.h>
 #include <assimp/IOStream.hpp>
-#include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/MemoryIOWrapper.h>
 #include <X4ConverterTools/xmf/XmfDataBufferDesc.h>

@@ -1,17 +1,19 @@
 #include "X4ConverterTools/model/Light.h"
 #include <boost/format.hpp>
 #include <iostream>
+#include <utility>
 
 using namespace boost;
 namespace model {
+namespace xml = util::xml;
 // TODO composition or subclass isntead of this mess
-Light::Light(ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+Light::Light(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 }
 
-Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName) : AbstractElement(
-    ctx) {
-  std::string tmp = str(boost::format("%1%-light%2%") % parentName % node.attribute("name").value());;
+Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName)
+    : AbstractElement(std::move(ctx)) {
+  std::string tmp = str(boost::format("%1%-light%2%") % parentName % node.attribute("name").value());
   setName(tmp);
   ReadOffset(node);
   std::string kind = node.name();
@@ -24,21 +26,21 @@ Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parent
   } else {
     throw std::runtime_error("Unknown light type:" + kind);
   }
-  color = ReadAttrRGB(node);
-  area = aiVector2D(node.attribute("areax").as_float(0.0f), node.attribute("areay").as_float(0.0f));
+  color = xml::ReadAttrRGB(node);
+  area = aiVector2D(node.attribute("areax").as_float(), node.attribute("areay").as_float());
   // TODO how to handle these:
-  lightEffect = node.attribute("lighteffect").as_bool(false);
-  range = node.attribute("range").as_float(0.0f);
-  shadowRange = node.attribute("shadowrange").as_float(0.0f);
-  radius = node.attribute("radius").as_float(0.0f);
-  spotAttenuation = node.attribute("spotattenuation").as_float(0.0f);
-  specularIntensity = node.attribute("specularintensity").as_float(0.0f);
-  trigger = node.attribute("trigger").as_bool(false);
-  intensity = node.attribute("intensity").as_float(0.0f);
+  lightEffect = node.attribute("lighteffect").as_bool();
+  range = node.attribute("range").as_float();
+  shadowRange = node.attribute("shadowrange").as_float();
+  radius = node.attribute("radius").as_float();
+  spotAttenuation = node.attribute("spotattenuation").as_float();
+  specularIntensity = node.attribute("specularintensity").as_float();
+  trigger = node.attribute("trigger").as_bool();
+  intensity = node.attribute("intensity").as_float();
   // TODO animation
 }
 
-Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   ConvertFromAiNode(node, pugi::xml_node());
 }
 
@@ -119,14 +121,14 @@ void Light::ConvertToGameFormat(pugi::xml_node out) {
       break;
   }
 
-  auto lightNode = AddChildByAttr(out, nodeType, "name", name);
+  auto lightNode = xml::AddChildByAttr(out, nodeType, "name", name);
   if (lightKind == arealight) {
-    WriteAttr(lightNode, "areax", area.x);
-    WriteAttr(lightNode, "areay", area.y);
+    xml::WriteAttr(lightNode, "areax", area.x);
+    xml::WriteAttr(lightNode, "areay", area.y);
   }
 
   WriteOffset(lightNode);
-  WriteAttrRGB(lightNode, color);
+  xml::WriteAttrRGB(lightNode, color);
 }
 
 }

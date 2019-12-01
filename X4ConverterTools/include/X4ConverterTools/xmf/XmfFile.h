@@ -37,13 +37,13 @@ class XmfFile {
 
   std::vector<XmfVertexElement> GetVertexDeclaration();
 
-  int NumVertices();
+  uint32_t NumVertices();
 
-  int NumIndices();
+  uint32_t NumIndices();
 
   std::vector<XmfMaterial> &GetMaterials() { return materials; };
 
-  int NumMaterials();
+  uint32_t NumMaterials();
   static XmfFile::Ptr ReadFromFile(const std::string &name, const ConversionContext::Ptr &ctx);
   static XmfFile::Ptr ReadFromIOStream(Assimp::IOStream *pStream, const ConversionContext::Ptr &ctx);
 
@@ -58,7 +58,7 @@ class XmfFile {
 
   static void AllocMeshFaces(aiMesh *pMesh, int numIndices);
 
-  void PopulateMeshVertices(aiMesh *pMesh, int firstIndex, uint32_t numIndices);
+  void PopulateMeshVertices(aiMesh *pMesh, uint32_t firstIndex, uint32_t numIndices);
 
   static void PopulateMeshFaces(aiMesh *pMesh, int numIndices);
 

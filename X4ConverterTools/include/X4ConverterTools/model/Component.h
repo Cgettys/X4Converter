@@ -12,7 +12,7 @@ class Component : public AbstractElement {
  public:
   explicit Component(ConversionContext::Ptr ctx);
 
-  explicit Component(pugi::xml_node node, ConversionContext::Ptr ctx);
+  explicit Component(pugi::xml_node node, const ConversionContext::Ptr &ctx);
 
   aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
 
@@ -26,7 +26,7 @@ class Component : public AbstractElement {
   std::vector<Connection> connections;
   std::vector<Layer> layers;
 
-  void recurseOnChildren(aiNode *child, ConversionContext::Ptr ctx);
+  void recurseOnChildren(aiNode *child, const ConversionContext::Ptr &ctx);
 };
 
 }

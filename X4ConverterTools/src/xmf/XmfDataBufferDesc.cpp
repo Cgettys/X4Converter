@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 using namespace Assimp;
 using namespace boost;

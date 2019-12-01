@@ -8,6 +8,7 @@
 #include <utility>
 
 namespace model {
+namespace xml = util::xml;
 Part::Part(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   hasRef = false;
   collisionLod = nullptr;
@@ -83,9 +84,6 @@ aiNode *Part::ConvertToAiNode(pugi::xml_node intermediateXml) {
   return result;
 }
 
-static std::regex lodRegex("[^-]+\\-lod\\d");
-static std::regex collisionRegex("[^-]+\\-collision");
-
 void Part::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
   std::string name = node->mName.C_Str();
   setName(name);
@@ -96,11 +94,11 @@ void Part::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
     // TODO check part names?
     if (childName == name + "-lights") {
       handleAiLights(child);
-    } else if (regex_match(childName, lodRegex)) {
+    } else if (regex_match(childName, ctx->lodRegex)) {
       auto lod = VisualLod(ctx);
       lod.ConvertFromAiNode(child, pugi::xml_node());
       lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
-    } else if (regex_match(childName, collisionRegex)) {
+    } else if (regex_match(childName, ctx->collisionRegex)) {
       collisionLod = std::make_unique<CollisionLod>(ctx);
       collisionLod->ConvertFromAiNode(child, pugi::xml_node());
     } else if (childName.find('*') != std::string::npos) {
@@ -123,7 +121,7 @@ void Part::ConvertToGameFormat(pugi::xml_node out) {
     throw std::runtime_error("part must be appended to a parts xml element");
   }
 
-  auto partNode = AddChildByAttr(out, "part", "name", getName());
+  auto partNode = xml::AddChildByAttr(out, "part", "name", getName());
 
 
   // Note the return statement! referenced parts don't get LODS!!!
@@ -139,11 +137,11 @@ void Part::ConvertToGameFormat(pugi::xml_node out) {
     return;
   }
   for (const auto &attr : attrs) {
-    WriteAttr(partNode, attr.first, attr.second);
+    xml::WriteAttr(partNode, attr.first, attr.second);
   }
 
   if (!lods.empty()) {
-    auto lodsNode = AddChild(partNode, "lods");
+    auto lodsNode = xml::AddChild(partNode, "lods");
     collisionLod->ConvertToGameFormat(partNode);
     for (auto lod : lods) {
       lod.second.ConvertToGameFormat(lodsNode);
@@ -153,7 +151,7 @@ void Part::ConvertToGameFormat(pugi::xml_node out) {
   }
 
   if (!lights.empty()) {
-    auto lightsNode = AddChild(partNode, "lights");
+    auto lightsNode = xml::AddChild(partNode, "lights");
     for (auto light : lights) {
       light.ConvertToGameFormat(lightsNode);
     }

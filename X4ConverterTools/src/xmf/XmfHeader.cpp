@@ -170,7 +170,7 @@ std::string XmfHeader::validate() const {
   ss << "\tBoundingBoxSize: (";
   ss << BoundingBoxSize[0] << ",";
   ss << BoundingBoxSize[1] << ",";
-  ss << BoundingBoxSize[2] << ")" << endl;;
+  ss << BoundingBoxSize[2] << ")" << endl;
 
   if (PrimitiveType != D3DPT_TRIANGLELIST) {
     ss << "\tERROR: File is using a DirectX primitive type that's not supported by this importer" << endl;

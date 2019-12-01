@@ -18,16 +18,16 @@ class AnimFile {
  public:
   AnimFile();
 
-  AnimFile(Assimp::IOStream *pStream);
+  explicit AnimFile(Assimp::IOStream *pStream);
 
-  AnimFile(pugi::xml_node node);
+  explicit AnimFile(pugi::xml_node &node);
 
   ~AnimFile();
 
   std::string validate(); // Debug method
-  Header getHeader() const;
+  [[nodiscard]] Header GetHeader() const;
 
-  void setHeader(Header header);
+  void SetHeader(Header header);
 
   void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const;
 

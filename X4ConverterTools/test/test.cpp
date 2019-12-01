@@ -78,12 +78,12 @@ BOOST_AUTO_TEST_CASE(xml) {
   fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
                 fs::copy_option::overwrite_if_exists);
 
-  auto ctx = TestUtil::GetTestContext();
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  auto ctx2  = TestUtil::GetTestContext();
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 

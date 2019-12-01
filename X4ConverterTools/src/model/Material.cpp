@@ -86,8 +86,11 @@ aiMaterial *Material::ConvertToAiMaterial(ConversionContext *ctx) {
 // wine '/home/cg/Desktop/X4/DirectXTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
 // Flatten
 // wine '/home/cg/Desktop/X4/DirectXTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
-void Material::PopulateLayer(aiMaterial *pAiMaterial, const std::string &path, const char *key, aiTextureType type,
-                             int num,
+void Material::PopulateLayer(aiMaterial *pAiMaterial,
+                             const std::string &path,
+                             const char *key,
+                             aiTextureType type,
+                             uint32_t num,
                              ConversionContext *ctx) {
   if (!path.empty()) {
     // TODO should GetDecompressedTextureFilePath move?
@@ -104,7 +107,7 @@ void Material::PopulateLayer(aiMaterial *pAiMaterial, const std::string &path, c
   }
 }
 
-const std::string
+std::string
 Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
   std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
   filePath = ConversionContext::MakePlatformSafe(filePath);
@@ -145,7 +148,7 @@ Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, 
   return uncompressedPath.string();
 }
 
-const std::string Material::GetTextureFilePath(const std::string &tgtFilePath, const path &baseFolderPath) const {
+std::string Material::GetTextureFilePath(const std::string &tgtFilePath, const path &baseFolderPath) {
   static const char *allowedExtensions[] = {"gz", "dds", "tga", "jpg"};
 
   std::string filePath = ConversionContext::MakePlatformSafe(tgtFilePath);

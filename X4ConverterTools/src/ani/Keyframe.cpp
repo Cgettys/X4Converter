@@ -1,8 +1,6 @@
 #include <X4ConverterTools/ani/Keyframe.h>
 #include <iostream>
-#include <exception>
 #include <cmath>
-#include <climits>
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <X4ConverterTools/util/FormatUtil.h>

@@ -1,10 +1,7 @@
 #include <X4ConverterTools/model/MaterialLibrary.h>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/range.hpp>
 #include <boost/filesystem.hpp>
-#include <assimp/scene.h>
-
 #include <string>
 
 using namespace boost;

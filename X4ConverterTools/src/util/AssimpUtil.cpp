@@ -55,20 +55,29 @@ void AssimpUtil::MergeVertices(aiMesh *pMesh) {
     aiFace *pFace = &pMesh->mFaces[faceIdx];
     for (int i = 0; i < pFace->mNumIndices; ++i) {
       auto it = indexToFirstIndex.find(pFace->mIndices[i]);
-      if (it != indexToFirstIndex.end())
+      if (it != indexToFirstIndex.end()) {
         pFace->mIndices[i] = numeric_cast<uint32_t>(it->second);
+      }
     }
   }
   // TODO can we get rid of this function or not?
 }
+bool AssimpUtil::IsZero(aiVector3D &vec) {
+  return vec.Equal(aiVector3D());
+}
+bool AssimpUtil::IsZero(aiQuaternion &quat) {
+  return quat.Equal(aiQuaternion());
+}
 
 bool AssimpUtil::VertexInfo::operator==(const VertexInfo &other) const {
-  if (Position != other.Position || Normal != other.Normal)
+  if (Position != other.Position || Normal != other.Normal) {
     return false;
+  }
 
   for (int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
-    if (UV[i] != other.UV[i])
+    if (UV[i] != other.UV[i]) {
       return false;
+    }
   }
   return true;
 }

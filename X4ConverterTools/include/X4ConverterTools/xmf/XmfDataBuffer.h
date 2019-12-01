@@ -20,9 +20,9 @@ class XmfDataBuffer : public IXmf {
 
   void WriteBinary(Assimp::StreamWriterLE &writer) const override;
 
-  bool IsIndexBuffer() const;
+  [[nodiscard]] bool IsIndexBuffer() const;
 
-  bool IsVertexBuffer() const;
+  [[nodiscard]] bool IsVertexBuffer() const;
 
   uint8_t *GetData();
 

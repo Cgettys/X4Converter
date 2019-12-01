@@ -1,6 +1,11 @@
 #include <X4ConverterTools/util/DXUtil.h>
-
+#include <boost/numeric/conversion/cast.hpp>
 namespace util {
+using boost::numeric_cast;
+static float kUINT8Scale = 255.0f;
+static float kINT16Scale = 32767.0f;
+static float kUINT16Scale = 65535.0f;
+
 int DXUtil::GetVertexElementTypeSize(D3DDECLTYPE type) {
   switch (type) {
     case D3DDECLTYPE_FLOAT1:
@@ -12,26 +17,33 @@ int DXUtil::GetVertexElementTypeSize(D3DDECLTYPE type) {
     case D3DDECLTYPE_USHORT2N:
     case D3DDECLTYPE_FLOAT16_2:
     case D3DDECLTYPE_DEC3N:
-    case D3DDECLTYPE_UDEC3:return 4;
+    case D3DDECLTYPE_UDEC3:
+      return 4;
 
     case D3DDECLTYPE_FLOAT2:
     case D3DDECLTYPE_SHORT4:
     case D3DDECLTYPE_SHORT4N:
     case D3DDECLTYPE_USHORT4N:
-    case D3DDECLTYPE_FLOAT16_4:return 8;
+    case D3DDECLTYPE_FLOAT16_4:
+      return 8;
 
-    case D3DDECLTYPE_FLOAT3:return 12;
+    case D3DDECLTYPE_FLOAT3:
+      return 12;
 
-    case D3DDECLTYPE_FLOAT4:return 16;
-    default:throw std::runtime_error("Unknown vertex element type");
+    case D3DDECLTYPE_FLOAT4:
+      return 16;
+    default:
+      throw std::runtime_error("Unknown vertex element type");
   }
 }
 
 aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDECLTYPE type) {
   switch (type) {
-    case D3DDECLTYPE_FLOAT1:return aiVector3D(((float *) pAttribute)[0], 0.0f, 0.0f);
+    case D3DDECLTYPE_FLOAT1:
+      return aiVector3D(((float *) pAttribute)[0], 0.0f, 0.0f);
 
-    case D3DDECLTYPE_FLOAT2:return aiVector3D(((float *) pAttribute)[0], ((float *) pAttribute)[1], 0.0f);
+    case D3DDECLTYPE_FLOAT2:
+      return aiVector3D(((float *) pAttribute)[0], ((float *) pAttribute)[1], 0.0f);
 
     case D3DDECLTYPE_FLOAT3:
     case D3DDECLTYPE_FLOAT4:
@@ -40,11 +52,12 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
                         ((float *) pAttribute)[2]);
 
     case D3DDECLTYPE_D3DCOLOR:
-      return aiVector3D(((float) pAttribute[2] / 255.0f) * 2.0f - 1.0f,
-                        ((float) pAttribute[1] / 255.0f) * 2.0f - 1.0f,
-                        ((float) pAttribute[0] / 255.0f) * 2.0f - 1.0f);
+      return aiVector3D(((float) pAttribute[2] / kUINT8Scale) * 2.0f - 1.0f,
+                        ((float) pAttribute[1] / kUINT8Scale) * 2.0f - 1.0f,
+                        ((float) pAttribute[0] / kUINT8Scale) * 2.0f - 1.0f);
 
-    case D3DDECLTYPE_SHORT2:return aiVector3D(((short *) pAttribute)[0], ((short *) pAttribute)[1], 0.0f);
+    case D3DDECLTYPE_SHORT2:
+      return aiVector3D(((short *) pAttribute)[0], ((short *) pAttribute)[1], 0.0f);
 
     case D3DDECLTYPE_SHORT4:
       return aiVector3D(((short *) pAttribute)[0],
@@ -52,22 +65,22 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
                         ((short *) pAttribute)[2]);
 
     case D3DDECLTYPE_SHORT2N:
-      return aiVector3D((float) ((short *) pAttribute)[0] / 32767.0f,
-                        (float) ((short *) pAttribute)[1] / 32767.0f, 0.0f);
+      return aiVector3D((float) ((short *) pAttribute)[0] / kINT16Scale,
+                        (float) ((short *) pAttribute)[1] / kINT16Scale, 0.0f);
 
     case D3DDECLTYPE_SHORT4N:
-      return aiVector3D((float) ((short *) pAttribute)[0] / 32767.0f,
-                        (float) ((short *) pAttribute)[1] / 32767.0f,
-                        (float) ((short *) pAttribute)[2] / 32767.0f);
+      return aiVector3D((float) ((short *) pAttribute)[0] / kINT16Scale,
+                        (float) ((short *) pAttribute)[1] / kINT16Scale,
+                        (float) ((short *) pAttribute)[2] / kINT16Scale);
 
     case D3DDECLTYPE_USHORT2N:
-      return aiVector3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
-                        (float) ((uint16_t *) pAttribute)[1] / 65535.0f, 0.0f);
+      return aiVector3D((float) ((uint16_t *) pAttribute)[0] / kUINT16Scale,
+                        (float) ((uint16_t *) pAttribute)[1] / kUINT16Scale, 0.0f);
 
     case D3DDECLTYPE_USHORT4N:
-      return aiVector3D((float) ((uint16_t *) pAttribute)[0] / 65535.0f,
-                        (float) ((uint16_t *) pAttribute)[1] / 65535.0f,
-                        (float) ((uint16_t *) pAttribute)[2] / 65535.0f);
+      return aiVector3D((float) ((uint16_t *) pAttribute)[0] / kUINT16Scale,
+                        (float) ((uint16_t *) pAttribute)[1] / kUINT16Scale,
+                        (float) ((uint16_t *) pAttribute)[2] / kUINT16Scale);
 
     case D3DDECLTYPE_FLOAT16_2:
       return aiVector3D(((half_float::half *) pAttribute)[0],
@@ -78,131 +91,149 @@ aiVector3D DXUtil::ConvertVertexAttributeToAiVector3D(uint8_t *pAttribute, D3DDE
       return aiVector3D(((half_float::half *) pAttribute)[0], ((half_float::half *) pAttribute)[1],
                         ((half_float::half *) pAttribute)[2]);
 
-    default:throw std::runtime_error("Unsupported vertex element type for vectors");
+    default:
+      throw std::runtime_error("Unsupported vertex element type for vectors");
   }
 }
 
 aiColor4D DXUtil::ConvertVertexAttributeToColorF(uint8_t *pAttribute, D3DDECLTYPE type) {
+  auto *pFP = reinterpret_cast<float *>(pAttribute);
+  auto *pHFP = reinterpret_cast<half_float::half *>(pAttribute);
   switch (type) {
     case D3DDECLTYPE_FLOAT3:
-      return aiColor4D(((float *) pAttribute)[0],
-                       ((float *) pAttribute)[1],
-                       ((float *) pAttribute)[2],
-                       1.0f);
-
+      return aiColor4D(pFP[0], pFP[1], pFP[2], 1.0f);
     case D3DDECLTYPE_FLOAT4:
-      return aiColor4D(((float *) pAttribute)[0], ((float *) pAttribute)[1], ((float *) pAttribute)[2],
-                       ((float *) pAttribute)[3]);
-
+      return aiColor4D(pFP[0], pFP[1], pFP[2], pFP[3]);
     case D3DDECLTYPE_FLOAT16_4:
-      return aiColor4D(((half_float::half *) pAttribute)[0], ((half_float::half *) pAttribute)[1],
-                       ((half_float::half *) pAttribute)[2], ((half_float::half *) pAttribute)[3]);
-
+      return aiColor4D(pHFP[0], pHFP[1], pHFP[2], pHFP[3]);
     case D3DDECLTYPE_D3DCOLOR:
-      return aiColor4D((float) pAttribute[2] / 255.0f, (float) pAttribute[1] / 255.0f,
-                       (float) pAttribute[0] / 255.0f, (float) pAttribute[3] / 255.0f);
-
-    default:throw std::runtime_error("Unsupported vertex element type for colors");
+      return aiColor4D(pFP[2] / kUINT8Scale, pFP[1] / kUINT8Scale, pFP[0] / kUINT8Scale, pFP[3] / kUINT8Scale);
+    default:
+      throw std::runtime_error("Unsupported vertex element type for colors");
   }
 }
 
 int DXUtil::WriteAiVector3DToVertexAttribute(aiVector3D vector, D3DDECLTYPE type, uint8_t *pAttribute) {
+  auto *pFP = reinterpret_cast<float *>(pAttribute);
+  auto *pHFP = reinterpret_cast<half_float::half *>(pAttribute);
+  auto *pINT16 = reinterpret_cast<int16_t *>(pAttribute);
+  auto *pUINT16 = reinterpret_cast<int16_t *>(pAttribute);
   switch (type) {
-    case D3DDECLTYPE_FLOAT1:((float *) pAttribute)[0] = vector.x;
+    case D3DDECLTYPE_FLOAT1:
+      pFP[0] = vector.x;
+      break;
+    case D3DDECLTYPE_FLOAT2:
+      pFP[0] = vector.x;
+      pFP[1] = vector.y;
+      break;
+    case D3DDECLTYPE_FLOAT3:
+      pFP[0] = vector.x;
+      pFP[1] = vector.y;
+      pFP[2] = vector.z;
+      break;
+    case D3DDECLTYPE_FLOAT4:
+      // TODO how do we end up needing this case?
+      pFP[0] = vector.x;
+      pFP[1] = vector.y;
+      pFP[2] = vector.z;
+      pFP[3] = 0.0f;
       break;
 
-    case D3DDECLTYPE_FLOAT2:((float *) pAttribute)[0] = vector.x;
-      ((float *) pAttribute)[1] = vector.y;
-      break;
-
-    case D3DDECLTYPE_FLOAT3:((float *) pAttribute)[0] = vector.x;
-      ((float *) pAttribute)[1] = vector.y;
-      ((float *) pAttribute)[2] = vector.z;
-      break;
-
-    case D3DDECLTYPE_FLOAT4:((float *) pAttribute)[0] = vector.x;
-      ((float *) pAttribute)[1] = vector.y;
-      ((float *) pAttribute)[2] = vector.z;
-      ((float *) pAttribute)[3] = 0.0f;
-      break;
-
-    case D3DDECLTYPE_D3DCOLOR:pAttribute[2] = (uint8_t) ((vector.x + 1.0f) / 2.0f * 255.0f);
-      pAttribute[1] = (uint8_t) ((vector.y + 1.0f) / 2.0f * 255.0f);
-      pAttribute[0] = (uint8_t) ((vector.z + 1.0f) / 2.0f * 255.0f);
+    case D3DDECLTYPE_D3DCOLOR:
+      // TODO check this math it seems a bit dodgy / unsymmetric
+      pAttribute[2] = numeric_cast<uint8_t>((vector.x + 1.0f) / 2.0f * kUINT8Scale);
+      pAttribute[1] = numeric_cast<uint8_t>((vector.y + 1.0f) / 2.0f * kUINT8Scale);
+      pAttribute[0] = numeric_cast<uint8_t>((vector.z + 1.0f) / 2.0f * kUINT8Scale);
       pAttribute[3] = 0;
       break;
 
-    case D3DDECLTYPE_SHORT2:((short *) pAttribute)[0] = (short) vector.x;
-      ((short *) pAttribute)[1] = (short) vector.y;
+    case D3DDECLTYPE_SHORT2:
+      pINT16[0] = numeric_cast<int16_t>(vector.x);
+      pINT16[1] = numeric_cast<int16_t>(vector.y);
       break;
 
-    case D3DDECLTYPE_SHORT4:((short *) pAttribute)[0] = (short) vector.x;
-      ((short *) pAttribute)[1] = (short) vector.y;
-      ((short *) pAttribute)[2] = (short) vector.z;
-      ((short *) pAttribute)[3] = 0;
+    case D3DDECLTYPE_SHORT4:
+      pINT16[0] = numeric_cast<int16_t>(vector.x);
+      pINT16[1] = numeric_cast<int16_t>(vector.y);
+      pINT16[2] = numeric_cast<int16_t>(vector.z);
+      pINT16[3] = 0;
       break;
 
-    case D3DDECLTYPE_SHORT2N:((short *) pAttribute)[0] = (short) (vector.x * 32767.0f);
-      ((short *) pAttribute)[1] = (short) (vector.y * 32767.0f);
+    case D3DDECLTYPE_SHORT2N:
+      pINT16[0] = numeric_cast<int16_t>(vector.x * kINT16Scale);
+      pINT16[1] = numeric_cast<int16_t>(vector.y * kINT16Scale);
       break;
 
-    case D3DDECLTYPE_SHORT4N:((short *) pAttribute)[0] = (short) (vector.x * 32767.0f);
-      ((short *) pAttribute)[1] = (short) (vector.y * 32767.0f);
-      ((short *) pAttribute)[2] = (short) (vector.z * 32767.0f);
-      ((short *) pAttribute)[3] = 0;
+    case D3DDECLTYPE_SHORT4N:
+      pINT16[0] = numeric_cast<int16_t>(vector.x * kINT16Scale);
+      pINT16[1] = numeric_cast<int16_t>(vector.y * kINT16Scale);
+      pINT16[2] = numeric_cast<int16_t>(vector.z * kINT16Scale);
+      pINT16[3] = 0;
       break;
 
-    case D3DDECLTYPE_USHORT2N:((uint16_t *) pAttribute)[0] = (uint16_t) (vector.x * 65535.0f);
-      ((uint16_t *) pAttribute)[1] = (uint16_t) (vector.y * 65535.0f);
+    case D3DDECLTYPE_USHORT2N:
+      pUINT16[0] = (uint16_t) (vector.x * kUINT16Scale);
+      pUINT16[1] = (uint16_t) (vector.y * kUINT16Scale);
       break;
 
-    case D3DDECLTYPE_USHORT4N:((uint16_t *) pAttribute)[0] = (uint16_t) (vector.x * 65535.0f);
-      ((uint16_t *) pAttribute)[1] = (uint16_t) (vector.y * 65535.0f);
-      ((uint16_t *) pAttribute)[2] = (uint16_t) (vector.z * 65535.0f);
+    case D3DDECLTYPE_USHORT4N:
+      pUINT16[0] = (uint16_t) (vector.x * kUINT16Scale);
+      pUINT16[1] = (uint16_t) (vector.y * kUINT16Scale);
+      pUINT16[2] = (uint16_t) (vector.z * kUINT16Scale);
       ((uint16_t *) pAttribute)[3] = 0;
       break;
 
-    case D3DDECLTYPE_FLOAT16_2:((half_float::half *) pAttribute)[0] = (half_float::half) vector.x;
-      ((half_float::half *) pAttribute)[1] = (half_float::half) vector.y;
+    case D3DDECLTYPE_FLOAT16_2:
+      pHFP[0] = half_float::half{vector.x};
+      pHFP[1] = half_float::half{vector.y};
       break;
 
-    case D3DDECLTYPE_FLOAT16_4:((half_float::half *) pAttribute)[0] = (half_float::half) vector.x;
-      ((half_float::half *) pAttribute)[1] = (half_float::half) vector.y;
-      ((half_float::half *) pAttribute)[2] = (half_float::half) vector.z;
-      ((half_float::half *) pAttribute)[3] = (half_float::half) 0.0f;
+    case D3DDECLTYPE_FLOAT16_4:
+      pHFP[0] = half_float::half{vector.x};
+      pHFP[1] = half_float::half{vector.y};
+      pHFP[2] = half_float::half{vector.z};
+      pHFP[3] = half_float::half{0.0f};
       break;
 
-    default:throw std::runtime_error("Unsupported vertex element type for vectors");
+    default:
+      throw std::runtime_error("Unsupported vertex element type for vectors");
   }
   return GetVertexElementTypeSize(type);
 }
 
 int DXUtil::WriteColorFToVertexAttribute(const aiColor4D &color, D3DDECLTYPE type, uint8_t *pAttribute) {
+  auto *pFP = reinterpret_cast<float *>(pAttribute);
+  auto *pHFP = reinterpret_cast<half_float::half *>(pAttribute);
   switch (type) {
-    case D3DDECLTYPE_FLOAT3:((float *) pAttribute)[0] = color.r;
-      ((float *) pAttribute)[1] = color.g;
-      ((float *) pAttribute)[2] = color.b;
+    case D3DDECLTYPE_FLOAT3:
+      pFP[0] = color.r;
+      pFP[1] = color.g;
+      pFP[2] = color.b;
       break;
 
-    case D3DDECLTYPE_FLOAT4:((float *) pAttribute)[0] = color.r;
-      ((float *) pAttribute)[1] = color.g;
-      ((float *) pAttribute)[2] = color.b;
-      ((float *) pAttribute)[3] = color.a;
+    case D3DDECLTYPE_FLOAT4:
+      pFP[0] = color.r;
+      pFP[1] = color.g;
+      pFP[2] = color.b;
+      pFP[3] = color.a;
       break;
 
-    case D3DDECLTYPE_FLOAT16_4:((half_float::half *) pAttribute)[0] = (half_float::half) color.r;
-      ((half_float::half *) pAttribute)[1] = (half_float::half) color.g;
-      ((half_float::half *) pAttribute)[2] = (half_float::half) color.b;
-      ((half_float::half *) pAttribute)[3] = (half_float::half) color.a;
+    case D3DDECLTYPE_FLOAT16_4:
+      pHFP[0] = half_float::half{color.r};
+      pHFP[1] = half_float::half{color.g};
+      pHFP[2] = half_float::half{color.b};
+      pHFP[3] = half_float::half{color.a};
       break;
 
-    case D3DDECLTYPE_D3DCOLOR:pAttribute[2] = (uint8_t) (color.r * 255.0f);
-      pAttribute[1] = (uint8_t) (color.g * 255.0f);
-      pAttribute[0] = (uint8_t) (color.b * 255.0f);
-      pAttribute[3] = (uint8_t) (color.a * 255.0f);
+    case D3DDECLTYPE_D3DCOLOR:
+      pAttribute[2] = numeric_cast<uint8_t>(color.r * kUINT8Scale);
+      pAttribute[1] = numeric_cast<uint8_t>(color.g * kUINT8Scale);
+      pAttribute[0] = numeric_cast<uint8_t>(color.b * kUINT8Scale);
+      pAttribute[3] = numeric_cast<uint8_t>(color.a * kUINT8Scale);
       break;
 
-    default:throw std::runtime_error("Unsupported vertex element type for colors");
+    default:
+      throw std::runtime_error("Unsupported vertex element type for colors");
   }
   return GetVertexElementTypeSize(type);
 }

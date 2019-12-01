@@ -1,14 +1,16 @@
 #include "X4ConverterTools/model/Layer.h"
 // TODO waypoints, trailemitters
 #include <boost/format.hpp>
+#include <utility>
+#include <X4ConverterTools/util/XmlUtil.h>
 
-using namespace boost;
 namespace model {
-Layer::Layer(ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+using namespace boost;
+Layer::Layer(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 }
 
-Layer::Layer(pugi::xml_node node, ConversionContext::Ptr ctx, int id) : AbstractElement(ctx) {
+Layer::Layer(pugi::xml_node node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx) {
   layerId = id;
   setName(str(format("layer%d") % layerId));
   auto lightsNode = node.child("lights");
@@ -19,7 +21,7 @@ Layer::Layer(pugi::xml_node node, ConversionContext::Ptr ctx, int id) : Abstract
   }
 }
 
-model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(ctx) {
+model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   ConvertFromAiNode(node, pugi::xml_node());
 }
 
@@ -71,7 +73,7 @@ void Layer::ConvertToGameFormat(pugi::xml_node out) {
     throw std::runtime_error("layer was passed incorrect node to write to!");
   }
   if (!lights.empty()) {
-    auto lightsNode = AddChild(out, "lights");
+    auto lightsNode = util::xml::AddChild(out, "lights");
     for (auto light : lights) {
       light.ConvertToGameFormat(lightsNode);
     }

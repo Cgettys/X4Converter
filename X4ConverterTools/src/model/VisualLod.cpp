@@ -3,6 +3,7 @@
 #include <utility>
 
 namespace model {
+namespace xml = util::xml;
 VisualLod::VisualLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
 
 VisualLod::VisualLod(pugi::xml_node node, std::string partName, const ConversionContext::Ptr &ctx) : Lod(ctx) {
@@ -52,15 +53,15 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
     } else {
       lodNode = out.append_child("lod");
     }
-    WriteAttr(lodNode, "index", std::to_string(index));
+    xml::WriteAttr(lodNode, "index", std::to_string(index));
     // TODO remove old?
-    auto matsNode = AddChild(lodNode, "materials");
+    auto matsNode = xml::AddChild(lodNode, "materials");
     // TODO write out xmfFile
     int matIdx = 1;
     for (auto mat : xmfFile->GetMaterials()) {
       // TODO ordering
-      auto matNode = AddChildByAttr(matsNode, "material", "id", std::to_string(matIdx++));
-      WriteAttr(matNode, "ref", mat.Name);
+      auto matNode = xml::AddChildByAttr(matsNode, "material", "id", std::to_string(matIdx++));
+      xml::WriteAttr(matNode, "ref", mat.Name);
     }
   }
 

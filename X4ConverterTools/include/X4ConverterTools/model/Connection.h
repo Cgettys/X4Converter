@@ -2,24 +2,25 @@
 
 #include <X4ConverterTools/model/Part.h>
 #include <pugixml.hpp>
+#include <utility>
 #include <vector>
 #include "AbstractElement.h"
 
 namespace model {
 class Connection : public AbstractElement {
  public:
-  Connection(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
+  Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
 
-  explicit Connection(pugi::xml_node node, ConversionContext::Ptr ctx,
+  explicit Connection(pugi::xml_node node, const ConversionContext::Ptr &ctx,
                       std::string componentName = "");
 
   explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");
 
-  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) final;
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) final;
 
-  void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) final;
 
   std::string getParentName();
 

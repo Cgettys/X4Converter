@@ -32,13 +32,29 @@ AnimFile::AnimFile(IOStream *pStream) {        // TODO endian handling??
   // TODO fixme
 }
 
+AnimFile::AnimFile(pugi::xml_node &node) {
+  header = Header();
+  pugi::xml_node dataNode = node.child("data");
+  for (auto &part : dataNode.children()) {
+    std::string partName = part.attribute("name").as_string();
+    for (auto &animCat : part.children()) {
+      for (auto &anim : animCat.children()) {
+        // TODO move this one layer down and assert only 1 category
+        descs.emplace_back(partName, anim);
+      }
+    }
+  }
+  header.setNumAnims(numeric_cast<int>(descs.size()));
+  pugi::xml_node metaNode = node.child("metadata");
+}
+
 AnimFile::~AnimFile() = default;
 
-Header AnimFile::getHeader() const {
+Header AnimFile::GetHeader() const {
   return header;
 }
 
-void AnimFile::setHeader(Header h) {
+void AnimFile::SetHeader(Header h) {
   header = h;
 }
 
@@ -123,22 +139,6 @@ void AnimFile::HandleConnection(pugi::xml_node tgtNode, const pugi::xml_node con
     }
   }
 
-}
-
-AnimFile::AnimFile(pugi::xml_node node) {
-  header = Header();
-  pugi::xml_node dataNode = node.child("data");
-  for (auto &part : dataNode.children()) {
-    std::string partName = part.attribute("name").as_string();
-    for (auto &animCat : part.children()) {
-      for (auto &anim : animCat.children()) {
-        // TODO move this one layer down and assert only 1 category
-        descs.emplace_back(partName, anim);
-      }
-    }
-  }
-  header.setNumAnims(numeric_cast<int>(descs.size()));
-  pugi::xml_node metaNode = node.child("metadata");
 }
 
 void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node) {

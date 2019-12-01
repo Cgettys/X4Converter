@@ -2,15 +2,11 @@
 
 #include <X4ConverterTools/model/AbstractElement.h>
 #include <vector>
-#include <cstdio>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <X4ConverterTools/util/FormatUtil.h>
 
 namespace model {
 using std::string;
-
+namespace xml = util::xml;
 AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
 
 }
@@ -48,12 +44,12 @@ void AbstractElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode 
   auto oldCount = target->mNumChildren;
   auto newCount = oldCount + numChildren;
   auto arr = new aiNode *[newCount];
-  auto oldLen = oldCount * sizeof(aiNode *);
+  auto oldLen = sizeof(aiNode *[oldCount]);
 
   if (target->mChildren != nullptr) {
     memcpy(arr, target->mChildren, oldLen);
   }
-  memcpy(arr + oldCount, children.data(), numChildren * sizeof(aiNode *));
+  memcpy(arr + oldCount, children.data(), sizeof(aiNode *[numChildren]));
   target->mNumChildren = newCount;
   auto old = target->mChildren;
   target->mChildren = arr;
@@ -114,8 +110,8 @@ void AbstractElement::readAiNodeChild(aiNode *parent, aiNode *source) {
     std::cerr << "Warning, name of element was " + name + " but tag was for name: " + namePart << std::endl;
   }
 
-  bool tagContainsPound = tagPart.find('#') == string::npos;
-  bool valContainsPound = valPart.find('#') == string::npos;
+  bool tagContainsPound = tagPart.find('#') != string::npos;
+  bool valContainsPound = valPart.find('#') != string::npos;
   if (!tagContainsPound && !valContainsPound) {
     attrs[tagPart] = valPart;
   }
@@ -129,65 +125,6 @@ void AbstractElement::readAiNodeChild(aiNode *parent, aiNode *source) {
   if (tagContainsPound && valContainsPound) {
     std::cerr << "Likely Malformed tag: " << raw << std::endl;
   }
-}
-
-pugi::xml_node AbstractElement::AddChild(pugi::xml_node parent, const string &elementName) {
-  auto result = parent.child(elementName.c_str());
-  if (!result.empty()) {
-    return result;
-  }
-  return parent.append_child(elementName.c_str());
-}
-
-pugi::xml_node
-AbstractElement::AddChildByAttr(pugi::xml_node parent, const string &elemName, const string &attrName,
-                                const string &attrVal) {
-  auto result = parent.find_child_by_attribute(elemName.c_str(), attrName.c_str(), attrVal.c_str());
-  if (!result.empty()) {
-    return result;
-  }
-  result = parent.append_child(elemName.c_str());
-  result.append_attribute(attrName.c_str()).set_value(attrVal.c_str());
-  return result;
-}
-
-// TODO corresponding read functions
-aiVector3D AbstractElement::ReadAttrXYZ(pugi::xml_node target) {
-  return aiVector3D(target.attribute("x").as_float(0.0), target.attribute("y").as_float(0.0),
-                    target.attribute("z").as_float(0.0));
-}
-
-// TODO make these static and use static import/ refactor into a util class
-void AbstractElement::WriteAttrXYZ(pugi::xml_node target, aiVector3D val) {
-  WriteAttr(target, "x", val.x);
-  WriteAttr(target, "y", val.y);
-  WriteAttr(target, "z", val.z);
-}
-
-aiQuaternion AbstractElement::ReadAttrQuat(pugi::xml_node target) {
-  return aiQuaternion{target.attribute("qw").as_float(), target.attribute("qx").as_float(),
-                      target.attribute("qy").as_float(), target.attribute("qz").as_float()};
-}
-
-void AbstractElement::WriteAttrQuat(pugi::xml_node target, aiQuaternion val) {
-  // NB: weird XML ordering for consistency with game files
-  WriteAttr(target, "qx", val.x);
-  WriteAttr(target, "qy", val.y);
-  WriteAttr(target, "qz", val.z);
-  WriteAttr(target, "qw", val.w);
-}
-
-void AbstractElement::WriteAttr(pugi::xml_node target, const string &name, float val) {
-  string strVal = util::FormatUtil::formatFloat(val);
-  WriteAttr(target, name, strVal);
-}
-
-void AbstractElement::WriteAttr(pugi::xml_node target, const string &name, const string &val) {
-  auto attr = target.attribute(name.c_str());
-  if (attr.empty()) {
-    attr = target.append_attribute(name.c_str());
-  }
-  attr.set_value(val.c_str());
 }
 
 void AbstractElement::GenerateAttrNode(std::vector<aiNode *> &children, const string &key, const string &value) {
@@ -222,25 +159,10 @@ void AbstractElement::GenerateAttrNode(std::vector<aiNode *> &children, const st
 }
 
 void AbstractElement::WriteOffset(pugi::xml_node target) {
-  bool offsetPosZero = offsetPos.Equal(aiVector3D());
-  bool offsetRotZero = offsetRot.Equal(aiQuaternion());
-  auto offsetNode = AddChild(target, "offset");
-  if (!offsetPosZero) {
-    auto posNode = AddChild(offsetNode, "position");
-    WriteAttrXYZ(posNode, offsetPos);
-  } else {
-    offsetNode.remove_child("position");
-  }
-  // TODO util method to check if zero
-  if (!offsetRotZero) {
-    auto quatNode = AddChild(offsetNode, "quaternion");
-    WriteAttrQuat(quatNode, offsetRot);
-  } else {
-    offsetNode.remove_child("quaternion");
-  }
-  if (offsetPosZero && offsetRotZero) {
-    target.remove_child("offset");
-  }
+  auto offsetNode = xml::AddChild(target, "offset");
+  xml::WriteChildXYZ("position", offsetNode, offsetPos);
+  xml::WriteRotation(offsetNode, offsetRot);
+  xml::RemoveIfChildless(offsetNode);
 
 }
 
@@ -267,34 +189,19 @@ void AbstractElement::ApplyOffsetToAiNode(aiNode *target) {
 }
 
 void AbstractElement::ReadOffset(pugi::xml_node target) {
-  offsetRot = aiQuaternion(0, 0, 0, 0);
-  offsetPos = aiVector3D(0, 0, 0);
+  offsetPos = aiVector3D();
+  offsetRot = aiQuaternion();
   // A word to the wise: the XML tends to be listed qx, qy, qz, qw. Why, I do not know.
   // However, most sensible software expects qw, qx, qy, qz
   auto offsetNode = target.child("offset");
   if (offsetNode) {
     auto positionNode = offsetNode.child("position");
-    if (positionNode) {
-      offsetPos = ReadAttrXYZ(positionNode);
-    }
+    offsetPos = xml::ReadAttrXYZ(positionNode);
+
     auto quaternionNode = offsetNode.child("quaternion");
-    if (quaternionNode) {
-      offsetRot = ReadAttrQuat(quaternionNode);
-    }
+    offsetRot = xml::ReadAttrQuat(quaternionNode);
     // TODO check for weird other cases
   }
 
 }
-
-aiColor3D AbstractElement::ReadAttrRGB(pugi::xml_node target) {
-  return aiColor3D(target.attribute("r").as_float(0.0), target.attribute("g").as_float(0.0),
-                   target.attribute("b").as_float(0.0));
-}
-
-void AbstractElement::WriteAttrRGB(pugi::xml_node target, const aiColor3D &val) {
-  WriteAttr(target, "r", val.r);
-  WriteAttr(target, "g", val.g);
-  WriteAttr(target, "b", val.b);
-}
-
 }

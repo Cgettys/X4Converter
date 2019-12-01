@@ -114,7 +114,7 @@ int main(int ac, char *av[]) {
     }
 
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
-    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath, io);
+    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath.generic_string(), io, !migrate, test);
     fs::path outFile(inFile);
     if (action == "importxmf") {
       // .xml/.xmf -> .dae //

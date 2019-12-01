@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <assimp/scene.h>
+#include <regex.h>
 
 #include <assimp/DefaultIOSystem.h>
 #include "X4ConverterTools/model/MaterialLibrary.h"
@@ -51,6 +52,9 @@ class ConversionContext {
   bool CheckLight(const std::string &name);
   bool ShouldConvertGeometry() { return should_convert; };
 
+  // TODO somewhere better
+  std::regex lodRegex{"[^-]+\\-lod\\d"};
+  std::regex collisionRegex{"[^-]+\\-collision"};
  protected:
   bool test;
   bool should_convert;
