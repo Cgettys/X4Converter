@@ -88,6 +88,7 @@ void AbstractElement::readMultiObjectAttr(aiNode *parent, const string &namePart
         break;
       }
     }
+
     if (i != count + 1) {
       // Warning because they may have accidentally deleted something
       std::cerr << "Could not find part #" << i << "For name: " << namePart << " and key: " << tagPart

@@ -13,7 +13,7 @@ Light::Light(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName)
     : AbstractElement(std::move(ctx)) {
-  std::string tmp = str(boost::format("%1%-light%2%") % parentName % node.attribute("name").value());
+  std::string tmp = str(boost::format("%1%-light-%2%") % parentName % node.attribute("name").value());
   setName(tmp);
   ReadOffset(node);
   std::string kind = node.name();
@@ -94,12 +94,15 @@ void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
   color = light->mColorSpecular;// TODO is this the best choice?
   // TODO reconstruct vector for mDirection
   switch (light->mType) {
-    case aiLightSource_AREA:lightKind = arealight;
+    case aiLightSource_AREA:
+      lightKind = arealight;
       area = light->mSize;
       break;
-    case aiLightSource_POINT:lightKind = omni;
+    case aiLightSource_POINT:
+      lightKind = omni;
       break;
-    default:auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
+    default:
+      auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
       throw std::runtime_error(err);
   }
 
@@ -107,20 +110,24 @@ void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
 
 void Light::ConvertToGameFormat(pugi::xml_node out) {
   auto name = getName();
-  size_t pos = name.rfind("-light");
+  size_t pos = name.rfind("-light-");
   if (pos == std::string::npos) {
     throw std::runtime_error("light name couldn't be parsed");
   }
-  name = name.substr(pos + 6);
+  name = name.substr(pos + 7);
   std::string nodeType;
   switch (lightKind) {
-    case arealight:nodeType = "arealight";
+    case arealight:
+      nodeType = "arealight";
       break;
-    case omni:nodeType = "omni";
+    case omni:
+      nodeType = "omni";
       break;
-    case box:nodeType = "box";
+    case box:
+      nodeType = "box";
       break;
-    default:nodeType = "unknown";
+    default:
+      nodeType = "unknown";
       break;
   }
 

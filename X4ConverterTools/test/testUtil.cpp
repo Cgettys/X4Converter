@@ -131,8 +131,10 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
       BOOST_TEST(actualAttr, "Missing attribute at path: " + x + " attr name: " + attrName);
       std::string expectedValueStr = expectedAttr.as_string();
       if (!std::regex_match(expectedValueStr, re_float)) {
-        BOOST_TEST_WARN(expectedValueStr == actualAttr.as_string(),
-                        "String attribute " + attrName + " at path " + x + " should be equal");
+        std::string actualValueStr = actualAttr.as_string();
+        BOOST_TEST_WARN(expectedValueStr == actualValueStr,
+                        "String attribute " + attrName + " at path " + x + " should be equal\n" +
+                            "Expected: " + expectedValueStr + " Actual: " + actualValueStr);
       } else {
         // We'll assume float otherwise
         float expectedValueFloat = expectedAttr.as_float();

@@ -29,6 +29,8 @@ Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractEle
       attrs["DO_NOT_EDIT.ref"] = attr.value();
     } else if (attrName == "name") {
       setName(attr.value());
+    } else if (attrName == "wreck") {
+      attrs[attrName] = attr.value();
     } else {
       std::cerr << "Warning, unhandled attribute on part: " << getName() << " attribute: " << attrName
                 << ". This may work fine, just a heads up ;)" << std::endl;
@@ -44,7 +46,7 @@ Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractEle
   // TODO common with Layer
   auto lightsNode = node.child("lights");
   if (!lightsNode.empty()) {
-    for (auto lightNode: lightsNode.children()) {
+    for (auto &lightNode: lightsNode.children()) {
       lights.emplace_back(lightNode, ctx, getName());
     }
   }

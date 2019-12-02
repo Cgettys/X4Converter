@@ -20,7 +20,7 @@ class Light : public AbstractElement {
 
   void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) final;
 
-  void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node out) final;
 
  private:
   LightKind lightKind;

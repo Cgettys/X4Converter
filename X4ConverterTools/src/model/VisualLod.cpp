@@ -68,7 +68,7 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
   }
 
   if (ctx->ShouldConvertGeometry()) {
-    xmfFile->WriteToFile(getName() + ".out.xmf");
+    xmfFile->WriteToFile(ctx->GetOutputPath(getName() + ".xmf"));
   }
 }
 }
