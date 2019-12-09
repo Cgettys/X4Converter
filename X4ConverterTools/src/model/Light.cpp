@@ -11,7 +11,7 @@ Light::Light(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 }
 
-Light::Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName)
+Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName)
     : AbstractElement(std::move(ctx)) {
   std::string tmp = str(boost::format("%1%-light-%2%") % parentName % node.attribute("name").value());
   setName(tmp);

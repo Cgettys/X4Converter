@@ -39,15 +39,15 @@ static void WriteAttr(xml_node &target, const string &name, float val) {
 }
 
 static aiColor3D ReadAttrRGB(xml_node &target) {
-  return aiColor3D(target.attribute("r").as_float(),
-                   target.attribute("g").as_float(),
-                   target.attribute("b").as_float());
+  return aiColor3D(target.attribute("r").as_float()/255.0f,
+                   target.attribute("g").as_float()/255.0f,
+                   target.attribute("b").as_float()/255.0f);
 }
 
 static void WriteAttrRGB(xml_node &target, const aiColor3D &val) {
-  WriteAttr(target, "r", val.r);
-  WriteAttr(target, "g", val.g);
-  WriteAttr(target, "b", val.b);
+  WriteAttr(target, "r", val.r*255.0f);
+  WriteAttr(target, "g", val.g*255.0f);
+  WriteAttr(target, "b", val.b*255.0f);
 }
 static aiVector3D ReadAttrXYZ(xml_node &target) {
   return aiVector3D(target.attribute("x").as_float(),

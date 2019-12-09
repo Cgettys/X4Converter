@@ -2,7 +2,20 @@
 enable_testing()
 
 # creates the executable
-add_executable(test_executable testUtil.cpp testUtil.h test.cpp model/testPart.cpp xmf/testXmfFile.cpp ani/testAnimFile.cpp xmf/testXmfMaterial.cpp xmf/testXmfHeader.cpp xmf/testXmfDataBufferDesc.cpp model/testLod.cpp model/testComponent.cpp model/testConnection.cpp)
+add_executable(test_executable
+        testUtil.cpp
+        testUtil.h
+        test.cpp
+        ani/testAnimFile.cpp
+        model/testComponent.cpp
+        model/testConnection.cpp
+        model/testLight.cpp
+        model/testLod.cpp
+        model/testPart.cpp
+        xmf/testXmfDataBufferDesc.cpp
+        xmf/testXmfFile.cpp
+        xmf/testXmfHeader.cpp
+        xmf/testXmfMaterial.cpp)
 # indicates the include paths
 target_include_directories(test_executable PRIVATE
         ${assimp_INCLUDE_DIRS}

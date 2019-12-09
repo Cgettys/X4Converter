@@ -12,7 +12,7 @@ class Light : public AbstractElement {
  public:
   explicit Light(ConversionContext::Ptr ctx);
 
-  explicit Light(pugi::xml_node node, ConversionContext::Ptr ctx, std::string parentName);
+  explicit Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName);
 
   explicit Light(aiNode *node, ConversionContext::Ptr ctx);
 
