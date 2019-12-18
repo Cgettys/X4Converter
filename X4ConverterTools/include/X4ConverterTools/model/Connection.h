@@ -11,7 +11,7 @@ class Connection : public AbstractElement {
  public:
   Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
 
-  explicit Connection(pugi::xml_node node, const ConversionContext::Ptr &ctx,
+  explicit Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx,
                       std::string componentName = "");
 
   explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");

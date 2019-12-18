@@ -22,7 +22,7 @@ Material::Material() {
 
 }
 
-Material::Material(std::string pCollectionName, pugi::xml_node node) {
+Material::Material(std::string pCollectionName, pugi::xml_node &node) {
   _pCollectionName = std::move(pCollectionName);
   _name = node.attribute("name").value();
 

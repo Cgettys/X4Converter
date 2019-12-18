@@ -8,7 +8,7 @@ using namespace util;
 namespace model {
 namespace xml = util::xml;
 
-Connection::Connection(pugi::xml_node node, const ConversionContext::Ptr &ctx, std::string componentName)
+Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string componentName)
     : AbstractElement(ctx) {
 
   if (!node.attribute("name")) {

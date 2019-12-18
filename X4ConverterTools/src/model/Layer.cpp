@@ -10,7 +10,7 @@ Layer::Layer(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 }
 
-Layer::Layer(pugi::xml_node node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx) {
+Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx) {
   layerId = id;
   setName(str(format("layer%d") % layerId));
   auto lightsNode = node.child("lights");

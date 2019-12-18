@@ -241,12 +241,19 @@ aiMesh *ConversionContext::GetMesh(size_t meshIndex) {
   return meshes.at(meshIndex);
 }
 
+ConversionContext::MetadataMap ConversionContext::GetMetadataMap(const std::string &name) {
+  if (allMetadata.count(name) != 0) {
+    return allMetadata[name];
+  }
+  return {}; // Empty map
+}
+void ConversionContext::AddMetadata(const std::string &name, MetadataMap m) {
+  allMetadata[name] = std::move(m);
+}
+
 ConversionContext::~ConversionContext() {
   if (pScene != nullptr) {
     ConversionContext::PopulateSceneArrays();
 //    delete pScene;
   }
 }
-
-
-

@@ -6,7 +6,7 @@ MaterialCollection::MaterialCollection() {
   _name = "";
 }
 
-MaterialCollection::MaterialCollection(pugi::xml_node node) {
+MaterialCollection::MaterialCollection(pugi::xml_node &node) {
   _node = node;
   _name = node.attribute("name").value();
   for (auto matNode : node.children("material")) {

@@ -13,7 +13,7 @@ class MaterialCollection {
 
   ~MaterialCollection() = default;
 
-  explicit MaterialCollection(pugi::xml_node node);
+  explicit MaterialCollection(pugi::xml_node &node);
 
   Material *GetMaterial(const std::string &name);
 

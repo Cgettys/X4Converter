@@ -12,6 +12,7 @@
 class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
+  using MetadataMap = std::map<std::string, std::string>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
                              std::shared_ptr<Assimp::IOSystem> io,
                              bool convert,
@@ -44,12 +45,19 @@ class ConversionContext {
 
   aiMesh *GetMesh(size_t meshIndex);
 
+  bool CheckLight(const std::string &name);
   aiLight *GetLight(const std::string &name);
 
   void AddMesh(aiNode *parentNode, aiMesh *mesh);
   void AddLight(aiLight *light);
+  // TODO something more elegant?
+  // Note, performance heavy
+  MetadataMap GetMetadataMap(const std::string &name);
 
-  bool CheckLight(const std::string &name);
+  void AddMetadata(const std::string &name, MetadataMap m);
+  // TODO write out
+
+
   bool ShouldConvertGeometry() { return should_convert; };
 
   // TODO somewhere better
@@ -64,5 +72,6 @@ class ConversionContext {
   std::string sourcePathSuffix;
   model::MaterialLibrary materialLibrary;
   std::map<std::string, aiLight *> lights;
-
+ private:
+  std::map<std::string, MetadataMap> allMetadata;
 };

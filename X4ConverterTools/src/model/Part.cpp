@@ -15,7 +15,7 @@ Part::Part(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   collisionLod = nullptr;
 }
 
-Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
   if (std::string(node.name()) != "part") {
     throw std::runtime_error("XML element must be a <part> element!");
   }

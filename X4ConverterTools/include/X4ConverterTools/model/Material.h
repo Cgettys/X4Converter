@@ -11,7 +11,7 @@ class Material {
  public:
   Material();
 
-  Material(std::string pCollectionName, pugi::xml_node node);
+  Material(std::string pCollectionName, pugi::xml_node &node);
 
   const std::string &GetName() { return _name; }
 

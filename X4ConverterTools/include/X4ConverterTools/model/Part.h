@@ -13,7 +13,7 @@ class Part : public AbstractElement {
  public:
   explicit Part(ConversionContext::Ptr ctx);
 
-  explicit Part(pugi::xml_node node, const ConversionContext::Ptr &ctx);
+  explicit Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx);
 
   aiNode *ConvertToAiNode() override;
 
