@@ -30,15 +30,8 @@ class AbstractElement {
  protected:
 
   // TODO template pattern?
-  // TODO refactor me please....
-  virtual std::vector<aiNode *> attrToAiNode();
 
   virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
-
-  void readMultiObjectAttr(aiNode *parent, const std::string &namePart, const std::string &tagPart,
-                           const std::string &valPart);
-
-  virtual void readAiNodeChild(aiNode *parent, aiNode *source);
 
   void ReadOffset(pugi::xml_node target);
 
@@ -47,7 +40,7 @@ class AbstractElement {
   void WriteOffset(pugi::xml_node target);
 
 
-  std::map<std::string, std::string> attrs;
+  ConversionContext::MetadataMap attrs;
 
   ConversionContext::Ptr ctx;
  protected:
@@ -55,10 +48,7 @@ class AbstractElement {
   aiVector3D offsetPos;
   aiQuaternion offsetRot;
  private:
-
   std::string name;
-
-  void GenerateAttrNode(std::vector<aiNode *> &children, const std::string &key, const std::string &value);
 
 };
 

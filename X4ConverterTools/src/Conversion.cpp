@@ -34,7 +34,8 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePat
   }
   auto *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
   ctx->SetScene(pScene);
-  model::Component component(doc.root(), ctx);
+  auto root_xml = doc.root();
+  model::Component component(root_xml, ctx);
   aiNode *root = component.ConvertToAiNode();
   pScene->mRootNode = root;
   ctx->PopulateSceneArrays();

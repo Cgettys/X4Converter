@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
   BOOST_TEST_REQUIRE(!node.empty());
 
   auto conn = Connection(node, ctx);
-  BOOST_TEST(conn.getName() == "Connection02");
+  BOOST_TEST(conn.getName() == "*Connection02*");
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)

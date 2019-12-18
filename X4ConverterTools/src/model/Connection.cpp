@@ -28,7 +28,7 @@ Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, 
     auto attrName = std::string(attr.name());
     auto value = std::string(attr.value());
     if (attrName == "name") {
-      setName(value);
+      setName("*" + value + "*");
     } else if (attrName == "parent") {
       parentName = value;
     } else {
@@ -46,9 +46,10 @@ Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string com
 }
 
 aiNode *Connection::ConvertToAiNode() {
-  auto result = new aiNode("*" + getName() + "*");
+  auto result = new aiNode(getName());
+  ctx->AddMetadata(getName(), attrs);
   ApplyOffsetToAiNode(result);
-  std::vector<aiNode *> children = attrToAiNode();
+  std::vector<aiNode *> children;
   for (auto &part : parts) {
     children.push_back(part.ConvertToAiNode());
   }
@@ -63,20 +64,17 @@ std::string Connection::getParentName() {
 void Connection::ConvertFromAiNode(aiNode *node) {
   std::string tmp = node->mName.C_Str();
   setName(tmp.substr(1, tmp.size() - 2));
-  // TODO check for scaling and error if cfound
+  attrs = ctx->GetMetadataMap(tmp);
+  // TODO check for scaling and error if found
   node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
 
   // TODO validate attributes; better check for parts & a better solution
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];
     auto childName = std::string(child->mName.C_Str());
-    if (childName.find('|') != std::string::npos) {
-      readAiNodeChild(node, child);
-    } else {
-      Part part(ctx);
-      part.ConvertFromAiNode(child);
-      parts.emplace(parts.end(), part);
-    }
+    Part part(ctx);
+    part.ConvertFromAiNode(child);
+    parts.emplace(parts.end(), part);
   }
 }
 

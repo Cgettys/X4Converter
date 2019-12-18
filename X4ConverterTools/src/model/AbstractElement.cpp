@@ -12,7 +12,7 @@ AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx
 
 }
 
-string AbstractElement::getName() {
+[[pure]] string AbstractElement::getName() {
   return name;
 }
 
@@ -28,13 +28,6 @@ void AbstractElement::setName(string n) {
   name = std::move(n);
 }
 
-std::vector<aiNode *> AbstractElement::attrToAiNode() {
-  std::vector<aiNode *> children;
-  for (const auto &attr : attrs) {
-    GenerateAttrNode(children, attr.first, attr.second);
-  }
-  return children;
-}
 
 void AbstractElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
   unsigned long numChildren = children.size();
@@ -62,103 +55,6 @@ void AbstractElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode 
   delete[] old;
 }
 
-void AbstractElement::readMultiObjectAttr(aiNode *parent, const string &namePart, const string &tagPart,
-                                          const string &valPart) {
-  //source.
-  std::cout << "Re-assembling multi-object attribute: " << namePart << "|" << tagPart << std::endl;
-  auto count = std::atoi(valPart.substr(1).c_str());
-  string val;
-  for (auto i = 1; i <= count + 1; i++) {
-    std::stringstream ss;
-    ss << namePart << "|" << tagPart << "#" << std::to_string(i) << "|";
-    auto soughtName = ss.str();
-    for (auto j = 0; j < parent->mNumChildren; j++) {
-      auto child = parent->mChildren[j];
-      std::string childName = child->mName.C_Str();
-      if (childName.find(soughtName) != string::npos) {
-        if (i != count + 1) {
-          // Error because we don't know how many extra parts there are
-          std::stringstream err;
-          err << "Found extra part #" << std::to_string(i);
-          err << "For name: " << namePart;
-          err << " and key: " << tagPart;
-          throw std::runtime_error(err.str());
-        }
-        val += childName.substr(soughtName.size());
-        break;
-      }
-    }
-
-    if (i != count + 1) {
-      // Warning because they may have accidentally deleted something
-      std::cerr << "Could not find part #" << i << "For name: " << namePart << " and key: " << tagPart
-                << std::endl;
-    }
-  }
-}
-
-void AbstractElement::readAiNodeChild(aiNode *parent, aiNode *source) {
-  string raw = source->mName.C_Str();
-  auto firstSplit = raw.find('|');
-  auto secondSplit = raw.rfind('|');
-  if (firstSplit == secondSplit || firstSplit == string::npos || secondSplit == string::npos) {
-    std::cerr << "warning, could not read node: " << raw << std::endl;
-    return;
-  }
-  auto namePart = raw.substr(0, firstSplit);
-  auto tagPart = raw.substr(firstSplit + 1, secondSplit - firstSplit - 1);
-  auto valPart = raw.substr(secondSplit + 1);
-  if (namePart != name) {
-    std::cerr << "Warning, name of element was " + name + " but tag was for name: " + namePart << std::endl;
-  }
-
-  bool tagContainsPound = tagPart.find('#') != string::npos;
-  bool valContainsPound = valPart.find('#') != string::npos;
-  if (!tagContainsPound && !valContainsPound) {
-    attrs[tagPart] = valPart;
-  }
-  if (tagContainsPound && !valContainsPound) {
-    readMultiObjectAttr(parent, namePart, tagPart, valPart);
-  }
-  if (!tagContainsPound && valContainsPound) {
-    std::cout << "Part of multi-object: " << raw << std::endl;
-  }
-
-  if (tagContainsPound && valContainsPound) {
-    std::cerr << "Likely Malformed tag: " << raw << std::endl;
-  }
-}
-
-void AbstractElement::GenerateAttrNode(std::vector<aiNode *> &children, const string &key, const string &value) {
-  auto rep = name + "|" + key + "|" + value;
-  // TODO make magic numbers constants
-  if (rep.size() > 63) {
-    if (name.size() + key.size() > 55) {
-      throw std::runtime_error("Cannot handle name: " + name + "key: " + key + ", too long to split up!");
-    }
-    std::cout << "Forming multi-object attribute, Name: " << name << " Key: " << key << std::endl;
-    auto base = name + "|" + key;
-    auto piece_len = 60 - base.size();
-    int piece_count = ceil(boost::numeric_cast<double>(value.size()) / piece_len);
-    auto flag_attr = base + "|#" + std::to_string(piece_count);
-    if (flag_attr.size() > 63) {
-      throw std::runtime_error("Flag attr string too long to import into blender!");
-    }
-    children.emplace_back(new aiNode(flag_attr));
-    for (int i = 0; i < piece_count; i++) {
-      auto piece = value.substr(i * piece_len, piece_len);
-      std::stringstream ss;
-      ss << base << "#" << i << "|" << piece;
-      auto result = ss.str();
-      if (result.size() > 63) {
-        throw std::runtime_error("Piece string too long to import into blender!");
-      }
-      children.emplace_back(new aiNode(result));
-    }
-  } else {
-    children.emplace_back(new aiNode(rep));
-  }
-}
 
 void AbstractElement::WriteOffset(pugi::xml_node target) {
   auto offsetNode = xml::AddChild(target, "offset");

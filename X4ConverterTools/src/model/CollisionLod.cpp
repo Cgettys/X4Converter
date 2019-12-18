@@ -20,6 +20,7 @@ CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &c
 void CollisionLod::ConvertFromAiNode(aiNode *node) {
   std::string rawName = node->mName.C_Str();
   setName(rawName);
+  attrs = ctx->GetMetadataMap(rawName);
   // Parse out the index
   size_t pos = rawName.rfind("-collision");
   if (pos == std::string::npos) {

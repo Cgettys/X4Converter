@@ -70,21 +70,13 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractEl
 
 aiNode *Part::ConvertToAiNode() {
   auto *result = new aiNode(getName());
-  std::vector<aiNode *> children = attrToAiNode();
+  ctx->AddMetadata(getName(), attrs);
+  std::vector<aiNode *> children;
   if (!hasRef) {
     children.push_back(collisionLod->ConvertToAiNode());
     for (auto lod: lods) {
       children.push_back(lod.second.ConvertToAiNode());
     }
-    auto lightResult = new aiNode();
-    lightResult->mName = getName() + "-lights";
-    // TODO should really add a Lights object or something
-    std::vector<aiNode *> lightChildren;
-    for (auto light: lights) {
-      lightChildren.push_back(light.ConvertToAiNode());
-    }
-    populateAiNodeChildren(lightResult, lightChildren);
-    children.push_back(lightResult);
   }
 
   populateAiNodeChildren(result, children);
@@ -94,11 +86,13 @@ aiNode *Part::ConvertToAiNode() {
 void Part::ConvertFromAiNode(aiNode *node) {
   std::string name = node->mName.C_Str();
   setName(name);
+  attrs = ctx->GetMetadataMap(name);
 
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];
     std::string childName = child->mName.C_Str();
     // TODO check part names?
+    // TODO lights better
     if (childName == name + "-lights") {
       handleAiLights(child);
     } else if (regex_match(childName, ctx->lodRegex)) {
@@ -110,8 +104,6 @@ void Part::ConvertFromAiNode(aiNode *node) {
       collisionLod->ConvertFromAiNode(child);
     } else if (childName.find('*') != std::string::npos) {
       // Ignore connection, handled elsewhere
-    } else {
-      readAiNodeChild(node, child);
     }
   }
   // TODO more

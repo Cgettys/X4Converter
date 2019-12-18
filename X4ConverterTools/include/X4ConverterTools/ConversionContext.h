@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 #include <assimp/scene.h>
-#include <regex.h>
 
 #include <assimp/DefaultIOSystem.h>
 #include "X4ConverterTools/model/MaterialLibrary.h"
@@ -12,6 +11,7 @@
 class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
+  // TODO move me?
   using MetadataMap = std::map<std::string, std::string>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
                              std::shared_ptr<Assimp::IOSystem> io,
@@ -52,7 +52,7 @@ class ConversionContext {
   void AddLight(aiLight *light);
   // TODO something more elegant?
   // Note, performance heavy
-  MetadataMap GetMetadataMap(const std::string &name);
+  [[nodiscard]] MetadataMap GetMetadataMap(const std::string &name);
 
   void AddMetadata(const std::string &name, MetadataMap m);
   // TODO write out

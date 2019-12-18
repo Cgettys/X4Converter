@@ -46,7 +46,6 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
       attrs[name] = value;
     }
   }
-
   auto connectionsNode = componentNode.child("connections");
   if (connectionsNode.empty()) {
     throw std::runtime_error("No connections found!");
@@ -70,8 +69,7 @@ aiNode *Component::ConvertToAiNode() {
   auto result = new aiNode(getName());
   std::map<std::string, aiNode *> nodes;
   nodes[getName()] = result;
-  populateAiNodeChildren(result, attrToAiNode());
-
+  ctx->AddMetadata(getName(), attrs);
   // Convert all the nodes
   for (auto conn : connections) {
     std::string connName = conn.getName();
@@ -94,6 +92,7 @@ aiNode *Component::ConvertToAiNode() {
     }
   }
 
+  // TODO handle layers
   // Now to unflatten everything
   std::map<std::string, std::vector<aiNode *>> parentMap;
   for (auto conn: connections) {
@@ -147,14 +146,11 @@ aiNode *Component::ConvertToAiNode() {
 
 void Component::ConvertFromAiNode(aiNode *node) {
   setName(node->mName.C_Str());
+  attrs = ctx->GetMetadataMap(getName());
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];
     std::string childName = child->mName.C_Str();
-    if (childName.find("class") != std::string::npos || childName.find("src") != std::string::npos) {
-      // TODO improve me to not risk accidental matches
-      readAiNodeChild(node, child);
-      continue;
-    } else if (childName.find('*') == std::string::npos) {
+    if (childName.find('*') == std::string::npos) {
       std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
                 << std::endl;
     } else if (starts_with(childName, "layer")) {

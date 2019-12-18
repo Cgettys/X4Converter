@@ -35,5 +35,13 @@ class Light : public AbstractElement {
   bool trigger; // TODO confirm bools
   float intensity;
 };
+
+class LightsGroup : public AbstractElement {
+  LightsGroup(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName);
+  aiNode *ConvertToAiNode() final;
+  void ConvertFromAiNode(aiNode *node) final;
+  void ConvertToGameFormat(pugi::xml_node &out) final;
+};
+
 }
 

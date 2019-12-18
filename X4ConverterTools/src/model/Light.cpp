@@ -143,4 +143,13 @@ void Light::ConvertToGameFormat(pugi::xml_node &out) {
   xml::WriteAttrRGB(lightNode, color);
 }
 
+aiNode *LightsGroup::ConvertToAiNode() {
+  return nullptr;
+}
+void LightsGroup::ConvertFromAiNode(aiNode *node) {
+
+}
+void LightsGroup::ConvertToGameFormat(pugi::xml_node &out) {
+
+}
 }
