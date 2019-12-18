@@ -98,7 +98,7 @@ void Material::PopulateLayer(aiMaterial *pAiMaterial,
     std::string textureFilePath = GetDecompressedTextureFilePath(path, ctx->gameBaseFolderPath);
     if (!textureFilePath.empty()) {
       aiString temp("../../../" +
-          ConversionContext::GetRelativePath(textureFilePath, ctx->gameBaseFolderPath).string());
+          ctx->GetRelativePath(textureFilePath).string());
       pAiMaterial->AddProperty(&temp, key, type, num);
     } else {
       // throw std::runtime_error("Could not find Diffuse Texture for Material!");

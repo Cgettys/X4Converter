@@ -8,28 +8,32 @@
 #include <assimp/DefaultIOSystem.h>
 #include "X4ConverterTools/model/MaterialLibrary.h"
 
+namespace fs = boost::filesystem;
 class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
   // TODO move me?
   using MetadataMap = std::map<std::string, std::string>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
+                             const std::string &metadataFilePath,
                              std::shared_ptr<Assimp::IOSystem> io,
                              bool convert,
                              bool is_test);
   ~ConversionContext();
-  static boost::filesystem::path
-  GetRelativePath(const boost::filesystem::path &filePath, const boost::filesystem::path &relativeToFolderPath);
 
-  static std::string MakePlatformSafe(const std::string &filePath);
+  [[nodiscard]] fs::path GetRelativePath(const fs::path &filePath);
+  [[nodiscard]] fs::path GetRelativePath(const fs::path &filePath, const fs::path &relativeToFolderPath);
+  [[nodiscard]] fs::path GetAbsolutePath(const fs::path &filePath);
 
-  static std::string MakeGameSafe(const std::string &filePath);
+  [[nodiscard]] static std::string MakePlatformSafe(const std::string &filePath);
 
-  static boost::filesystem::path MakePlatformSafe(const boost::filesystem::path &filePath);
+  [[nodiscard]] static std::string MakeGameSafe(const std::string &filePath);
 
-  static boost::filesystem::path MakeGameSafe(const boost::filesystem::path &filePath);
+  [[nodiscard]] static fs::path MakePlatformSafe(const fs::path &filePath);
 
-  std::string GetOutputPath(const std::string &inputPath);
+  [[nodiscard]] static fs::path MakeGameSafe(const fs::path &filePath);
+
+  [[nodiscard]] std::string GetOutputPath(const std::string &inputPath);
   void PopulateSceneArrays();
 
   void SetSourcePathSuffix(std::string path);
@@ -51,6 +55,7 @@ class ConversionContext {
   void AddMesh(aiNode *parentNode, aiMesh *mesh);
   void AddLight(aiLight *light);
   // TODO something more elegant?
+  void SetMetadataPath(const std::string &metadataFilePath);
   // Note, performance heavy
   [[nodiscard]] MetadataMap GetMetadataMap(const std::string &name);
 
@@ -73,5 +78,6 @@ class ConversionContext {
   model::MaterialLibrary materialLibrary;
   std::map<std::string, aiLight *> lights;
  private:
+  const std::string metadataPath;
   std::map<std::string, MetadataMap> allMetadata;
 };

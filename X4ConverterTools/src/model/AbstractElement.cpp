@@ -12,7 +12,7 @@ AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx
 
 }
 
-[[pure]] string AbstractElement::getName() {
+string AbstractElement::getName() {
   return name;
 }
 

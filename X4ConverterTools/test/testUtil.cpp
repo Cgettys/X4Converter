@@ -34,10 +34,10 @@ std::string TestUtil::GetBasePath() {
   BOOST_TEST_REQUIRE(path != nullptr);
   return std::string(path);
 }
-ConversionContext::Ptr TestUtil::GetTestContext(std::string geomPath, bool convert) {
+ConversionContext::Ptr TestUtil::GetTestContext(std::string tgtPath, bool convert) {
   auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(GetBasePath(), io, convert, true);
-  ctx->SetSourcePathSuffix(geomPath);
+  auto ctx = std::make_shared<ConversionContext>(GetBasePath(), tgtPath + ".out.metadata", io, convert, true);
+  ctx->SetSourcePathSuffix(tgtPath + "_data");
   return ctx;
 }
 

@@ -23,7 +23,8 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/");
+  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data/",
+                                      "xmf_geom_test.out.metadata");
   const std::string tgt = "fx_licence-lod0";
   const std::string testFile = tgt + ".xmf";
   const std::string resultsFile = tgt + ".out.xmf";
@@ -57,7 +58,8 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
 
-  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data", true);
+  auto ctx = TestUtil::GetTestContext("extensions/break/assets/units/size_s/ship_gen_s_fighter_02_data",
+                                      "extensions/break/assets/units/size_s/ship_gen_s_fighter_02.out.metadata");
   const std::string tgt = "fx_licence-collision";
   const std::string testFile = tgt + ".xmf";
   const std::string resultsFile = tgt + ".out.xmf";

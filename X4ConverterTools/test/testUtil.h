@@ -18,7 +18,7 @@ class TestUtil {
 
   static std::string GetBasePath();
 
-  static ConversionContext::Ptr GetTestContext(std::string geomPath, bool convert = true);
+  static ConversionContext::Ptr GetTestContext(std::string tgtPath, bool convert = true);
   static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
   static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);

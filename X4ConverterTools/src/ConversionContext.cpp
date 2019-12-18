@@ -16,6 +16,7 @@ namespace fs = boost::filesystem;
 
 // TODO materialLibrary should be passed in
 ConversionContext::ConversionContext(const std::string &gameBaseFolderPath,
+                                     const std::string &metadataFilePath,
                                      std::shared_ptr<Assimp::IOSystem> io,
                                      bool convert,
                                      bool is_test) :
@@ -23,7 +24,8 @@ ConversionContext::ConversionContext(const std::string &gameBaseFolderPath,
     gameBaseFolderPath(gameBaseFolderPath),
     test(is_test),
     should_convert(convert),
-    io(std::move(io)) {
+    io(std::move(io)),
+    metadataPath(GetAbsolutePath(metadataFilePath).generic_string()) {
 
 }
 
@@ -57,6 +59,18 @@ fs::path ConversionContext::MakePlatformSafe(const fs::path &filePath) {
 
 fs::path ConversionContext::MakeGameSafe(const fs::path &filePath) {
   return fs::path(MakeGameSafe(filePath.string()));
+}
+
+fs::path ConversionContext::GetAbsolutePath(const fs::path &filePath) {
+  if (!gameBaseFolderPath.empty() && filePath.is_relative()) {
+    std::cout << "Prepending " << gameBaseFolderPath << " to path " << filePath << std::endl;
+    return gameBaseFolderPath / filePath;
+  }
+  return filePath;
+}
+
+fs::path ConversionContext::GetRelativePath(const fs::path &filePath) {
+  return GetRelativePath(filePath, gameBaseFolderPath);
 }
 
 fs::path ConversionContext::GetRelativePath(const fs::path &filePath, const fs::path &relativeToFolderPath) {

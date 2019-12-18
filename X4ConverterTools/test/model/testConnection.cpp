@@ -16,8 +16,9 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE(ConnectionUnitTests) // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  std::string tgtPath = "/assets/units/size_s/ship_arg_s_fighter_01";
+  auto ctx = TestUtil::GetTestContext(tgtPath);
+  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
   auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
   node.remove_child("lods");
   BOOST_TEST_REQUIRE(!node.empty());

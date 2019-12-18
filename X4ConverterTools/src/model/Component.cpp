@@ -59,8 +59,10 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
     std::cerr << "Warning, <layers> node not found";
   }
   auto layerNode = layersNode.child("layer");
+  // TODO handle these fully
   if (layerNode.next_sibling()) {
     std::cerr << "Warning, this file contains more than one layer. Ignoring all but the first." << std::endl;
+    throw std::runtime_error("multiple layers");
   }
 
 }
@@ -92,7 +94,6 @@ aiNode *Component::ConvertToAiNode() {
     }
   }
 
-  // TODO handle layers
   // Now to unflatten everything
   std::map<std::string, std::vector<aiNode *>> parentMap;
   for (auto conn: connections) {

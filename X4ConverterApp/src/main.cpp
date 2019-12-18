@@ -114,7 +114,9 @@ int main(int ac, char *av[]) {
     }
 
     auto io = std::make_shared<Assimp::DefaultIOSystem>();
-    auto ctx = std::make_shared<ConversionContext>(gameBaseFolderPath.generic_string(), io, !migrate, test);
+    auto metadataFilePath = inFile.replace_extension(".metadata").generic_string();
+    auto ctx =
+        std::make_shared<ConversionContext>(gameBaseFolderPath.generic_string(), metadataFilePath, io, !migrate, test,);
     fs::path outFile(inFile);
     if (action == "importxmf") {
       // .xml/.xmf -> .dae //
@@ -127,10 +129,9 @@ int main(int ac, char *av[]) {
       // .dae -> .xml/.xmf
       // .out.xml not necessary because already is .out.dae & .dae is the "extension"
       outFile.replace_extension(".xml");
-      std::cout << outFile << std::endl;
-      ConvertDaeToXml(ctx,
-                      inFile.generic_string(),
-                      outFile.generic_string());
+      auto &daeFilePath = ctx->GetAbsolutePath(inFile.generic_string()).generic_string();
+      auto &xmlFilePath = ctx->GetAbsolutePath(outFile.generic_string()).generic_string();
+      ConvertDaeToXml(ctx, daeFilePath, xmlFilePath);
 
     } else {
       printf("Unknown action.\n\n");

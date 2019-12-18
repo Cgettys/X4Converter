@@ -45,19 +45,6 @@ aiNode *Layer::ConvertToAiNode() {
 }
 
 void Layer::ConvertFromAiNode(aiNode *node) {
-  std::string name = node->mName.C_Str();
-  setName(name);
-  // TODO abstract out some of the shared logic with Component
-  for (int i = 0; i < node->mNumChildren; i++) {
-    auto child = node->mChildren[i];
-    std::string childName = child->mName.C_Str();
-    if (childName == name + "-lights") {
-      handleAiLights(child);
-      continue;
-    } else {
-      throw std::runtime_error("Unexpected child name under layer: " + childName);
-    }
-  }
 
 }
 

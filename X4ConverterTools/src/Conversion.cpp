@@ -1,21 +1,19 @@
 #include <X4ConverterTools/Conversion.h>
 #include <X4ConverterTools/model/Component.h>
 #include <iostream>
-#include <cstdio>
-#include <cstdlib>
 
 #include <boost/filesystem.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/Exporter.hpp>
-#include <assimp/DefaultIOSystem.h>
 #include <assimp/scene.h>
-#include <assimp/SceneCombiner.h>
 #include <pugixml.hpp>
 namespace fs = boost::filesystem;
 
 bool
-ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePath, const std::string &daeFilePath) {
+ConvertXmlToDae(const ConversionContext::Ptr &ctx,
+                const std::string &xmlFilePath,
+                const std::string &daeFilePath) {
 
   pugi::xml_document doc;
   pugi::xml_parse_result load_result;
@@ -57,26 +55,15 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePat
   return true;
 }
 
-std::string
-PrependIfNecessary(const std::string &gameBaseFolderPath, const std::string &filePath, const std::string &ext) {
-  if (!gameBaseFolderPath.empty() && filePath.find(gameBaseFolderPath) == std::string::npos) {
-    std::cout << "Prepending " << gameBaseFolderPath << " to path " << filePath << std::endl;
-    return gameBaseFolderPath + filePath;
-  }
-
-  std::cout << "Using " << ext << " at " << filePath << std::endl;
-  return filePath;
-}
-
 bool
-ConvertDaeToXml(const ConversionContext::Ptr &ctx, const std::string &daeFilePath, const std::string &xmlFilePath) {
+ConvertDaeToXml(const ConversionContext::Ptr &ctx,
+                const std::string &daeFilePath,
+                const std::string &xmlFilePath) {
   // TODO make better
-  std::string actualDaeFilePath = PrependIfNecessary(ctx->gameBaseFolderPath, daeFilePath, ".dae");
-  std::string actualXmlFilePath = PrependIfNecessary(ctx->gameBaseFolderPath, xmlFilePath, ".xml");
 
   auto importer = std::make_unique<Assimp::Importer>();
   importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
-  const aiScene *pScene = importer->ReadFile(actualDaeFilePath, 0);
+  const aiScene *pScene = importer->ReadFile(daeFilePath, 0);
   if (!pScene) {
     std::cerr << "Failed during import" << std::endl;
     throw std::runtime_error(importer->GetErrorString());
@@ -89,20 +76,20 @@ ConvertDaeToXml(const ConversionContext::Ptr &ctx, const std::string &daeFilePat
   component.ConvertFromAiNode(myScene->mRootNode->mChildren[0]);
 
   pugi::xml_document doc;
-  if (fs::exists(actualXmlFilePath)) {
-    auto load_result = doc.load_file(actualXmlFilePath.c_str());
+  if (fs::exists(xmlFilePath)) {
+    auto load_result = doc.load_file(xmlFilePath.c_str());
     if (load_result.status != pugi::status_ok) {
       throw std::runtime_error("output xml file could not be opened!");
     }
   } else {
-    std::cerr << "Warning, creating output file at path: " << actualXmlFilePath;
+    std::cerr << "Warning, creating output file at path: " << xmlFilePath;
   }
   auto tgtNode = doc.child("components");
   if (!tgtNode) {
     tgtNode = doc.append_child("components");
   }
   component.ConvertToGameFormat(tgtNode);
-  doc.save_file(actualXmlFilePath.c_str());
+  doc.save_file(xmlFilePath.c_str());
 
   return true;
 }
