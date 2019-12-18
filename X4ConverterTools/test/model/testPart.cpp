@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
 
   auto part = Part(partNode, ctx);
-  auto result = part.ConvertToAiNode(pugi::xml_node());
+  auto result = part.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
   delete result;
 
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
 
   Part part(ctx);
-  part.ConvertFromAiNode(ainode, pugi::xml_node());
+  part.ConvertFromAiNode(ainode);
   std::string name = part.getName();
   BOOST_TEST(name == partName);
   delete ainode;
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_name) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
 
   Part part(ctx);
-  part.ConvertFromAiNode(ainode, pugi::xml_node());
+  part.ConvertFromAiNode(ainode);
   pugi::xml_document doc;
   auto node = doc.append_child("parts");
   part.ConvertToGameFormat(node);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) {
 
   auto part = Part(partNode, ctx);
 
-  auto result = part.ConvertToAiNode(pugi::xml_node());
+  auto result = part.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
   BOOST_TEST_REQUIRE(result->mNumChildren == 7);
   TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|wreck|anim_main_wreck");
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
 
   Part part(ctx);
-  part.ConvertFromAiNode(ainode, pugi::xml_node());
+  part.ConvertFromAiNode(ainode);
   pugi::xml_document doc;
   auto node = doc.append_child("parts");
   part.ConvertToGameFormat(node);

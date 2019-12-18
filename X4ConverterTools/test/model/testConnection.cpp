@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
   BOOST_TEST_REQUIRE(!node.empty());
 
   auto conn = Connection(node, ctx);
-  auto result = conn.ConvertToAiNode(pugi::xml_node());
+  auto result = conn.ConvertToAiNode();
   aiMatrix4x4 expectedMatrix(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
                              aiVector3D(9.411734, -2.738604, -2.866085));
   BOOST_TEST(result->mTransformation.Equal(expectedMatrix));
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
   node->mTransformation.d4 = tmp.d4;
 
   auto conn = Connection(ctx);
-  conn.ConvertFromAiNode(node, pugi::xml_node());
+  conn.ConvertFromAiNode(node);
 
   pugi::xml_document doc;
   auto outNode = doc.append_child("connections");

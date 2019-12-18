@@ -66,7 +66,7 @@ Component::Component(pugi::xml_node node, const ConversionContext::Ptr &ctx) : A
 
 }
 
-aiNode *Component::ConvertToAiNode(pugi::xml_node &intermediateXml) {
+aiNode *Component::ConvertToAiNode() {
   auto result = new aiNode(getName());
   std::map<std::string, aiNode *> nodes;
   nodes[getName()] = result;
@@ -78,7 +78,7 @@ aiNode *Component::ConvertToAiNode(pugi::xml_node &intermediateXml) {
     if (nodes.count(connName)) {
       throw std::runtime_error("Duplicate key is not allowed!" + connName);
     }
-    nodes[connName] = conn.ConvertToAiNode(pugi::xml_node());
+    nodes[connName] = conn.ConvertToAiNode();
 
     // TODO get rid of this getParts somehow
     for (auto &part : conn.getParts()) {
@@ -145,7 +145,7 @@ aiNode *Component::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   return fakeRoot;
 }
 
-void Component::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void Component::ConvertFromAiNode(aiNode *node) {
   setName(node->mName.C_Str());
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];

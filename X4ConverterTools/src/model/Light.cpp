@@ -41,10 +41,10 @@ Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string paren
 }
 
 Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-  ConvertFromAiNode(node, pugi::xml_node());
+  ConvertFromAiNode(node);
 }
 
-aiNode *Light::ConvertToAiNode(pugi::xml_node &intermediateXml) {
+aiNode *Light::ConvertToAiNode() {
   auto result = new aiLight();
   result->mName = getName();
   // TODO axes?
@@ -83,7 +83,7 @@ aiNode *Light::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   return node;
 }
 
-void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void Light::ConvertFromAiNode(aiNode *node) {
   std::string name = node->mName.C_Str();
   setName(name);// TODO template method out this stuff?
   if (!ctx->CheckLight(name)) {

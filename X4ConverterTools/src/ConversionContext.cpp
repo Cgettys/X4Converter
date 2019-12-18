@@ -202,7 +202,7 @@ void ConversionContext::AddLight(aiLight *light) {
   if (lights[name]) {
     throw std::runtime_error("Duplicated light name: " + name);
   }
-  lights.insert(std::pair<std::string, aiLight *>(name, light));
+  lights[name] = light;
 }
 
 bool ConversionContext::CheckLight(const std::string &name) {

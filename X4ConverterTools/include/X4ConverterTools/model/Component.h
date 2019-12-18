@@ -14,9 +14,9 @@ class Component : public AbstractElement {
 
   explicit Component(pugi::xml_node node, const ConversionContext::Ptr &ctx);
 
-  aiNode *ConvertToAiNode(pugi::xml_node &intermediateXml) override;
+  aiNode *ConvertToAiNode() override;
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node) override;
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
 

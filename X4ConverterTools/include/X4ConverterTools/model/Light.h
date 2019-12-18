@@ -16,9 +16,9 @@ class Light : public AbstractElement {
 
   explicit Light(aiNode *node, ConversionContext::Ptr ctx);
 
-  aiNode *ConvertToAiNode(pugi::xml_node &intermediateXml) final;
+  aiNode *ConvertToAiNode() final;
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) final;
+  void ConvertFromAiNode(aiNode *node) final;
 
   void ConvertToGameFormat(pugi::xml_node &out) final;
 

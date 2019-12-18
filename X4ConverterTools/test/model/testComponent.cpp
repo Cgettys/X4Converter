@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_basic) { // NOLINT(cert-err58-cpp)
   BOOST_TEST_REQUIRE(!node.empty());
   auto component = Component(node, ctx);
 
-  auto result = component.ConvertToAiNode(pugi::xml_node());
+  auto result = component.ConvertToAiNode();
 
   BOOST_TEST_REQUIRE(result->mNumChildren > 0);
   TestUtil::checkAiNodeName(result->mChildren[0], "ship_arg_s_fighter_01");
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(from_ainode_basic) { // NOLINT(cert-err58-cpp)
   auto node = new aiNode("ship_arg_s_fighter_01");
 
   auto component = Component(ctx);
-  component.ConvertFromAiNode(node, pugi::xml_node());
+  component.ConvertFromAiNode(node);
   BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
   delete node;
 }
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   auto outNode = doc.append_child("components");
 
   auto component = Component(ctx);
-  component.ConvertFromAiNode(node, pugi::xml_node());
+  component.ConvertFromAiNode(node);
   BOOST_TEST(component.getNumberOfConnections() == 3);
 
   component.ConvertToGameFormat(outNode);

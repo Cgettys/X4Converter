@@ -17,7 +17,7 @@ CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &c
   }
 }
 
-void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void CollisionLod::ConvertFromAiNode(aiNode *node) {
   std::string rawName = node->mName.C_Str();
   setName(rawName);
   // Parse out the index

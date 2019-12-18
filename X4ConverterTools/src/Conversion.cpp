@@ -35,7 +35,7 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx, const std::string &xmlFilePat
   auto *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
   ctx->SetScene(pScene);
   model::Component component(doc.root(), ctx);
-  aiNode *root = component.ConvertToAiNode(pugi::xml_node());
+  aiNode *root = component.ConvertToAiNode();
   pScene->mRootNode = root;
   ctx->PopulateSceneArrays();
 
@@ -85,7 +85,7 @@ ConvertDaeToXml(const ConversionContext::Ptr &ctx, const std::string &daeFilePat
   ctx->SetScene(myScene);
   model::Component component(ctx);
 
-  component.ConvertFromAiNode(myScene->mRootNode->mChildren[0], pugi::xml_node());
+  component.ConvertFromAiNode(myScene->mRootNode->mChildren[0]);
 
   pugi::xml_document doc;
   if (fs::exists(actualXmlFilePath)) {

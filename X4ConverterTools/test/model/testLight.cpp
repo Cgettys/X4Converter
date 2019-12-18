@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(arealight_to_ainode){
   doc.load_string(xml.c_str());
   auto root = doc.root().first_child();
   Light l{root, ctx, "test"};
-  aiNode *node = l.ConvertToAiNode(nullptr);
+  aiNode *node = l.ConvertToAiNode();
   auto *out = ctx->GetLight("test-light-XU AreaLight05");
   BOOST_REQUIRE(out->mType == aiLightSource_AREA);
   BOOST_ASSERT(out->mSize == aiVector2D(0, 0.53));

@@ -39,18 +39,18 @@ Connection::Connection(pugi::xml_node node, const ConversionContext::Ptr &ctx, s
 
 Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName)
     : AbstractElement(std::move(ctx)) {
-  ConvertFromAiNode(node, pugi::xml_node());
+  ConvertFromAiNode(node);
   // TODO does this do the offset?
   parentName = std::move(componentName);//Default to component as parent
 
 }
 
-aiNode *Connection::ConvertToAiNode(pugi::xml_node &intermediateXml) {
+aiNode *Connection::ConvertToAiNode() {
   auto result = new aiNode("*" + getName() + "*");
   ApplyOffsetToAiNode(result);
   std::vector<aiNode *> children = attrToAiNode();
   for (auto &part : parts) {
-    children.push_back(part.ConvertToAiNode(pugi::xml_node()));
+    children.push_back(part.ConvertToAiNode());
   }
   populateAiNodeChildren(result, children);
   return result;
@@ -60,7 +60,7 @@ std::string Connection::getParentName() {
   return parentName;
 }
 
-void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void Connection::ConvertFromAiNode(aiNode *node) {
   std::string tmp = node->mName.C_Str();
   setName(tmp.substr(1, tmp.size() - 2));
   // TODO check for scaling and error if cfound
@@ -74,7 +74,7 @@ void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml
       readAiNodeChild(node, child);
     } else {
       Part part(ctx);
-      part.ConvertFromAiNode(child, pugi::xml_node());
+      part.ConvertFromAiNode(child);
       parts.emplace(parts.end(), part);
     }
   }

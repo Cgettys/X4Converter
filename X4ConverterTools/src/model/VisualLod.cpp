@@ -23,7 +23,7 @@ VisualLod::VisualLod(pugi::xml_node node, std::string partName, const Conversion
   }
 }
 
-void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void VisualLod::ConvertFromAiNode(aiNode *node) {
   std::string rawName = node->mName.C_Str();
   setName(rawName);
   // Parse out the index

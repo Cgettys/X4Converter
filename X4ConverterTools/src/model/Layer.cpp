@@ -22,10 +22,10 @@ Layer::Layer(pugi::xml_node node, const ConversionContext::Ptr &ctx, int id) : A
 }
 
 model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-  ConvertFromAiNode(node, pugi::xml_node());
+  ConvertFromAiNode(node);
 }
 
-aiNode *Layer::ConvertToAiNode(pugi::xml_node &intermediateXml) {
+aiNode *Layer::ConvertToAiNode() {
   auto result = new aiNode();
   result->mName = getName();
 
@@ -34,7 +34,7 @@ aiNode *Layer::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   // TODO should really add a Lights object or something
   std::vector<aiNode *> lightChildren;
   for (auto light: lights) {
-    lightChildren.push_back(light.ConvertToAiNode(pugi::xml_node()));
+    lightChildren.push_back(light.ConvertToAiNode());
   }
   populateAiNodeChildren(lightResult, lightChildren);
 
@@ -44,7 +44,7 @@ aiNode *Layer::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   return result;
 }
 
-void Layer::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
+void Layer::ConvertFromAiNode(aiNode *node) {
   std::string name = node->mName.C_Str();
   setName(name);
   // TODO abstract out some of the shared logic with Component
