@@ -182,6 +182,7 @@ void TestUtil::checkXmfHeaderEquality(XmfFile &lFile, XmfFile &rFile) {
   //    float BoundingBoxCenter[3];		    // bytes 30 - 41; virtual center of the mesh TODO calculate
   //    float BoundingBoxSize[3];		    // bytes 42 - 53; max absolute extents from the center (aligned coords) TODO calculate
   //    byte pad[10];                       // bytes 54 - 63
+  // Check that the two are equal
   BOOST_TEST(lhs.Magic == rhs.Magic);
   BOOST_TEST(lhs.Version == rhs.Version);
   BOOST_TEST(lhs.IsBigEndian == rhs.IsBigEndian);
@@ -205,6 +206,7 @@ void TestUtil::checkXmfHeaderEquality(XmfFile &lFile, XmfFile &rFile) {
 
   BOOST_TEST(lhs.pad == rhs.pad);
 
+  // The equality function should agree:
+  BOOST_TEST((lhs == rhs));
 }
-
 }

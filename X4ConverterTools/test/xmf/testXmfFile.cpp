@@ -81,11 +81,11 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
 
   TestUtil::checkXuMeshFileEquality(*meshFile, *reloadedFile);
   //	 Directly read the data into the vector & make sure we got it one go)
-  // TODO eventually would be better if we got exact same contents
+//   TODO eventually would be better if we got exact same contents
 //        BOOST_TEST(
-//                sourceLen == sourceStream->Read(&expected[0], sizeof(byte), expectedLen));
+//                sourceLen == sourceStream->Read(&expected[0], sizeof(uint8_t), expectedLen));
 //        BOOST_TEST(
-//                actualLen == resultStream->Read(&actual[0], sizeof(byte), actualLen));
+//                actualLen == resultStream->Read(&actual[0], sizeof(uint8_t), actualLen));
 
 }
 

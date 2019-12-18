@@ -15,8 +15,8 @@ class XmfMaterial : public IXmf {
   XmfMaterial(uint32_t firstIndex, uint32_t numIndices, std::string name);
 
   explicit XmfMaterial(Assimp::StreamReaderLE &reader);
-  void ReadBinary(Assimp::StreamReaderLE &reader) override;
-  void WriteBinary(Assimp::StreamWriterLE &writer) const override;
+  void ReadBinary(Assimp::StreamReaderLE &reader) final;
+  void WriteBinary(Assimp::StreamWriterLE &writer) const final;
 
   uint32_t FirstIndex;
   uint32_t NumIndices;

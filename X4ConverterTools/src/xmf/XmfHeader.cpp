@@ -60,13 +60,8 @@ XmfHeader::XmfHeader(Assimp::StreamReaderLE &reader) {
   reader >> PrimitiveType;
   reader >> MeshOptimization;
 
-  for (float &f: BoundingBoxCenter) {
-    reader >> f;
-  }
-
-  for (float &f: BoundingBoxSize) {
-    reader >> f;
-  }
+  reader >> BoundingBoxCenter.x >> BoundingBoxCenter.y >> BoundingBoxCenter.z;
+  reader >> BoundingBoxSize.x >> BoundingBoxSize.y >> BoundingBoxSize.z;
 
   for (uint8_t &c : pad) {
     reader >> c;
@@ -87,14 +82,8 @@ void XmfHeader::Write(Assimp::StreamWriterLE &writer) {
   writer << NumVertices << NumIndices;
 
   writer << PrimitiveType << MeshOptimization;
-
-  for (float &f: BoundingBoxCenter) {
-    writer << f;
-  }
-
-  for (float &f: BoundingBoxSize) {
-    writer << f;
-  }
+  writer << BoundingBoxCenter.x << BoundingBoxCenter.y << BoundingBoxCenter.z;
+  writer << BoundingBoxSize.x << BoundingBoxSize.y << BoundingBoxSize.z;
 
   for (uint8_t &c : pad) {
     writer << c;
@@ -188,5 +177,25 @@ std::string XmfHeader::validate() const {
     throw std::runtime_error(result);
   }
   return result;
+}
+bool operator==(XmfHeader const &lhs, XmfHeader const &rhs) {
+  return (memcmp(lhs.Magic, rhs.Magic, 4) == 0)
+      && (lhs.Version == rhs.Version)
+      && (lhs.IsBigEndian == rhs.IsBigEndian)
+      && (lhs.SizeOfHeader == rhs.SizeOfHeader)
+      && (lhs.reserved0 == rhs.reserved0)
+      && (lhs.NumDataBuffers == rhs.NumDataBuffers)
+      && (lhs.DataBufferDescSize == rhs.DataBufferDescSize)
+      && (lhs.NumMaterials == rhs.NumMaterials)
+      && (lhs.MaterialSize == rhs.MaterialSize)
+      && (lhs.Culling_CW == rhs.Culling_CW)
+      && (lhs.RightHand == rhs.RightHand)
+      && (lhs.NumVertices == rhs.NumVertices)
+      && (lhs.NumIndices == rhs.NumIndices)
+      && (lhs.PrimitiveType == rhs.PrimitiveType)
+      && (lhs.MeshOptimization == rhs.MeshOptimization)
+      && (lhs.BoundingBoxCenter == rhs.BoundingBoxCenter)
+      && (lhs.BoundingBoxSize == rhs.BoundingBoxSize)
+      && (memcmp(lhs.pad, rhs.pad, 10) == 0);
 }
 }
