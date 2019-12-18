@@ -47,15 +47,19 @@ class ExportAsset(Operator, ExportHelper):
         return {'FINISHED'}
 
 
-    def tweak_and_export_collada(self,ctx, base_path):
-        ship_macro=base_path.rsplit('/',1)[1]
-        ship_macro=ship_macro.replace(".out","")
+    def tweak_and_export_collada(self, ctx, base_path):
+        # TODO real path handling. This is a kludge to address issue 2
+        if (base_path.contains('/')):
+            ship_macro = base_path.rsplit('/', 1)[1]
+        else:
+            ship_macro = base_path.rsplit('\\', 1)[1]
+        ship_macro = ship_macro.replace(".out", "")
         # also the root part
-        root_part=bpy.data.objects[ship_macro]
-        root_part.scale = (1,1,1)
+        root_part = bpy.data.objects[ship_macro]
+        root_part.scale = (1, 1, 1)
         # For export, we need it to be at the game's scale
 
-        dae_path = base_path+ ".dae"
+        dae_path = base_path + ".dae"
         bpy.ops.wm.collada_export(filepath=dae_path)
 
 
