@@ -54,22 +54,24 @@ class ImportAsset(Operator, ImportHelper):
     )
     def execute(self, context):
         if (self.run_converter):
-            call_converter("importxmf",self.filepath)
+            call_converter("importxmf", self.filepath)
         base_path = re.sub(r'\.xml$', '', self.filepath)
-        self.import_and_tweak_collada(context,base_path)
-
+        self.import_and_tweak_collada(context, base_path)
 
         if (self.import_animations):
             self.read_animations(base_path)
-
-        ship_macro=base_path.rsplit('/',1)[1]
-        ship_macro=ship_macro.replace(".out","")
+        # TODO real path handling. This is a kludge to address issue 2
+        if (base_path.contains('/')):
+            ship_macro = base_path.rsplit('/', 1)[1]
+        else:
+            ship_macro = base_path.rsplit('\\', 1)[1]
+        ship_macro = ship_macro.replace(".out", "")
         # also the root part
-        root_part=bpy.data.objects[ship_macro]
+        root_part = bpy.data.objects[ship_macro]
         if (self.scale != "1.00"):
             scale_num = float(self.scale)
             root_part.scale = (scale_num, scale_num, scale_num)
-        
+
         return {'FINISHED'}
 
 
