@@ -28,7 +28,7 @@ class ExportAsset(Operator, ExportHelper):
     export_animations: BoolProperty(
         name="Export Animations (Experimental)",
         description="Export Animation Data - wip",
-        default=True,
+        default=False,
     )
 
     def execute(self, context):

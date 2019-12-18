@@ -42,7 +42,7 @@ class ImportAsset(Operator, ImportHelper):
     import_animations: BoolProperty(
         name="Import Animations (Experimental)",
         description="Import Animation Data - wip",
-        default=True,
+        default=False,
     )
     scale: EnumProperty(
         name="Scale",
