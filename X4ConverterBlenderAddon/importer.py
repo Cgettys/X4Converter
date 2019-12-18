@@ -61,7 +61,7 @@ class ImportAsset(Operator, ImportHelper):
         if (self.import_animations):
             self.read_animations(base_path)
         # TODO real path handling. This is a kludge to address issue 2
-        if (base_path.contains('/')):
+        if (base_path.find('/') != -1):
             ship_macro = base_path.rsplit('/', 1)[1]
         else:
             ship_macro = base_path.rsplit('\\', 1)[1]
