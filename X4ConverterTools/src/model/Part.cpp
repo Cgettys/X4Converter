@@ -9,6 +9,7 @@
 
 namespace model {
 namespace xml = util::xml;
+// TODO wreck class subclassing Part?
 Part::Part(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   hasRef = false;
   collisionLod = nullptr;
@@ -22,6 +23,8 @@ Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractEle
     throw std::runtime_error("Part must have a name attribute!");
   }
   hasRef = false;
+  bool hasWreck = false;
+  std::string wreckName;
   for (auto attr: node.attributes()) {
     auto attrName = std::string(attr.name());
     if (attrName == "ref") {
@@ -30,7 +33,9 @@ Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractEle
     } else if (attrName == "name") {
       setName(attr.value());
     } else if (attrName == "wreck") {
-      attrs[attrName] = attr.value();
+      hasWreck = true;
+      wreckName = attr.value();
+      // TODO FINISH HIM
     } else {
       std::cerr << "Warning, unhandled attribute on part: " << getName() << " attribute: " << attrName
                 << ". This may work fine, just a heads up ;)" << std::endl;

@@ -28,6 +28,9 @@ class Part : public AbstractElement {
   std::map<int, VisualLod> lods;
   std::vector<Light> lights;
   std::optional<ani::AnimFile> animation;
+  bool hasWreck;
+  std::shared_ptr<CollisionLod> wreckCollisionLod;
+  std::map<int, VisualLod> wreckLods;
   void handleAiLights(aiNode *node);
 };
 }
