@@ -21,11 +21,11 @@ class AbstractElement {
 
   void setName(std::string n);
 
-  virtual aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) = 0;
+  virtual aiNode *ConvertToAiNode(pugi::xml_node &intermediateXml) = 0;
 
-  virtual void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) = 0;
+  virtual void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) = 0;
 
-  virtual void ConvertToGameFormat(pugi::xml_node out) = 0;
+  virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;
 
  protected:
 

@@ -66,7 +66,7 @@ Component::Component(pugi::xml_node node, const ConversionContext::Ptr &ctx) : A
 
 }
 
-aiNode *Component::ConvertToAiNode(pugi::xml_node intermediateXml) {
+aiNode *Component::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   auto result = new aiNode(getName());
   std::map<std::string, aiNode *> nodes;
   nodes[getName()] = result;
@@ -145,7 +145,7 @@ aiNode *Component::ConvertToAiNode(pugi::xml_node intermediateXml) {
   return fakeRoot;
 }
 
-void Component::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void Component::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   setName(node->mName.C_Str());
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];
@@ -184,7 +184,7 @@ void Component::recurseOnChildren(aiNode *tgt, const ConversionContext::Ptr &ctx
 
 }
 
-void Component::ConvertToGameFormat(pugi::xml_node out) {
+void Component::ConvertToGameFormat(pugi::xml_node &out) {
   // TODO asset.xmf?
   if (std::string(out.name()) != "components") {
     throw std::runtime_error("Component should be under components element");

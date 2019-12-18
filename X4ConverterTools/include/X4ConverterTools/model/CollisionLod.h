@@ -14,9 +14,9 @@ class CollisionLod : public Lod {
 
   explicit CollisionLod(std::string partName, const ConversionContext::Ptr &ctx);
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) override;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) override;
 
-  void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node &out) override;
 
  private:
 

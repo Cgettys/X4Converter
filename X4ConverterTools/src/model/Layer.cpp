@@ -25,7 +25,7 @@ model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(
   ConvertFromAiNode(node, pugi::xml_node());
 }
 
-aiNode *Layer::ConvertToAiNode(pugi::xml_node intermediateXml) {
+aiNode *Layer::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   auto result = new aiNode();
   result->mName = getName();
 
@@ -44,7 +44,7 @@ aiNode *Layer::ConvertToAiNode(pugi::xml_node intermediateXml) {
   return result;
 }
 
-void Layer::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void Layer::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string name = node->mName.C_Str();
   setName(name);
   // TODO abstract out some of the shared logic with Component
@@ -68,7 +68,7 @@ void Layer::handleAiLights(aiNode *node) {
   }
 }
 
-void Layer::ConvertToGameFormat(pugi::xml_node out) {
+void Layer::ConvertToGameFormat(pugi::xml_node &out) {
   if (out.name() != "layer") {
     throw std::runtime_error("layer was passed incorrect node to write to!");
   }

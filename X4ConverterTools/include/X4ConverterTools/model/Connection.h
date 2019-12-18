@@ -16,11 +16,11 @@ class Connection : public AbstractElement {
 
   explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");
 
-  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) final;
+  aiNode *ConvertToAiNode(pugi::xml_node &intermediateXml) final;
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) final;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) final;
 
-  void ConvertToGameFormat(pugi::xml_node out) final;
+  void ConvertToGameFormat(pugi::xml_node &out) final;
 
   std::string getParentName();
 

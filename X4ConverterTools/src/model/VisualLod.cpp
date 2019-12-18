@@ -23,7 +23,7 @@ VisualLod::VisualLod(pugi::xml_node node, std::string partName, const Conversion
   }
 }
 
-void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string rawName = node->mName.C_Str();
   setName(rawName);
   // Parse out the index
@@ -37,7 +37,7 @@ void VisualLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) 
   }
 }
 
-void VisualLod::ConvertToGameFormat(pugi::xml_node out) {
+void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "lods") {
     throw std::runtime_error("Lods must be added to a lods node");
   }

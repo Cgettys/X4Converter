@@ -45,7 +45,7 @@ Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string com
 
 }
 
-aiNode *Connection::ConvertToAiNode(pugi::xml_node intermediateXml) {
+aiNode *Connection::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   auto result = new aiNode("*" + getName() + "*");
   ApplyOffsetToAiNode(result);
   std::vector<aiNode *> children = attrToAiNode();
@@ -60,7 +60,7 @@ std::string Connection::getParentName() {
   return parentName;
 }
 
-void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string tmp = node->mName.C_Str();
   setName(tmp.substr(1, tmp.size() - 2));
   // TODO check for scaling and error if cfound
@@ -80,7 +80,7 @@ void Connection::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml)
   }
 }
 
-void Connection::ConvertToGameFormat(pugi::xml_node out) {
+void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }

@@ -44,7 +44,7 @@ Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::mo
   ConvertFromAiNode(node, pugi::xml_node());
 }
 
-aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
+aiNode *Light::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   auto result = new aiLight();
   result->mName = getName();
   // TODO axes?
@@ -55,7 +55,8 @@ aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
   result->mColorSpecular = color;
   result->mColorAmbient = color;
   auto node = new aiNode();
-  node->mName = getName();
+  // TODO something smarter, do we even need the node at all?
+  node->mName = "node-" + getName();
   switch (lightKind) {
     case arealight:
       result->mType = aiLightSource_AREA;
@@ -67,6 +68,7 @@ aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
       result->mType = aiLightSource_POINT;
       break;
     case box:
+      // TODO fixme
       return node;
       result->mType = aiLightSource_AREA;
       // TODO wth is this
@@ -81,7 +83,7 @@ aiNode *Light::ConvertToAiNode(pugi::xml_node intermediateXml) {
   return node;
 }
 
-void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string name = node->mName.C_Str();
   setName(name);// TODO template method out this stuff?
   if (!ctx->CheckLight(name)) {
@@ -108,7 +110,7 @@ void Light::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
 
 }
 
-void Light::ConvertToGameFormat(pugi::xml_node out) {
+void Light::ConvertToGameFormat(pugi::xml_node &out) {
   auto name = getName();
   size_t pos = name.rfind("-light-");
   if (pos == std::string::npos) {

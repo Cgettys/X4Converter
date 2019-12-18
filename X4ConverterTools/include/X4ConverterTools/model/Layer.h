@@ -14,11 +14,11 @@ class Layer : public AbstractElement {
 
   explicit Layer(aiNode *node, ConversionContext::Ptr ctx);
 
-  aiNode *ConvertToAiNode(pugi::xml_node intermediateXml) override;
+  aiNode *ConvertToAiNode(pugi::xml_node &intermediateXml) override;
 
-  void ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) final;
+  void ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) final;
 
-  void ConvertToGameFormat(pugi::xml_node out) override;
+  void ConvertToGameFormat(pugi::xml_node &out) override;
 
  protected:
   int layerId;

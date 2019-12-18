@@ -68,7 +68,7 @@ Part::Part(pugi::xml_node node, const ConversionContext::Ptr &ctx) : AbstractEle
 
 }
 
-aiNode *Part::ConvertToAiNode(pugi::xml_node intermediateXml) {
+aiNode *Part::ConvertToAiNode(pugi::xml_node &intermediateXml) {
   auto *result = new aiNode(getName());
   std::vector<aiNode *> children = attrToAiNode();
   if (!hasRef) {
@@ -91,7 +91,7 @@ aiNode *Part::ConvertToAiNode(pugi::xml_node intermediateXml) {
   return result;
 }
 
-void Part::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void Part::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string name = node->mName.C_Str();
   setName(name);
 
@@ -123,7 +123,7 @@ void Part::handleAiLights(aiNode *node) {
     lights.emplace_back(child, ctx);
   }
 }
-void Part::ConvertToGameFormat(pugi::xml_node out) {
+void Part::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "parts") {
     throw std::runtime_error("part must be appended to a parts xml element");
   }

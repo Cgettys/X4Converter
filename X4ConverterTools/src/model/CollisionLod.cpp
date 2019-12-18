@@ -17,7 +17,7 @@ CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &c
   }
 }
 
-void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node intermediateXml) {
+void CollisionLod::ConvertFromAiNode(aiNode *node, pugi::xml_node &intermediateXml) {
   std::string rawName = node->mName.C_Str();
   setName(rawName);
   // Parse out the index
@@ -66,7 +66,7 @@ void CollisionLod::CalculateSizeAndCenter(aiNode *pCollisionNode) {
   center = lowerBound + maxDim;
 }
 
-void CollisionLod::ConvertToGameFormat(pugi::xml_node out) {
+void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
   // TODO handle no collision mesh
   if (!AssimpUtil::IsZero(maxDim) || !AssimpUtil::IsZero(center)) {
     auto sizeNode = xml::AddChild(out, "size");
