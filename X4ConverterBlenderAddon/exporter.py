@@ -5,7 +5,9 @@ from bpy.props import StringProperty, BoolProperty, EnumProperty
 from bpy.types import Operator
 import xml.etree.ElementTree as ET
 from X4ConverterBlenderAddon.common import *
+import logging
 
+log = logging.getLogger(__name__)
 class ExportAsset(Operator, ExportHelper):
     bl_idname = "export_scene.x4export"
     bl_label = "X4 Foundations Export"

@@ -6,12 +6,15 @@ from bpy.types import Operator
 import xml.etree.ElementTree as ET
 from X4ConverterBlenderAddon.common import *
 from X4ConverterBlenderAddon.panel import SubAnimationItem
-    
+import logging
+
+log = logging.getLogger(__name__)
+
 
 class ImportAsset(Operator, ImportHelper):
     bl_idname = "import_scene.x4import"
     bl_label = "X4 Foundations Import"
-    bl_options = {'REGISTER' }
+    bl_options = {'REGISTER'}
     filename_ext = ".xml"
 
     filter_glob: StringProperty(
@@ -101,7 +104,7 @@ class ImportAsset(Operator, ImportHelper):
         anixml_path = base_path + ".anixml"
         tree = ET.parse(anixml_path)
         root = tree.getroot()
-        print("Starting animations")
+        log.warning("Starting animations")
         for part in root[1]: #metadata first
             part_name = part.attrib['name']
             obj = bpy.data.objects[part_name]
@@ -121,7 +124,7 @@ class ImportAsset(Operator, ImportHelper):
         part_name = part.attrib['name']
         obj = bpy.data.objects[part_name]
         part_metadata=find_anim_metadata_source(obj).X4_anim_data
-        print(part_metadata)
+        log.warning(part_metadata)
         for cat in part:
             for anim in cat:
                 self.handle_category_anim(obj,cat,part_name,anim,part_metadata)
