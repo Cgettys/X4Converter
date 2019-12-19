@@ -7,9 +7,9 @@
 #include "AbstractElement.h"
 
 namespace model {
-class Connection : public AbstractElement {
+class Connection : public AiNodeElement {
  public:
-  Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
+  Connection(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
 
   explicit Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx,
                       std::string componentName = "");

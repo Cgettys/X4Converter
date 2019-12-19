@@ -10,12 +10,12 @@
 namespace model {
 namespace xml = util::xml;
 // TODO wreck class subclassing Part?
-Part::Part(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+Part::Part(ConversionContext::Ptr ctx) : AiNodeElement(ctx), lights(ctx) {
   hasRef = false;
   collisionLod = nullptr;
 }
 
-Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
   if (std::string(node.name()) != "part") {
     throw std::runtime_error("XML element must be a <part> element!");
   }
@@ -48,13 +48,8 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractEl
     throw std::runtime_error("ref should not contain lods");
   }
 
-  // TODO common with Layer
   auto lightsNode = node.child("lights");
-  if (!lightsNode.empty()) {
-    for (auto &lightNode: lightsNode.children()) {
-      lights.emplace_back(lightNode, ctx, getName());
-    }
-  }
+  lights.ConvertFromGameFormat(lightsNode, getName());
 
   // TODO figure out a better way
   if (!hasRef) {
@@ -78,8 +73,8 @@ aiNode *Part::ConvertToAiNode() {
       children.push_back(lod.second.ConvertToAiNode());
     }
   }
-
   populateAiNodeChildren(result, children);
+  lights.ConvertToAiLights();
   return result;
 }
 
@@ -87,15 +82,13 @@ void Part::ConvertFromAiNode(aiNode *node) {
   std::string name = node->mName.C_Str();
   setName(name);
   attrs = ctx->GetMetadataMap(name);
-
+  lights.ConvertFromAiLights(name);
   for (int i = 0; i < node->mNumChildren; i++) {
     auto child = node->mChildren[i];
     std::string childName = child->mName.C_Str();
     // TODO check part names?
     // TODO lights better
-    if (childName == name + "-lights") {
-      handleAiLights(child);
-    } else if (regex_match(childName, ctx->lodRegex)) {
+    if (regex_match(childName, ctx->lodRegex)) {
       auto lod = VisualLod(ctx);
       lod.ConvertFromAiNode(child);
       lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
@@ -109,12 +102,6 @@ void Part::ConvertFromAiNode(aiNode *node) {
   // TODO more
 }
 
-void Part::handleAiLights(aiNode *node) {
-  for (int i = 0; i < node->mNumChildren; i++) {
-    auto child = node->mChildren[i];
-    lights.emplace_back(child, ctx);
-  }
-}
 void Part::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "parts") {
     throw std::runtime_error("part must be appended to a parts xml element");
@@ -149,12 +136,7 @@ void Part::ConvertToGameFormat(pugi::xml_node &out) {
     partNode.remove_child("lods");
   }
 
-  if (!lights.empty()) {
-    auto lightsNode = xml::AddChild(partNode, "lights");
-    for (auto light : lights) {
-      light.ConvertToGameFormat(lightsNode);
-    }
-  }
+  lights.ConvertToGameFormat(out);
   // TODO out more
 }
 }

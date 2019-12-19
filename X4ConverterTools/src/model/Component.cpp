@@ -7,9 +7,9 @@ using namespace boost::algorithm;
 namespace model {
 namespace xml = util::xml;
 
-Component::Component(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
+Component::Component(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
 
-Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx) {
   auto componentsNode = node.child("components");
   if (componentsNode.empty()) {
     throw std::runtime_error("<components> node not found");

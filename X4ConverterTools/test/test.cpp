@@ -67,24 +67,22 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
 BOOST_AUTO_TEST_CASE(xml) {
   // TODO refactor all the io...
-  const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string geomPath = "assets/units/size_s/ship_gen_s_fighter_01_data";
-  const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
-  const std::string inputXMLPath = tgtPath + ".xml";
-  const std::string daePath = tgtPath + ".out.dae";
-  const std::string outputXMLPath = tgtPath + ".out.xml";
+  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
+  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
+  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
+  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(gameBaseFolderPath + daePath);
+  fs::remove(daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
-                fs::copy_option::overwrite_if_exists);
+  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
 
-  auto ctx = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  auto ctx2 = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
@@ -98,24 +96,23 @@ BOOST_AUTO_TEST_CASE(xml) {
 BOOST_AUTO_TEST_CASE(xml_hard) {
   // TODO refactor all the io...
   // TODO test /assets/units/size_m/ship_arg_m_bomber_02.xml as well
-  const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string geomPath = "assets/units/size_s/ship_gen_s_fighter_01_data";
-  const std::string tgtPath = "/assets/units/size_s/ship_gen_s_fighter_01";
-  const std::string inputXMLPath = tgtPath + ".xml";
-  const std::string daePath = tgtPath + ".out.dae";
-  const std::string outputXMLPath = tgtPath + ".out.xml";
+  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
+  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
+  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
+  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(gameBaseFolderPath + daePath);
-  fs::remove(gameBaseFolderPath + outputXMLPath);
+  fs::remove(daePath);
+  fs::remove(outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
-  auto ctx = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  auto ctx2 = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
@@ -130,24 +127,23 @@ BOOST_AUTO_TEST_CASE(xml_hard) {
 }
 
 BOOST_AUTO_TEST_CASE(xml_hard_2) {
-  // TODO refactor all the io...
-  const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string geomPath = "assets/units/size_m/ship_arg_m_bomber_02_data";
-  const std::string tgtPath = "/assets/units/size_m/ship_arg_m_bomber_02";
-  const std::string inputXMLPath = tgtPath + ".xml";
-  const std::string daePath = tgtPath + ".out.dae";
-  const std::string outputXMLPath = tgtPath + ".out.xml";
+  // TODO no more io
+  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "/assets/units/size_m/ship_arg_m_bomber_02";
+  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
+  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
+  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(gameBaseFolderPath + daePath);
-  fs::remove(gameBaseFolderPath + outputXMLPath);
+  fs::remove(daePath);
+  fs::remove(outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
-  auto ctx = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
-  auto ctx2 = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   BOOST_TEST_CHECKPOINT("Forward parsing");
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
@@ -161,24 +157,22 @@ BOOST_AUTO_TEST_CASE(xml_hard_2) {
 }
 BOOST_AUTO_TEST_CASE(bridge) {
   // TODO refactor all the io...
-  const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string geomPath = "assets/interiors/bridges/bridge_arg_xl_01_data";
-  const std::string tgtPath = "/assets/interiors/bridges/bridge_arg_xl_01";
-  const std::string inputXMLPath = tgtPath + ".xml";
-  const std::string daePath = tgtPath + ".out.dae";
-  const std::string outputXMLPath = tgtPath + ".out.xml";
+  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "/assets/interiors/bridges/bridge_arg_xl_01";
+  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
+  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
+  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(gameBaseFolderPath + daePath);
+  fs::remove(daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
-                fs::copy_option::overwrite_if_exists);
-  auto ctx = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+  auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  auto ctx2 = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 
@@ -191,25 +185,23 @@ BOOST_AUTO_TEST_CASE(bridge) {
 
 BOOST_AUTO_TEST_CASE(multimat) {
   // TODO refactor all the io...
-  const std::string gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string geomPath = "assets/units/size_m/ship_arg_m_trans_container_01_data";
+  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
   const std::string tgtPath = "/assets/units/size_m/ship_arg_m_trans_container_01";
   // TODO lowercase hatch name in code instead of the hack
-  const std::string inputXMLPath = tgtPath + ".xml";
-  const std::string daePath = tgtPath + ".out.dae";
-  const std::string outputXMLPath = tgtPath + ".out.xml";
+  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
+  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
+  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(gameBaseFolderPath + daePath);
+  fs::remove(daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(gameBaseFolderPath + inputXMLPath, gameBaseFolderPath + outputXMLPath,
-                fs::copy_option::overwrite_if_exists);
-  auto ctx = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+  auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");
   bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
   BOOST_TEST(forwardSuccess);
   BOOST_TEST_CHECKPOINT("Forward parsing");
-  auto ctx2 = TestUtil::GetTestContext(geomPath, tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
   BOOST_TEST(backwardSuccess);
 

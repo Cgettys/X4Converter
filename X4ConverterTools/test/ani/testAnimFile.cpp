@@ -20,10 +20,10 @@ BOOST_AUTO_TEST_SUITE(AnimUnitTests) // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_CASE(ani_read_basic) { // NOLINT(cert-err58-cpp)
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
-  const std::string aniFile =
-      test::TestUtil::GetBasePath() + "/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto aniFile =
+      test::TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
-  IOStream *sourceStream = io->Open(aniFile, "rb");
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
   AnimFile file(sourceStream);
   std::cout << file.validate();
@@ -31,16 +31,16 @@ BOOST_AUTO_TEST_CASE(ani_read_basic) { // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
-  const std::string aniFile =
-      test::TestUtil::GetBasePath() + "/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
-  const std::string xmlFile =
-      test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_gen_s_fighter_01.xml";
-  const std::string aniOutFile =
-      test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
-//const std::string aniFile = "test::TestUtil::GetBasePath()/test_files/struct_bt_ut_omicron_superyard_data.ani";
-//        const std::string aniFile =current_path().string()+"/assets/fx/lensflares/LENSFLARES_DATA.ANI";
+  auto aniFile =
+      test::TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile =
+      test::TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+  auto aniOutFile =
+      test::TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
+//auto aniFile = "test::TestUtil::GetBasePath()/test_files/struct_bt_ut_omicron_superyard_data.ani";
+//        auto aniFile =current_path().string()+"/assets/fx/lensflares/LENSFLARES_DATA.ANI";
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
-  IOStream *sourceStream = io->Open(aniFile, "rb");
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
   AnimFile file(sourceStream);
   std::cout << file.validate();
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
 
   pugi::xml_document doc;
-  file.WriteIntermediateRepr(xmlFile, doc.root());
+  file.WriteIntermediateRepr(xmlFile.string(), doc.root());
   doc.save_file(aniOutFile.c_str());//TODO get rid of this once we validate
 
   // TODO validate

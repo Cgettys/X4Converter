@@ -7,6 +7,6 @@ bool ConvertXmlToDae(const ConversionContext::Ptr &ctx,
                      const std::string &daeFilePath);
 
 bool ConvertDaeToXml(const ConversionContext::Ptr &ctx,
-                     const std::string &daeFilePath,
-                     const std::string &xmlFilePath);
+                     const std::string &rawDaeFilePath,
+                     const std::string &rawXmlFilePath);
 

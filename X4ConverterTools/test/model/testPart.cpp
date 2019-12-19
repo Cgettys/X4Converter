@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   partNode.remove_child("lods");
   BOOST_TEST_REQUIRE(!partNode.empty());
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   auto part = Part(partNode, ctx);
   BOOST_TEST(part.getName() == "anim_main");
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   partNode.remove_child("lods");
   BOOST_TEST_REQUIRE(!partNode.empty());
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   auto part = Part(partNode, ctx);
   auto result = part.ConvertToAiNode();
@@ -43,22 +43,22 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) {
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto partNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   BOOST_TEST_REQUIRE(!partNode.empty());
   partNode.remove_attribute("name");
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto partNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts[1]").node();
   BOOST_TEST_REQUIRE(!partNode.empty());
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   BOOST_CHECK_THROW(auto part = Part(partNode, ctx), std::runtime_error);
 }
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
 BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
   std::string partName = "testpart";
   auto ainode = new aiNode(partName);
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   Part part(ctx);
   part.ConvertFromAiNode(ainode);
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
 BOOST_AUTO_TEST_CASE(ainode_to_xml_name) {
   std::string partName = "testpart";
   auto ainode = new aiNode(partName);
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   Part part(ctx);
   part.ConvertFromAiNode(ainode);
@@ -147,24 +147,22 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 BOOST_AUTO_TEST_SUITE(PartIntegrationTests)
 
 BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) {
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto partNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   BOOST_TEST_REQUIRE(!partNode.empty());
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", true);
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   auto part = Part(partNode, ctx);
 
   auto result = part.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
-  BOOST_TEST_REQUIRE(result->mNumChildren == 7);
-  TestUtil::checkAiNodeName(result->mChildren[0], "anim_main|wreck|anim_main_wreck");
+  BOOST_TEST_REQUIRE(result->mNumChildren == 5);
   TestUtil::checkAiNodeName(result->mChildren[1], "anim_main|collision");
   TestUtil::checkAiNodeName(result->mChildren[2], "anim_main|lod0");
   TestUtil::checkAiNodeName(result->mChildren[3], "anim_main|lod1");
   TestUtil::checkAiNodeName(result->mChildren[4], "anim_main|lod2");
   TestUtil::checkAiNodeName(result->mChildren[5], "anim_main|lod3");
-  TestUtil::checkAiNodeName(result->mChildren[6], "anim_main|lights");
 }
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {

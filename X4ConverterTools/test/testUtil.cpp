@@ -1,3 +1,4 @@
+#include <cmath>
 #include <utility>
 
 #include "testUtil.h"
@@ -10,6 +11,7 @@
 #include <regex>
 #include <cmath>
 #include <X4ConverterTools/xmf/XmfHeader.h>
+#include <boost/filesystem/path.hpp>
 
 namespace test {
 
@@ -20,24 +22,36 @@ void TestUtil::checkAiNodeName(aiNode *node, std::string name) {
   BOOST_TEST(name == std::string(actualName));
 }
 
-std::unique_ptr<pugi::xml_document> TestUtil::GetXmlDocument(std::string path) {
-  std::string fullPath = GetBasePath() + path;
+std::unique_ptr<pugi::xml_document> TestUtil::GetXmlDocument(const std::string &path) {
+  boost::filesystem::path fullPath = path;
+  if (fullPath.is_relative()) {
+    fullPath = GetBasePath() / path;
+  } else {
+    BOOST_WARN_MESSAGE(true, "Warning, absolute path used in test: " + path);
+  }
+  auto pathString = fullPath.make_preferred().c_str();
   auto doc = std::make_unique<pugi::xml_document>();
-  pugi::xml_parse_result result = doc->load_file(fullPath.c_str());
+  pugi::xml_parse_result result = doc->load_file(pathString);
   BOOST_TEST_REQUIRE(result.status == pugi::status_ok);
   return doc;
 }
 
-std::string TestUtil::GetBasePath() {
+boost::filesystem::path TestUtil::GetBasePath() {
 
   char *path = std::getenv("X4_UNPACKED_ROOT");
   BOOST_TEST_REQUIRE(path != nullptr);
-  return std::string(path);
+  return {path};
 }
-ConversionContext::Ptr TestUtil::GetTestContext(std::string tgtPath, bool convert) {
+
+ConversionContext::Ptr TestUtil::GetTestContext(const boost::filesystem::path &tgtPath, bool convert) {
   auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(GetBasePath(), tgtPath + ".out.metadata", io, convert, true);
-  ctx->SetSourcePathSuffix(tgtPath + "_data");
+  auto ctx = std::make_shared<ConversionContext>(
+      GetBasePath().string(),
+      tgtPath.generic_path().replace_extension(".out.metadata").make_preferred().string(),
+      io,
+      convert,
+      true);
+  ctx->SetSourcePathSuffix(tgtPath.string() + "_data");
   return ctx;
 }
 
@@ -140,7 +154,7 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
         float expectedValueFloat = expectedAttr.as_float();
         float actualValueFloat = actualAttr.as_float();
         const float small = 2e-6;
-        if (fabs(expectedValueFloat) > small && fabs(actualValueFloat) > small) {
+        if (std::fabs(expectedValueFloat) > small && std::fabs(actualValueFloat) > small) {
           BOOST_WARN_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
 //                        BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat,1.0);
         } else {

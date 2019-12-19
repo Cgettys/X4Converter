@@ -8,17 +8,17 @@
 #include <string>
 #include <assimp/scene.h>
 #include <X4ConverterTools/xmf/XmfFile.h>
+#include <boost/filesystem.hpp>
 namespace test {
-
 class TestUtil {
  public:
   static void checkAiNodeName(aiNode *node, std::string name);
 
-  static std::unique_ptr<pugi::xml_document> GetXmlDocument(std::string path);
+  static std::unique_ptr<pugi::xml_document> GetXmlDocument(const std::string &path);
 
-  static std::string GetBasePath();
+  static boost::filesystem::path GetBasePath();
 
-  static ConversionContext::Ptr GetTestContext(std::string tgtPath, bool convert = true);
+  static ConversionContext::Ptr GetTestContext(const boost::filesystem::path &tgtPath, bool convert = true);
   static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
   static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);

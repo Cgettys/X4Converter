@@ -6,65 +6,43 @@
 
 namespace model {
 using namespace boost;
-Layer::Layer(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+Layer::Layer(ConversionContext::Ptr ctx) : AiNodeElement(ctx), lights(ctx) {
 
 }
 
-Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx) {
+Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AiNodeElement(ctx), lights(ctx) {
   layerId = id;
-  setName(str(format("layer%d") % layerId));
+  auto myName = str(format("layer|%d") % layerId);
+  setName(myName);
   auto lightsNode = node.child("lights");
-  if (!lightsNode.empty()) {
-    for (auto lightNode: lightsNode.children()) {
-      lights.emplace_back(lightNode, ctx, getName());
-    }
-  }
+  lights.ConvertFromGameFormat(node, myName);
 }
 
-model::Layer::Layer(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+model::Layer::Layer(aiNode *node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
   ConvertFromAiNode(node);
 }
 
 aiNode *Layer::ConvertToAiNode() {
   auto result = new aiNode();
   result->mName = getName();
-
-  auto lightResult = new aiNode();
-  lightResult->mName = getName() + "-lights";
-  // TODO should really add a Lights object or something
-  std::vector<aiNode *> lightChildren;
-  for (auto light: lights) {
-    lightChildren.push_back(light.ConvertToAiNode());
-  }
-  populateAiNodeChildren(lightResult, lightChildren);
-
-  std::vector<aiNode *> children;
-  children.push_back(lightResult);
-  populateAiNodeChildren(result, children);
+  lights.ConvertToAiLights();
   return result;
 }
 
 void Layer::ConvertFromAiNode(aiNode *node) {
-
+  std::string myname{node->mName.C_Str()};
+  setName(myname);
+  std::string id = myname.substr(myname.find('|'));
+  layerId = std::stoi(id);
+  lights.ConvertFromAiLights(myname);
 }
 
-void Layer::handleAiLights(aiNode *node) {
-  for (int i = 0; i < node->mNumChildren; i++) {
-    auto child = node->mChildren[i];
-    lights.emplace_back(child, ctx);
-  }
-}
 
 void Layer::ConvertToGameFormat(pugi::xml_node &out) {
-  if (out.name() != "layer") {
+  if (std::string(out.name()) != "layer") {
     throw std::runtime_error("layer was passed incorrect node to write to!");
   }
-  if (!lights.empty()) {
-    auto lightsNode = util::xml::AddChild(out, "lights");
-    for (auto light : lights) {
-      light.ConvertToGameFormat(lightsNode);
-    }
-  }
+  lights.ConvertToGameFormat(out);
 }
 
 }

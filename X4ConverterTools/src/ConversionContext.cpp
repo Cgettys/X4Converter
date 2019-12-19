@@ -62,11 +62,12 @@ fs::path ConversionContext::MakeGameSafe(const fs::path &filePath) {
 }
 
 fs::path ConversionContext::GetAbsolutePath(const fs::path &filePath) {
+
   if (!gameBaseFolderPath.empty() && filePath.is_relative()) {
     std::cout << "Prepending " << gameBaseFolderPath << " to path " << filePath << std::endl;
     return gameBaseFolderPath / filePath;
   }
-  return filePath;
+  return filePath.generic_path();
 }
 
 fs::path ConversionContext::GetRelativePath(const fs::path &filePath) {
@@ -212,8 +213,11 @@ Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, cons
 }
 
 void ConversionContext::AddLight(aiLight *light) {
+  if (light == nullptr) {
+    throw std::runtime_error("light may not be a nullptr!");
+  }
   std::string name = light->mName.C_Str();
-  if (lights[name]) {
+  if (CheckLight(name)) {
     throw std::runtime_error("Duplicated light name: " + name);
   }
   lights[name] = light;
@@ -270,4 +274,14 @@ ConversionContext::~ConversionContext() {
     ConversionContext::PopulateSceneArrays();
 //    delete pScene;
   }
+}
+std::vector<aiLight *> ConversionContext::GetLightsByParent(const std::string &name) {
+  std::vector<aiLight *> matches;
+  const auto key = name + "|lights|";
+  auto it = lights.lower_bound(key);
+  while (it != lights.end() && it->first.find(key) != std::string::npos) {
+    matches.emplace_back(it->second);
+    it = std::next(it);
+  }
+  return matches;
 }

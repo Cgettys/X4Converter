@@ -8,10 +8,10 @@
 #include <assimp/DefaultIOSystem.h>
 #include "X4ConverterTools/model/MaterialLibrary.h"
 
-namespace fs = boost::filesystem;
 class ConversionContext {
  public:
   using Ptr = std::shared_ptr<ConversionContext>;
+  using path = boost::filesystem::path;
   // TODO move me?
   using MetadataMap = std::map<std::string, std::string>;
   explicit ConversionContext(const std::string &gameBaseFolderPath,
@@ -21,17 +21,17 @@ class ConversionContext {
                              bool is_test);
   ~ConversionContext();
 
-  [[nodiscard]] fs::path GetRelativePath(const fs::path &filePath);
-  [[nodiscard]] fs::path GetRelativePath(const fs::path &filePath, const fs::path &relativeToFolderPath);
-  [[nodiscard]] fs::path GetAbsolutePath(const fs::path &filePath);
+  [[nodiscard]] path GetRelativePath(const path &filePath);
+  [[nodiscard]] path GetRelativePath(const path &filePath, const path &relativeToFolderPath);
+  [[nodiscard]] path GetAbsolutePath(const path &filePath);
 
   [[nodiscard]] static std::string MakePlatformSafe(const std::string &filePath);
 
   [[nodiscard]] static std::string MakeGameSafe(const std::string &filePath);
 
-  [[nodiscard]] static fs::path MakePlatformSafe(const fs::path &filePath);
+  [[nodiscard]] static path MakePlatformSafe(const path &filePath);
 
-  [[nodiscard]] static fs::path MakeGameSafe(const fs::path &filePath);
+  [[nodiscard]] static path MakeGameSafe(const path &filePath);
 
   [[nodiscard]] std::string GetOutputPath(const std::string &inputPath);
   void PopulateSceneArrays();
@@ -51,11 +51,11 @@ class ConversionContext {
 
   bool CheckLight(const std::string &name);
   aiLight *GetLight(const std::string &name);
+  std::vector<aiLight *> GetLightsByParent(const std::string &parentName);
 
   void AddMesh(aiNode *parentNode, aiMesh *mesh);
   void AddLight(aiLight *light);
   // TODO something more elegant?
-  void SetMetadataPath(const std::string &metadataFilePath);
   // Note, performance heavy
   [[nodiscard]] MetadataMap GetMetadataMap(const std::string &name);
 

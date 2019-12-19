@@ -21,30 +21,19 @@ class AbstractElement {
 
   void setName(std::string n);
 
-  virtual aiNode *ConvertToAiNode() = 0;
-
-  virtual void ConvertFromAiNode(aiNode *node) = 0;
-
   virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;
 
  protected:
 
   // TODO template pattern?
 
-  virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
-
   void ReadOffset(pugi::xml_node target);
 
-  void ApplyOffsetToAiNode(aiNode *target);
-
   void WriteOffset(pugi::xml_node target);
-
 
   ConversionContext::MetadataMap attrs;
 
   ConversionContext::Ptr ctx;
- protected:
-
   aiVector3D offsetPos;
   aiQuaternion offsetRot;
  private:
@@ -52,4 +41,15 @@ class AbstractElement {
 
 };
 
+class AiNodeElement : public AbstractElement {
+ public:
+  explicit AiNodeElement(ConversionContext::Ptr ctx);
+  virtual ~AiNodeElement() = default;
+  virtual aiNode *ConvertToAiNode() = 0;
+  virtual void ConvertFromAiNode(aiNode *node) = 0;
+ protected:
+  virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
+  void ApplyOffsetToAiNode(aiNode *target);
+
+};
 }

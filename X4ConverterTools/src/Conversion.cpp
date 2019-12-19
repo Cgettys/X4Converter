@@ -57,10 +57,12 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
 
 bool
 ConvertDaeToXml(const ConversionContext::Ptr &ctx,
-                const std::string &daeFilePath,
-                const std::string &xmlFilePath) {
+                const std::string &rawDaeFilePath,
+                const std::string &rawXmlFilePath) {
   // TODO make better
 
+  auto daeFilePath = ctx->GetAbsolutePath(rawDaeFilePath).generic_string();
+  auto xmlFilePath = ctx->GetAbsolutePath(rawXmlFilePath).generic_string();
   auto importer = std::make_unique<Assimp::Importer>();
   importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
   const aiScene *pScene = importer->ReadFile(daeFilePath, 0);

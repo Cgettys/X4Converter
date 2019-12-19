@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests)
 
 BOOST_AUTO_TEST_CASE(read_lod_name) {
   std::string tgtPath = "/assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
   auto node = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(read_lod_name) {
 
 BOOST_AUTO_TEST_CASE(read_lod_no_index) {
   std::string tgtPath = "/assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data", tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
   auto node = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(read_lod_no_index) {
 
 BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
   std::string tgtPath = "/assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
   auto node = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   std::string tgtPath = "/assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", tgtPath + ".out.metadata");
+  auto ctx = TestUtil::GetTestContext(tgtPath);
   auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
   auto pScene = new aiScene();
   ctx->SetScene(pScene);
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   auto lodForward = VisualLod(node, "anim_main", ctx);
   auto forwardResult = lodForward.ConvertToAiNode();
   ctx->PopulateSceneArrays();
-  auto ctx2 = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01_data)", tgtPath + ".out.metadata");
+  auto ctx2 = TestUtil::GetTestContext(tgtPath);
   ctx2->SetScene(pScene);
 
   auto lodBackward = VisualLod(ctx2);

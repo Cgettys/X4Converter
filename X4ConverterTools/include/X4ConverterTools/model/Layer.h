@@ -6,13 +6,13 @@
 #include "Light.h"
 
 namespace model {
-class Layer : public AbstractElement {
+class Layer : public AiNodeElement {
  public:
   explicit Layer(ConversionContext::Ptr ctx);
 
   explicit Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id = 0);
 
-  explicit Layer(aiNode *node, ConversionContext::Ptr ctx);
+  explicit Layer(aiNode *node, const ConversionContext::Ptr &ctx);
 
   aiNode *ConvertToAiNode() override;
 
@@ -22,9 +22,7 @@ class Layer : public AbstractElement {
 
  protected:
   int layerId;
-  std::vector<Light> lights;
-
-  void handleAiLights(aiNode *pNode);
+  LightsGroup lights;
 };
 
 }

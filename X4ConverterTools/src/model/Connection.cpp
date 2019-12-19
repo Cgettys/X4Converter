@@ -9,7 +9,7 @@ namespace model {
 namespace xml = util::xml;
 
 Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string componentName)
-    : AbstractElement(ctx) {
+    : AiNodeElement(ctx) {
 
   if (!node.attribute("name")) {
     throw std::runtime_error("Unnamed connection!");
@@ -38,7 +38,7 @@ Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, 
 }
 
 Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName)
-    : AbstractElement(std::move(ctx)) {
+    : AiNodeElement(std::move(ctx)) {
   ConvertFromAiNode(node);
   // TODO does this do the offset?
   parentName = std::move(componentName);//Default to component as parent

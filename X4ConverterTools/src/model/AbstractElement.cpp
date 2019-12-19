@@ -3,7 +3,6 @@
 #include <X4ConverterTools/model/AbstractElement.h>
 #include <vector>
 #include <iostream>
-#include <boost/numeric/conversion/cast.hpp>
 
 namespace model {
 using std::string;
@@ -29,7 +28,7 @@ void AbstractElement::setName(string n) {
 }
 
 
-void AbstractElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
+void AiNodeElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
   unsigned long numChildren = children.size();
   if (children.empty()) {
     return;
@@ -64,7 +63,7 @@ void AbstractElement::WriteOffset(pugi::xml_node target) {
 
 }
 
-void AbstractElement::ApplyOffsetToAiNode(aiNode *target) {
+void AiNodeElement::ApplyOffsetToAiNode(aiNode *target) {
   aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
   // TODO fixme upstream... this sucks
   target->mTransformation.a1 = tmp.a1;
@@ -83,6 +82,9 @@ void AbstractElement::ApplyOffsetToAiNode(aiNode *target) {
   target->mTransformation.d2 = tmp.d2;
   target->mTransformation.d3 = tmp.d3;
   target->mTransformation.d4 = tmp.d4;
+
+}
+AiNodeElement::AiNodeElement(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
 }
 

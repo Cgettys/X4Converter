@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_SUITE(ComponentUnitTests) // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(from_xml_basic) { // NOLINT(cert-err58-cpp)
   auto ctx = TestUtil::GetTestContext("");
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto node = doc->root();
   BOOST_TEST_REQUIRE(!node.empty());
 

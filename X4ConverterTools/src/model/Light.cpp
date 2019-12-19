@@ -6,14 +6,11 @@
 using namespace boost;
 namespace model {
 namespace xml = util::xml;
-// TODO composition or subclass isntead of this mess
-Light::Light(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-
-}
+// TODO composition or subclass instead of this mess
 
 Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName)
     : AbstractElement(std::move(ctx)) {
-  std::string tmp = str(boost::format("%1%-light-%2%") % parentName % node.attribute("name").value());
+  std::string tmp = str(boost::format("%1%|light|%2%") % parentName % node.attribute("name").value());
   setName(tmp);
   ReadOffset(node);
   std::string kind = node.name();
@@ -40,11 +37,11 @@ Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string paren
   // TODO animation
 }
 
-Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-  ConvertFromAiNode(node);
+Light::Light(aiLight *light, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+  ConvertFromAiLight(light);
 }
 
-aiNode *Light::ConvertToAiNode() {
+aiLight *Light::ConvertToAiLight() {
   auto result = new aiLight();
   result->mName = getName();
   // TODO axes?
@@ -54,9 +51,6 @@ aiNode *Light::ConvertToAiNode() {
   result->mColorDiffuse = color;
   result->mColorSpecular = color;
   result->mColorAmbient = color;
-  auto node = new aiNode();
-  // TODO something smarter, do we even need the node at all?
-  node->mName = "node-" + getName();
   switch (lightKind) {
     case arealight:
       result->mType = aiLightSource_AREA;
@@ -69,7 +63,7 @@ aiNode *Light::ConvertToAiNode() {
       break;
     case box:
       // TODO fixme
-      return node;
+      return result;
       result->mType = aiLightSource_AREA;
       // TODO wth is this
       result->mSize = area;
@@ -78,22 +72,15 @@ aiNode *Light::ConvertToAiNode() {
 
       break;
   }
-  ctx->AddLight(result);
   // TODO other stuff here
-  return node;
+  return result;
 }
 
-void Light::ConvertFromAiNode(aiNode *node) {
-  std::string name = node->mName.C_Str();
-  setName(name);// TODO template method out this stuff?
-  if (!ctx->CheckLight(name)) {
-    std::cerr << "Warning, could not find light by name:" + name << std::endl;
-    node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
-    return;
-  }
-  auto light = ctx->GetLight(name);
+void Light::ConvertFromAiLight(aiLight *light) {
+  setName(light->mName.C_Str());
   offsetPos = light->mPosition;
   color = light->mColorSpecular;// TODO is this the best choice?
+//  offsetRot = light->mDirection;
   // TODO reconstruct vector for mDirection
   switch (light->mType) {
     case aiLightSource_AREA:
@@ -112,7 +99,7 @@ void Light::ConvertFromAiNode(aiNode *node) {
 
 void Light::ConvertToGameFormat(pugi::xml_node &out) {
   auto name = getName();
-  size_t pos = name.rfind("-light-");
+  size_t pos = name.rfind("|light|");
   if (pos == std::string::npos) {
     throw std::runtime_error("light name couldn't be parsed");
   }
@@ -142,14 +129,43 @@ void Light::ConvertToGameFormat(pugi::xml_node &out) {
   WriteOffset(lightNode);
   xml::WriteAttrRGB(lightNode, color);
 }
+LightsGroup::LightsGroup(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
-aiNode *LightsGroup::ConvertToAiNode() {
-  return nullptr;
 }
-void LightsGroup::ConvertFromAiNode(aiNode *node) {
 
+void LightsGroup::ConvertFromGameFormat(pugi::xml_node &node, const std::string &parent) {
+  parentName = parent;
+  if (!node.empty()) {
+    if (std::string(node.name()) != "lights") {
+      throw std::runtime_error("XML element must be a <lights> element!");
+    }
+    for (auto lightNode: node.children()) {
+      lights.emplace_back(lightNode, ctx, parentName);
+    }
+  }
+
+}
+void LightsGroup::ConvertToAiLights() {
+  for (auto &light: lights) {
+    auto result = light.ConvertToAiLight();
+    ctx->AddLight(result);
+  }
+}
+void LightsGroup::ConvertFromAiLights(const std::string &parent) {
+  parentName = parent;
+  auto mylights = ctx->GetLightsByParent(parentName);
+  for (auto light: mylights) {
+    lights.emplace_back(light, ctx);
+  }
 }
 void LightsGroup::ConvertToGameFormat(pugi::xml_node &out) {
+  // TODO is this following the correct convention we want to set?
+  if (!lights.empty()) {
+    auto lightsNode = util::xml::AddChild(out, "lights");
+    for (auto light : lights) {
+      light.ConvertToGameFormat(lightsNode);
+    }
+  }
 
 }
 }

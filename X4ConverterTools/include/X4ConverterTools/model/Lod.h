@@ -4,9 +4,9 @@
 #include "AbstractElement.h"
 
 namespace model {
-class Lod : public AbstractElement {
+class Lod : public AiNodeElement {
  public:
-  explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(ctx) {}
+  explicit Lod(ConversionContext::Ptr ctx) : AiNodeElement(ctx) {}
 
   aiNode *ConvertToAiNode() override {
     if (!ctx->ShouldConvertGeometry()) {

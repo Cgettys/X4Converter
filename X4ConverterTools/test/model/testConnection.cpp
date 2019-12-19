@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
 
 BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
   // TODO split into integration + unit
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
+  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01");
   auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
   BOOST_TEST_REQUIRE(!node.empty());
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
+  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01");
   auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto node = doc->select_node("/components/component/connections/connection[@name='Connection01']").node();
   node.remove_child("lods");
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
-  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
+  auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01");
   auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
   node.remove_child("lods");

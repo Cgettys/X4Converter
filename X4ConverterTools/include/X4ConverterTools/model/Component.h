@@ -8,7 +8,7 @@
 
 namespace model {
 
-class Component : public AbstractElement {
+class Component : public AiNodeElement {
  public:
   explicit Component(ConversionContext::Ptr ctx);
 
