@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_SUITE(LightUnitTests) // NOLINT(cert-err58-cpp)
 
-BOOST_AUTO_TEST_CASE(arealight_to_ainode){
+BOOST_AUTO_TEST_CASE(arealight_to_ailight) {
   auto ctx = TestUtil::GetTestContext("");
   std::stringstream ss;
   ss
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(arealight_to_ainode){
   doc.load_string(xml.c_str());
   auto root = doc.root().first_child();
   Light l{root, ctx, "test"};
-  auto *out = ctx->GetLight("test-light-XU AreaLight05");
+  auto *out = l.ConvertToAiLight();
   BOOST_REQUIRE(out->mType == aiLightSource_AREA);
   BOOST_ASSERT(out->mSize == aiVector2D(0, 0.53));
   BOOST_ASSERT(out->mColorSpecular == aiColor3D(124.0f / 255.0f, 1.0f, 1.0f));

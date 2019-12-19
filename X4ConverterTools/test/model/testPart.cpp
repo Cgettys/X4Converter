@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_SUITE(PartUnitTests)
 
 // TODO split all these sorta unit tests in half in all files
 BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto partNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   partNode.remove_child("lods");
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(from_xml_read_part_name_correct) {
 }
 
 BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
-  auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
   auto partNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part").node();
   partNode.remove_child("lods");

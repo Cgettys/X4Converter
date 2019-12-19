@@ -27,7 +27,7 @@ std::unique_ptr<pugi::xml_document> TestUtil::GetXmlDocument(const std::string &
   if (fullPath.is_relative()) {
     fullPath = GetBasePath() / path;
   } else {
-    BOOST_WARN_MESSAGE(true, "Warning, absolute path used in test: " + path);
+    BOOST_FAIL("Provide relative path in place of this: " + path);
   }
   auto pathString = fullPath.make_preferred().c_str();
   auto doc = std::make_unique<pugi::xml_document>();
@@ -44,6 +44,10 @@ boost::filesystem::path TestUtil::GetBasePath() {
 }
 
 ConversionContext::Ptr TestUtil::GetTestContext(const boost::filesystem::path &tgtPath, bool convert) {
+  // TODO better checks
+  if (tgtPath.is_absolute()) {
+    BOOST_FAIL("Provide relative paths to test files");
+  }
   auto io = std::make_shared<Assimp::DefaultIOSystem>();
   auto ctx = std::make_shared<ConversionContext>(
       GetBasePath().string(),
