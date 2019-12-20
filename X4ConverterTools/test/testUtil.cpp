@@ -158,7 +158,7 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
         float expectedValueFloat = expectedAttr.as_float();
         float actualValueFloat = actualAttr.as_float();
         const float small = 2e-6;
-        if (std::fabs(expectedValueFloat) > small && std::fabs(actualValueFloat) > small) {
+        if ((std::fabs(expectedValueFloat) > small) && (std::fabs(actualValueFloat) > small)) {
           BOOST_WARN_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
 //                        BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat,1.0);
         } else {

@@ -13,11 +13,11 @@ class Light : public AbstractElement {
 
   explicit Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName);
 
-  explicit Light(aiLight *light, ConversionContext::Ptr ctx);
+  explicit Light(aiLight &light, ConversionContext::Ptr ctx);
 
-  aiLight *ConvertToAiLight();
+  aiLight ConvertToAiLight();
 
-  void ConvertFromAiLight(aiLight *light);
+  void ConvertFromAiLight(aiLight &light);
 
   void ConvertToGameFormat(pugi::xml_node &out) final;
 

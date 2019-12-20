@@ -37,38 +37,38 @@ Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string paren
   // TODO animation
 }
 
-Light::Light(aiLight *light, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+Light::Light(aiLight &light, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
   ConvertFromAiLight(light);
 }
 
-aiLight *Light::ConvertToAiLight() {
-  auto result = new aiLight();
-  result->mName = getName();
+aiLight Light::ConvertToAiLight() {
+  aiLight result;
+  result.mName = getName();
   // TODO axes?
-  result->mPosition = offsetPos;
+  result.mPosition = offsetPos;
 
   // NB: only one value in the XML, but duplicated here to make sure it works
-  result->mColorDiffuse = color;
-  result->mColorSpecular = color;
-  result->mColorAmbient = color;
+  result.mColorDiffuse = color;
+  result.mColorSpecular = color;
+  result.mColorAmbient = color;
   switch (lightKind) {
     case arealight:
-      result->mType = aiLightSource_AREA;
-      result->mSize = area;
-      result->mUp = aiVector3D(0, 0, 1); // TODO figure this out
-      result->mDirection = offsetRot.Rotate(result->mUp); // TODO checkme
+      result.mType = aiLightSource_AREA;
+      result.mSize = area;
+      result.mUp = aiVector3D(0, 0, 1); // TODO figure this out
+      result.mDirection = offsetRot.Rotate(result.mUp); // TODO checkme
       break;
     case omni:
-      result->mType = aiLightSource_POINT;
+      result.mType = aiLightSource_POINT;
       break;
     case box:
       // TODO fixme
       return result;
-      result->mType = aiLightSource_AREA;
+      result.mType = aiLightSource_AREA;
       // TODO wth is this
-      result->mSize = area;
-      result->mUp = aiVector3D(0, 0, 1); // TODO figure this out
-      result->mDirection = offsetRot.Rotate(result->mUp); // TODO checkme
+      result.mSize = area;
+      result.mUp = aiVector3D(0, 0, 1); // TODO figure this out
+      result.mDirection = offsetRot.Rotate(result.mUp); // TODO checkme
 
       break;
   }
@@ -76,22 +76,22 @@ aiLight *Light::ConvertToAiLight() {
   return result;
 }
 
-void Light::ConvertFromAiLight(aiLight *light) {
-  setName(light->mName.C_Str());
-  offsetPos = light->mPosition;
-  color = light->mColorSpecular;// TODO is this the best choice?
-//  offsetRot = light->mDirection;
+void Light::ConvertFromAiLight(aiLight &light) {
+  setName(light.mName.C_Str());
+  offsetPos = light.mPosition;
+  color = light.mColorSpecular;// TODO is this the best choice?
+//  offsetRot = light.mDirection;
   // TODO reconstruct vector for mDirection
-  switch (light->mType) {
+  switch (light.mType) {
     case aiLightSource_AREA:
       lightKind = arealight;
-      area = light->mSize;
+      area = light.mSize;
       break;
     case aiLightSource_POINT:
       lightKind = omni;
       break;
     default:
-      auto err = str(format("Unknown light type from Assimp: %d") % light->mType);
+      auto err = str(format("Unknown light type from Assimp: %d") % light.mType);
       throw std::runtime_error(err);
   }
 
@@ -147,8 +147,7 @@ void LightsGroup::ConvertFromGameFormat(pugi::xml_node &node, const std::string 
 }
 void LightsGroup::ConvertToAiLights() {
   for (auto &light: lights) {
-    auto result = light.ConvertToAiLight();
-    ctx->AddLight(result);
+    ctx->AddLight(light.ConvertToAiLight());
   }
 }
 void LightsGroup::ConvertFromAiLights(const std::string &parent) {

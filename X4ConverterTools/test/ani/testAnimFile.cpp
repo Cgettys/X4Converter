@@ -8,16 +8,17 @@
 #include <X4ConverterTools/ani/AnimFile.h>
 #include <boost/filesystem.hpp>
 #include "../testUtil.h"
-
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
 using namespace ani;
-BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(UnitTests)
 
-BOOST_AUTO_TEST_SUITE(AnimUnitTests) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(AnimUnitTests)
 
-BOOST_AUTO_TEST_CASE(ani_read_basic) { // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_CASE(ani_read_basic) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
   auto aniFile =
@@ -48,7 +49,8 @@ BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
 
   pugi::xml_document doc;
-  file.WriteIntermediateRepr(xmlFile.string(), doc.root());
+  auto node = doc.root();
+  file.WriteIntermediateRepr(xmlFile.string(), node);
   doc.save_file(aniOutFile.c_str());//TODO get rid of this once we validate
 
   // TODO validate
@@ -80,12 +82,12 @@ BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
 //        }
 
 
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(ValidateData)
 
-BOOST_AUTO_TEST_CASE(ani_struct_correctness) { // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_CASE(ani_struct_correctness) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
   const fs::path basePath = fs::path(std::getenv("X4_UNPACKED_ROOT"));
@@ -112,4 +114,5 @@ BOOST_AUTO_TEST_CASE(ani_struct_correctness) { // NOLINT(cert-err58-cpp)
   BOOST_REQUIRE_MESSAGE(true, "No files should have errors");
 }
 
-BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE_END()
+#pragma clang diagnostic pop

@@ -29,11 +29,11 @@ class AnimFile {
 
   void SetHeader(Header header);
 
-  void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const;
+  void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node &tgtNode) const;
 
-  void HandleConnection(pugi::xml_node tgtNode, pugi::xml_node conn) const;
+  void HandleConnection(pugi::xml_node &tgtNode, pugi::xml_node &conn) const;
 
-  void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node);
+  void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node &node);
 
  protected:
   Header header = Header();

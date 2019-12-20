@@ -8,7 +8,7 @@
 namespace model {
 class Layer : public AiNodeElement {
  public:
-  explicit Layer(ConversionContext::Ptr ctx);
+  explicit Layer(const ConversionContext::Ptr &ctx);
 
   explicit Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id = 0);
 

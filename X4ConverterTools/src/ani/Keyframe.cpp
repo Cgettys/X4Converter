@@ -48,7 +48,7 @@ Keyframe::Keyframe(StreamReaderLE &reader) {
 }
 // Export Conversion
 
-Keyframe::Keyframe(pugi::xml_node node) {
+Keyframe::Keyframe(pugi::xml_node &node) {
 
 }
 
@@ -204,7 +204,7 @@ InterpolationType Keyframe::getInterpByAxis(const std::string &axis) {
 
 }
 
-void Keyframe::WriteChannel(pugi::xml_node node, std::string &axis) {
+void Keyframe::WriteChannel(pugi::xml_node &node, std::string &axis) {
   InterpolationType interp = getInterpByAxis(axis);
   if (!checkInterpolationType(interp) || interp == INTERPOLATION_TCB) {
     throw std::runtime_error("Cannot write keyframe");

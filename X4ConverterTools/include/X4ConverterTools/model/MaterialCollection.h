@@ -9,11 +9,9 @@
 namespace model {
 class MaterialCollection {
  public:
-  MaterialCollection();
+  explicit MaterialCollection(pugi::xml_node &node);
 
   ~MaterialCollection() = default;
-
-  explicit MaterialCollection(pugi::xml_node &node);
 
   Material *GetMaterial(const std::string &name);
 
@@ -22,7 +20,6 @@ class MaterialCollection {
  private:
 
   std::string _name;
-  pugi::xml_node _node;
   std::map<std::string, Material> _materials;
 };
 }

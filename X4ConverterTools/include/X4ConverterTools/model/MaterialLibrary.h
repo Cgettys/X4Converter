@@ -13,7 +13,7 @@ class MaterialLibrary {
  public:
   explicit MaterialLibrary(const std::string &gameBaseFolderPath);
 
-  Material *GetMaterial(const std::string &dottedName);
+  Material *GetMaterial(std::string dottedName);
 
  private:
   std::regex materialPattern{R"((\w+)\.(\w+))"};

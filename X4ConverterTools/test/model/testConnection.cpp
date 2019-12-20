@@ -1,7 +1,4 @@
 #include <boost/test/unit_test.hpp>
-
-#include <X4ConverterTools/model/Part.h>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <X4ConverterTools/model/Connection.h>
 #include "../testUtil.h"

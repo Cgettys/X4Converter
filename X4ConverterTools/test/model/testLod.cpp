@@ -1,10 +1,10 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 #include <boost/test/unit_test.hpp>
 
 #include <X4ConverterTools/model/VisualLod.h>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include "../testUtil.h"
-// NOLINT(cert-err58-cpp)
 namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
@@ -145,3 +145,4 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
 // TODO check that name makes sense with parent name
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
+#pragma clang diagnostic pop

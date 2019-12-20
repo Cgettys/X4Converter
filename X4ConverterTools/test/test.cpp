@@ -67,15 +67,15 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 
 BOOST_AUTO_TEST_CASE(xml) {
   // TODO refactor all the io...
-  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
+  auto base = test::TestUtil::GetBasePath();
   const fs::path tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
-  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
-  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
-  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
+  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
+  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
+  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(daePath);
+  fs::remove(base / daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+  fs::copy_file(base / inputXMLPath, base / outputXMLPath, fs::copy_option::overwrite_if_exists);
 
   auto ctx = TestUtil::GetTestContext(tgtPath);
   BOOST_TEST_CHECKPOINT("Begin test");
@@ -94,16 +94,17 @@ BOOST_AUTO_TEST_CASE(xml) {
 }
 
 BOOST_AUTO_TEST_CASE(xml_hard) {
+  auto base = test::TestUtil::GetBasePath();
   // TODO refactor all the io...
   // TODO test /assets/units/size_m/ship_arg_m_bomber_02.xml as well
-  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
   const fs::path tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
-  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
-  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
-  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
+  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
+  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
+  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
+  // TODO absolute path handling tests
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(daePath);
-  fs::remove(outputXMLPath);
+  fs::remove(base / daePath);
+  fs::remove(base / outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
   auto ctx = TestUtil::GetTestContext(tgtPath);
@@ -128,14 +129,14 @@ BOOST_AUTO_TEST_CASE(xml_hard) {
 
 BOOST_AUTO_TEST_CASE(xml_hard_2) {
   // TODO no more io
-  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const fs::path tgtPath = "/assets/units/size_m/ship_arg_m_bomber_02";
-  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
-  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
-  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
+  auto base = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "assets/units/size_m/ship_arg_m_bomber_02";
+  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
+  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
+  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(daePath);
-  fs::remove(outputXMLPath);
+  fs::remove(base / daePath);
+  fs::remove(base / outputXMLPath);
   // Also to prevent cross contamination, overwrite the output XML with something lacking connections.
   pugi::xml_document doc;
   auto ctx = TestUtil::GetTestContext(tgtPath);
@@ -157,15 +158,15 @@ BOOST_AUTO_TEST_CASE(xml_hard_2) {
 }
 BOOST_AUTO_TEST_CASE(bridge) {
   // TODO refactor all the io...
-  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const fs::path tgtPath = "/assets/interiors/bridges/bridge_arg_xl_01";
-  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
-  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
-  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
+  auto base = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "assets/interiors/bridges/bridge_arg_xl_01";
+  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
+  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
+  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(daePath);
+  fs::remove(base / daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+  fs::copy_file(base / inputXMLPath, base / outputXMLPath, fs::copy_option::overwrite_if_exists);
   auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");
@@ -185,16 +186,16 @@ BOOST_AUTO_TEST_CASE(bridge) {
 
 BOOST_AUTO_TEST_CASE(multimat) {
   // TODO refactor all the io...
-  auto gameBaseFolderPath = test::TestUtil::GetBasePath();
-  const std::string tgtPath = "/assets/units/size_m/ship_arg_m_trans_container_01";
+  auto base = test::TestUtil::GetBasePath();
+  const fs::path tgtPath = "assets/units/size_m/ship_arg_m_trans_container_01";
   // TODO lowercase hatch name in code instead of the hack
-  auto inputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".xml").string();
-  auto daePath = (gameBaseFolderPath / tgtPath).replace_extension(".out.dae").string();
-  auto outputXMLPath = (gameBaseFolderPath / tgtPath).replace_extension(".out.xml").string();
+  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
+  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
+  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
   // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(daePath);
+  fs::remove(base / daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(inputXMLPath, outputXMLPath, fs::copy_option::overwrite_if_exists);
+  fs::copy_file(base / inputXMLPath, base / outputXMLPath, fs::copy_option::overwrite_if_exists);
   auto ctx = TestUtil::GetTestContext(tgtPath);
 
   BOOST_TEST_CHECKPOINT("Begin test");

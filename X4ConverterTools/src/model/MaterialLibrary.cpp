@@ -20,13 +20,15 @@ MaterialLibrary::MaterialLibrary(const std::string &gameBaseFolderPath) : _gameB
   for (auto x : doc.select_nodes("/materiallibrary/collection")) {
     auto collection = x.node();
     std::string collectionName = collection.attribute("name").value();
-    collections[collectionName] = MaterialCollection(collection);
+    if (!collections.try_emplace(collectionName, collection).second) {
+      throw std::runtime_error("Duplicated collection: " + collectionName);
+    }
   }
 }
-Material *MaterialLibrary::GetMaterial(const std::string &dottedName) {
+Material *MaterialLibrary::GetMaterial(std::string dottedName) { // NOLINT(performance-unnecessary-value-param)
 
-  std::smatch match;
-  if (!std::regex_match(dottedName, match, materialPattern)) {
+  std::cmatch match;
+  if (!std::regex_match(dottedName.c_str(), match, materialPattern)) {
     throw std::runtime_error("Could not parse material name: " + dottedName);
   }
 

@@ -202,7 +202,7 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
   }
 }
 
-unsigned long Component::getNumberOfConnections() {
-  return connections.size();
+uint32_t Component::getNumberOfConnections() {
+  return boost::numeric_cast<uint32_t>(connections.size());
 }
 }

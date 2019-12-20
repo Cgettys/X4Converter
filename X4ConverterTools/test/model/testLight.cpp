@@ -28,12 +28,14 @@ BOOST_AUTO_TEST_CASE(arealight_to_ailight) {
   doc.load_string(xml.c_str());
   auto root = doc.root().first_child();
   Light l{root, ctx, "test"};
-  auto *out = l.ConvertToAiLight();
-  BOOST_REQUIRE(out->mType == aiLightSource_AREA);
-  BOOST_ASSERT(out->mSize == aiVector2D(0, 0.53));
-  BOOST_ASSERT(out->mColorSpecular == aiColor3D(124.0f / 255.0f, 1.0f, 1.0f));
-  BOOST_ASSERT(out->mPosition == aiVector3D(-0.4923809f, -1.759839f, 6.782082f));
+  auto out = l.ConvertToAiLight();
+  BOOST_REQUIRE(out.mType == aiLightSource_AREA);
+  BOOST_ASSERT(out.mSize == aiVector2D(0, 0.53));
+  BOOST_ASSERT(out.mColorSpecular == aiColor3D(124.0f / 255.0f, 1.0f, 1.0f));
+  BOOST_ASSERT(out.mPosition == aiVector3D(-0.4923809f, -1.759839f, 6.782082f));
   //BOOST_ASSERT(out->mUp == aiQuaternion(-0.0f,-0.0f,-0.8660254f, 0.5f)); // TODO
+
+
 }
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

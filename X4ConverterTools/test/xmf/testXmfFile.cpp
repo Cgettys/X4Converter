@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <assimp/types.h>
-#include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
 #include <X4ConverterTools/Conversion.h>
@@ -108,7 +107,9 @@ BOOST_AUTO_TEST_CASE(xmf_struct_correctness) { // NOLINT(cert-err58-cpp)
 
       auto sourceStream = io->Open(filePath.generic_string(), "rb");
       try {
-        auto file = XmfFile::ReadFromIOStream(sourceStream, nullptr);//TODO not the null demon
+        auto ctx = test::TestUtil::GetTestContext("");
+        // TODO make the context sensible ^
+        auto file = XmfFile::ReadFromIOStream(sourceStream, ctx);
         std::cout << filePath.c_str() << std::endl;
       } catch (std::runtime_error &e) {
         std::string error = str(format("Filepath: %1% Exception:\n %2%\n") % filePath.c_str() % e.what());

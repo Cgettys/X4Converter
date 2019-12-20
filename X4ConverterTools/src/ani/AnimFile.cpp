@@ -77,7 +77,7 @@ std::string AnimFile::validate() {
   return s;
 }
 
-void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node tgtNode) const {
+void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node &tgtNode) const {
 
   // TODO integrate into Component?
   // TODO validate non-overlap
@@ -96,7 +96,8 @@ void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node 
   pugi::xpath_node_set connections = componentNode.select_nodes("connections/connection");
   for (auto conn : connections) {
     // TODO what if multiple parts?
-    HandleConnection(tgtNode, conn.node());
+    auto connNode = conn.node();
+    HandleConnection(tgtNode, connNode);
 
   }
   std::cout << "Writing animations!" << std::endl;
@@ -107,7 +108,7 @@ void AnimFile::WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node 
 
 }
 
-void AnimFile::HandleConnection(pugi::xml_node tgtNode, const pugi::xml_node conn) const {
+void AnimFile::HandleConnection(pugi::xml_node &tgtNode, pugi::xml_node &conn) const {
   pugi::xml_node partNode = conn.child("parts").child("part");
   std::string name = partNode.attribute("name").value();
 
@@ -141,7 +142,7 @@ void AnimFile::HandleConnection(pugi::xml_node tgtNode, const pugi::xml_node con
 
 }
 
-void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node node) {
+void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node &node) {
   // TODO
 }
 

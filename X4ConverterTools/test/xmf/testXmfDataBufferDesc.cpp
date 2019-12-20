@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 //TODO uncompressed tests
 
 #include <boost/test/unit_test.hpp>
@@ -9,8 +11,8 @@
 
 using namespace Assimp;
 using namespace xmf;
-BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
-BOOST_AUTO_TEST_SUITE(XmfUnitTests) // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_SUITE(UnitTests)
+BOOST_AUTO_TEST_SUITE(XmfUnitTests)
 // TODO extract some permanent test files
 BOOST_AUTO_TEST_CASE(xmf_data_buffer_desc) {
   // assets/units/size_s/ship_gen_s_fighter_01_data/fx_licence-collision.xmf v2.20 or so
@@ -51,3 +53,4 @@ BOOST_AUTO_TEST_CASE(xmf_data_buffer_desc) {
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
+#pragma clang diagnostic pop

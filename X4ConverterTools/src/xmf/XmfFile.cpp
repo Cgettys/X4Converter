@@ -17,7 +17,7 @@ XmfDataBuffer *XmfFile::GetIndexBuffer() {
     if (_buffer.IsIndexBuffer())
       return &_buffer;
   }
-  return nullptr;
+  throw std::runtime_error("No Index Buffer");
 }
 
 std::vector<XmfVertexElement> XmfFile::GetVertexDeclaration() {
@@ -45,7 +45,7 @@ uint32_t XmfFile::NumIndices() {
 }
 
 uint32_t XmfFile::NumMaterials() {
-  return boost::numeric_cast<int>(materials.size());
+  return boost::numeric_cast<uint32_t>(materials.size());
 }
 
 XmfFile::Ptr XmfFile::ReadFromFile(const std::string &name, const ConversionContext::Ptr &ctx) {

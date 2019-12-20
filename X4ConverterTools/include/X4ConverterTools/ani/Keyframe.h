@@ -20,7 +20,7 @@ class Keyframe {
  public:
   Keyframe() = default;
 
-  explicit Keyframe(pugi::xml_node node);
+  explicit Keyframe(pugi::xml_node &node);
 
   explicit Keyframe(Assimp::StreamReaderLE &reader);
 
@@ -29,7 +29,7 @@ class Keyframe {
 
   static bool checkInterpolationType(InterpolationType type);
 
-  void WriteChannel(pugi::xml_node node, std::string &axis);
+  void WriteChannel(pugi::xml_node &node, std::string &axis);
 
  protected:
   float getValueByAxis(const std::string &axis);

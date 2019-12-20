@@ -10,9 +10,11 @@
 namespace model {
 namespace xml = util::xml;
 // TODO wreck class subclassing Part?
-Part::Part(ConversionContext::Ptr ctx) : AiNodeElement(ctx), lights(ctx) {
+Part::Part(const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
   hasRef = false;
+  hasWreck = false;
   collisionLod = nullptr;
+  wreckCollisionLod = nullptr;
 }
 
 Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
@@ -23,7 +25,7 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
     throw std::runtime_error("Part must have a name attribute!");
   }
   hasRef = false;
-  bool hasWreck = false;
+  hasWreck = false;
   std::string wreckName;
   for (auto attr: node.attributes()) {
     auto attrName = std::string(attr.name());

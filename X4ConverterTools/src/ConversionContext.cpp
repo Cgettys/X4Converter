@@ -3,13 +3,9 @@
 #include <boost/format.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <iostream>
-#include <X4ConverterTools/ConversionContext.h>
 #include <string>
-#include <boost/predef.h>
 #include <boost/algorithm/string.hpp>
 #include <utility>
-#include <boost/filesystem.hpp>
-#include <X4ConverterTools/types.h>
 #include <X4ConverterTools/util/AssimpUtil.h>
 using namespace boost;
 namespace fs = boost::filesystem;
@@ -106,11 +102,11 @@ fs::path ConversionContext::GetRelativePath(const fs::path &filePath, const fs::
         relativeToFolderPath.c_str()));
   }
   fs::path result;
-  for (size_t i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
+  for (auto i = differenceStart; i < relativeToFolderPathParts.size(); ++i) {
     result /= "..";
   }
 
-  for (size_t i = differenceStart; i < filePathParts.size() - 1; ++i) {
+  for (auto i = differenceStart; i < filePathParts.size() - 1; ++i) {
     result /= filePathParts[i];
   }
 
@@ -169,14 +165,25 @@ void ConversionContext::PopulateSceneArrays() {
     pScene->mLights = new aiLight *[lightCount];
 
     for (auto &lightIt : lights) {
-      if (lightIt.second == nullptr) {
-
-        continue;
-        // TODO figure out where nullptr ones come from
-      }
-      pScene->mLights[pScene->mNumLights++] = lightIt.second;
+      pScene->mLights[pScene->mNumLights++] = &lightIt.second;
     }
   }
+  // TODO animation handling here too
+  // Reformat it into more readable xml. Yes, JSON might be more natural for this part, but not so much for the animation
+  // Also, consistency...
+  pugi::xml_document metadoc;
+  auto metaroot = metadoc.root();
+  auto kvNode = metaroot.child("misc");
+  for (const auto &obj : allMetadata) {
+    auto objNode = kvNode.child("object");
+    objNode.child("name").set_value(obj.first.c_str());
+    for (const auto &pair : obj.second) {
+      auto attrNode = objNode.child("attribute");
+      attrNode.child("key").set_value(pair.first.c_str());
+      attrNode.child("value").set_value(pair.second.c_str());
+    }
+  }
+  metadoc.save_file(metadataPath.c_str());
 }
 
 void ConversionContext::SetSourcePathSuffix(std::string path) {
@@ -188,7 +195,7 @@ std::string ConversionContext::GetSourcePath() {
   if (sourcePathSuffix.empty()) {
     throw std::runtime_error("Source path suffix has not been set!");
   }
-  return ConversionContext::MakePlatformSafe(gameBaseFolderPath + "/" + sourcePathSuffix);
+  return ConversionContext::MakePlatformSafe(gameBaseFolderPath / sourcePathSuffix).string();
 }
 
 Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, const std::string &mode) {
@@ -212,22 +219,19 @@ Assimp::IOStream *ConversionContext::GetSourceFile(const std::string &name, cons
   return result;
 }
 
-void ConversionContext::AddLight(aiLight *light) {
-  if (light == nullptr) {
-    throw std::runtime_error("light may not be a nullptr!");
-  }
-  std::string name = light->mName.C_Str();
+void ConversionContext::AddLight(aiLight light) {
+  std::string name = light.mName.C_Str();
   if (CheckLight(name)) {
     throw std::runtime_error("Duplicated light name: " + name);
   }
-  lights[name] = light;
+  lights[name] = std::move(light);
 }
 
 bool ConversionContext::CheckLight(const std::string &name) {
   return lights.count(name) > 0;
 }
 
-aiLight *ConversionContext::GetLight(const std::string &name) {
+aiLight &ConversionContext::GetLight(const std::string &name) {
   if (CheckLight(name)) {
     return lights[name];
   }
@@ -237,7 +241,7 @@ aiLight *ConversionContext::GetLight(const std::string &name) {
 void ConversionContext::SetScene(aiScene *scene) {
   ConversionContext::pScene = scene;
   for (auto i = 0U; i < scene->mNumLights; i++) {
-    ConversionContext::AddLight(scene->mLights[i]);
+    ConversionContext::AddLight(*(scene->mLights[i]));
   }
   for (auto i = 0U; i < scene->mNumMeshes; i++) {
     meshes.emplace_back(scene->mMeshes[i]);
@@ -259,11 +263,11 @@ aiMesh *ConversionContext::GetMesh(size_t meshIndex) {
   return meshes.at(meshIndex);
 }
 
-ConversionContext::MetadataMap ConversionContext::GetMetadataMap(const std::string &name) {
-  if (allMetadata.count(name) != 0) {
-    return allMetadata[name];
+ConversionContext::MetadataMap &ConversionContext::GetMetadataMap(const std::string &name) {
+  if (allMetadata.count(name) == 0) {
+    allMetadata[name] = {};
   }
-  return {}; // Empty map
+  return allMetadata[name];
 }
 void ConversionContext::AddMetadata(const std::string &name, MetadataMap m) {
   allMetadata[name] = std::move(m);
@@ -275,8 +279,8 @@ ConversionContext::~ConversionContext() {
 //    delete pScene;
   }
 }
-std::vector<aiLight *> ConversionContext::GetLightsByParent(const std::string &name) {
-  std::vector<aiLight *> matches;
+std::vector<std::reference_wrapper<aiLight>> ConversionContext::GetLightsByParent(const std::string &name) {
+  std::vector<std::reference_wrapper<aiLight>> matches;
   const auto key = name + "|lights|";
   auto it = lights.lower_bound(key);
   while (it != lights.end() && it->first.find(key) != std::string::npos) {

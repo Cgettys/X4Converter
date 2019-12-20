@@ -20,7 +20,7 @@ class Component : public AiNodeElement {
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
-  unsigned long getNumberOfConnections();
+  uint32_t getNumberOfConnections();
 
  protected:
   std::vector<Connection> connections;

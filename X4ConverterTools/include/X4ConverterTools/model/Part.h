@@ -11,11 +11,10 @@
 namespace model {
 class Part : public AiNodeElement {
  public:
-  explicit Part(ConversionContext::Ptr ctx);
+  explicit Part(const ConversionContext::Ptr &ctx);
 
   explicit Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx);
 
-  void ConvertFromGameFormat(pugi::xml_node &node);
   aiNode *ConvertToAiNode() override;
 
   void ConvertFromAiNode(aiNode *node) override;

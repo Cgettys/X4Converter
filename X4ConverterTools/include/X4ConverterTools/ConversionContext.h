@@ -43,21 +43,19 @@ class ConversionContext {
   Assimp::IOStream *GetSourceFile(const std::string &name, const std::string &mode = "rb");
 
   std::map<std::string, uint32_t> Materials;
-  std::string gameBaseFolderPath;
+  boost::filesystem::path gameBaseFolderPath;
 
   void SetScene(aiScene *scene);
 
   aiMesh *GetMesh(size_t meshIndex);
 
+  void AddLight(aiLight light);
   bool CheckLight(const std::string &name);
-  aiLight *GetLight(const std::string &name);
-  std::vector<aiLight *> GetLightsByParent(const std::string &parentName);
+  aiLight &GetLight(const std::string &name);
+  std::vector<std::reference_wrapper<aiLight>> GetLightsByParent(const std::string &parentName);
 
   void AddMesh(aiNode *parentNode, aiMesh *mesh);
-  void AddLight(aiLight *light);
-  // TODO something more elegant?
-  // Note, performance heavy
-  [[nodiscard]] MetadataMap GetMetadataMap(const std::string &name);
+  [[nodiscard]] MetadataMap &GetMetadataMap(const std::string &name);
 
   void AddMetadata(const std::string &name, MetadataMap m);
   // TODO write out
@@ -76,7 +74,7 @@ class ConversionContext {
   std::vector<aiMesh *> meshes;
   std::string sourcePathSuffix;
   model::MaterialLibrary materialLibrary;
-  std::map<std::string, aiLight *> lights;
+  std::map<std::string, aiLight> lights;
  private:
   const std::string metadataPath;
   std::map<std::string, MetadataMap> allMetadata;

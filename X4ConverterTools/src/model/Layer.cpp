@@ -6,7 +6,7 @@
 
 namespace model {
 using namespace boost;
-Layer::Layer(ConversionContext::Ptr ctx) : AiNodeElement(ctx), lights(ctx) {
+Layer::Layer(const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
 
 }
 

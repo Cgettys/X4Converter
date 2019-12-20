@@ -22,9 +22,9 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
   bool relative_paths = false;
   if (fs::exists(xmlFilePath)) {
     load_result = doc.load_file((xmlFilePath).c_str());
-  } else if (fs::exists(ctx->gameBaseFolderPath + xmlFilePath)) {
+  } else if (fs::exists(ctx->gameBaseFolderPath / xmlFilePath)) {
     std::cout << "Paths appear to be relative" << std::endl;
-    load_result = doc.load_file((ctx->gameBaseFolderPath + xmlFilePath).c_str());
+    load_result = doc.load_file((ctx->gameBaseFolderPath / xmlFilePath).c_str());
     relative_paths = true;
   }
   if (load_result.status != pugi::status_ok) {
@@ -43,7 +43,7 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
 //    pugi::xml_document animdoc;
 //    pugi::xml_node rt = animdoc.root().append_child("root");
 
-  auto actualDaeFilePath = relative_paths ? ctx->gameBaseFolderPath + daeFilePath : daeFilePath;
+  auto actualDaeFilePath = relative_paths ? (ctx->gameBaseFolderPath / daeFilePath).string() : daeFilePath;
   Assimp::Exporter exporter;
 //    Assimp::ExportProperties props;
 //    props.SetPropertyBool("COLLADA_EXPORT_USE_MESH_NAMES",true);
