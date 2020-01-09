@@ -134,14 +134,17 @@ using namespace model;
 // Note: This function is crucial. All meshes + materials are stored flat in aiScene, so this does the actual population
 // of that array from the vectors that have been built up
 void ConversionContext::PopulateSceneArrays() {
+  if (populatedArrays) {
+    throw std::runtime_error("You cannot populate the scene arrays twice!");
+  }
+  populatedArrays = true;
   // Add the materials to the scene
   if (!Materials.empty()) {
     std::string modelFolderPath = fs::path(gameBaseFolderPath).parent_path().string();
     pScene->mNumMaterials = numeric_cast<unsigned int>(Materials.size());
     pScene->mMaterials = new aiMaterial *[pScene->mNumMaterials];
     for (auto &it : Materials) {
-      Material *pMaterial = materialLibrary.GetMaterial(it.first);
-      auto pAiMaterial = pMaterial->ConvertToAiMaterial(this);
+      auto pAiMaterial = materialLibrary.GetMaterial(it.first).ConvertToAiMaterial(this);
       pScene->mMaterials[it.second] = pAiMaterial;
     }
   }
@@ -240,6 +243,7 @@ aiLight &ConversionContext::GetLight(const std::string &name) {
 
 void ConversionContext::SetScene(aiScene *scene) {
   ConversionContext::pScene = scene;
+  populatedArrays = false;
   for (auto i = 0U; i < scene->mNumLights; i++) {
     ConversionContext::AddLight(*(scene->mLights[i]));
   }
@@ -274,13 +278,16 @@ void ConversionContext::AddMetadata(const std::string &name, MetadataMap m) {
 }
 
 ConversionContext::~ConversionContext() {
-  if (pScene != nullptr) {
+  if (pScene != nullptr && !populatedArrays) {
     ConversionContext::PopulateSceneArrays();
 //    delete pScene;
+    for (auto mesh: meshes) {
+      delete mesh;
+    }
   }
 }
 std::vector<std::reference_wrapper<aiLight>> ConversionContext::GetLightsByParent(const std::string &name) {
-  std::vector<std::reference_wrapper<aiLight>> matches;
+  std::vector<std::reference_wrapper<aiLight>> matches{};
   const auto key = name + "|lights|";
   auto it = lights.lower_bound(key);
   while (it != lights.end() && it->first.find(key) != std::string::npos) {

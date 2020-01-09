@@ -37,6 +37,8 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
     } else if (attrName == "wreck") {
       hasWreck = true;
       wreckName = attr.value();
+      // TODO there has to be a more elegant way of handling this
+
       // TODO FINISH HIM
     } else {
       std::cerr << "Warning, unhandled attribute on part: " << getName() << " attribute: " << attrName
@@ -68,11 +70,14 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
 aiNode *Part::ConvertToAiNode() {
   auto *result = new aiNode(getName());
   ctx->AddMetadata(getName(), attrs);
-  std::vector<aiNode *> children;
+  std::vector<aiNode *> children{};
   if (!hasRef) {
     children.push_back(collisionLod->ConvertToAiNode());
     for (auto lod: lods) {
       children.push_back(lod.second.ConvertToAiNode());
+    }
+    if (hasWreck) {
+      children.push_back()
     }
   }
   populateAiNodeChildren(result, children);

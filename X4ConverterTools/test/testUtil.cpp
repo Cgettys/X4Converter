@@ -55,7 +55,7 @@ ConversionContext::Ptr TestUtil::GetTestContext(const boost::filesystem::path &t
       io,
       convert,
       true);
-  ctx->SetSourcePathSuffix(tgtPath.string() + "_data");
+  ctx->SetSourcePathSuffix(tgtPath.generic_path().replace_extension("").string() + "_data");
   return ctx;
 }
 

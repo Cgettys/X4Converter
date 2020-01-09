@@ -101,7 +101,7 @@ aiNode *Component::ConvertToAiNode() {
     if (!nodes.count(parentName)) {
       throw std::runtime_error("Missing parent \"" + parentName + "\" on: \"" + conn.getName() + "\"");
     } else {
-      std::cout << conn.getName() << " " << parentName << std::endl;
+//      std::cout << conn.getName() << " " << parentName << std::endl;
       auto connNode = nodes[conn.getName()];
       if (parentMap.count(parentName) == 0) {
         parentMap[parentName] = std::vector<aiNode *>();

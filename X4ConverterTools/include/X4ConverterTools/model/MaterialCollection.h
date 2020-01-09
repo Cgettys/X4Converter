@@ -9,11 +9,12 @@
 namespace model {
 class MaterialCollection {
  public:
+  // TODO help with typos?
   explicit MaterialCollection(pugi::xml_node &node);
 
   ~MaterialCollection() = default;
 
-  Material *GetMaterial(const std::string &name);
+  Material &GetMaterial(const std::string &name);
 
   [[nodiscard]] const std::string &GetName() const { return _name; }
 

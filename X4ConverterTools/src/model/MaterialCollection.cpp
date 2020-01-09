@@ -16,10 +16,10 @@ MaterialCollection::MaterialCollection(pugi::xml_node &node) {
   }
 }
 
-Material *MaterialCollection::GetMaterial(const std::string &name) {
+Material &MaterialCollection::GetMaterial(const std::string &name) {
   auto it = _materials.find(name);
   if (it != _materials.end()) {
-    return &(it->second);
+    return it->second;
   }
   throw std::runtime_error("Could not find material by name: " + name + " from collection: " + _name);
 }

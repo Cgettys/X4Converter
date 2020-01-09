@@ -69,9 +69,9 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
   // Reset stream to start
   // TODO memory stream
   auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
-  sourceStream = ctx->GetSourceFile(testFile, "rb");
+  auto sourceStream2 = ctx->GetSourceFile(testFile, "rb");
 
-  size_t sourceLen = sourceStream->FileSize();
+  size_t sourceLen = sourceStream2->FileSize();
   size_t resultLen = resultStream->FileSize();
   std::vector<uint8_t> sourceBytes(sourceLen);
   std::vector<uint8_t> resultByte(resultLen);

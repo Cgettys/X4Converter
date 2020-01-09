@@ -69,6 +69,7 @@ class ConversionContext {
  protected:
   bool test;
   bool should_convert;
+  bool populatedArrays = false;
   std::shared_ptr<Assimp::IOSystem> io;
   aiScene *pScene{};
   std::vector<aiMesh *> meshes;
