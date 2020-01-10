@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 #include <assimp/scene.h>
 
@@ -60,6 +61,14 @@ class ConversionContext {
   void AddMetadata(const std::string &name, MetadataMap m);
   // TODO write out
 
+  //TODO remove these two when read/write works
+
+  void SetAllMetadata(std::map<std::string, MetadataMap> in) {
+    allMetadata = std::move(in);
+  }
+  std::map<std::string, MetadataMap> GetAllMetadata() {
+    return allMetadata;
+  }
 
   bool ShouldConvertGeometry() { return should_convert; };
 

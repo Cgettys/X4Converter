@@ -4,7 +4,7 @@
 #include <utility>
 
 namespace model {
-namespace xml = util::xml;
+using util::XmlUtil;
 // Not really a LOD but it makes more sense if we pretend
 CollisionLod::CollisionLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
 
@@ -64,15 +64,15 @@ void CollisionLod::CalculateSizeAndCenter(aiNode *pCollisionNode) {
 
   // TODO flip axes if necessary
   maxDim = (upperBound - lowerBound) / 2.0f;
-  center = lowerBound + maxDim;
+  center = (upperBound + lowerBound) / 2.0f;
 }
 
 void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
   // TODO handle no collision mesh
   if (!AssimpUtil::IsZero(maxDim) || !AssimpUtil::IsZero(center)) {
-    auto sizeNode = xml::AddChild(out, "size");
-    xml::WriteChildXYZ("max", sizeNode, maxDim, true);
-    xml::WriteChildXYZ("center", sizeNode, center, true);
+    auto sizeNode = XmlUtil::AddChild(out, "size");
+    XmlUtil::WriteChildXYZ("max", sizeNode, maxDim, true);
+    XmlUtil::WriteChildXYZ("center", sizeNode, center, true);
   } else {
     out.remove_child("size");
     out.remove_child("size_raw");

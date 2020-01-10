@@ -5,10 +5,11 @@
 
 using namespace boost;
 namespace model {
-namespace xml = util::xml;
+using util::XmlUtil;
+
 // TODO composition or subclass instead of this mess
 
-Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName)
+Light::Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName)
     : AbstractElement(std::move(ctx)) {
   std::string tmp = str(boost::format("%1%|light|%2%") % parentName % node.attribute("name").value());
   setName(tmp);
@@ -23,7 +24,7 @@ Light::Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string paren
   } else {
     throw std::runtime_error("Unknown light type:" + kind);
   }
-  color = xml::ReadAttrRGB(node);
+  color = XmlUtil::ReadAttrRGB(node);
   area = aiVector2D(node.attribute("areax").as_float(), node.attribute("areay").as_float());
   // TODO how to handle these:
   lightEffect = node.attribute("lighteffect").as_bool();
@@ -120,14 +121,14 @@ void Light::ConvertToGameFormat(pugi::xml_node &out) {
       break;
   }
 
-  auto lightNode = xml::AddChildByAttr(out, nodeType, "name", name);
+  auto lightNode = XmlUtil::AddChildByAttr(out, nodeType, "name", name);
   if (lightKind == arealight) {
-    xml::WriteAttr(lightNode, "areax", area.x);
-    xml::WriteAttr(lightNode, "areay", area.y);
+    XmlUtil::WriteAttr(lightNode, "areax", area.x);
+    XmlUtil::WriteAttr(lightNode, "areay", area.y);
   }
 
   WriteOffset(lightNode);
-  xml::WriteAttrRGB(lightNode, color);
+  XmlUtil::WriteAttrRGB(lightNode, color);
 }
 LightsGroup::LightsGroup(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
 
@@ -160,7 +161,7 @@ void LightsGroup::ConvertFromAiLights(const std::string &parent) {
 void LightsGroup::ConvertToGameFormat(pugi::xml_node &out) {
   // TODO is this following the correct convention we want to set?
   if (!lights.empty()) {
-    auto lightsNode = util::xml::AddChild(out, "lights");
+    auto lightsNode = util::XmlUtil::AddChild(out, "lights");
     for (auto light : lights) {
       light.ConvertToGameFormat(lightsNode);
     }

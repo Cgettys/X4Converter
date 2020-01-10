@@ -12,6 +12,7 @@
 #include <cmath>
 #include <X4ConverterTools/xmf/XmfHeader.h>
 #include <boost/filesystem/path.hpp>
+#include <X4ConverterTools/util/XmlUtil.h>
 
 namespace test {
 
@@ -136,34 +137,73 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
     printf("Output has extra path: %s\n", x.c_str());
   }
 
+  for (auto &&x : intersection) {
+    checkPath(x, expectedDoc, actualDoc);
 
+  }
+}
+void TestUtil::checkPath(const std::string &path, pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc) {
+  auto expectedNode = expectedDoc->select_node(path.c_str()).node();
+  auto actualNode = actualDoc->select_node(path.c_str()).node();
   // Slightly modified to allow integers too for ease of use: from https://stackoverflow.com/a/5578251
   auto re_float = std::regex(
-      "^\\s*[+-]?([0-9]+\\.?[0-9]*([Ee][+-]?[0-9]+)?|\\.?[0-9]+([Ee][+-]?[0-9]+)?|[0-9]+[Ee][+-]?[0-9]+)$");
-  for (auto &&x : intersection) {
-    auto expectedNode = expectedDoc->select_node(x.c_str()).node();
-    auto actualNode = actualDoc->select_node(x.c_str()).node();
-    for (auto &expectedAttr: expectedNode.attributes()) {
+      R"(^\s*[+-]?([0-9]+\.?[0-9]*([Ee][+-]?[0-9]+)?|\.?[0-9]+([Ee][+-]?[0-9]+)?|[0-9]+[Ee][+-]?[0-9]+)$)");
+  // TODO maybe reconsider quaternion check? technically not equivalent for some forms of interpolation
+  if (std::string(expectedNode.name()) == "quaternion") {
+    auto expectedQuat = util::XmlUtil::ReadAttrQuat(expectedNode);
+    auto actualQuat = util::XmlUtil::ReadAttrQuat(actualNode);
+    if (!expectedQuat.Equal(actualQuat)) {
+//      if (expectedQuat.Equal({-actualQuat.w, -actualQuat.x, -actualQuat.y, -actualQuat.z})) {
+//        BOOST_TEST_WARN(false,"Negated quaternion at path: " + path + ". This may cause problems for interpolation!");
+//      } else {
+      BOOST_CHECK_MESSAGE(false,
+                          "Expected quaternion: (" +
+                              std::to_string(expectedQuat.w) + "," +
+                              std::to_string(expectedQuat.x) + "," +
+                              std::to_string(expectedQuat.y) + "," +
+                              std::to_string(expectedQuat.z) +
+                              ") Actual Quaternion: (" +
+                              std::to_string(actualQuat.w) + "," +
+                              std::to_string(actualQuat.x) + "," +
+                              std::to_string(actualQuat.y) + "," +
+                              std::to_string(actualQuat.z) + ")");
+//      }
+
+    }
+  } else {
+    for (
+      auto &expectedAttr
+        : expectedNode.
+        attributes()
+        ) {
       std::string attrName = expectedAttr.name();
       auto actualAttr = actualNode.attribute(attrName.c_str());
-      BOOST_TEST(actualAttr, "Missing attribute at path: " + x + " attr name: " + attrName);
-      std::string expectedValueStr = expectedAttr.as_string();
-      if (!std::regex_match(expectedValueStr, re_float)) {
+      BOOST_TEST(actualAttr, "Missing attribute at path: " + path + " attr name: " + attrName);
+      if (actualAttr) {
+        std::string expectedValueStr = expectedAttr.as_string();
         std::string actualValueStr = actualAttr.as_string();
-        BOOST_TEST_WARN(expectedValueStr == actualValueStr,
-                        "String attribute " + attrName + " at path " + x + " should be equal\n" +
-                            "Expected: " + expectedValueStr + " Actual: " + actualValueStr);
-      } else {
-        // We'll assume float otherwise
-        float expectedValueFloat = expectedAttr.as_float();
-        float actualValueFloat = actualAttr.as_float();
-        const float small = 2e-6;
-        if ((std::fabs(expectedValueFloat) > small) && (std::fabs(actualValueFloat) > small)) {
-          BOOST_WARN_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
-//                        BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat,1.0);
+        if (!
+            std::regex_match(expectedValueStr, re_float
+            )) {
+          BOOST_TEST_WARN(expectedValueStr == actualValueStr,
+                          "String attribute " + attrName + " at path " + path + " should be equal\n" +
+                              "Expected: " + expectedValueStr + " Actual: " + actualValueStr);
         } else {
-          BOOST_CHECK_SMALL(expectedValueFloat, small);
-          BOOST_CHECK_SMALL(actualValueFloat, small);
+          float expectedValueFloat = expectedAttr.as_float();
+          float actualValueFloat = actualAttr.as_float();
+          const float small = 2e-6;
+          BOOST_TEST_INFO("Path: " + path
+                              + "\n\tattr: " + attrName
+                              + "\n\tExpected: " + std::to_string(expectedValueFloat)
+                              + "\n\tActual: " + std::to_string(actualValueFloat));
+          if ((std::fabs(expectedValueFloat) > small) || (std::fabs(actualValueFloat) > small)) {
+            BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
+            BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
+          } else {
+            BOOST_CHECK_SMALL(expectedValueFloat, small);
+            BOOST_CHECK_SMALL(actualValueFloat, small);
+          }
+
         }
       }
 
@@ -171,12 +211,10 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
 
     for (auto &actualAttr: actualNode.attributes()) {
       BOOST_TEST(expectedNode.attribute(actualAttr.name()),
-                 "Extra attribute at path: " + x + " attr name: " + actualAttr.name());
+                 "Extra attribute at path: " + path + " attr name: " + actualAttr.name());
     }
-
   }
 }
-
 using namespace xmf;
 
 void TestUtil::checkXuMeshFileEquality(XmfFile &lhs, XmfFile &rhs) {

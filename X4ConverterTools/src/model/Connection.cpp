@@ -6,7 +6,7 @@
 
 using namespace util;
 namespace model {
-namespace xml = util::xml;
+using util::XmlUtil;
 
 Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string componentName)
     : AiNodeElement(ctx) {
@@ -49,7 +49,7 @@ aiNode *Connection::ConvertToAiNode() {
   auto result = new aiNode(getName());
   ctx->AddMetadata(getName(), attrs);
   ApplyOffsetToAiNode(result);
-  std::vector<aiNode *> children;
+  std::vector<aiNode *> children{};
   for (auto &part : parts) {
     children.push_back(part.ConvertToAiNode());
   }
@@ -82,14 +82,14 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
-  auto node = xml::AddChildByAttr(out, "connection", "name", getName());
+  auto node = XmlUtil::AddChildByAttr(out, "connection", "name", getName());
 
   if (!parentName.empty()) {
-    xml::WriteAttr(node, "parent", parentName);
+    XmlUtil::WriteAttr(node, "parent", parentName);
   }
 
   for (const auto &pair : attrs) {
-    xml::WriteAttr(node, pair.first, pair.second);
+    XmlUtil::WriteAttr(node, pair.first, pair.second);
   }
 
   WriteOffset(node);
@@ -97,7 +97,7 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (parts.empty()) {
     return;
   }
-  auto partsNode = xml::AddChild(node, "parts");
+  auto partsNode = XmlUtil::AddChild(node, "parts");
   for (auto &part : parts) {
     part.ConvertToGameFormat(partsNode);
   }

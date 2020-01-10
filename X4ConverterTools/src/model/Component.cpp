@@ -5,7 +5,7 @@
 
 using namespace boost::algorithm;
 namespace model {
-namespace xml = util::xml;
+using util::XmlUtil;
 
 Component::Component(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
 
@@ -186,15 +186,15 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "components") {
     throw std::runtime_error("Component should be under components element");
   }
-  auto compNode = xml::AddChildByAttr(out, "component", "name", getName());
-  auto connsNode = xml::AddChild(compNode, "connections");
+  auto compNode = XmlUtil::AddChildByAttr(out, "component", "name", getName());
+  auto connsNode = XmlUtil::AddChild(compNode, "connections");
   for (const auto &attr : attrs) {
     if (attr.first == "src") {
-      xml::AddChildByAttr(compNode, "source", "geometry", attr.second);
+      XmlUtil::AddChildByAttr(compNode, "source", "geometry", attr.second);
       // TODO compare to output path and confirm if wrong
       ctx->SetSourcePathSuffix(attr.second);
     } else {
-      xml::WriteAttr(compNode, attr.first, attr.second);
+      XmlUtil::WriteAttr(compNode, attr.first, attr.second);
     }
   }
   for (auto conn : connections) {

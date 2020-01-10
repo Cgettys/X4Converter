@@ -6,7 +6,8 @@
 
 namespace model {
 using std::string;
-namespace xml = util::xml;
+using util::XmlUtil;
+
 AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
 
 }
@@ -56,10 +57,10 @@ void AiNodeElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *>
 
 
 void AbstractElement::WriteOffset(pugi::xml_node target) {
-  auto offsetNode = xml::AddChild(target, "offset");
-  xml::WriteChildXYZ("position", offsetNode, offsetPos);
-  xml::WriteRotation(offsetNode, offsetRot);
-  xml::RemoveIfChildless(offsetNode);
+  auto offsetNode = XmlUtil::AddChild(target, "offset");
+  XmlUtil::WriteChildXYZ("position", offsetNode, offsetPos);
+  XmlUtil::WriteRotation(offsetNode, offsetRot);
+  XmlUtil::RemoveIfChildless(offsetNode);
 
 }
 
@@ -96,10 +97,10 @@ void AbstractElement::ReadOffset(pugi::xml_node target) {
   auto offsetNode = target.child("offset");
   if (offsetNode) {
     auto positionNode = offsetNode.child("position");
-    offsetPos = xml::ReadAttrXYZ(positionNode);
+    offsetPos = XmlUtil::ReadAttrXYZ(positionNode);
 
     auto quaternionNode = offsetNode.child("quaternion");
-    offsetRot = xml::ReadAttrQuat(quaternionNode);
+    offsetRot = XmlUtil::ReadAttrQuat(quaternionNode);
     // TODO check for weird other cases
   }
 
