@@ -24,13 +24,13 @@ class Part : public AiNodeElement {
  private:
   bool hasRef;
   bool hasAnimation;
-  std::shared_ptr<CollisionLod> collisionLod;
+  std::optional<CollisionLod> collisionLod;
   std::map<int, VisualLod> lods;
   LightsGroup lights;
   std::optional<ani::AnimFile> animation;
   bool hasWreck;
-  std::shared_ptr<CollisionLod> wreckCollisionLod;
-  std::map<int, VisualLod> wreckLods;
+  std::optional<VisualLod> wreckVisualLod;
+  std::optional<CollisionLod> wreckCollisionLod;
 };
 }
 

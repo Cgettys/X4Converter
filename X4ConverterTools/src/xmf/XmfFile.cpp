@@ -14,8 +14,9 @@ XmfFile::XmfFile(ConversionContext::Ptr ctx) : ctx{std::move(ctx)} {
 }
 XmfDataBuffer *XmfFile::GetIndexBuffer() {
   for (auto &_buffer : buffers) {
-    if (_buffer.IsIndexBuffer())
+    if (_buffer.IsIndexBuffer()) {
       return &_buffer;
+    }
   }
   throw std::runtime_error("No Index Buffer");
 }
@@ -139,7 +140,7 @@ void XmfFile::WriteToIOStream(IOStream *pStream) {
 }
 
 std::map<XmfDataBuffer *, std::vector<uint8_t> > XmfFile::CompressBuffers() {
-  std::map<XmfDataBuffer *, std::vector<uint8_t> > result;
+  std::map<XmfDataBuffer *, std::vector<uint8_t> > result{};
   for (XmfDataBuffer &buffer: buffers) {
     std::vector<uint8_t> &compressedData = result[&buffer];
     compressedData.resize(compressBound(buffer.Description.GetUncompressedDataSize()));
@@ -180,10 +181,10 @@ void XmfFile::WriteBuffers(StreamWriterLE &pStreamWriter,
 
 aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
   auto *pMeshGroupNode = new aiNode();
-  pMeshGroupNode->mName = name;
+  pMeshGroupNode->mName = aiString{name};
   try {
     if (GetMaterials().empty()) {
-      aiMesh *pMesh = ConvertToAiMesh(0, NumIndices(), name);
+      auto pMesh = ConvertToAiMesh(0, NumIndices(), name);
       ctx->AddMesh(pMeshGroupNode, pMesh);
     } else {
       pMeshGroupNode->mChildren = new aiNode *[NumMaterials()];
@@ -194,8 +195,9 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
 
         auto itMat = ctx->Materials.find(material.Name);
         if (itMat == ctx->Materials.end()) {
-          pMesh->mMaterialIndex = numeric_cast<unsigned int>(ctx->Materials.size());
-          ctx->Materials[material.Name] = pMesh->mMaterialIndex;
+          auto matIdx = numeric_cast<unsigned int>(ctx->Materials.size());
+          pMesh->mMaterialIndex = matIdx;
+          ctx->Materials[material.Name] = matIdx;
         } else {
           pMesh->mMaterialIndex = itMat->second;
         }
@@ -204,7 +206,8 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
         pMeshNode->mName = pMesh->mName;
         ctx->AddMesh(pMeshNode, pMesh);
 
-        pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren++] = pMeshNode;
+        pMeshGroupNode->mChildren[pMeshGroupNode->mNumChildren] = pMeshNode;
+        ++pMeshGroupNode->mNumChildren;
       }
     }
   } catch (...) {
@@ -215,18 +218,13 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
 }
 
 aiMesh *XmfFile::ConvertToAiMesh(int firstIndex, int numIndices, const std::string &name) {
-  auto *pMesh = new aiMesh();
-  pMesh->mName = name;
+  auto *pMesh = new aiMesh;
+  pMesh->mName = aiString{name};
 
-  try {
-    AllocMeshVertices(pMesh, numIndices);
-    AllocMeshFaces(pMesh, numIndices);
-    PopulateMeshVertices(pMesh, firstIndex, numeric_cast<uint32_t>(numIndices));
-    PopulateMeshFaces(pMesh, numIndices);
-  } catch (...) {
-    delete pMesh;
-    throw;
-  }
+  AllocMeshVertices(pMesh, numIndices);
+  AllocMeshFaces(pMesh, numIndices);
+  PopulateMeshVertices(pMesh, firstIndex, numeric_cast<uint32_t>(numIndices));
+  PopulateMeshFaces(pMesh, numIndices);
   return pMesh;
 }
 
@@ -269,7 +267,7 @@ void XmfFile::AllocMeshVertices(aiMesh *pMesh, int numVertices) {
             if (!pMesh->mBitangents) {
               pMesh->mBitangents = new aiVector3D[numVertices];
             } else {
-              throw std::runtime_error("Duplicate TANGENT vertex element with usage index 1");
+              throw std::runtime_error("Duplicate BITANGENT vertex element with usage index 1");
             }
           } else if (vertexElem.UsageIndex > 1) {
             throw std::runtime_error("Invalid usage index for TANGENT vertex element");
@@ -300,7 +298,8 @@ void XmfFile::AllocMeshVertices(aiMesh *pMesh, int numVertices) {
           }
           break;
 
-        default:throw std::runtime_error(str(format("Unexpected Usage: %1%") % vertexElem.Usage));
+        default:
+          throw std::runtime_error(str(format("Unexpected Usage: %1%") % vertexElem.Usage));
       }
     }
   }
@@ -392,7 +391,8 @@ void XmfFile::PopulateMeshVertices(aiMesh *pMesh, uint32_t firstIndex, uint32_t 
             break;
           }
 
-          default:throw std::runtime_error(str(format("Unexpected Usage: %1%") % elem.Usage));
+          default:
+            throw std::runtime_error(str(format("Unexpected Usage: %1%") % elem.Usage));
         }
       }
       elemOffset += util::DXUtil::GetVertexElementTypeSize((D3DDECLTYPE) elem.Type);
@@ -414,7 +414,7 @@ void XmfFile::PopulateMeshFaces(aiMesh *pMesh, int numIndices) {
 
 std::shared_ptr<XmfFile>
 XmfFile::GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool isCollisionMesh) {
-  std::vector<aiNode *> meshNodes;
+  std::vector<aiNode *> meshNodes{};
   if (pNode->mNumChildren == 0) {
     meshNodes.push_back(pNode);
   } else {
@@ -498,7 +498,7 @@ XmfFile::GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool
     if (std::regex_match(pMeshNode->mName.C_Str(), match, std::regex(R"(\w+?-\w+?X(\w+?)X(\w+?))"))) {
       uint32_t firstIndex = indexOffset;
       unsigned int numIndices = pMesh->mNumFaces * 3;
-      const std::string &name = match[1].str() + "." + match[2].str();
+      const std::string name = "" + match[1].str() + "." + match[2].str();
       pMeshFile->materials.emplace_back(firstIndex, numIndices, name);
     }
     vertexOffset += pMesh->mNumVertices;
@@ -510,23 +510,28 @@ XmfFile::GenerateMeshFile(const ConversionContext::Ptr &ctx, aiNode *pNode, bool
 
 void XmfFile::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElement> &declaration) {
   std::vector<XmfVertexElement> meshDeclaration;
-  if (pMesh->mVertices)
+  if (pMesh->mVertices) {
     meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT3, D3DDECLUSAGE_POSITION);
+  }
 
-  if (pMesh->mNormals)
+  if (pMesh->mNormals) {
     meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_NORMAL);
+  }
 
-  if (pMesh->mTangents)
+  if (pMesh->mTangents) {
     meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_TANGENT, 0);
+  }
 
   for (int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
-    if (pMesh->mTextureCoords[i])
+    if (pMesh->mTextureCoords[i]) {
       meshDeclaration.emplace_back(D3DDECLTYPE_FLOAT16_2, D3DDECLUSAGE_TEXCOORD, i);
+    }
   }
 
   for (int i = 0; i < AI_MAX_NUMBER_OF_COLOR_SETS; ++i) {
-    if (pMesh->mColors[i])
+    if (pMesh->mColors[i]) {
       meshDeclaration.emplace_back(D3DDECLTYPE_D3DCOLOR, D3DDECLUSAGE_COLOR, i);
+    }
   }
 
   for (XmfVertexElement &meshElem: meshDeclaration) {
@@ -537,8 +542,9 @@ void XmfFile::ExtendVertexDeclaration(aiMesh *pMesh, std::vector<XmfVertexElemen
         break;
       }
     }
-    if (!alreadyExists)
+    if (!alreadyExists) {
       declaration.push_back(meshElem);
+    }
   }
 }
 

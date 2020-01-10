@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
 //                sourceLen == sourceStream->Read(&expected[0], sizeof(uint8_t), expectedLen));
 //        BOOST_TEST(
 //                actualLen == resultStream->Read(&actual[0], sizeof(uint8_t), actualLen));
-
+  delete sourceStream2;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

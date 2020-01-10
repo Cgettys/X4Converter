@@ -11,13 +11,12 @@ class VisualLod : public Lod {
  public:
   explicit VisualLod(ConversionContext::Ptr ctx);
 
-  VisualLod(pugi::xml_node &node, std::string partName, const ConversionContext::Ptr &ctx);
+  VisualLod(int index, std::string partName, const ConversionContext::Ptr &ctx);
 
   void ConvertFromAiNode(aiNode *node) override;
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
- private:
 
 };
 

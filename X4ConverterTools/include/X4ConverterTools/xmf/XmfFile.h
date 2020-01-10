@@ -86,8 +86,8 @@ class XmfFile {
                     std::map<XmfDataBuffer *, std::vector<uint8_t> > &compressedBuffers);
   ConversionContext::Ptr ctx;
   XmfHeader header;
-  std::vector<XmfDataBuffer> buffers;
-  std::vector<XmfMaterial> materials;
+  std::vector<XmfDataBuffer> buffers{};
+  std::vector<XmfMaterial> materials{};
 };
 
 }

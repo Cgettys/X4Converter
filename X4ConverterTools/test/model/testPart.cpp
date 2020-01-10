@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 #include <boost/test/unit_test.hpp>
 
 #include <X4ConverterTools/model/Part.h>
@@ -38,7 +40,6 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
   auto result = part.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
   delete result;
-
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_read_part_name_throws_on_empty) {
@@ -184,4 +185,5 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-BOOST_AUTO_TEST_SUITE_END() 
+BOOST_AUTO_TEST_SUITE_END()
+#pragma clang diagnostic pop

@@ -6,15 +6,8 @@ namespace model {
 namespace xml = util::xml;
 VisualLod::VisualLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
 
-VisualLod::VisualLod(pugi::xml_node &node, std::string partName, const ConversionContext::Ptr &ctx) : Lod(ctx) {
-
-  if (std::string(node.name()) != "lod") {
-    throw std::runtime_error("XML element must be a <lod> element!");
-  }
-  if (node.attribute("index").empty()) {
-    throw std::runtime_error("VisualLod must have an index attribute!");
-  }
-  index = node.attribute("index").as_int();
+VisualLod::VisualLod(int index, std::string partName, const ConversionContext::Ptr &ctx) : Lod(ctx) {
+  this->index = index;
   std::string tmp = str(boost::format("%1%-lod%2%") % partName % index);
   setName(tmp);
 

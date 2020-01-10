@@ -17,56 +17,52 @@ BOOST_AUTO_TEST_SUITE(LodUnitTests)
 BOOST_AUTO_TEST_CASE(read_lod_name) {
   std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
   auto ctx = TestUtil::GetTestContext(tgtPath);
-  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
-  auto node = doc->select_node(
-      "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
-  BOOST_TEST_REQUIRE(!node.empty());
-
-  auto lod = VisualLod(node, "anim_main", ctx);
+  auto lod = VisualLod(0, "anim_main", ctx);
   std::string expectedName = "anim_main-lod0";
   BOOST_TEST(lod.getName() == expectedName);
   auto result = lod.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
   delete result;
 }
-
-BOOST_AUTO_TEST_CASE(read_lod_no_index) {
-  std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext(tgtPath);
-  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
-  auto node = doc->select_node(
-      "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
-  BOOST_TEST_REQUIRE(!node.empty());
-  node.remove_attribute("index");
-
-  BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
-}
-
-BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
-  std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
-  auto ctx = TestUtil::GetTestContext(tgtPath);
-  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
-  auto node = doc->select_node(
-      "/components/component/connections/connection[@name='Connection01']/parts/part").node();
-  BOOST_TEST_REQUIRE(!node.empty());
-  BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
-}
+// TODO rewrite/move to part
+//BOOST_AUTO_TEST_CASE(read_lod_no_index) {
+//  std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
+//  auto ctx = TestUtil::GetTestContext(tgtPath);
+//  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
+//  auto node = doc->select_node(
+//      "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[1]").node();
+//  BOOST_TEST_REQUIRE(!node.empty());
+//  node.remove_attribute("index");
+//
+//  BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
+//}
+//
+//BOOST_AUTO_TEST_CASE(read_lod_wrong_type) { // NOLINT(cert-err58-cpp)
+//  std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
+//  auto ctx = TestUtil::GetTestContext(tgtPath);
+//  auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
+//  auto node = doc->select_node(
+//      "/components/component/connections/connection[@name='Connection01']/parts/part").node();
+//  BOOST_TEST_REQUIRE(!node.empty());
+//  BOOST_CHECK_THROW(auto lod = VisualLod(node, "anim_main", ctx), std::runtime_error);
+//}
 
 BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
+  // TODO what do I even need the doc for here?
   auto ctx = TestUtil::GetTestContext(tgtPath);
   auto doc = TestUtil::GetXmlDocument(tgtPath + ".xml");
-  auto pScene = new aiScene();
-  ctx->SetScene(pScene);
+  aiScene scene;
+  ctx->SetScene(&scene);
   auto node = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods/lod[@index='0']").node();
   BOOST_TEST_REQUIRE(!node.empty());
 
-  auto lodForward = VisualLod(node, "anim_main", ctx);
+  auto lodForward = VisualLod(0, "anim_main", ctx);
   auto forwardResult = lodForward.ConvertToAiNode();
   ctx->PopulateSceneArrays();
   auto ctx2 = TestUtil::GetTestContext(tgtPath);
-  ctx2->SetScene(pScene);
+  ctx2->SetScene(&scene);
 
   auto lodBackward = VisualLod(ctx2);
   auto outDoc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
@@ -83,6 +79,9 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "1"));
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "2"));
   BOOST_TEST(matsNode.find_child_by_attribute("material", "id", "3"));
+  BOOST_TEST_CHECKPOINT("Beginning cleanup");
+  // Normally, scene would delete this but not this time since it is never added to the scene.
+  delete forwardResult;
 }
 // TODO fixme
 //        BOOST_AUTO_TEST_CASE(part_name_from_ainode) {

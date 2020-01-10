@@ -152,11 +152,13 @@ void ConversionContext::PopulateSceneArrays() {
   if (!meshes.empty()) {
     auto meshCount = numeric_cast<unsigned int>(meshes.size());
     pScene->mNumMeshes = meshCount;
+    auto oldMeshes = pScene->mMeshes;
     pScene->mMeshes = new aiMesh *[meshCount];
-
+    delete[] oldMeshes;
     int meshIdx = 0;
-    for (auto &meshIt : meshes) {
-      pScene->mMeshes[meshIdx++] = meshIt;
+    for (auto *meshIt : meshes) {
+      pScene->mMeshes[meshIdx] = meshIt;
+      ++meshIdx;
     }
   }
   // TODO figure out what this is supposed to do and if necessary fix it
@@ -279,8 +281,12 @@ void ConversionContext::AddMetadata(const std::string &name, MetadataMap m) {
 
 ConversionContext::~ConversionContext() {
   if (pScene != nullptr && !populatedArrays) {
+    // Populate arrays so that the scene can do the dirty work for us.
     ConversionContext::PopulateSceneArrays();
 //    delete pScene;
+
+  } else if (pScene == nullptr) {
+    // We need to clean up the loose ends
     for (auto mesh: meshes) {
       delete mesh;
     }
