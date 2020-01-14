@@ -65,38 +65,6 @@ BOOST_AUTO_TEST_SUITE(IntegrationTests)
 //
 //}
 
-BOOST_AUTO_TEST_CASE(xml_easy) {
-  // TODO refactor all the io...
-  auto base = test::TestUtil::GetBasePath();
-  const fs::path tgtPath = "assets/units/size_s/ship_gen_s_fighter_01";
-  auto inputXMLPath = tgtPath.generic_path().replace_extension(".xml").string();
-  auto daePath = tgtPath.generic_path().replace_extension(".out.dae").string();
-  auto outputXMLPath = tgtPath.generic_path().replace_extension(".out.xml").string();
-  // To prevent cross contamination between runs, remove dae to be safe
-  fs::remove(base / daePath);
-  // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(base / inputXMLPath, base / outputXMLPath, fs::copy_option::overwrite_if_exists);
-
-  auto ctx = TestUtil::GetTestContext(tgtPath);
-  BOOST_TEST_CHECKPOINT("Begin test");
-  bool forwardSuccess = ConvertXmlToDae(ctx, inputXMLPath, daePath);
-  BOOST_TEST(forwardSuccess);
-  BOOST_TEST_CHECKPOINT("Forward parsing");
-
-  auto ctx2 = TestUtil::GetTestContext(tgtPath);
-  ctx2->SetAllMetadata(ctx->GetAllMetadata());// TODO replace me
-  bool backwardSuccess = ConvertDaeToXml(ctx2, daePath, outputXMLPath);
-  BOOST_TEST(backwardSuccess);
-
-  BOOST_TEST_CHECKPOINT("Backward parsing");
-  auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
-  auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
-  auto partNodes = expectedDoc->select_nodes("//components/component/connections/connection/parts/part");
-  for (auto &x : partNodes) {
-    x.node().remove_child("size");
-  }
-  TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
-}
 
 BOOST_AUTO_TEST_CASE(xml) {
   // TODO refactor all the io...
@@ -108,7 +76,7 @@ BOOST_AUTO_TEST_CASE(xml) {
   // To prevent cross contamination between runs, remove dae to be safe
   fs::remove(base / daePath);
   // Also to prevent cross contamination, overwrite the output XML with original copy. Converter expects to be working on original; this lets us compare it to that
-  fs::copy_file(base / inputXMLPath, base / outputXMLPath, fs::copy_option::overwrite_if_exists);
+  fs::remove(base / outputXMLPath);
 
   auto ctx = TestUtil::GetTestContext(tgtPath);
   BOOST_TEST_CHECKPOINT("Begin test");
@@ -123,9 +91,25 @@ BOOST_AUTO_TEST_CASE(xml) {
 
   BOOST_TEST_CHECKPOINT("Backward parsing");
   auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
+  // TODO remove me as we progress
+  auto layer = expectedDoc->select_node("//components/component/layers/layer");
+  layer.node().remove_child("lights");
+  layer.node().remove_child("sounds");
+  layer.node().remove_child("trailemitters");
+
+  auto animations = expectedDoc->select_nodes("//components/component/connections/connection");
+  for (auto &&x : animations) {
+    x.node().remove_child("animations");
+  }
+  auto parts = expectedDoc->select_nodes("//components/component/connections/connection/parts/part");
+  for (auto &&x : parts) {
+    x.node().remove_child("size_raw");
+  }
+
   auto actualDoc = TestUtil::GetXmlDocument(outputXMLPath);
   TestUtil::CompareXMLFiles(expectedDoc.get(), actualDoc.get());
 }
+
 BOOST_AUTO_TEST_CASE(xml_hard) {
   auto base = test::TestUtil::GetBasePath();
   // TODO refactor all the io...

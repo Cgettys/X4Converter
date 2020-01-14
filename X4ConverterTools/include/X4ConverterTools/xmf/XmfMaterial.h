@@ -20,8 +20,8 @@ class XmfMaterial : public IXmf {
 
   uint32_t FirstIndex;
   uint32_t NumIndices;
-  char Name[kMaxStrLen];
+  std::array<char, kMaxStrLen> Name;
  private:
-  inline void ReadBinaryImpl(Assimp::StreamReaderLE &reader);
+  void ReadBinaryImpl(Assimp::StreamReaderLE &reader);
 };
 }

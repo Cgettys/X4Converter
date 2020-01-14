@@ -13,6 +13,7 @@ using namespace test;
 BOOST_AUTO_TEST_SUITE(UnitTests)
 
 BOOST_AUTO_TEST_SUITE(LodUnitTests)
+// TODO split into 2
 
 BOOST_AUTO_TEST_CASE(read_lod_name) {
   std::string tgtPath = "assets/units/size_s/ship_arg_s_fighter_01";
@@ -83,6 +84,7 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   // Normally, scene would delete this but not this time since it is never added to the scene.
   delete forwardResult;
 }
+
 // TODO fixme
 //        BOOST_AUTO_TEST_CASE(part_name_from_ainode) {
 //            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");

@@ -191,13 +191,13 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
 
       for (XmfMaterial &material : GetMaterials()) {
         aiMesh *pMesh = ConvertToAiMesh(material.FirstIndex, material.NumIndices,
-                                        name + "X" + replace_all_copy(std::string(material.Name), ".", "X"));
+                                        name + "X" + replace_all_copy(std::string(material.Name.data()), ".", "X"));
 
-        auto itMat = ctx->Materials.find(material.Name);
+        auto itMat = ctx->Materials.find(material.Name.data());
         if (itMat == ctx->Materials.end()) {
           auto matIdx = numeric_cast<unsigned int>(ctx->Materials.size());
           pMesh->mMaterialIndex = matIdx;
-          ctx->Materials[material.Name] = matIdx;
+          ctx->Materials[material.Name.data()] = matIdx;
         } else {
           pMesh->mMaterialIndex = itMat->second;
         }

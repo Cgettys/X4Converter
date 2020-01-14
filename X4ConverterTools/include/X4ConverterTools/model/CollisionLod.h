@@ -17,13 +17,6 @@ class CollisionLod : public Lod {
   void ConvertFromAiNode(aiNode *node) override;
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
-
- private:
-
-  void CalculateSizeAndCenter(aiNode *pCollisionNode);
-
-  aiVector3D maxDim;
-  aiVector3D center;
 };
 
 }

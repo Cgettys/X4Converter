@@ -32,8 +32,9 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
   auto ctx = TestUtil::GetTestContext("TEST");
   auto node = new aiNode("Connection02");
 
-  aiMatrix4x4 tmp(aiVector3D(1, 1, 1), aiQuaternion(0.976296, -0, -0, -0.2164396),
-                  aiVector3D(9.411734, -2.738604, -2.866085));
+  aiMatrix4x4 tmp(aiVector3D(1.0f, 1.0f, 1.0f),
+                  aiQuaternion(0.976296f, -0.0f, -0.0f, -0.2164396f),
+                  aiVector3D(9.411734f, -2.738604f, -2.866085f));
   node->mTransformation.a1 = tmp.a1;
   node->mTransformation.a2 = tmp.a2;
   node->mTransformation.a3 = tmp.a3;
@@ -68,11 +69,9 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
   BOOST_CHECK_EQUAL(posNode.attribute("y").as_float(), -2.738604f);
   BOOST_CHECK_EQUAL(posNode.attribute("z").as_float(), -2.866085f);
   // NB: ordering matching weird xml ordering
-  BOOST_CHECK_EQUAL(quatNode.attribute("qx").as_float(), -0.0f);
-  BOOST_CHECK_EQUAL(quatNode.attribute("qy").as_float(), -0.0f);
-  BOOST_CHECK_EQUAL(quatNode.attribute("qz").as_float(), -0.2164396f);
-  BOOST_CHECK_EQUAL(quatNode.attribute("qw").as_float(), 0.976296f);
-
+  aiQuaternion expectedQuat{0.976296f, -0.0f, -0.0f, -0.2164396f};
+  auto actualQuat = util::XmlUtil::ReadAttrQuat(quatNode);
+  TestUtil::checkQuaternion(quatNode.path(), expectedQuat, actualQuat);
   delete node;
 }
 

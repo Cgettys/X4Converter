@@ -17,7 +17,6 @@ class VisualLod : public Lod {
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
-
 };
 
 }

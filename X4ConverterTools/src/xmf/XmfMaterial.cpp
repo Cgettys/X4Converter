@@ -6,13 +6,15 @@ namespace xmf {
 XmfMaterial::XmfMaterial() {
   FirstIndex = 0;
   NumIndices = 0;
+  Name.fill('\0');
 }
 
 XmfMaterial::XmfMaterial(uint32_t firstIndex, uint32_t numIndices, std::string name) {
   if (name.size() >= kMaxStrLen) {
     throw std::runtime_error(str(format("Material name %s is too long") % name));
   }
-  strncpy(Name, name.c_str(), name.size());
+  Name.fill('\0');
+  strncpy(Name.data(), name.c_str(), name.size());
   FirstIndex = firstIndex;
   NumIndices = numIndices;
 }
@@ -28,7 +30,7 @@ void XmfMaterial::ReadBinary(Assimp::StreamReaderLE &reader) {
 void XmfMaterial::ReadBinaryImpl(Assimp::StreamReaderLE &reader) {
   reader >> FirstIndex;
   reader >> NumIndices;
-  reader.CopyAndAdvance(Name, kMaxStrLen);
+  reader.CopyAndAdvance(Name.data(), kMaxStrLen);
 }
 
 void XmfMaterial::WriteBinary(Assimp::StreamWriterLE &writer) const {

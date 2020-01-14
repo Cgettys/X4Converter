@@ -139,7 +139,25 @@ void TestUtil::CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_docume
 
   for (auto &&x : intersection) {
     checkPath(x, expectedDoc, actualDoc);
-
+  }
+}
+void TestUtil::checkQuaternion(const std::string path, aiQuaternion &expectedQuat, aiQuaternion &actualQuat) {
+  if (!expectedQuat.Equal(actualQuat)) {
+    if (expectedQuat.Equal({-actualQuat.w, -actualQuat.x, -actualQuat.y, -actualQuat.z})) {
+      BOOST_TEST_WARN(false, "Negated quaternion at path: " + path + ". This may cause problems for interpolation!");
+    } else {
+      BOOST_CHECK_MESSAGE(false,
+                          "Expected quaternion: (" +
+                              std::to_string(expectedQuat.w) + "," +
+                              std::to_string(expectedQuat.x) + "," +
+                              std::to_string(expectedQuat.y) + "," +
+                              std::to_string(expectedQuat.z) +
+                              ") Actual Quaternion: (" +
+                              std::to_string(actualQuat.w) + "," +
+                              std::to_string(actualQuat.x) + "," +
+                              std::to_string(actualQuat.y) + "," +
+                              std::to_string(actualQuat.z) + ")");
+    }
   }
 }
 void TestUtil::checkPath(const std::string &path, pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc) {
@@ -152,30 +170,9 @@ void TestUtil::checkPath(const std::string &path, pugi::xml_document *expectedDo
   if (std::string(expectedNode.name()) == "quaternion") {
     auto expectedQuat = util::XmlUtil::ReadAttrQuat(expectedNode);
     auto actualQuat = util::XmlUtil::ReadAttrQuat(actualNode);
-    if (!expectedQuat.Equal(actualQuat)) {
-//      if (expectedQuat.Equal({-actualQuat.w, -actualQuat.x, -actualQuat.y, -actualQuat.z})) {
-//        BOOST_TEST_WARN(false,"Negated quaternion at path: " + path + ". This may cause problems for interpolation!");
-//      } else {
-      BOOST_CHECK_MESSAGE(false,
-                          "Expected quaternion: (" +
-                              std::to_string(expectedQuat.w) + "," +
-                              std::to_string(expectedQuat.x) + "," +
-                              std::to_string(expectedQuat.y) + "," +
-                              std::to_string(expectedQuat.z) +
-                              ") Actual Quaternion: (" +
-                              std::to_string(actualQuat.w) + "," +
-                              std::to_string(actualQuat.x) + "," +
-                              std::to_string(actualQuat.y) + "," +
-                              std::to_string(actualQuat.z) + ")");
-//      }
-
-    }
+    checkQuaternion(path, expectedQuat, actualQuat);
   } else {
-    for (
-      auto &expectedAttr
-        : expectedNode.
-        attributes()
-        ) {
+    for (auto &expectedAttr : expectedNode.attributes()) {
       std::string attrName = expectedAttr.name();
       auto actualAttr = actualNode.attribute(attrName.c_str());
       BOOST_TEST(actualAttr, "Missing attribute at path: " + path + " attr name: " + attrName);
@@ -197,7 +194,6 @@ void TestUtil::checkPath(const std::string &path, pugi::xml_document *expectedDo
                               + "\n\tExpected: " + std::to_string(expectedValueFloat)
                               + "\n\tActual: " + std::to_string(actualValueFloat));
           if ((std::fabs(expectedValueFloat) > small) || (std::fabs(actualValueFloat) > small)) {
-            BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
             BOOST_CHECK_CLOSE(expectedValueFloat, actualValueFloat, 1.0);
           } else {
             BOOST_CHECK_SMALL(expectedValueFloat, small);
@@ -265,4 +261,5 @@ void TestUtil::checkXmfHeaderEquality(XmfFile &lFile, XmfFile &rFile) {
   // The equality function should agree:
   BOOST_TEST((lhs == rhs));
 }
+
 }

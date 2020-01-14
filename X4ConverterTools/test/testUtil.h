@@ -20,6 +20,7 @@ class TestUtil {
 
   static ConversionContext::Ptr GetTestContext(const boost::filesystem::path &tgtPath, bool convert = true);
   static void CompareXMLFiles(pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
+  static void checkQuaternion(std::string path, aiQuaternion &expectedQuat, aiQuaternion &actualQuat);
   static void checkPath(const std::string &path, pugi::xml_document *expectedDoc, pugi::xml_document *actualDoc);
 
   static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);

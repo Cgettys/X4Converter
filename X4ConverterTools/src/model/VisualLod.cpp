@@ -55,7 +55,8 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
       // TODO ordering
       // TODO debug source of uninit.
       auto matNode = XmlUtil::AddChildByAttr(matsNode, "material", "id", std::to_string(matIdx++));
-      std::string matName{mat.Name};
+      std::string matName{mat.Name.data()};
+      std::cout << matName << std::endl;
       XmlUtil::WriteAttr(matNode, "ref", matName);
     }
   }

@@ -28,46 +28,14 @@ void CollisionLod::ConvertFromAiNode(aiNode *node) {
   }
   index = COLLISION_INDEX;
   if (ctx->ShouldConvertGeometry()) {
-    xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, true);
     CalculateSizeAndCenter(node);
+    xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, true);
   }
-}
-
-void CollisionLod::CalculateSizeAndCenter(aiNode *pCollisionNode) {
-  auto numMeshes = pCollisionNode->mNumMeshes;
-  if (numMeshes != 1) {
-    std::stringstream ss;
-    ss << "Warning, collision " << getName() << " has " << numMeshes << " meshes. Should have one." << std::endl;
-    throw std::runtime_error(ss.str());
-  }
-
-  aiMesh *pCollisionMesh = ctx->GetMesh(pCollisionNode->mMeshes[0]);
-  auto numVertices = pCollisionMesh->mNumVertices;
-  if (numVertices == 0) {
-    std::stringstream ss;
-    ss << "Warning, collision " << getName() << " has an empty mesh." << std::endl;
-    throw std::runtime_error(ss.str());
-  }
-
-  aiVector3D lowerBound = pCollisionMesh->mVertices[0];
-  aiVector3D upperBound = pCollisionMesh->mVertices[0];
-  for (size_t i = 1; i < numVertices; ++i) {
-    aiVector3D &position = pCollisionMesh->mVertices[i];
-    lowerBound.x = std::min(lowerBound.x, position.x);
-    lowerBound.y = std::min(lowerBound.y, position.y);
-    lowerBound.z = std::min(lowerBound.z, position.z);
-
-    upperBound.x = std::max(upperBound.x, position.x);
-    upperBound.y = std::max(upperBound.y, position.y);
-    upperBound.z = std::max(upperBound.z, position.z);
-  }
-
-  // TODO flip axes if necessary
-  maxDim = (upperBound - lowerBound) / 2.0f;
-  center = (upperBound + lowerBound) / 2.0f;
 }
 
 void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
+  // TODO size raw???
+
   // TODO handle no collision mesh
   if (!AssimpUtil::IsZero(maxDim) || !AssimpUtil::IsZero(center)) {
     auto sizeNode = XmlUtil::AddChild(out, "size");
@@ -77,8 +45,6 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
     out.remove_child("size");
     out.remove_child("size_raw");
   }
-  // TODO size raw???
-
   if (ctx->ShouldConvertGeometry()) {
     xmfFile->WriteToFile(ctx->GetOutputPath(getName() + ".xmf"));
   }

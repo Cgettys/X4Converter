@@ -60,8 +60,7 @@ Material::Material(std::string pCollectionName, pugi::xml_node &node) {
 aiMaterial *Material::ConvertToAiMaterial(ConversionContext *ctx) {
   auto pAiMaterial = new aiMaterial();
   std::string nameStr = _pCollectionName + "X" + GetName();
-  aiString name(nameStr);
-  // Explicit constructor new aiString is broken
+  const aiString name(nameStr);
   pAiMaterial->AddProperty(&name, AI_MATKEY_NAME);
   PopulateLayer(pAiMaterial, _diffuseMapFilePath, AI_MATKEY_TEXTURE_DIFFUSE(0), ctx);
   PopulateLayer(pAiMaterial, _specularMapFilePath, AI_MATKEY_TEXTURE_SPECULAR(0), ctx);

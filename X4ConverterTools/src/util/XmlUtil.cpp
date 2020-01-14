@@ -83,10 +83,10 @@ void XmlUtil::WriteAttrQuat(xml_node &target, aiQuaternion &val) {
 
   // NB: weird XML ordering for consistency with game files
   // TODO is negating all components the right call? leads to consistency with game files
-  WriteAttr(target, "qx", -val.x);
-  WriteAttr(target, "qy", -val.y);
-  WriteAttr(target, "qz", -val.z);
-  WriteAttr(target, "qw", -val.w);
+  WriteAttr(target, "qx", val.x);
+  WriteAttr(target, "qy", val.y);
+  WriteAttr(target, "qz", val.z);
+  WriteAttr(target, "qw", val.w);
 }
 
 bool XmlUtil::WriteRotation(xml_node &offsetNode, aiQuaternion &val) {
