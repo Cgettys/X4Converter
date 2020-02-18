@@ -17,7 +17,6 @@ string AbstractElement::getName() {
 }
 
 void AbstractElement::setName(string n) {
-  // TODO Verify exact limit
   // E.g.
   // "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_carrier_01_data"
   // cuts off to "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_"

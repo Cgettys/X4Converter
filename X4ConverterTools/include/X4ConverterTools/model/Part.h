@@ -28,6 +28,7 @@ class Part : public AiNodeElement {
     return attrs.count("ref") > 0;
   }
  private:
+  bool MatchesWreck(const std::string &childName);
   bool hasAnimation;
   std::optional<CollisionLod> collisionLod;
   std::map<int, VisualLod> lods;

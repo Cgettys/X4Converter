@@ -157,24 +157,38 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_lods) {
 
   auto result = part.ConvertToAiNode();
   BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
-  BOOST_TEST_REQUIRE(result->mNumChildren == 5);
+  BOOST_TEST_REQUIRE(result->mNumChildren == 7);
+  // TODO use sets to be more robust
   TestUtil::checkAiNodeName(result->mChildren[0], "anim_main-collision");
   TestUtil::checkAiNodeName(result->mChildren[1], "anim_main-lod0");
   TestUtil::checkAiNodeName(result->mChildren[2], "anim_main-lod1");
   TestUtil::checkAiNodeName(result->mChildren[3], "anim_main-lod2");
   TestUtil::checkAiNodeName(result->mChildren[4], "anim_main-lod3");
+  TestUtil::checkAiNodeName(result->mChildren[5], "anim_main_wreck-lod0");
+  TestUtil::checkAiNodeName(result->mChildren[6], "anim_main_wreck-collision");
 }
 
+aiNode *createNode(const ConversionContext::Ptr &ctx, const std::string &partName, const std::string &suffix) {
+  auto *result = new aiNode(partName + suffix);
+  auto *mesh = new aiMesh;
+  mesh->mPrimitiveTypes = aiPrimitiveType_TRIANGLE;
+  mesh->mNumVertices = 3;
+  mesh->mVertices = new aiVector3D[3];
+  mesh->mVertices[0] = {0, 1, 0};
+  mesh->mVertices[1] = {1, 0, 0};
+  mesh->mVertices[2] = {0, 0, 1};
+  ctx->AddMesh(result, mesh);
+  return result;
+}
 BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
   std::string partName = "testpart";
   auto ainode = new aiNode(partName);
   auto ainodeChildren = new aiNode *[3];
-  ainodeChildren[0] = new aiNode(partName + "-collision");
-  ainodeChildren[1] = new aiNode(partName + "-lod1");
-  ainodeChildren[2] = new aiNode(partName + "-lod2");
+  ainodeChildren[0] = createNode(ctx, partName, "-collision");
+  ainodeChildren[1] = createNode(ctx, partName, "-lod1");
+  ainodeChildren[2] = createNode(ctx, partName, "-lod2");
   ainode->addChildren(3, ainodeChildren);
-  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
-
   Part part(ctx);
   part.ConvertFromAiNode(ainode);
   pugi::xml_document doc;
@@ -182,7 +196,33 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
   part.ConvertToGameFormat(node);
 
   BOOST_TEST(!node.child("part").child("lods").empty());
+  //TODO more in depth
 }
+BOOST_AUTO_TEST_CASE(ainode_to_xml_lods_hard) {
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
+  std::string partName = "testpart";
+  ctx->AddMetadata(partName, {{"wreck", partName + "_wreck"}});
+  auto ainode = new aiNode(partName);
+  auto ainodeChildren = new aiNode *[5];
+  ainodeChildren[0] = createNode(ctx, partName, "-collision");
+  ainodeChildren[1] = createNode(ctx, partName, "-lod1");
+  ainodeChildren[2] = createNode(ctx, partName, "-lod2");
+  ainodeChildren[3] = createNode(ctx, partName, "_wreck-collision");
+  ainodeChildren[4] = createNode(ctx, partName, "_wreck-lod0");
+  ainode->addChildren(5, ainodeChildren);
+
+  Part part(ctx);
+  part.ConvertFromAiNode(ainode);
+  pugi::xml_document doc;
+  auto node = doc.append_child("parts");
+  part.ConvertToGameFormat(node);
+  //TODO more in depth checks
+
+
+  BOOST_TEST(!node.child("part").child("lods").empty());
+  BOOST_TEST(!node.child("part").attribute("wreck").empty());
+}
+// TODO unhappy paths
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

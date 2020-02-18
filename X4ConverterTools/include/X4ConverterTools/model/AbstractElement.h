@@ -24,9 +24,6 @@ class AbstractElement {
   virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;
 
  protected:
-
-  // TODO template pattern?
-
   void ReadOffset(pugi::xml_node target);
 
   void WriteOffset(pugi::xml_node target);

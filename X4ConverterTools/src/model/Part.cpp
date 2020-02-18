@@ -54,9 +54,12 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
       if (lodNode.attribute("index").empty()) {
         throw std::runtime_error("VisualLod must have an index attribute!");
       }
-      auto lodIndex = node.attribute("index").as_int();
+      auto lodIndex = lodNode.attribute("index").as_int();
       auto lod = VisualLod(lodIndex, getName(), ctx);
-      lods.insert(std::pair < int, VisualLod > (lodIndex, lod));
+      auto result = lods.insert(std::pair<int, VisualLod>(lodIndex, lod));
+      if (!result.second) {
+        throw std::runtime_error("Duplicate Lod index read");
+      }
     }
     collisionLod = CollisionLod(getName(), ctx);
     if (HasWreck()) {
@@ -88,6 +91,18 @@ aiNode *Part::ConvertToAiNode() {
   return result;
 }
 
+bool Part::MatchesWreck(const std::string &childName) {
+  if (HasWreck()) {
+    std::string wreckName = attrs["wreck"];
+    if (wreckName.empty()) {
+      throw std::runtime_error("Wreck name cannot be empty!");
+    }
+    if (childName.find(wreckName) != std::string::npos) {
+      return true;
+    }
+  }
+  return false;
+}
 void Part::ConvertFromAiNode(aiNode *node) {
   std::string name = node->mName.C_Str();
   setName(name);
@@ -96,7 +111,7 @@ void Part::ConvertFromAiNode(aiNode *node) {
 
   // TODO handle children if ref?
 
-  for (int i = 0; i < node->mNumChildren; i++) {
+  for (int i = 0; i < node->mNumChildren; ++i) {
     auto child = node->mChildren[i];
     std::string childName = child->mName.C_Str();
     // TODO check part names?
@@ -105,18 +120,18 @@ void Part::ConvertFromAiNode(aiNode *node) {
       auto lod = VisualLod(ctx);
       lod.ConvertFromAiNode(child);
       // The part name may be contained in the wreck name but usually not the reverse, so we check for the wreck name
-      if (HasWreck() && lod.getName().find(attrs["wreck"])) {
+      if (MatchesWreck(childName)) {
         if (wreckVisualLod.has_value()) {
           throw std::runtime_error("Found two wreck visual lods!");
         }
         wreckVisualLod = lod;
       } else {
-        lods.insert(std::pair < int, VisualLod > (lod.getIndex(), lod));
+        lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
       }
     } else if (regex_match(childName, ctx->collisionRegex)) {
       auto lod = CollisionLod(ctx);
       lod.ConvertFromAiNode(child);
-      if (HasWreck() && lod.getName().find(attrs["wreck"])) {
+      if (MatchesWreck(childName)) {
         if (wreckCollisionLod.has_value()) {
           throw std::runtime_error("Found two wreck collision lods!");
         }
@@ -157,6 +172,7 @@ void Part::ConvertToGameFormat(pugi::xml_node &out) {
   for (const auto &attr : attrs) {
     XmlUtil::WriteAttr(partNode, attr.first, attr.second);
   }
+  // TODO warn if missing middle lod, etc?
 
   if (!lods.empty()) {
     auto lodsNode = XmlUtil::AddChild(partNode, "lods");

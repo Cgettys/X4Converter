@@ -10,7 +10,6 @@
 using namespace boost;
 namespace fs = boost::filesystem;
 
-// TODO materialLibrary should be passed in
 ConversionContext::ConversionContext(const std::string &gameBaseFolderPath,
                                      const std::string &metadataFilePath,
                                      std::shared_ptr<Assimp::IOSystem> io,

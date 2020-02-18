@@ -7,7 +7,6 @@ using namespace boost;
 using namespace Assimp;
 using boost::numeric_cast;
 namespace ani {
-// TODO copy constructors?
 AnimFile::AnimFile() : header() {
 
 }

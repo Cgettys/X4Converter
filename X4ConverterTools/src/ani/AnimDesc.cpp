@@ -5,7 +5,6 @@ using namespace boost;
 using namespace Assimp;
 
 namespace ani {
-// TODO copy constructors?
 AnimDesc::AnimDesc(StreamReaderLE &reader) {
   for (char &c : Name) {
     reader >> c;

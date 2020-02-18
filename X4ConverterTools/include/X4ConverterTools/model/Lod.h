@@ -47,7 +47,7 @@ class Lod : public AiNodeElement {
     // TODO flip axes if necessary
     maxDim = (upperBound - lowerBound) / 2.0f;
     center = (upperBound + lowerBound) / 2.0f;
-    center.x = center.x;
+    center.x = -center.x;
   }
   ~Lod() override = default;
 

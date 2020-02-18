@@ -47,7 +47,6 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
       lodNode = out.append_child("lod");
     }
     XmlUtil::WriteAttr(lodNode, "index", std::to_string(index));
-    // TODO remove old?
     auto matsNode = XmlUtil::AddChild(lodNode, "materials");
     // TODO write out xmfFile
     int matIdx = 1;

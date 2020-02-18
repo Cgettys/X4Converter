@@ -3,7 +3,6 @@
 using namespace boost;
 using namespace Assimp;
 
-// TODO copy constructors?
 namespace ani {
 
 Header::Header() {
@@ -23,7 +22,6 @@ Header::Header(Assimp::StreamReaderLE &reader) {
   validate();
 }
 
-// TODO Separate validation from string stuff
 std::string Header::validate() {
   std::string result;
   bool valid = true;
@@ -85,8 +83,8 @@ int Header::getPadding() const {
   return Padding;
 }
 
-void Header::setPadding(int Padding) {
-  Header::Padding = Padding;
+void Header::setPadding(int padding) {
+  Header::Padding = padding;
 }
 
 }

@@ -31,10 +31,12 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
   if (!componentNode.child("source")) {
     std::cerr << "source directory not specified" << std::endl;
   } else {
-    // TODO verify not null
-    std::string ref = componentNode.child("source").attribute("geometry").value();
-    attrs["src"] = ref;
-    ctx->SetSourcePathSuffix(ref);
+    std::string src = componentNode.child("source").attribute("geometry").value();
+    if (src.empty()) {
+      throw runtime_error("Source directory for geometry must be specified!");
+    }
+    attrs["source"] = src;
+    ctx->SetSourcePathSuffix(src);
   }
 
   for (auto attr: componentNode.attributes()) {
@@ -189,7 +191,7 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
   auto compNode = XmlUtil::AddChildByAttr(out, "component", "name", getName());
   auto connsNode = XmlUtil::AddChild(compNode, "connections");
   for (const auto &attr : attrs) {
-    if (attr.first == "src") {
+    if (attr.first == "source") {
       XmlUtil::AddChildByAttr(compNode, "source", "geometry", attr.second);
       // TODO compare to output path and confirm if wrong
       ctx->SetSourcePathSuffix(attr.second);

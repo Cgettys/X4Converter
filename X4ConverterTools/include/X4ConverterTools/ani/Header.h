@@ -4,7 +4,6 @@
 #include <boost/format.hpp>
 #include <iostream>
 
-// TODO check/warn on used unknowns
 namespace ani {
 class Header {
  public:
@@ -27,7 +26,7 @@ class Header {
 
   [[nodiscard]] int getPadding() const;
 
-  void setPadding(int Padding);
+  void setPadding(int padding);
 
  protected:
   int NumAnims = 0;
