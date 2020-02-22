@@ -15,12 +15,7 @@ Part::Part(const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) 
 }
 
 Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
-  if (std::string(node.name()) != "part") {
-    throw std::runtime_error("XML element must be a <part> element!");
-  }
-  if (node.attribute("name").empty()) {
-    throw std::runtime_error("Part must have a name attribute!");
-  }
+  CheckXmlNode(node, "part");
   for (auto attr: node.attributes()) {
     auto attrName = std::string(attr.name());
     if (attrName == "ref") {

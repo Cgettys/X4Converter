@@ -1,4 +1,5 @@
 #include <X4ConverterTools/util/AssimpUtil.h>
+#include <iostream>
 
 using boost::numeric_cast;
 
@@ -67,6 +68,14 @@ bool AssimpUtil::IsZero(aiVector3D &vec) {
 }
 bool AssimpUtil::IsZero(aiQuaternion &quat) {
   return quat.Equal(aiQuaternion());
+}
+// Debug function
+void AssimpUtil::printAiMap(std::map<std::string, aiNode *> &m) {
+  for (const auto &entry : m) {
+    auto *node = entry.second;
+    std::string nodeName = node == nullptr ? "nullptr" : node->mName.C_Str();
+    std::cerr << "(" << entry.first << ", " << nodeName << ")" << std::endl;
+  }
 }
 
 bool AssimpUtil::VertexInfo::operator==(const VertexInfo &other) const {

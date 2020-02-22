@@ -5,12 +5,14 @@
 #include <unordered_map>
 #include <assimp/scene.h>
 #include <boost/numeric/conversion/cast.hpp>
+#include <map>
 
 class AssimpUtil {
  public:
   static void MergeVertices(aiMesh *pMesh);
   static bool IsZero(aiVector3D &vec);
   static bool IsZero(aiQuaternion &quat);
+  static void printAiMap(std::map<std::string, aiNode *> &m);
   struct VertexInfo {
     aiVector3D Position;
     aiVector3D Normal;

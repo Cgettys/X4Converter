@@ -33,7 +33,19 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
   auto *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
   ctx->SetScene(pScene);
   auto root_xml = doc.root();
-  model::Component component(root_xml, ctx);
+  // TODO Components class?
+  auto componentsNode = root_xml.child("components");
+  if (componentsNode.empty()) {
+    throw std::runtime_error("<components> node not found");
+  }
+
+  auto componentNode = componentsNode.child("component");
+  if (componentNode.next_sibling()) {
+    std::cerr << "Warning, this file contains more than one component. Ignoring all but the first."
+              << std::endl;
+  }
+
+  model::Component component(componentNode, ctx);
   aiNode *root = component.ConvertToAiNode();
   pScene->mRootNode = root;
   ctx->PopulateSceneArrays();

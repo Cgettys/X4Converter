@@ -55,13 +55,6 @@ void AiNodeElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *>
 }
 
 
-void AbstractElement::WriteOffset(pugi::xml_node target) {
-  auto offsetNode = XmlUtil::AddChild(target, "offset");
-  XmlUtil::WriteChildXYZ("position", offsetNode, offsetPos);
-  XmlUtil::WriteRotation(offsetNode, offsetRot);
-  XmlUtil::RemoveIfChildless(offsetNode);
-
-}
 
 void AiNodeElement::ApplyOffsetToAiNode(aiNode *target) {
   aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
@@ -88,6 +81,22 @@ AiNodeElement::AiNodeElement(ConversionContext::Ptr ctx) : AbstractElement(std::
 
 }
 
+void AbstractElement::CheckXmlNode(pugi::xml_node &src, const std::string expectedName) {
+  // Check that the xml_node is not empty
+  if (src.empty()) {
+    throw std::runtime_error("Could not find expected xml element of type: <" + expectedName + ">");
+  }
+  // Check we have the correct tag
+  std::string actualName = std::string(src.name());
+  if (actualName != expectedName) {
+    throw std::runtime_error(
+        "Received wrong xml element. Expected: <" + expectedName + "> Actual: <" + actualName + ">");
+  }
+  // Check it is named
+  if (!src.attribute("name")) {
+    throw std::runtime_error("XML element <" + expectedName + "> must have a name attribute!");
+  }
+}
 void AbstractElement::ReadOffset(pugi::xml_node target) {
   offsetPos = aiVector3D();
   offsetRot = aiQuaternion();
@@ -102,6 +111,14 @@ void AbstractElement::ReadOffset(pugi::xml_node target) {
     offsetRot = XmlUtil::ReadAttrQuat(quaternionNode);
     // TODO check for weird other cases
   }
+
+}
+
+void AbstractElement::WriteOffset(pugi::xml_node target) {
+  auto offsetNode = XmlUtil::AddChild(target, "offset");
+  XmlUtil::WriteChildXYZ("position", offsetNode, offsetPos);
+  XmlUtil::WriteRotation(offsetNode, offsetRot);
+  XmlUtil::RemoveIfChildless(offsetNode);
 
 }
 }

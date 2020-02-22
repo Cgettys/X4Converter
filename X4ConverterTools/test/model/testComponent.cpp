@@ -19,10 +19,11 @@ BOOST_AUTO_TEST_CASE(from_xml_basic) { // NOLINT(cert-err58-cpp)
   auto tgt = "assets/units/size_s/ship_arg_s_fighter_01.xml";
   auto ctx = TestUtil::GetTestContext(tgt);
   auto doc = TestUtil::GetXmlDocument(tgt);
-  auto node = doc->root();
-  BOOST_TEST_REQUIRE(!node.empty());
+  auto node = doc->root();;
+  auto componentNode = node.child("components").child("component");
+  BOOST_TEST_REQUIRE(!componentNode.empty());
 
-  auto component = Component(node, ctx);
+  auto component = Component(componentNode, ctx);
   BOOST_TEST(component.getName() == "ship_arg_s_fighter_01");
   BOOST_TEST(component.getNumberOfConnections() == 74);
 }
@@ -32,9 +33,10 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_basic) { // NOLINT(cert-err58-cpp)
   auto ctx = TestUtil::GetTestContext(tgt);
   auto doc = TestUtil::GetXmlDocument(tgt);
   auto node = doc->root();
-  node.remove_child("connections");
-  BOOST_TEST_REQUIRE(!node.empty());
-  auto component = Component(node, ctx);
+  auto componentNode = node.child("components").child("component");
+  componentNode.remove_child("connections");
+  BOOST_TEST_REQUIRE(!componentNode.empty());
+  auto component = Component(componentNode, ctx);
 
   auto result = component.ConvertToAiNode();
 
@@ -87,6 +89,22 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   delete node;
 }
 
+BOOST_AUTO_TEST_CASE(xml_to_ainode_full) { // NOLINT(cert-err58-cpp)
+  auto tgt = "assets/units/size_s/ship_arg_s_fighter_01.xml";
+  auto ctx = TestUtil::GetTestContext(tgt);
+  auto doc = TestUtil::GetXmlDocument(tgt);
+  auto node = doc->root();
+  auto componentNode = node.child("components").child("component");
+  BOOST_TEST_REQUIRE(!componentNode.empty());
+  auto component = Component(componentNode, ctx);
+
+  auto result = component.ConvertToAiNode();
+
+  BOOST_TEST_REQUIRE(result->mNumChildren > 0);
+  TestUtil::checkAiNodeName(result->mChildren[0], "ship_arg_s_fighter_01");
+
+  delete result;
+}
 //
 // TODO layers? source? MUST DO class etc
 BOOST_AUTO_TEST_SUITE_END() // NOLINT(cert-err58-cpp)

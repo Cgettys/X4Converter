@@ -11,6 +11,7 @@ Layer::Layer(const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx
 }
 
 Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AiNodeElement(ctx), lights(ctx) {
+  // TODO check node better
   layerId = id;
   auto myName = str(format("layer|%d") % layerId);
   setName(myName);

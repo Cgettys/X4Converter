@@ -10,24 +10,8 @@ using util::XmlUtil;
 Component::Component(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
 
 Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx) {
-  auto componentsNode = node.child("components");
-  if (componentsNode.empty()) {
-    throw std::runtime_error("<components> node not found");
-  }
-
-  auto componentNode = componentsNode.child("component");
-  if (componentNode.empty()) {
-    throw std::runtime_error("<component> node not found");
-  }
-
-  if (componentNode.next_sibling()) {
-    std::cerr << "Warning, this file contains more than one component. Ignoring all but the first."
-              << std::endl;
-  }
-
-  if (!componentNode.attribute("name")) {
-    throw std::runtime_error("Unnamed component!");
-  }
+  auto componentNode = node;
+  CheckXmlNode(node, "component");
   if (!componentNode.child("source")) {
     std::cerr << "source directory not specified" << std::endl;
   } else {
@@ -50,7 +34,7 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
   }
   auto connectionsNode = componentNode.child("connections");
   if (connectionsNode.empty()) {
-    throw std::runtime_error("No connections found!");
+    std::cerr << "Warning, could not find any <connection> nodes!" << std::endl;
   }
   for (auto connectionNode : connectionsNode.children()) {
     connections.emplace_back(connectionNode, ctx, getName());
@@ -81,41 +65,32 @@ aiNode *Component::ConvertToAiNode() {
       throw std::runtime_error("Duplicate key is not allowed!" + connName);
     }
     nodes[connName] = conn.ConvertToAiNode();
-
-    // TODO get rid of this getParts somehow
-    for (auto &part : conn.getParts()) {
-      std::string partName = part.getName();
-      if (nodes.count(partName)) {
-        throw std::runtime_error("Duplicate key is not allowed!" + partName);
-      }
-      auto partNode = nodes[connName]->FindNode(partName.c_str());
-      if (partNode == nullptr) {
-        throw std::runtime_error("something has gone horribly wrong");
-      }
-      nodes[partName] = partNode;
-    }
+    conn.ConvertParts(nodes);
   }
-
+  AssimpUtil::printAiMap(nodes);
   // Now to unflatten everything
   std::map<std::string, std::vector<aiNode *>> parentMap;
   for (auto conn: connections) {
     auto parentName = conn.getParentName();
     if (!nodes.count(parentName)) {
       throw std::runtime_error("Missing parent \"" + parentName + "\" on: \"" + conn.getName() + "\"");
-    } else {
-//      std::cout << conn.getName() << " " << parentName << std::endl;
-      auto connNode = nodes[conn.getName()];
-      if (parentMap.count(parentName) == 0) {
-        parentMap[parentName] = std::vector<aiNode *>();
-      }
-      if (connNode == nullptr) {
-        throw std::runtime_error("null ainode");
-      }
-      parentMap[parentName].push_back(connNode);
     }
+//      std::cout << conn.getName() << " " << parentName << std::endl;
+    auto connNode = nodes[conn.getName()];
+    if (connNode == nullptr) {
+      throw std::runtime_error("null ainode for connection " + conn.getName());
+    }
+    if (parentMap.count(parentName) == 0) {
+      parentMap[parentName] = std::vector<aiNode *>();
+    }
+    parentMap[parentName].push_back(connNode);
+
   }
   for (const auto &pair : parentMap) {
     auto parentNode = nodes[pair.first];
+    if (parentNode == nullptr) {
+      throw std::runtime_error("null ainode for parent: " + pair.first);
+    }
     populateAiNodeChildren(parentNode, pair.second);
   }
 

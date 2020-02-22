@@ -24,6 +24,7 @@ class AbstractElement {
   virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;
 
  protected:
+  static void CheckXmlNode(pugi::xml_node &src, const std::string expectedName);
   void ReadOffset(pugi::xml_node target);
 
   void WriteOffset(pugi::xml_node target);
