@@ -28,34 +28,6 @@ void AbstractElement::setName(string n) {
 }
 
 
-void AiNodeElement::populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
-  unsigned long numChildren = children.size();
-  if (children.empty()) {
-    return;
-  }
-
-  auto oldCount = target->mNumChildren;
-  auto newCount = oldCount + numChildren;
-  auto arr = new aiNode *[newCount];
-  auto oldLen = sizeof(aiNode *[oldCount]);
-
-  if (target->mChildren != nullptr) {
-    memcpy(arr, target->mChildren, oldLen);
-  }
-  memcpy(arr + oldCount, children.data(), sizeof(aiNode *[numChildren]));
-  target->mNumChildren = newCount;
-  auto old = target->mChildren;
-  target->mChildren = arr;
-  for (auto i = 0UL; i < newCount; i++) {
-    auto child = arr[i];
-    child->mParent = target;
-
-  }
-  delete[] old;
-}
-
-
-
 void AiNodeElement::ApplyOffsetToAiNode(aiNode *target) {
   aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
   // TODO fixme upstream... this sucks

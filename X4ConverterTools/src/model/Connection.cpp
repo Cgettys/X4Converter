@@ -50,8 +50,24 @@ aiNode *Connection::ConvertToAiNode() {
   for (auto &part : parts) {
     children.push_back(part.ConvertToAiNode());
   }
-  populateAiNodeChildren(result, children);
+  AssimpUtil::PopulateAiNodeChildren(result, children);
   return result;
+}
+// TODO figure out how to get rid of this special handling
+void Connection::ConvertAll(NodeMap &nodes) {
+  auto result = ConvertToAiNode();
+  nodes.AddNode(result);
+  for (auto &part : parts) {
+    std::string partName = part.getName();
+    auto partNode = result->FindNode(partName.c_str());
+    if (partNode == nullptr) {
+      throw std::runtime_error(
+          "Something has gone horribly wrong! Could not find node for part: " + partName + " under connection: "
+              + getName());
+    }
+    nodes.AddNode(partNode);
+  }
+
 }
 
 std::string Connection::getParentName() {
@@ -99,20 +115,5 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
     part.ConvertToGameFormat(partsNode);
   }
 
-}
-void Connection::ConvertParts(std::map<std::string, aiNode *> nodes) {
-  for (auto &part : parts) {
-    std::string partName = part.getName();
-    if (nodes.count(partName)) {
-      throw std::runtime_error("Duplicate key is not allowed!" + partName);
-    }
-    auto partNode = nodes[getName()]->FindNode(partName.c_str());
-    if (partNode == nullptr) {
-      throw std::runtime_error(
-          "Something has gone horribly wrong! Could not find node for part: " + partName + " under connection: "
-              + getName());
-    }
-    nodes[partName] = partNode;
-  }
 }
 }

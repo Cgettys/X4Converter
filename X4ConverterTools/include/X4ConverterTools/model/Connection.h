@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include "AbstractElement.h"
+#include "NodeMap.h"
 
 namespace model {
 class Connection : public AiNodeElement {
@@ -17,6 +18,7 @@ class Connection : public AiNodeElement {
   explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");
 
   aiNode *ConvertToAiNode() final;
+  void ConvertAll(NodeMap &map);
 
   void ConvertFromAiNode(aiNode *node) final;
 
@@ -24,7 +26,6 @@ class Connection : public AiNodeElement {
 
   std::string getParentName();
 
-  void ConvertParts(std::map<std::string, aiNode *> map);
  private:
   std::string parentName;
   std::vector<Part> parts;

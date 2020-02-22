@@ -16,7 +16,7 @@ Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : 
   auto myName = str(format("layer|%d") % layerId);
   setName(myName);
   auto lightsNode = node.child("lights");
-  lights.ConvertFromGameFormat(node, myName);
+  lights.ConvertFromGameFormat(lightsNode, myName);
 }
 
 model::Layer::Layer(aiNode *node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
@@ -24,7 +24,7 @@ model::Layer::Layer(aiNode *node, const ConversionContext::Ptr &ctx) : AiNodeEle
 }
 
 aiNode *Layer::ConvertToAiNode() {
-  auto result = new aiNode();
+  auto result = new aiNode;
   result->mName = getName();
   lights.ConvertToAiLights();
   return result;

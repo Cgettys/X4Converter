@@ -70,14 +70,38 @@ bool AssimpUtil::IsZero(aiQuaternion &quat) {
   return quat.Equal(aiQuaternion());
 }
 // Debug function
-void AssimpUtil::printAiMap(std::map<std::string, aiNode *> &m) {
+void AssimpUtil::PrintAiNodeMap(std::map<std::string, aiNode *> &m) {
   for (const auto &entry : m) {
     auto *node = entry.second;
     std::string nodeName = node == nullptr ? "nullptr" : node->mName.C_Str();
     std::cerr << "(" << entry.first << ", " << nodeName << ")" << std::endl;
   }
 }
+void AssimpUtil::PopulateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
+  unsigned long numChildren = children.size();
+  if (children.empty()) {
+    return;
+  }
 
+  auto oldCount = target->mNumChildren;
+  auto newCount = oldCount + numChildren;
+  auto arr = new aiNode *[newCount];
+  auto oldLen = sizeof(aiNode *[oldCount]);
+
+  if (target->mChildren != nullptr) {
+    memcpy(arr, target->mChildren, oldLen);
+  }
+  memcpy(arr + oldCount, children.data(), sizeof(aiNode *[numChildren]));
+  target->mNumChildren = newCount;
+  auto old = target->mChildren;
+  target->mChildren = arr;
+  for (auto i = 0UL; i < newCount; i++) {
+    auto child = arr[i];
+    child->mParent = target;
+
+  }
+  delete[] old;
+}
 bool AssimpUtil::VertexInfo::operator==(const VertexInfo &other) const {
   if (Position != other.Position || Normal != other.Normal) {
     return false;

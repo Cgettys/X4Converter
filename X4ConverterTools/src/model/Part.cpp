@@ -80,7 +80,7 @@ aiNode *Part::ConvertToAiNode() {
       children.push_back(wreckVisualLod->ConvertToAiNode());
       children.push_back(wreckCollisionLod->ConvertToAiNode());
     }
-    populateAiNodeChildren(result, children);
+    AssimpUtil::PopulateAiNodeChildren(result, children);
     lights.ConvertToAiLights();
   }
   return result;

@@ -12,7 +12,8 @@ class AssimpUtil {
   static void MergeVertices(aiMesh *pMesh);
   static bool IsZero(aiVector3D &vec);
   static bool IsZero(aiQuaternion &quat);
-  static void printAiMap(std::map<std::string, aiNode *> &m);
+  static void PopulateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
+  static void PrintAiNodeMap(std::map<std::string, aiNode *> &m);
   struct VertexInfo {
     aiVector3D Position;
     aiVector3D Normal;

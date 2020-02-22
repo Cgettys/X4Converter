@@ -2,6 +2,7 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <utility>
+#include <X4ConverterTools/model/NodeMap.h>
 
 using namespace boost::algorithm;
 namespace model {
@@ -10,12 +11,11 @@ using util::XmlUtil;
 Component::Component(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
 
 Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx) {
-  auto componentNode = node;
   CheckXmlNode(node, "component");
-  if (!componentNode.child("source")) {
+  if (!node.child("source")) {
     std::cerr << "source directory not specified" << std::endl;
   } else {
-    std::string src = componentNode.child("source").attribute("geometry").value();
+    std::string src = node.child("source").attribute("geometry").value();
     if (src.empty()) {
       throw runtime_error("Source directory for geometry must be specified!");
     }
@@ -23,16 +23,16 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
     ctx->SetSourcePathSuffix(src);
   }
 
-  for (auto attr: componentNode.attributes()) {
-    auto name = std::string(attr.name());
-    auto value = std::string(attr.value());
-    if (name == "name") {
-      setName(value);
+  for (auto attr: node.attributes()) {
+    auto attrName = std::string(attr.name());
+    auto attrValue = std::string(attr.value());
+    if (attrName == "name") {
+      setName(attrValue);
     } else {
-      attrs[name] = value;
+      attrs[attrName] = attrValue;
     }
   }
-  auto connectionsNode = componentNode.child("connections");
+  auto connectionsNode = node.child("connections");
   if (connectionsNode.empty()) {
     std::cerr << "Warning, could not find any <connection> nodes!" << std::endl;
   }
@@ -40,80 +40,50 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
     connections.emplace_back(connectionNode, ctx, getName());
   }
 
-  auto layersNode = componentNode.child("layers");
+  auto layersNode = node.child("layers");
   if (layersNode.empty()) {
-    std::cerr << "Warning, <layers> node not found";
+    std::cerr << "Warning, <layers> node not found" << std::endl;
   }
-  auto layerNode = layersNode.child("layer");
-  // TODO handle these fully
-  if (layerNode.next_sibling()) {
-    std::cerr << "Warning, this file contains more than one layer. Ignoring all but the first." << std::endl;
-    throw std::runtime_error("multiple layers");
+  // Index the layers so we can reassemble them in the same order. Not sure it really matters, but this makes things
+  // more consistent
+  int layerIndex = 0;
+  for (auto layerNode : layersNode.children()) {
+    layers.emplace_back(layerNode, ctx, layerIndex);
+    ++layerIndex;
   }
-
 }
 
-aiNode *Component::ConvertToAiNode() {
-  auto result = new aiNode(getName());
-  std::map<std::string, aiNode *> nodes;
-  nodes[getName()] = result;
-  ctx->AddMetadata(getName(), attrs);
-  // Convert all the nodes
-  for (auto conn : connections) {
-    std::string connName = conn.getName();
-    if (nodes.count(connName)) {
-      throw std::runtime_error("Duplicate key is not allowed!" + connName);
-    }
-    nodes[connName] = conn.ConvertToAiNode();
-    conn.ConvertParts(nodes);
-  }
-  AssimpUtil::printAiMap(nodes);
-  // Now to unflatten everything
-  std::map<std::string, std::vector<aiNode *>> parentMap;
-  for (auto conn: connections) {
-    auto parentName = conn.getParentName();
-    if (!nodes.count(parentName)) {
-      throw std::runtime_error("Missing parent \"" + parentName + "\" on: \"" + conn.getName() + "\"");
-    }
-//      std::cout << conn.getName() << " " << parentName << std::endl;
-    auto connNode = nodes[conn.getName()];
-    if (connNode == nullptr) {
-      throw std::runtime_error("null ainode for connection " + conn.getName());
-    }
-    if (parentMap.count(parentName) == 0) {
-      parentMap[parentName] = std::vector<aiNode *>();
-    }
-    parentMap[parentName].push_back(connNode);
+class ParentMap {
 
+};
+aiNode *Component::ConvertToAiNode() {
+  NodeMap nodes;
+  auto result = nodes.CreateNode(getName());
+  ctx->AddMetadata(getName(), attrs);
+  // Handle layers
+  nodes.CreateNode("layers");
+  for (auto &layer : layers) {
+    auto *layerAiNode = layer.ConvertToAiNode();
+    nodes.AddNode(layerAiNode);
+    nodes.MakeParent("layers", layer.getName());
   }
-  for (const auto &pair : parentMap) {
-    auto parentNode = nodes[pair.first];
-    if (parentNode == nullptr) {
-      throw std::runtime_error("null ainode for parent: " + pair.first);
-    }
-    populateAiNodeChildren(parentNode, pair.second);
+  // Convert all the nodes
+  for (auto &conn : connections) {
+    std::string connName = conn.getName();
+    conn.ConvertAll(nodes);
+    nodes.MakeParent(conn.getParentName(), conn.getName());
   }
+  // Now to unflatten everything
+  nodes.PopulateChildren();
 
   // Now double check that we didn't miss anything
-  for (auto conn: connections) {
-    auto connNode = nodes[conn.getName()];
+  for (auto &conn: connections) {
+    auto connNode = nodes.GetNode(conn.getName());
     if (connNode->mParent == nullptr) {
       throw std::runtime_error("connection" + conn.getName() + "lost its parent");
     }
   }
-  for (const auto &pair : nodes) {
-    if (pair.first == getName()) {
-      continue;
-    }
-    if (pair.second->mParent == nullptr) {
-      throw std::runtime_error(std::string(pair.second->mName.C_Str()) + "lost its parent");
-    }
-    for (int i = 0; i < pair.second->mNumChildren; i++) {
-      if (pair.second->mChildren[i] == nullptr) {
-        throw std::runtime_error(std::string(pair.second->mName.C_Str()) + "has null child");
-      }
-    }
-  }
+
   auto rootChildren = new aiNode *[1];
   rootChildren[0] = result;
   auto fakeRoot = new aiNode("ROOT");
@@ -133,7 +103,6 @@ void Component::ConvertFromAiNode(aiNode *node) {
                 << std::endl;
     } else if (starts_with(childName, "layer")) {
       layers.emplace_back(child, ctx);
-
     } else {
       connections.emplace_back(child, ctx);
       recurseOnChildren(child, ctx);
@@ -174,8 +143,12 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
       XmlUtil::WriteAttr(compNode, attr.first, attr.second);
     }
   }
-  for (auto conn : connections) {
+  for (auto &conn : connections) {
     conn.ConvertToGameFormat(connsNode);
+  }
+  auto layersNode = XmlUtil::AddChild(compNode, "layers");
+  for (auto &layer : layers) {
+    layer.ConvertToGameFormat(layersNode);
   }
 }
 

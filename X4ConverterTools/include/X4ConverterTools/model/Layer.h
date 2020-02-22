@@ -10,7 +10,7 @@ class Layer : public AiNodeElement {
  public:
   explicit Layer(const ConversionContext::Ptr &ctx);
 
-  explicit Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id = 0);
+  explicit Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id);
 
   explicit Layer(aiNode *node, const ConversionContext::Ptr &ctx);
 
@@ -21,7 +21,7 @@ class Layer : public AiNodeElement {
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
  protected:
-  int layerId;
+  int layerId = -1;
   LightsGroup lights;
 };
 

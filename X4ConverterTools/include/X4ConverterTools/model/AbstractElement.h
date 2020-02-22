@@ -46,7 +46,6 @@ class AiNodeElement : public AbstractElement {
   virtual aiNode *ConvertToAiNode() = 0;
   virtual void ConvertFromAiNode(aiNode *node) = 0;
  protected:
-  virtual void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
   void ApplyOffsetToAiNode(aiNode *target);
 
 };
