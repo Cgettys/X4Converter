@@ -599,3 +599,5 @@ healthchecksdb
 # End of https://www.gitignore.io/api/c,c++,cmake,eclipse,visualstudio,jetbrains+all,visualstudiocode
 /.vscode/
 /cmake/
+/X4ConverterBlenderAddonReleases/*
+/X4ConverterBlenderAddonBuild/*
