@@ -1,12 +1,14 @@
 #pragma once
 
 #include <X4ConverterTools/xmf/XmfFile.h>
+
+#include <utility>
 #include "AbstractElement.h"
 
 namespace model {
-class Lod : public AiNodeElement {
+class Lod : public AbstractElement {
  public:
-  explicit Lod(ConversionContext::Ptr ctx) : AiNodeElement(ctx) {}
+  explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
 
   aiNode *ConvertToAiNode() override {
     if (!ctx->ShouldConvertGeometry()) {

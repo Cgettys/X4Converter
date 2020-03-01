@@ -16,20 +16,7 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
                 const std::string &daeFilePath) {
 
   pugi::xml_document doc;
-  pugi::xml_parse_result load_result;
-
-  // TODO better way to do extension and path handling / generate a Config object to ease integration testing.
-  bool relative_paths = false;
-  if (fs::exists(xmlFilePath)) {
-    load_result = doc.load_file((xmlFilePath).c_str());
-  } else if (fs::exists(ctx->gameBaseFolderPath / xmlFilePath)) {
-    std::cout << "Paths appear to be relative" << std::endl;
-    load_result = doc.load_file((ctx->gameBaseFolderPath / xmlFilePath).c_str());
-    relative_paths = true;
-  }
-  if (load_result.status != pugi::status_ok) {
-    throw std::runtime_error("xml file could not be opened!");
-  }
+  ctx->fsUtil->LoadXml(doc, xmlFilePath);
   auto *pScene = new aiScene();// cleaned up by the exporter when it's deleted...
   ctx->SetScene(pScene);
   auto root_xml = doc.root();
@@ -54,8 +41,7 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
 //    aniPath.replace_extension("anixml");
 //    pugi::xml_document animdoc;
 //    pugi::xml_node rt = animdoc.root().append_child("root");
-
-  auto actualDaeFilePath = relative_paths ? (ctx->gameBaseFolderPath / daeFilePath).string() : daeFilePath;
+  auto actualDaeFilePath = ctx->fsUtil->GetDaeOutputPath(daeFilePath);
   Assimp::Exporter exporter;
 //    Assimp::ExportProperties props;
 //    props.SetPropertyBool("COLLADA_EXPORT_USE_MESH_NAMES",true);
@@ -73,12 +59,12 @@ ConvertDaeToXml(const ConversionContext::Ptr &ctx,
                 const std::string &rawXmlFilePath) {
   // TODO make better
 
-  auto daeFilePath = ctx->GetAbsolutePath(rawDaeFilePath).generic_string();
-  auto xmlFilePath = ctx->GetAbsolutePath(rawXmlFilePath).generic_string();
+  auto daeFilePath = ctx->fsUtil->GetAbsolutePath(rawDaeFilePath).generic_string();
+  auto xmlFilePath = ctx->fsUtil->GetAbsolutePath(rawXmlFilePath).generic_string();
   auto importer = std::make_unique<Assimp::Importer>();
   importer->SetPropertyInteger(AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, 1);
   const aiScene *pScene = importer->ReadFile(daeFilePath, 0);
-  if (!pScene) {
+  if (pScene == nullptr) {
     std::cerr << "Failed during import" << std::endl;
     throw std::runtime_error(importer->GetErrorString());
   }

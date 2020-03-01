@@ -17,14 +17,13 @@ VisualLod::VisualLod(int index, std::string partName, const ConversionContext::P
 }
 
 void VisualLod::ConvertFromAiNode(aiNode *node) {
-  std::string rawName = node->mName.C_Str();
-  setName(rawName);
+  AbstractElement::ConvertFromAiNode(node);
   // Parse out the index
-  size_t pos = rawName.rfind("-lod");
+  size_t pos = getName().rfind("-lod");
   if (pos == std::string::npos) {
     throw std::runtime_error("lod lacks index");
   }
-  index = std::stoi(rawName.substr(pos + 4));
+  index = std::stoi(getName().substr(pos + 4));
   if (ctx->ShouldConvertGeometry()) {
     xmfFile = xmf::XmfFile::GenerateMeshFile(ctx, node, false);
   }
@@ -61,7 +60,7 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
   }
 
   if (ctx->ShouldConvertGeometry()) {
-    xmfFile->WriteToFile(ctx->GetOutputPath(getName() + ".xmf"));
+    xmfFile->WriteToFile(ctx->fsUtil->GetOutputPath(getName() + ".xmf"));
   }
 }
 }

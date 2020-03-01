@@ -5,12 +5,13 @@
 #include <utility>
 #include <vector>
 #include "AbstractElement.h"
-#include "NodeMap.h"
+#include "X4ConverterTools/util/NodeMap.h"
+#include "Offset.h"
 
 namespace model {
-class Connection : public AiNodeElement {
+class Connection : public AbstractElement {
  public:
-  explicit Connection(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
+  explicit Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
 
   explicit Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx,
                       std::string componentName = "");
@@ -18,7 +19,7 @@ class Connection : public AiNodeElement {
   explicit Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName = "");
 
   aiNode *ConvertToAiNode() final;
-  void ConvertAll(NodeMap &map);
+  void ConvertAll(util::NodeMap &map);
 
   void ConvertFromAiNode(aiNode *node) final;
 
@@ -27,6 +28,7 @@ class Connection : public AiNodeElement {
   std::string getParentName();
 
  private:
+  Offset offset;
   std::string parentName;
   std::vector<Part> parts;
 };

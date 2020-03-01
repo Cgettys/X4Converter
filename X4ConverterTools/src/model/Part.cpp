@@ -9,28 +9,24 @@
 
 namespace model {
 using util::XmlUtil;
+using util::AssimpUtil;
 
 // TODO wreck class subclassing Part?
-Part::Part(const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
+Part::Part(const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
 }
 
-Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx), lights(ctx) {
-  CheckXmlNode(node, "part");
-  for (auto attr: node.attributes()) {
-    auto attrName = std::string(attr.name());
-    if (attrName == "ref") {
-      attrs["ref"] = attr.value();
-    } else if (attrName == "name") {
-      setName(attr.value());
-    } else if (attrName == "wreck") {
-      attrs["wreck"] = attr.value();
-      // TODO there has to be a more elegant way of handling this
-    } else {
-      std::cerr << "Warning, unhandled attribute on part: " << getName() << " attribute: " << attrName
-                << ". This may work fine, just a heads up ;)" << std::endl;
-      attrs[attrName] = attr.value();
-    }
-  }
+Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+  CheckXmlElement(node, "part");
+  ProcessAttributes(node, [](auto *a, std::string n, std::string v) -> void {
+                      if (n == "ref" or n == "wreck") {
+                        a->setAttr(n, v);
+                      } else {
+                        std::cerr << "Warning, unhandled attribute on part: " << a->getName() << " attribute: " << n
+                                  << ". This may work fine, just a heads up ;)" << std::endl;
+                        a->setAttr(n, v);
+                      }
+                    }
+  );
 
   auto lodsNode = node.child("lods");
   if (HasRef() && !lodsNode.empty()) {
@@ -38,7 +34,9 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
   }
 
   auto lightsNode = node.child("lights");
-  lights.ConvertFromGameFormat(lightsNode, getName());
+  if (!lightsNode.empty()) {
+    lights = LightsGroup(ctx, lightsNode, getName());
+  }
 
   // TODO figure out a better way
   if (!HasRef()) {
@@ -59,17 +57,16 @@ Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElem
     collisionLod = CollisionLod(getName(), ctx);
     if (HasWreck()) {
       // TODO verify this: wrecks apparently only get one lod
-      wreckVisualLod = VisualLod(0, attrs["wreck"], ctx);
-      wreckCollisionLod = CollisionLod(attrs["wreck"], ctx);
+      auto wreckName = getAttr("wreck");
+      wreckVisualLod = VisualLod(0, wreckName, ctx);
+      wreckCollisionLod = CollisionLod(wreckName, ctx);
     }
   }
 
 }
 
 aiNode *Part::ConvertToAiNode() {
-  auto *result = new aiNode;
-  result->mName = aiString{getName()};
-  ctx->AddMetadata(getName(), attrs);
+  auto result = AbstractElement::ConvertToAiNode();
   std::vector<aiNode *> children{};
   if (!HasRef()) {
     children.push_back(collisionLod->ConvertToAiNode());
@@ -80,15 +77,17 @@ aiNode *Part::ConvertToAiNode() {
       children.push_back(wreckVisualLod->ConvertToAiNode());
       children.push_back(wreckCollisionLod->ConvertToAiNode());
     }
+    if (HasLights()) {
+      children.push_back(lights->ConvertToAiNode());
+    }
     AssimpUtil::PopulateAiNodeChildren(result, children);
-    lights.ConvertToAiLights();
   }
   return result;
 }
 
 bool Part::MatchesWreck(const std::string &childName) {
   if (HasWreck()) {
-    std::string wreckName = attrs["wreck"];
+    std::string wreckName = getAttr("wreck");;
     if (wreckName.empty()) {
       throw std::runtime_error("Wreck name cannot be empty!");
     }
@@ -99,19 +98,16 @@ bool Part::MatchesWreck(const std::string &childName) {
   return false;
 }
 void Part::ConvertFromAiNode(aiNode *node) {
-  std::string name = node->mName.C_Str();
-  setName(name);
-  attrs = ctx->GetMetadataMap(name);
-  lights.ConvertFromAiLights(name);
-
+  AbstractElement::ConvertFromAiNode(node);
   // TODO handle children if ref?
-
-  for (int i = 0; i < node->mNumChildren; ++i) {
-    auto child = node->mChildren[i];
+  for (auto &child : getChildren(node)) {
     std::string childName = child->mName.C_Str();
     // TODO check part names?
-    // TODO lights better
-    if (regex_match(childName, ctx->lodRegex)) {
+    if (childName.find("|lights|")) {
+      if (HasLights()) {
+        throw std::runtime_error("Found two lights for part!");
+      }
+    } else if (regex_match(childName, ctx->lodRegex)) {
       auto lod = VisualLod(ctx);
       lod.ConvertFromAiNode(child);
       // The part name may be contained in the wreck name but usually not the reverse, so we check for the wreck name
@@ -155,18 +151,16 @@ void Part::ConvertToGameFormat(pugi::xml_node &out) {
 
   // Note the return statement! referenced parts don't get LODS!!!
   // TODO remove if lods exist or at least error out
-  if (HasRef()) {
-    auto value = attrs["ref"];
-    if (partNode.attribute("ref")) {
-      partNode.attribute("ref").set_value(value.c_str());
-    } else {
-      partNode.prepend_attribute("ref").set_value(value.c_str());
-    }
-    return;
-  }
-  for (const auto &attr : attrs) {
-    XmlUtil::WriteAttr(partNode, attr.first, attr.second);
-  }
+//  if (HasRef()) {
+//    auto value = getAttr("ref");;
+//    if (partNode.attribute("ref")) {
+//      partNode.attribute("ref").set_value(value.c_str());
+//    } else {
+//      partNode.prepend_attribute("ref").set_value(value.c_str());
+//    }
+//    return;
+//  }
+  WriteAttrs(partNode);
   // TODO warn if missing middle lod, etc?
 
   if (!lods.empty()) {
@@ -178,8 +172,9 @@ void Part::ConvertToGameFormat(pugi::xml_node &out) {
   } else {
     partNode.remove_child("lods");
   }
-
-  lights.ConvertToGameFormat(out);
+  if (HasLights()) {
+    lights->ConvertToGameFormat(out);
+  }
   // TODO out more
 }
 }

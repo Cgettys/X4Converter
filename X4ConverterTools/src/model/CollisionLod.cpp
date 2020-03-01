@@ -5,6 +5,7 @@
 
 namespace model {
 using util::XmlUtil;
+using util::AssimpUtil;
 // Not really a LOD but it makes more sense if we pretend
 CollisionLod::CollisionLod(ConversionContext::Ptr ctx) : Lod(std::move(ctx)) {}
 
@@ -18,11 +19,9 @@ CollisionLod::CollisionLod(std::string partName, const ConversionContext::Ptr &c
 }
 
 void CollisionLod::ConvertFromAiNode(aiNode *node) {
-  std::string rawName = node->mName.C_Str();
-  setName(rawName);
-  attrs = ctx->GetMetadataMap(rawName);
+  AbstractElement::ConvertFromAiNode(node);
   // Parse out the index
-  size_t pos = rawName.rfind("-collision");
+  size_t pos = getName().rfind("-collision");
   if (pos == std::string::npos) {
     throw std::runtime_error("this is not a collision mesh");
   }
@@ -46,7 +45,7 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
     out.remove_child("size_raw");
   }
   if (ctx->ShouldConvertGeometry()) {
-    xmfFile->WriteToFile(ctx->GetOutputPath(getName() + ".xmf"));
+    xmfFile->WriteToFile(ctx->fsUtil->GetOutputPath(getName() + ".xmf"));
   }
 }
 }

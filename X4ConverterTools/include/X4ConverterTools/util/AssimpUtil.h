@@ -7,6 +7,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <map>
 
+namespace util {
 class AssimpUtil {
  public:
   static void MergeVertices(aiMesh *pMesh);
@@ -22,6 +23,7 @@ class AssimpUtil {
     bool operator==(const VertexInfo &other) const;
   };
 };
+}
 // TODO is this ok form?
 namespace std {
 template<>
@@ -35,9 +37,9 @@ class hash<aiVector3D> : public unary_function<aiVector3D, size_t> {
 };
 
 template<>
-class hash<AssimpUtil::VertexInfo> : public unary_function<aiVector3D, size_t> {
+class hash<util::AssimpUtil::VertexInfo> : public unary_function<aiVector3D, size_t> {
  public:
-  typedef AssimpUtil::VertexInfo _Kty;
+  typedef util::AssimpUtil::VertexInfo _Kty;
 
   size_t operator()(const _Kty &value) const {
     uint32_t result = 0;

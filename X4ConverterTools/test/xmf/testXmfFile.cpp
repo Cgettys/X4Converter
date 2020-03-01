@@ -26,15 +26,15 @@ BOOST_AUTO_TEST_CASE(xmf_geom) {
   const std::string tgt = "fx_licence-lod0";
   const std::string testFile = tgt + ".xmf";
   const std::string resultsFile = tgt + ".out.xmf";
-  auto sourceStream = ctx->GetSourceFile(testFile, "rb");
-  auto outStream = ctx->GetSourceFile(resultsFile, "wb");
+  auto sourceStream = ctx->fsUtil->GetSourceFile(testFile, "rb");
+  auto outStream = ctx->fsUtil->GetSourceFile(resultsFile, "wb");
   XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);
   meshFile->WriteToIOStream(outStream);
   BOOST_TEST_CHECKPOINT("Read/Write complete");
 
   // TODO do this bit in memory
   // Reset stream to start
-  auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
+  auto resultStream = ctx->fsUtil->GetSourceFile(resultsFile, "rb");
 
 //  size_t sourceLen = sourceStream->FileSize();
 //  size_t resultLen = resultStream->FileSize();
@@ -60,16 +60,16 @@ BOOST_AUTO_TEST_CASE(xmf_collision) {
   const std::string tgt = "fx_licence-collision";
   const std::string testFile = tgt + ".xmf";
   const std::string resultsFile = tgt + ".out.xmf";
-  auto sourceStream = ctx->GetSourceFile(testFile, "rb");
-  auto outStream = ctx->GetSourceFile(resultsFile, "wb");
+  auto sourceStream = ctx->fsUtil->GetSourceFile(testFile, "rb");
+  auto outStream = ctx->fsUtil->GetSourceFile(resultsFile, "wb");
   XmfFile::Ptr meshFile = XmfFile::ReadFromIOStream(sourceStream, ctx);
   meshFile->WriteToIOStream(outStream);
   BOOST_TEST_CHECKPOINT("Read/Write complete");
 
   // Reset stream to start
   // TODO memory stream
-  auto resultStream = ctx->GetSourceFile(resultsFile, "rb");
-  auto sourceStream2 = ctx->GetSourceFile(testFile, "rb");
+  auto resultStream = ctx->fsUtil->GetSourceFile(resultsFile, "rb");
+  auto sourceStream2 = ctx->fsUtil->GetSourceFile(testFile, "rb");
 
   size_t sourceLen = sourceStream2->FileSize();
   size_t resultLen = resultStream->FileSize();

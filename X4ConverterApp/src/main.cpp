@@ -113,10 +113,9 @@ int main(int ac, char *av[]) {
       return 1;
     }
 
-    auto io = std::make_shared<Assimp::DefaultIOSystem>();
-    auto metadataFilePath = inFile.replace_extension(".metadata").generic_string();
-    auto ctx =
-        std::make_shared<ConversionContext>(gameBaseFolderPath.generic_string(), metadataFilePath, io, !migrate, test);
+    auto fsUtil = std::make_shared<util::FileSystemUtil>(gameBaseFolderPath.generic_string(), test);
+    auto metadataFilePath = fsUtil->GetAbsolutePath(inFile.replace_extension(".metadata")).generic_string();
+    auto ctx = std::make_shared<ConversionContext>(fsUtil, metadataFilePath, !migrate);
     fs::path outFile(inFile);
     if (action == "importxmf") {
       // .xml/.xmf -> .dae //

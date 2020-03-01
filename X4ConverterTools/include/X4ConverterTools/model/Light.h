@@ -2,6 +2,7 @@
 
 #include <pugixml.hpp>
 #include "AbstractElement.h"
+#include "Offset.h"
 
 namespace model {
 enum LightKind {
@@ -11,39 +12,30 @@ enum LightKind {
 class Light : public AbstractElement {
  public:
 
-  explicit Light(pugi::xml_node& node, ConversionContext::Ptr ctx, std::string parentName);
+  explicit Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName);
 
-  explicit Light(aiLight &light, ConversionContext::Ptr ctx);
+  explicit Light(aiNode *node, ConversionContext::Ptr ctx);
 
-  aiLight ConvertToAiLight();
+  aiNode *ConvertToAiNode() final;
 
-  void ConvertFromAiLight(aiLight &light);
+  void ConvertFromAiNode(aiNode *node) final;
 
   void ConvertToGameFormat(pugi::xml_node &out) final;
 
  private:
-  LightKind lightKind;
-  aiColor3D color;
-  aiVector2D area;
-  bool lightEffect;
-  float range;
-  float shadowRange;
-  float radius;
-  float spotAttenuation;
-  float specularIntensity;
-  bool trigger; // TODO confirm bools
-  float intensity;
+  void CheckLightKindValidity(const std::string &kind);
+  Offset offset;
+
 };
 
 class LightsGroup : public AbstractElement {
  public:
-  explicit LightsGroup(ConversionContext::Ptr ctx);
-  void ConvertFromGameFormat(pugi::xml_node &node, const std::string &parent);
-  void ConvertToAiLights();
-  void ConvertFromAiLights(const std::string &parent);
+  explicit LightsGroup(ConversionContext::Ptr ctx, pugi::xml_node &node, const std::string &parentName);
+  explicit LightsGroup(ConversionContext::Ptr ctx, aiNode *node);
+  aiNode *ConvertToAiNode() final;
+  void ConvertFromAiNode(aiNode *node) final;
   void ConvertToGameFormat(pugi::xml_node &out) final;
  private:
-  std::string parentName;
   std::vector<Light> lights;
 };
 

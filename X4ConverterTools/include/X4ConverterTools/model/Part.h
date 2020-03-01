@@ -9,7 +9,7 @@
 #include "Light.h"
 #include <X4ConverterTools/ani/AnimFile.h>
 namespace model {
-class Part : public AiNodeElement {
+class Part : public AbstractElement {
  public:
   explicit Part(const ConversionContext::Ptr &ctx);
 
@@ -22,17 +22,20 @@ class Part : public AiNodeElement {
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
   bool HasWreck() {
-    return attrs.count("wreck") > 0;
+    return hasAttr("wreck");
   }
   bool HasRef() {
-    return attrs.count("ref") > 0;
+    return hasAttr("ref");
+  }
+  bool HasLights() {
+    return lights.has_value();
   }
  private:
   bool MatchesWreck(const std::string &childName);
   bool hasAnimation;
   std::optional<CollisionLod> collisionLod;
   std::map<int, VisualLod> lods;
-  LightsGroup lights;
+  std::optional<LightsGroup> lights;
   std::optional<ani::AnimFile> animation;
   std::optional<VisualLod> wreckVisualLod;
   std::optional<CollisionLod> wreckCollisionLod;

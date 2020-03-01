@@ -15,8 +15,8 @@
 #include <assimp/IOSystem.hpp>
 #include <assimp/StreamReader.h>
 #include <assimp/StreamWriter.h>
-
 #include <X4ConverterTools/ConversionContext.h>
+
 #include "XmfHeader.h"
 #include "XmfVertexElement.h"
 #include "XmfMaterial.h"

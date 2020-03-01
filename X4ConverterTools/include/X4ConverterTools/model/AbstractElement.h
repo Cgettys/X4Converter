@@ -1,11 +1,8 @@
-//
-// Created by cg on 4/14/19.
-//
-
 #pragma once
 
 #include <string>
 #include <map>
+#include <functional>
 #include <assimp/scene.h>
 #include <X4ConverterTools/ConversionContext.h>
 #include <X4ConverterTools/util/XmlUtil.h>
@@ -21,32 +18,40 @@ class AbstractElement {
 
   void setName(std::string n);
 
+  virtual aiNode *ConvertToAiNode() {
+    auto *result = new aiNode;
+    result->mName = aiString{getName()};
+    return result;
+  }
+  virtual void ConvertFromAiNode(aiNode *node) {
+    setName(node->mName.C_Str());
+  }
+
   virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;
-
+  bool hasAttr(const std::string &n);
+  std::string getAttr(const std::string &n);
+  void setAttr(const std::string &n, const std::string &value, bool overwrite = true);
  protected:
-  static void CheckXmlNode(pugi::xml_node &src, const std::string expectedName);
-  void ReadOffset(pugi::xml_node target);
-
-  void WriteOffset(pugi::xml_node target);
-
-  ConversionContext::MetadataMap attrs;
-
+  static auto ExcludePredicate(const std::string &excluded) {
+    return [excluded](auto n) -> bool {
+      return n != excluded;
+    };
+  }
+  void WriteAttrs(pugi::xml_node &node);
+  void WriteAttrs(pugi::xml_node &node, const std::function<bool(std::string)> &predicate);
+  void ProcessAttributes(pugi::xml_node &node,
+                         const std::function<void(AbstractElement *,
+                                                  std::string,
+                                                  std::string)> &func = &AbstractElement::DefaultProcessAttribute);
+  void DefaultProcessAttribute(const std::string &n, const std::string &value);
   ConversionContext::Ptr ctx;
-  aiVector3D offsetPos;
-  aiQuaternion offsetRot;
+  static std::vector<aiNode *> getChildren(aiNode *node);
+
+  void CheckXmlElement(pugi::xml_node &src, const std::string &expectedName, bool nameRequired = true);
+
  private:
   std::string name;
 
 };
 
-class AiNodeElement : public AbstractElement {
- public:
-  explicit AiNodeElement(ConversionContext::Ptr ctx);
-  virtual ~AiNodeElement() = default;
-  virtual aiNode *ConvertToAiNode() = 0;
-  virtual void ConvertFromAiNode(aiNode *node) = 0;
- protected:
-  void ApplyOffsetToAiNode(aiNode *target);
-
-};
 }

@@ -1,7 +1,6 @@
-
-#include <X4ConverterTools/model/AbstractElement.h>
-#include "X4ConverterTools/model/NodeMap.h"
-namespace model {
+#include "X4ConverterTools/util/NodeMap.h"
+namespace util {
+using util::AssimpUtil;
 aiNode *NodeMap::CreateNode(const std::string &name) {
   auto result = new aiNode;
   result->mName = name;
@@ -65,34 +64,9 @@ void NodeMap::PopulateChildren() {
       }
       children.emplace_back(GetNode(childName));
     }
-    populateAiNodeChildren(parentNode, children);
+    AssimpUtil::PopulateAiNodeChildren(parentNode, children);
   }
 
 }
 
-void NodeMap::populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children) {
-  unsigned long numChildren = children.size();
-  if (children.empty()) {
-    return;
-  }
-
-  auto oldCount = target->mNumChildren;
-  auto newCount = oldCount + numChildren;
-  auto arr = new aiNode *[newCount];
-  auto oldLen = sizeof(aiNode *[oldCount]);
-
-  if (target->mChildren != nullptr) {
-    memcpy(arr, target->mChildren, oldLen);
-  }
-  memcpy(arr + oldCount, children.data(), sizeof(aiNode *[numChildren]));
-  target->mNumChildren = newCount;
-  auto old = target->mChildren;
-  target->mChildren = arr;
-  for (auto i = 0UL; i < newCount; i++) {
-    auto child = arr[i];
-    child->mParent = target;
-
-  }
-  delete[] old;
-}
 }

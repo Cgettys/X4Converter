@@ -201,7 +201,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_lods) {
 BOOST_AUTO_TEST_CASE(ainode_to_xml_lods_hard) {
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
   std::string partName = "testpart";
-  ctx->AddMetadata(partName, {{"wreck", partName + "_wreck"}});
+  ctx->metadata->SetAttribute(partName, "wreck", partName + "_wreck");
   auto ainode = new aiNode(partName);
   auto ainodeChildren = new aiNode *[5];
   ainodeChildren[0] = createNode(ctx, partName, "-collision");

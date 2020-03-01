@@ -1,13 +1,12 @@
 #include <utility>
 
 #include <X4ConverterTools/model/AbstractElement.h>
-#include <vector>
 #include <iostream>
+#include <X4ConverterTools/util/XmlUtil.h>
 
 namespace model {
 using std::string;
 using util::XmlUtil;
-
 AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
 
 }
@@ -27,33 +26,31 @@ void AbstractElement::setName(string n) {
   name = std::move(n);
 }
 
-
-void AiNodeElement::ApplyOffsetToAiNode(aiNode *target) {
-  aiMatrix4x4 tmp(aiVector3D(1, 1, 1), offsetRot, offsetPos);
-  // TODO fixme upstream... this sucks
-  target->mTransformation.a1 = tmp.a1;
-  target->mTransformation.a2 = tmp.a2;
-  target->mTransformation.a3 = tmp.a3;
-  target->mTransformation.a4 = tmp.a4;
-  target->mTransformation.b1 = tmp.b1;
-  target->mTransformation.b2 = tmp.b2;
-  target->mTransformation.b3 = tmp.b3;
-  target->mTransformation.b4 = tmp.b4;
-  target->mTransformation.c1 = tmp.c1;
-  target->mTransformation.c2 = tmp.c2;
-  target->mTransformation.c3 = tmp.c3;
-  target->mTransformation.c4 = tmp.c4;
-  target->mTransformation.d1 = tmp.d1;
-  target->mTransformation.d2 = tmp.d2;
-  target->mTransformation.d3 = tmp.d3;
-  target->mTransformation.d4 = tmp.d4;
-
+bool AbstractElement::hasAttr(const std::string &n) {
+  if (name.empty()) {
+    throw std::runtime_error("Name is not yet set!");
+  }
+  return ctx->metadata->HasAttribute(name, n);
 }
-AiNodeElement::AiNodeElement(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-
+string AbstractElement::getAttr(const string &n) {
+  if (name.empty()) {
+    throw std::runtime_error("Name is not yet set!");
+  }
+  return ctx->metadata->GetAttribute(name, n);
 }
 
-void AbstractElement::CheckXmlNode(pugi::xml_node &src, const std::string expectedName) {
+void AbstractElement::setAttr(const string &n, const string &value, bool overwrite) {
+  if (name.empty()) {
+    throw std::runtime_error("Name is not yet set!");
+  }
+  if (!overwrite && hasAttr(n)) {
+    throw std::runtime_error(
+        "Attribute " + n + " already set for " + getName() + " and this attribute should not be overwritten!");
+  }
+  ctx->metadata->SetAttribute(name, n, value);
+}
+
+void AbstractElement::CheckXmlElement(pugi::xml_node &src, const std::string &expectedName, bool nameRequired) {
   // Check that the xml_node is not empty
   if (src.empty()) {
     throw std::runtime_error("Could not find expected xml element of type: <" + expectedName + ">");
@@ -65,32 +62,52 @@ void AbstractElement::CheckXmlNode(pugi::xml_node &src, const std::string expect
         "Received wrong xml element. Expected: <" + expectedName + "> Actual: <" + actualName + ">");
   }
   // Check it is named
-  if (!src.attribute("name")) {
-    throw std::runtime_error("XML element <" + expectedName + "> must have a name attribute!");
+  if (nameRequired) {
+    auto nameAttr = src.attribute("name");
+    if (!nameAttr) {
+      throw std::runtime_error("XML element <" + expectedName + "> must have a name attribute!");
+    }
   }
 }
-void AbstractElement::ReadOffset(pugi::xml_node target) {
-  offsetPos = aiVector3D();
-  offsetRot = aiQuaternion();
-  // A word to the wise: the XML tends to be listed qx, qy, qz, qw. Why, I do not know.
-  // However, most sensible software expects qw, qx, qy, qz
-  auto offsetNode = target.child("offset");
-  if (offsetNode) {
-    auto positionNode = offsetNode.child("position");
-    offsetPos = XmlUtil::ReadAttrXYZ(positionNode);
 
-    auto quaternionNode = offsetNode.child("quaternion");
-    offsetRot = XmlUtil::ReadAttrQuat(quaternionNode);
-    // TODO check for weird other cases
+void AbstractElement::ProcessAttributes(pugi::xml_node &node,
+                                        const std::function<void(AbstractElement *, std::string, std::string)> &func) {
+  for (auto attr: node.attributes()) {
+    std::string attrName = attr.name();
+    if (attrName == "name" && getName().empty()) {
+      throw std::runtime_error("Name was not set before processing attributes");
+    }
+    std::invoke(func, this, attr.name(), attr.value());
   }
-
 }
 
-void AbstractElement::WriteOffset(pugi::xml_node target) {
-  auto offsetNode = XmlUtil::AddChild(target, "offset");
-  XmlUtil::WriteChildXYZ("position", offsetNode, offsetPos);
-  XmlUtil::WriteRotation(offsetNode, offsetRot);
-  XmlUtil::RemoveIfChildless(offsetNode);
-
+void AbstractElement::DefaultProcessAttribute(const std::string &n, const std::string &value) {
+  setAttr(n, value);
 }
+
+void AbstractElement::WriteAttrs(pugi::xml_node &node) {
+  WriteAttrs(node, [](auto) -> bool { return true; });
+}
+void AbstractElement::WriteAttrs(pugi::xml_node &node, const std::function<bool(std::string)> &predicate) {
+  for (auto &entry : ctx->metadata->GetMetadata(name)) {
+    std::string attrName = entry.first;
+    std::string attrValue = entry.second;
+    if (attrName == "name") {
+      // Should be used to construct the node or not at all, so skip it
+      continue;
+    }
+    if (predicate(attrName)) {
+      XmlUtil::WriteAttr(node, attrName, attrValue);
+    }
+  }
+}
+std::vector<aiNode *> AbstractElement::getChildren(aiNode *node) {
+  std::vector<aiNode *> children;
+  children.reserve(node->mNumChildren);
+  for (int i = 0; i < node->mNumChildren; ++i) {
+    children.push_back(node->mChildren[i]);
+  }
+  return children;
+}
+
 }

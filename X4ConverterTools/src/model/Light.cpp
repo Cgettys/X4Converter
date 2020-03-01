@@ -2,100 +2,39 @@
 #include <boost/format.hpp>
 #include <iostream>
 #include <utility>
+#include <X4ConverterTools/util/AssimpUtil.h>
 
 using namespace boost;
 namespace model {
 using util::XmlUtil;
-
-// TODO composition or subclass instead of this mess
-
+using util::AssimpUtil;
 Light::Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName)
-    : AbstractElement(std::move(ctx)) {
+    : AbstractElement(std::move(ctx)), offset(node) {
   std::string tmp = str(boost::format("%1%|light|%2%") % parentName % node.attribute("name").value());
   setName(tmp);
-  ReadOffset(node);
   std::string kind = node.name();
-  if (kind == "arealight") {
-    lightKind = arealight;
-  } else if (kind == "omni") {
-    lightKind = omni;
-  } else if (kind == "box") {
-    lightKind = box;
-  } else {
-    throw std::runtime_error("Unknown light type:" + kind);
-  }
-  color = XmlUtil::ReadAttrRGB(node);
-  area = aiVector2D(node.attribute("areax").as_float(), node.attribute("areay").as_float());
-  // TODO how to handle these:
-  lightEffect = node.attribute("lighteffect").as_bool();
-  range = node.attribute("range").as_float();
-  shadowRange = node.attribute("shadowrange").as_float();
-  radius = node.attribute("radius").as_float();
-  spotAttenuation = node.attribute("spotattenuation").as_float();
-  specularIntensity = node.attribute("specularintensity").as_float();
-  trigger = node.attribute("trigger").as_bool();
-  intensity = node.attribute("intensity").as_float();
+  CheckLightKindValidity(kind);
+  setAttr("kind", kind);
+  ProcessAttributes(node);
   // TODO animation
 }
 
-Light::Light(aiLight &light, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-  ConvertFromAiLight(light);
+Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+  ConvertFromAiNode(node);
 }
 
-aiLight Light::ConvertToAiLight() {
-  aiLight result;
-  result.mName = getName();
-  // TODO axes?
-  result.mPosition = offsetPos;
-
-  // NB: only one value in the XML, but duplicated here to make sure it works
-  result.mColorDiffuse = color;
-  result.mColorSpecular = color;
-  result.mColorAmbient = color;
-  switch (lightKind) {
-    case arealight:
-      result.mType = aiLightSource_AREA;
-      result.mSize = area;
-      result.mUp = aiVector3D(0, 0, 1); // TODO figure this out
-      result.mDirection = offsetRot.Rotate(result.mUp); // TODO checkme
-      break;
-    case omni:
-      result.mType = aiLightSource_POINT;
-      break;
-    case box:
-      // TODO fixme
-      return result;
-      result.mType = aiLightSource_AREA;
-      // TODO wth is this
-      result.mSize = area;
-      result.mUp = aiVector3D(0, 0, 1); // TODO figure this out
-      result.mDirection = offsetRot.Rotate(result.mUp); // TODO checkme
-
-      break;
-  }
+aiNode *Light::ConvertToAiNode() {
+  auto result = AbstractElement::ConvertToAiNode();
+  offset.WriteAiNode(result);
   // TODO other stuff here
   return result;
 }
 
-void Light::ConvertFromAiLight(aiLight &light) {
-  setName(light.mName.C_Str());
-  offsetPos = light.mPosition;
-  color = light.mColorSpecular;// TODO is this the best choice?
-//  offsetRot = light.mDirection;
-  // TODO reconstruct vector for mDirection
-  switch (light.mType) {
-    case aiLightSource_AREA:
-      lightKind = arealight;
-      area = light.mSize;
-      break;
-    case aiLightSource_POINT:
-      lightKind = omni;
-      break;
-    default:
-      auto err = str(format("Unknown light type from Assimp: %d") % light.mType);
-      throw std::runtime_error(err);
-  }
-
+void Light::ConvertFromAiNode(aiNode *node) {
+  AbstractElement::ConvertFromAiNode(node);
+  auto kind = getAttr("kind");;
+  CheckLightKindValidity(kind);
+  offset.ReadAiNode(node);
 }
 
 void Light::ConvertToGameFormat(pugi::xml_node &out) {
@@ -105,57 +44,39 @@ void Light::ConvertToGameFormat(pugi::xml_node &out) {
     throw std::runtime_error("light name couldn't be parsed");
   }
   name = name.substr(pos + 7);
-  std::string nodeType;
-  switch (lightKind) {
-    case arealight:
-      nodeType = "arealight";
-      break;
-    case omni:
-      nodeType = "omni";
-      break;
-    case box:
-      nodeType = "box";
-      break;
-    default:
-      nodeType = "unknown";
-      break;
-  }
-
-  auto lightNode = XmlUtil::AddChildByAttr(out, nodeType, "name", name);
-  if (lightKind == arealight) {
-    XmlUtil::WriteAttr(lightNode, "areax", area.x);
-    XmlUtil::WriteAttr(lightNode, "areay", area.y);
-  }
-
-  WriteOffset(lightNode);
-  XmlUtil::WriteAttrRGB(lightNode, color);
+  auto lightNode = XmlUtil::AddChildByAttr(out, getAttr("kind"), "name", name);
+  WriteAttrs(out, ExcludePredicate("kind"));
+  offset.WriteXml(lightNode);
 }
-LightsGroup::LightsGroup(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
-
+void Light::CheckLightKindValidity(const std::string &kind) {
+  if (!(kind == "arealight" || kind == "omni" || kind == "box")) {
+    throw std::runtime_error("Unknown light type:" + kind);
+  }
+}
+LightsGroup::LightsGroup(ConversionContext::Ptr ctx, pugi::xml_node &node, const std::string &parentName)
+    : AbstractElement(std::move(ctx)) {
+  CheckXmlElement(node, "lights", false);
+  for (auto lightNode: node.children()) {
+    lights.emplace_back(lightNode, ctx, parentName);
+  }
 }
 
-void LightsGroup::ConvertFromGameFormat(pugi::xml_node &node, const std::string &parent) {
-  parentName = parent;
-  if (!node.empty()) {
-    if (std::string(node.name()) != "lights") {
-      throw std::runtime_error("XML element must be a <lights> element!");
-    }
-    for (auto lightNode: node.children()) {
-      lights.emplace_back(lightNode, ctx, parentName);
-    }
-  }
-
+LightsGroup::LightsGroup(ConversionContext::Ptr ctx, aiNode *node) : AbstractElement(std::move(ctx)) {
+  ConvertFromAiNode(node);
 }
-void LightsGroup::ConvertToAiLights() {
+aiNode *LightsGroup::ConvertToAiNode() {
+  auto result = AbstractElement::ConvertToAiNode();
+  std::vector<aiNode *> children{};
   for (auto &light: lights) {
-    ctx->AddLight(light.ConvertToAiLight());
+    children.push_back(light.ConvertToAiNode());
   }
+  AssimpUtil::PopulateAiNodeChildren(result, children);
+  return result;
 }
-void LightsGroup::ConvertFromAiLights(const std::string &parent) {
-  parentName = parent;
-  auto mylights = ctx->GetLightsByParent(parentName);
-  for (auto light: mylights) {
-    lights.emplace_back(light, ctx);
+void LightsGroup::ConvertFromAiNode(aiNode *node) {
+  AbstractElement::ConvertFromAiNode(node);
+  for (auto &child : getChildren(node)) {
+    lights.emplace_back(child, ctx);
   }
 }
 void LightsGroup::ConvertToGameFormat(pugi::xml_node &out) {
@@ -168,4 +89,5 @@ void LightsGroup::ConvertToGameFormat(pugi::xml_node &out) {
   }
 
 }
+
 }

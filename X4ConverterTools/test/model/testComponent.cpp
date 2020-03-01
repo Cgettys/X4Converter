@@ -89,6 +89,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   delete node;
 }
 
+// TODO this is really an integration test
 BOOST_AUTO_TEST_CASE(xml_to_ainode_full) { // NOLINT(cert-err58-cpp)
   auto tgt = "assets/units/size_s/ship_arg_s_fighter_01.xml";
   auto ctx = TestUtil::GetTestContext(tgt);

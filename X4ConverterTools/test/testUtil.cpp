@@ -49,14 +49,10 @@ ConversionContext::Ptr TestUtil::GetTestContext(const boost::filesystem::path &t
   if (tgtPath.is_absolute()) {
     BOOST_FAIL("Provide relative paths to test files");
   }
-  auto io = std::make_shared<Assimp::DefaultIOSystem>();
-  auto ctx = std::make_shared<ConversionContext>(
-      GetBasePath().string(),
-      tgtPath.generic_path().replace_extension(".out.metadata").make_preferred().string(),
-      io,
-      convert,
-      true);
-  ctx->SetSourcePathSuffix(tgtPath.generic_path().replace_extension("").string() + "_data");
+  auto fsUtil = std::make_shared<util::FileSystemUtil>(GetBasePath().string(), true);
+  auto metadataPath = tgtPath.generic_path().replace_extension(".out.metadata").make_preferred().string();
+  auto ctx = std::make_shared<ConversionContext>(fsUtil, metadataPath, convert);
+  ctx->fsUtil->SetSourcePathSuffix(tgtPath.generic_path().replace_extension("").string() + "_data");
   return ctx;
 }
 

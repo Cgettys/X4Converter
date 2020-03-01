@@ -1,8 +1,7 @@
 #include <X4ConverterTools/util/AssimpUtil.h>
 #include <iostream>
-
+namespace util {
 using boost::numeric_cast;
-
 void AssimpUtil::MergeVertices(aiMesh *pMesh) {
   std::unordered_map<VertexInfo, int> firstVertexIdxByPos;
   std::unordered_map<int, int> indexToFirstIndex;
@@ -10,8 +9,9 @@ void AssimpUtil::MergeVertices(aiMesh *pMesh) {
   for (int srcIdx = 0; srcIdx < pMesh->mNumVertices; ++srcIdx) {
     VertexInfo vertexInfo;
     vertexInfo.Position = pMesh->mVertices[srcIdx];
-    if (pMesh->mNormals)
+    if (pMesh->mNormals) {
       vertexInfo.Normal = pMesh->mNormals[srcIdx];
+    }
 
     for (int i = 0; i < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++i) {
       if (pMesh->mTextureCoords[i])
@@ -113,4 +113,5 @@ bool AssimpUtil::VertexInfo::operator==(const VertexInfo &other) const {
     }
   }
   return true;
+}
 }

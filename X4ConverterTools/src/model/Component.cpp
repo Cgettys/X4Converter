@@ -2,16 +2,16 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <utility>
-#include <X4ConverterTools/model/NodeMap.h>
+#include <X4ConverterTools/util/NodeMap.h>
 
 using namespace boost::algorithm;
 namespace model {
 using util::XmlUtil;
 
-Component::Component(ConversionContext::Ptr ctx) : AiNodeElement(std::move(ctx)) {}
+Component::Component(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
 
-Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AiNodeElement(ctx) {
-  CheckXmlNode(node, "component");
+Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+  CheckXmlElement(node, "component");
   if (!node.child("source")) {
     std::cerr << "source directory not specified" << std::endl;
   } else {
@@ -19,19 +19,10 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
     if (src.empty()) {
       throw runtime_error("Source directory for geometry must be specified!");
     }
-    attrs["source"] = src;
-    ctx->SetSourcePathSuffix(src);
+    setAttr("source", src);;
+    ctx->fsUtil->SetSourcePathSuffix(src);
   }
-
-  for (auto attr: node.attributes()) {
-    auto attrName = std::string(attr.name());
-    auto attrValue = std::string(attr.value());
-    if (attrName == "name") {
-      setName(attrValue);
-    } else {
-      attrs[attrName] = attrValue;
-    }
-  }
+  ProcessAttributes(node);
   auto connectionsNode = node.child("connections");
   if (connectionsNode.empty()) {
     std::cerr << "Warning, could not find any <connection> nodes!" << std::endl;
@@ -53,13 +44,9 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
   }
 }
 
-class ParentMap {
-
-};
 aiNode *Component::ConvertToAiNode() {
-  NodeMap nodes;
+  util::NodeMap nodes;
   auto result = nodes.CreateNode(getName());
-  ctx->AddMetadata(getName(), attrs);
   // Handle layers
   nodes.CreateNode("layers");
   for (auto &layer : layers) {
@@ -76,14 +63,6 @@ aiNode *Component::ConvertToAiNode() {
   // Now to unflatten everything
   nodes.PopulateChildren();
 
-  // Now double check that we didn't miss anything
-  for (auto &conn: connections) {
-    auto connNode = nodes.GetNode(conn.getName());
-    if (connNode->mParent == nullptr) {
-      throw std::runtime_error("connection" + conn.getName() + "lost its parent");
-    }
-  }
-
   auto rootChildren = new aiNode *[1];
   rootChildren[0] = result;
   auto fakeRoot = new aiNode("ROOT");
@@ -93,10 +72,8 @@ aiNode *Component::ConvertToAiNode() {
 }
 
 void Component::ConvertFromAiNode(aiNode *node) {
-  setName(node->mName.C_Str());
-  attrs = ctx->GetMetadataMap(getName());
-  for (int i = 0; i < node->mNumChildren; i++) {
-    auto child = node->mChildren[i];
+  AbstractElement::ConvertFromAiNode(node);
+  for (auto &child: getChildren(node)) {
     std::string childName = child->mName.C_Str();
     if (childName.find('*') == std::string::npos) {
       std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
@@ -113,8 +90,7 @@ void Component::ConvertFromAiNode(aiNode *node) {
 void Component::recurseOnChildren(aiNode *tgt, const ConversionContext::Ptr &ctx) {
   std::string tgtName = tgt->mName.C_Str();
   bool is_connection = tgtName.find('*') != std::string::npos;
-  for (int i = 0; i < tgt->mNumChildren; i++) {
-    auto child = tgt->mChildren[i];
+  for (auto &child : getChildren(tgt)) {
     std::string childName = child->mName.C_Str();
     if (childName.find('*') != std::string::npos) {
       if (is_connection) {
@@ -134,15 +110,11 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
   }
   auto compNode = XmlUtil::AddChildByAttr(out, "component", "name", getName());
   auto connsNode = XmlUtil::AddChild(compNode, "connections");
-  for (const auto &attr : attrs) {
-    if (attr.first == "source") {
-      XmlUtil::AddChildByAttr(compNode, "source", "geometry", attr.second);
-      // TODO compare to output path and confirm if wrong
-      ctx->SetSourcePathSuffix(attr.second);
-    } else {
-      XmlUtil::WriteAttr(compNode, attr.first, attr.second);
-    }
-  }
+  auto src = getAttr("source");;
+  XmlUtil::AddChildByAttr(compNode, "source", "geometry", src);
+  // TODO compare to output path and confirm if wrong
+  ctx->fsUtil->SetSourcePathSuffix(src);
+  WriteAttrs(compNode, ExcludePredicate("source"));
   for (auto &conn : connections) {
     conn.ConvertToGameFormat(connsNode);
   }

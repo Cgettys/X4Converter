@@ -17,7 +17,22 @@ set("LIB_SRCS"
         src/xmf/XmfMaterial.cpp
         src/xmf/XmfVertexElement.cpp
         src/xmf/XmfFile.cpp
-        src/xmf/XmfHeader.cpp src/ConversionContext.cpp src/model/Component.cpp include/X4ConverterTools/model/Component.h src/model/Connection.cpp include/X4ConverterTools/model/Connection.h src/model/Part.cpp include/X4ConverterTools/model/Part.h include/X4ConverterTools/model/AbstractElement.h src/model/VisualLod.cpp include/X4ConverterTools/model/VisualLod.h src/model/CollisionLod.cpp src/model/AbstractElement.cpp src/model/Light.cpp include/X4ConverterTools/model/Light.h src/model/Layer.cpp include/X4ConverterTools/model/Layer.h include/X4ConverterTools/xmf/IXmf.h include/X4ConverterTools/util/XmlUtil.h src/util/XmlUtil.cpp src/model/NodeMap.cpp include/X4ConverterTools/model/NodeMap.h)
+        src/xmf/XmfHeader.cpp
+        src/ConversionContext.cpp
+        src/model/Component.cpp include/X4ConverterTools/model/Component.h
+        src/model/Connection.cpp include/X4ConverterTools/model/Connection.h
+        src/model/Part.cpp include/X4ConverterTools/model/Part.h
+        src/model/AbstractElement.cpp include/X4ConverterTools/model/AbstractElement.h
+        src/model/VisualLod.cpp include/X4ConverterTools/model/VisualLod.h
+        src/model/CollisionLod.cpp include/X4ConverterTools/model/CollisionLod.h
+        src/model/Light.cpp include/X4ConverterTools/model/Light.h
+        src/model/Layer.cpp include/X4ConverterTools/model/Layer.h
+        include/X4ConverterTools/xmf/IXmf.h
+        src/util/XmlUtil.cpp include/X4ConverterTools/util/XmlUtil.h
+        src/util/NodeMap.cpp include/X4ConverterTools/util/NodeMap.h
+        src/model/Offset.cpp include/X4ConverterTools/model/Offset.h
+        src/util/MetadataStore.cpp include/X4ConverterTools/util/MetadataStore.h
+        src/util/FileSystemUtil.cpp include/X4ConverterTools/util/FileSystemUtil.h)
 add_library(X4ConverterTools STATIC ${LIB_SRCS})
 target_compile_definitions(X4ConverterTools PRIVATE "X4ConverterTools_TEST=TRUE") # TODO fixme
 target_link_libraries(X4ConverterTools PUBLIC Boost::filesystem Boost::unit_test_framework pugixml ${ZLIB_LIBRARIES} ${assimp_LIB})

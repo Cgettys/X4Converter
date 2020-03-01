@@ -8,7 +8,6 @@ using namespace Assimp;
 using namespace boost;
 using util::DXUtil;
 namespace xmf {
-
 XmfFile::XmfFile(ConversionContext::Ptr ctx) : ctx{std::move(ctx)} {
 
 }
@@ -50,7 +49,7 @@ uint32_t XmfFile::NumMaterials() {
 }
 
 XmfFile::Ptr XmfFile::ReadFromFile(const std::string &name, const ConversionContext::Ptr &ctx) {
-  auto pStream = ctx->GetSourceFile(name);
+  auto pStream = ctx->fsUtil->GetSourceFile(name);
   return xmf::XmfFile::ReadFromIOStream(pStream, ctx);
 }
 XmfFile::Ptr XmfFile::ReadFromIOStream(IOStream *pStream, const ConversionContext::Ptr &ctx) {
@@ -121,7 +120,7 @@ std::string XmfFile::Validate() {
 }
 
 void XmfFile::WriteToFile(const std::string &name) {
-  auto stream = ctx->GetSourceFile(name, "wb");
+  auto stream = ctx->fsUtil->GetSourceFile(name, "wb");
   WriteToIOStream(stream);
 }
 
@@ -193,15 +192,7 @@ aiNode *XmfFile::ConvertToAiNode(const std::string &name) {
         aiMesh *pMesh = ConvertToAiMesh(material.FirstIndex, material.NumIndices,
                                         name + "X" + replace_all_copy(std::string(material.Name.data()), ".", "X"));
 
-        auto itMat = ctx->Materials.find(material.Name.data());
-        if (itMat == ctx->Materials.end()) {
-          auto matIdx = numeric_cast<unsigned int>(ctx->Materials.size());
-          pMesh->mMaterialIndex = matIdx;
-          ctx->Materials[material.Name.data()] = matIdx;
-        } else {
-          pMesh->mMaterialIndex = itMat->second;
-        }
-
+        pMesh->mMaterialIndex = ctx->GetMaterialIndex(material.Name.data());
         auto *pMeshNode = new aiNode();
         pMeshNode->mName = pMesh->mName;
         ctx->AddMesh(pMeshNode, pMesh);

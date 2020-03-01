@@ -1,7 +1,7 @@
 #pragma once
 
 #include <X4ConverterTools/util/AssimpUtil.h>
-namespace model {
+namespace util {
 // Class to ease handling of unflattening the document structure
 class NodeMap {
  public:
@@ -17,6 +17,5 @@ class NodeMap {
   bool hasPopulatedChildren = false;
   std::map<std::string, aiNode *> nodes;
   std::map<std::string, std::vector<std::string>> parentMap;
-  void populateAiNodeChildren(aiNode *target, std::vector<aiNode *> children);
 };
 }

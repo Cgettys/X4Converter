@@ -8,12 +8,10 @@ using namespace util;
 namespace model {
 using util::XmlUtil;
 
-Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string componentName)
-    : AiNodeElement(ctx) {
-  CheckXmlNode(node, "connection");
-  parentName = std::move(componentName);//Default to component as parent
-
-  ReadOffset(node);
+Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string componentName) :
+    AbstractElement(ctx), offset(node) {
+  CheckXmlElement(node, "connection");
+  setAttr("parent", std::move(componentName));;//Default to component as parent
 
   auto partsNode = node.child("parts");
   if (partsNode) {
@@ -26,26 +24,22 @@ Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx, 
     auto value = std::string(attr.value());
     if (attrName == "name") {
       setName("*" + value + "*");
-    } else if (attrName == "parent") {
-      parentName = value;
     } else {
-      attrs[attrName] = value;
+      setAttr(attrName, value);;
     }
   }
 }
 
 Connection::Connection(aiNode *node, ConversionContext::Ptr ctx, std::string componentName)
-    : AiNodeElement(std::move(ctx)) {
+    : AbstractElement(std::move(ctx)) {
   ConvertFromAiNode(node);
-  // TODO does this do the offset?
-  parentName = std::move(componentName);//Default to component as parent
+  setAttr("parent", std::move(componentName));;//Default to component as parent
 
 }
 
 aiNode *Connection::ConvertToAiNode() {
-  auto result = new aiNode(getName());
-  ctx->AddMetadata(getName(), attrs);
-  ApplyOffsetToAiNode(result);
+  auto result = AbstractElement::ConvertToAiNode();
+  offset.WriteAiNode(result);
   std::vector<aiNode *> children{};
   for (auto &part : parts) {
     children.push_back(part.ConvertToAiNode());
@@ -71,19 +65,16 @@ void Connection::ConvertAll(NodeMap &nodes) {
 }
 
 std::string Connection::getParentName() {
-  return parentName;
+  return getAttr("parent");;
 }
 
 void Connection::ConvertFromAiNode(aiNode *node) {
-  std::string tmp = node->mName.C_Str();
-  setName(tmp.substr(1, tmp.size() - 2));
-  attrs = ctx->GetMetadataMap(tmp);
-  // TODO check for scaling and error if found
-  node->mTransformation.DecomposeNoScaling(offsetRot, offsetPos);
+  AbstractElement::ConvertFromAiNode(node);
+  setName(getName().substr(1, getName().size() - 2));
+  offset.ReadAiNode(node);
 
   // TODO validate attributes; better check for parts & a better solution
-  for (int i = 0; i < node->mNumChildren; i++) {
-    auto child = node->mChildren[i];
+  for (auto &child : getChildren(node)) {
     auto childName = std::string(child->mName.C_Str());
     Part part(ctx);
     part.ConvertFromAiNode(child);
@@ -96,16 +87,8 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
   auto node = XmlUtil::AddChildByAttr(out, "connection", "name", getName());
-
-  if (!parentName.empty()) {
-    XmlUtil::WriteAttr(node, "parent", parentName);
-  }
-
-  for (const auto &pair : attrs) {
-    XmlUtil::WriteAttr(node, pair.first, pair.second);
-  }
-
-  WriteOffset(node);
+  WriteAttrs(node);
+  offset.WriteXml(node);
 
   if (parts.empty()) {
     return;

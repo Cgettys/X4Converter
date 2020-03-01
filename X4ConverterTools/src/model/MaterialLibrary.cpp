@@ -1,14 +1,12 @@
 #include <X4ConverterTools/model/MaterialLibrary.h>
-
-#include <boost/range.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/numeric/conversion/cast.hpp>
 #include <string>
 #include <utility>
 
-using namespace boost;
-using namespace boost::filesystem;
 namespace model {
-MaterialLibrary::MaterialLibrary(std::string gameBaseFolderPath) : _gameBaseFolderPath(std::move(gameBaseFolderPath)) {
+using namespace boost;
+namespace fs=boost::filesystem;
+MaterialLibrary::MaterialLibrary(util::FileSystemUtil::Ptr c) : fsUtil(std::move(c)) {
 
 }
 Material &MaterialLibrary::GetMaterial(const std::string &dottedName) {
@@ -29,8 +27,8 @@ Material &MaterialLibrary::GetMaterial(const std::string &dottedName) {
 }
 void MaterialLibrary::init() {
   // Being a little bit lazy on when we read the library in (i.e. only if it is used) vastly speeds up tests
-  std::string filePath = (path(_gameBaseFolderPath) / "libraries" / "material_library.xml").string();
-  if (!is_regular_file(filePath)) {
+  auto filePath = fsUtil->GetAbsolutePath("libraries/material_library.xml");
+  if (!fs::is_regular_file(filePath)) {
     throw std::runtime_error(str(format("Failed to load material library: %s does not exist") % filePath));
   }
   pugi::xml_document doc;
@@ -43,8 +41,30 @@ void MaterialLibrary::init() {
   for (auto x : nodeList) {
     auto collection = x.node();
     std::string collectionName = collection.attribute("name").value();
-    if (!collections.try_emplace(collectionName, collection).second) {
+    if (!collections.try_emplace(collectionName, fsUtil, collection).second) {
       throw std::runtime_error("Duplicated collection: " + collectionName);
+    }
+  }
+}
+uint32_t MaterialLibrary::GetIndex(const std::string &matName) {
+  auto it = materials.find(matName);
+  uint32_t index;
+  if (it == materials.end()) {
+    index = numeric_cast<unsigned int>(materials.size());
+    materials.insert({matName, index});
+  } else {
+    index = it->second;
+  }
+  return index;
+}
+void MaterialLibrary::PopulateScene(aiScene *scene) {
+  if (!materials.empty()) {
+    std::string modelFolderPath = fs::path(_gameBaseFolderPath).parent_path().string();
+    scene->mNumMaterials = numeric_cast<unsigned int>(materials.size());
+    scene->mMaterials = new aiMaterial *[scene->mNumMaterials];
+    for (auto &it : materials) {
+      auto pAiMaterial = GetMaterial(it.first).ConvertToAiMaterial();
+      scene->mMaterials[it.second] = pAiMaterial;
     }
   }
 

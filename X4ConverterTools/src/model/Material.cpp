@@ -6,13 +6,14 @@
 #include <X4ConverterTools/ConversionContext.h>
 #include <boost/numeric/conversion/cast.hpp>
 #include <cstdint>
+#include <utility>
 
-using namespace boost;
-using namespace boost::algorithm;
-using namespace boost::filesystem;
+namespace algo= boost::algorithm;
+namespace fs = boost::filesystem;
 using boost::numeric_cast;
+using util::FileSystemUtil;
 namespace model {
-Material::Material() {
+Material::Material(FileSystemUtil::Ptr c) : fsUtil(std::move(c)) {
   _pCollectionName = "";
 
   _diffuseStrength = NAN;
@@ -22,7 +23,7 @@ Material::Material() {
 
 }
 
-Material::Material(std::string pCollectionName, pugi::xml_node &node) {
+Material::Material(FileSystemUtil::Ptr c, std::string pCollectionName, pugi::xml_node &node) : fsUtil(std::move(c)) {
   _pCollectionName = std::move(pCollectionName);
   _name = node.attribute("name").value();
 
@@ -57,15 +58,15 @@ Material::Material(std::string pCollectionName, pugi::xml_node &node) {
   }
 }
 
-aiMaterial *Material::ConvertToAiMaterial(ConversionContext *ctx) {
+aiMaterial *Material::ConvertToAiMaterial() {
   auto pAiMaterial = new aiMaterial();
   std::string nameStr = _pCollectionName + "X" + GetName();
   const aiString name(nameStr);
   pAiMaterial->AddProperty(&name, AI_MATKEY_NAME);
-  PopulateLayer(pAiMaterial, _diffuseMapFilePath, AI_MATKEY_TEXTURE_DIFFUSE(0), ctx);
-  PopulateLayer(pAiMaterial, _specularMapFilePath, AI_MATKEY_TEXTURE_SPECULAR(0), ctx);
-  PopulateLayer(pAiMaterial, _normalMapFilePath, AI_MATKEY_TEXTURE_NORMALS(0), ctx);
-  PopulateLayer(pAiMaterial, _environmentMapFilePath, AI_MATKEY_TEXTURE_REFLECTION(0), ctx);
+  PopulateLayer(pAiMaterial, _diffuseMapFilePath, AI_MATKEY_TEXTURE_DIFFUSE(0));
+  PopulateLayer(pAiMaterial, _specularMapFilePath, AI_MATKEY_TEXTURE_SPECULAR(0));
+  PopulateLayer(pAiMaterial, _normalMapFilePath, AI_MATKEY_TEXTURE_NORMALS(0));
+  PopulateLayer(pAiMaterial, _environmentMapFilePath, AI_MATKEY_TEXTURE_REFLECTION(0));
   // TODO what does this do
 //    if (textureFilePath.size() < 1){
 //        std::cerr << "Warning, empty textureFilePath for material"<<std::endl;
@@ -82,22 +83,21 @@ aiMaterial *Material::ConvertToAiMaterial(ConversionContext *ctx) {
 
 // TODO automate:
 // Decompress a second time
-// wine '/home/cg/Desktop/X4/DirectXTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
+// wine '/home/cg/Desktop/X4/DirefsUtilTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
 // Flatten
-// wine '/home/cg/Desktop/X4/DirectXTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
+// wine '/home/cg/Desktop/X4/DirefsUtilTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
 void Material::PopulateLayer(aiMaterial *pAiMaterial,
                              const std::string &path,
                              const char *key,
                              aiTextureType type,
-                             uint32_t num,
-                             ConversionContext *ctx) {
+                             uint32_t num) {
   if (!path.empty()) {
     // TODO should GetDecompressedTextureFilePath move?
     // TODO how to do the relative path with stuff
-    std::string textureFilePath = GetDecompressedTextureFilePath(path, ctx->gameBaseFolderPath);
+    std::string textureFilePath = GetDecompressedTextureFilePath(path);
     if (!textureFilePath.empty()) {
       aiString temp("../../../" +
-          ctx->GetRelativePath(textureFilePath).string());
+          fsUtil->GetRelativePath(textureFilePath).string());
       pAiMaterial->AddProperty(&temp, key, type, num);
     } else {
       // throw std::runtime_error("Could not find Diffuse Texture for Material!");
@@ -106,17 +106,45 @@ void Material::PopulateLayer(aiMaterial *pAiMaterial,
   }
 }
 
-std::string
-Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, const path &baseFolderPath) const {
-  std::string filePath = GetTextureFilePath(compressedFilePath, baseFolderPath);
-  filePath = ConversionContext::MakePlatformSafe(filePath);
+std::string Material::GetTextureFilePath(const std::string &tgtFilePath) const {
+  static const char *allowedExtensions[] = {"gz", "dds", "tga", "jpg"};
 
-  path textureFilePath(filePath);
-  if (!iequals(textureFilePath.extension().string(), ".gz")) {
+  std::string filePath = FileSystemUtil::MakePlatformSafe(tgtFilePath);
+
+  if (filePath.empty()) {
+    throw std::runtime_error("Received empty filepath");
+  }
+  fs::path textureFilePath = fsUtil->GetAbsolutePath(filePath);
+
+  // TODO debug flag   std::cerr << textureFilePath << std::endl;
+
+  if (fs::is_regular_file(textureFilePath)) {
+    return textureFilePath.string();
+  }
+  for (auto &allowedExtension : allowedExtensions) {
+    textureFilePath.replace_extension(allowedExtension);
+    if (is_regular_file(textureFilePath)) {
+      return textureFilePath.string();
+    }
+  }
+  if (textureFilePath.has_extension()) {
+    std::cerr << "Warning textureFilePath has unexpected extension" << std::endl;
+    return std::string();
+  }
+  std::cerr << "Warning returned empty string" << std::endl;
+  return std::string();
+}
+std::string
+Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath) const {
+  std::string filePath = GetTextureFilePath(compressedFilePath);
+  filePath = FileSystemUtil::MakePlatformSafe(filePath);
+
+  fs::path textureFilePath(filePath);
+  if (!algo::iequals(textureFilePath.extension().string(), ".gz")) {
     return textureFilePath.string();
   }
 
-  path uncompressedPath(textureFilePath);
+  fs::path uncompressedPath(textureFilePath);
   uncompressedPath.replace_extension(".dds");
   if (is_regular_file(uncompressedPath)) {
     return uncompressedPath.string();
@@ -147,33 +175,4 @@ Material::GetDecompressedTextureFilePath(const std::string &compressedFilePath, 
   return uncompressedPath.string();
 }
 
-std::string Material::GetTextureFilePath(const std::string &tgtFilePath, const path &baseFolderPath) {
-  static const char *allowedExtensions[] = {"gz", "dds", "tga", "jpg"};
-
-  std::string filePath = ConversionContext::MakePlatformSafe(tgtFilePath);
-
-  if (filePath.empty()) {
-    throw std::runtime_error("Received empty filepath");
-  }
-  path textureFilePath(baseFolderPath);
-  textureFilePath /= filePath;
-
-  // TODO debug flag   std::cerr << textureFilePath << std::endl;
-
-  if (is_regular_file(textureFilePath)) {
-    return textureFilePath.string();
-  }
-  for (auto &allowedExtension : allowedExtensions) {
-    textureFilePath.replace_extension(allowedExtension);
-    if (is_regular_file(textureFilePath)) {
-      return textureFilePath.string();
-    }
-  }
-  if (textureFilePath.has_extension()) {
-    std::cerr << "Warning textureFilePath has unexpected extension" << std::endl;
-    return std::string();
-  }
-  std::cerr << "Warning returned empty string" << std::endl;
-  return std::string();
-}
 }

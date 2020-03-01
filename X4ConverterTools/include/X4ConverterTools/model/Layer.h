@@ -6,7 +6,7 @@
 #include "Light.h"
 
 namespace model {
-class Layer : public AiNodeElement {
+class Layer : public AbstractElement {
  public:
   explicit Layer(const ConversionContext::Ptr &ctx);
 
@@ -22,7 +22,7 @@ class Layer : public AiNodeElement {
 
  protected:
   int layerId = -1;
-  LightsGroup lights;
+  std::optional<LightsGroup> lights;
 };
 
 }

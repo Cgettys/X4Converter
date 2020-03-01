@@ -5,6 +5,7 @@
 #include "FormatUtil.h"
 #include "AssimpUtil.h"
 #include <X4ConverterTools/util/XmlUtil.h>
+#include <X4ConverterTools/types.h>
 
 namespace util {
 using std::string;
@@ -19,7 +20,6 @@ class XmlUtil {
                                  const string &attrVal);
   static void WriteAttr(xml_node &target, const string &name, const string &val);
   static void WriteAttr(xml_node &target, const string &name, float val);
-
   static aiColor3D ReadAttrRGB(xml_node &target);
   static void WriteAttrRGB(xml_node &target, const aiColor3D &val);
   static aiVector3D ReadAttrXYZ(xml_node &target);
@@ -35,6 +35,7 @@ class XmlUtil {
   static bool HasChildren(xml_node &node);
 
   static void RemoveIfChildless(xml_node &node);
+
 };
 }
 #endif //X4CONVERTER_X4CONVERTERTOOLS_SRC_UTIL_XMLUTIL_H_

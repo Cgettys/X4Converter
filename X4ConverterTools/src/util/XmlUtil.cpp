@@ -1,5 +1,7 @@
 #include <X4ConverterTools/util/XmlUtil.h>
 
+#include <utility>
+
 namespace util {
 using std::string;
 using pugi::xml_node;
@@ -36,7 +38,6 @@ void XmlUtil::WriteAttr(xml_node &target, const string &name, float val) {
   string strVal = FormatUtil::formatFloat(val);
   WriteAttr(target, name, strVal);
 }
-
 aiColor3D XmlUtil::ReadAttrRGB(xml_node &target) {
   return aiColor3D(target.attribute("r").as_float() / 255.0f,
                    target.attribute("g").as_float() / 255.0f,
@@ -107,4 +108,5 @@ void XmlUtil::RemoveIfChildless(xml_node &node) {
     node.parent().remove_child(node);
   }
 }
+
 }
