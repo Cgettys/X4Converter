@@ -5,17 +5,16 @@
 #include <X4ConverterTools/util/XmlUtil.h>
 
 namespace model {
-using std::string;
 using util::XmlUtil;
 AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
 
 }
 
-string AbstractElement::getName() {
+std::string AbstractElement::getName() {
   return name;
 }
 
-void AbstractElement::setName(string n) {
+void AbstractElement::setName(std::string n) {
   // E.g.
   // "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_carrier_01_data"
   // cuts off to "ship_arg_xl_carrier_01|source|assets\\units\\size_xl\\ship_arg_xl_"
@@ -32,14 +31,14 @@ bool AbstractElement::hasAttr(const std::string &n) {
   }
   return ctx->metadata->HasAttribute(name, n);
 }
-string AbstractElement::getAttr(const string &n) {
+std::string AbstractElement::getAttr(const std::string &n) {
   if (name.empty()) {
     throw std::runtime_error("Name is not yet set!");
   }
   return ctx->metadata->GetAttribute(name, n);
 }
 
-void AbstractElement::setAttr(const string &n, const string &value, bool overwrite) {
+void AbstractElement::setAttr(const std::string &n, const std::string &value, bool overwrite) {
   if (name.empty()) {
     throw std::runtime_error("Name is not yet set!");
   }

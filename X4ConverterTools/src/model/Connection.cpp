@@ -1,5 +1,5 @@
 #include "X4ConverterTools/model/Connection.h"
-
+#include <boost/algorithm/string.hpp>
 #include <utility>
 #include <vector>
 #include <map>
@@ -67,6 +67,11 @@ std::string Connection::getParentName() {
 
 void Connection::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
+  std::string actualName = getName();
+  boost::replace_first(actualName, "*", "");
+  boost::replace_last(actualName, "*", "");
+  setName(actualName);
+
   offset.ReadAiNode(node);
 
   // TODO validate attributes; better check for parts & a better solution
