@@ -12,9 +12,9 @@ enum LightKind {
 class Light : public AbstractElement {
  public:
 
-  explicit Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName);
+  explicit Light(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string parentName);
 
-  explicit Light(aiNode *node, ConversionContext::Ptr ctx);
+  explicit Light(aiNode *node, const ConversionContext::Ptr &ctx);
 
   aiNode *ConvertToAiNode() final;
 
@@ -30,8 +30,8 @@ class Light : public AbstractElement {
 
 class LightsGroup : public AbstractElement {
  public:
-  explicit LightsGroup(ConversionContext::Ptr ctx, pugi::xml_node &node, const std::string &parentName);
-  explicit LightsGroup(ConversionContext::Ptr ctx, aiNode *node);
+  explicit LightsGroup(const ConversionContext::Ptr &ctx, pugi::xml_node &node, const std::string &parentName);
+  explicit LightsGroup(const ConversionContext::Ptr &ctx, aiNode *node);
   aiNode *ConvertToAiNode() final;
   void ConvertFromAiNode(aiNode *node) final;
   void ConvertToGameFormat(pugi::xml_node &out) final;

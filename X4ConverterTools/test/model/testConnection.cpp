@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
   node.remove_child("lods");
   BOOST_TEST_REQUIRE(!node.empty());
 
-  auto conn = Connection(node, ctx, "ship_arg_s_fighter_01");
-  BOOST_TEST(conn.getParentName() == "ship_arg_s_fighter_01");
+  auto conn = Connection(node, ctx);
+  BOOST_TEST(!conn.hasParent());
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
@@ -105,6 +105,7 @@ BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
   BOOST_TEST_REQUIRE(!node.empty());
 
   auto conn = Connection(node, ctx);
+  BOOST_TEST(conn.hasParent());
   BOOST_TEST(conn.getParentName() == "anim_main");
 }
 BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)

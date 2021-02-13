@@ -47,6 +47,7 @@ void AbstractElement::setAttr(const string &n, const string &value, bool overwri
     throw std::runtime_error(
         "Attribute " + n + " already set for " + getName() + " and this attribute should not be overwritten!");
   }
+
   ctx->metadata->SetAttribute(name, n, value);
 }
 
@@ -66,6 +67,8 @@ void AbstractElement::CheckXmlElement(pugi::xml_node &src, const std::string &ex
     auto nameAttr = src.attribute("name");
     if (!nameAttr) {
       throw std::runtime_error("XML element <" + expectedName + "> must have a name attribute!");
+    } else {
+      setName(nameAttr.value());
     }
   }
 }
@@ -74,10 +77,13 @@ void AbstractElement::ProcessAttributes(pugi::xml_node &node,
                                         const std::function<void(AbstractElement *, std::string, std::string)> &func) {
   for (auto attr: node.attributes()) {
     std::string attrName = attr.name();
-    if (attrName == "name" && getName().empty()) {
-      throw std::runtime_error("Name was not set before processing attributes");
+    if (attrName == "name") {
+      if (getName().empty()) {
+        throw std::runtime_error("Name was not set before processing attributes");
+      }
+    } else {
+      std::invoke(func, this, attr.name(), attr.value());
     }
-    std::invoke(func, this, attr.name(), attr.value());
   }
 }
 

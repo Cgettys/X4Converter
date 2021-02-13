@@ -32,26 +32,22 @@ void MetadataStore::WriteXml(pugi::xml_node &target) {
 }
 
 bool MetadataStore::HasAttribute(const std::string &name, const std::string &key) {
-  if (allMetadata.count(name) > 0) {
-    if (allMetadata.count(key) > 0) {
-      return true;
-    }
-  }
-  return false;
+  return allMetadata.count(name) > 0 && allMetadata[name].count(key) > 0;
 }
 
 std::string MetadataStore::GetAttribute(const std::string &name, const std::string &key) {
   if (!HasAttribute(name, key)) {
-    throw std::runtime_error("Attribute not found!");
+    throw std::runtime_error("Attribute " + key + " not found for name: " + name + "!");
   }
   return allMetadata[name][key];
 }
 
-void MetadataStore::SetAttribute(const std::string &name, const std::string &key, std::string value) {
+void MetadataStore::SetAttribute(const std::string &name, const std::string &key, const std::string &value) {
   if (allMetadata.count(name) <= 0) {
-    allMetadata[name] = {};
+    allMetadata.insert({name, {}});
   }
-  allMetadata[name][key] = std::move(value);
+  // Note: insert wouldn't overwrite here
+  allMetadata[name].insert_or_assign(key, value);
 }
 MetadataStore::MetadataMap &MetadataStore::GetMetadata(const std::string &name) {
   if (allMetadata.count(name) <= 0) {

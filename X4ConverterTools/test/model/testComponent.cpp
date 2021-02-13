@@ -58,7 +58,8 @@ BOOST_AUTO_TEST_CASE(from_ainode_basic) { // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
-  auto node = new aiNode("ship_arg_s_fighter_01");
+  auto shipName = "ship_arg_s_fighter_01";
+  auto node = new aiNode(shipName);
   auto childrenZero = new aiNode *[2];
   childrenZero[0] = new aiNode("*test_conn_0*");
   childrenZero[1] = new aiNode("*test_conn_1*");
@@ -71,6 +72,10 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   node->addChildren(2, childrenZero);
   pugi::xml_document doc;
   auto outNode = doc.append_child("components");
+
+
+  // Set missing metadata:
+  ctx->metadata->SetAttribute(shipName, "source", "don'tcare");
 
   auto component = Component(ctx);
   component.ConvertFromAiNode(node);

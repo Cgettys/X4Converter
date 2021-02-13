@@ -8,8 +8,8 @@ using namespace boost;
 namespace model {
 using util::XmlUtil;
 using util::AssimpUtil;
-Light::Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string parentName)
-    : AbstractElement(std::move(ctx)), offset(node) {
+Light::Light(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string parentName)
+    : AbstractElement(ctx), offset(node) {
   std::string tmp = str(boost::format("%1%|light|%2%") % parentName % node.attribute("name").value());
   setName(tmp);
   std::string kind = node.name();
@@ -19,7 +19,7 @@ Light::Light(pugi::xml_node &node, ConversionContext::Ptr ctx, std::string paren
   // TODO animation
 }
 
-Light::Light(aiNode *node, ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {
+Light::Light(aiNode *node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
   ConvertFromAiNode(node);
 }
 
@@ -45,7 +45,7 @@ void Light::ConvertToGameFormat(pugi::xml_node &out) {
   }
   name = name.substr(pos + 7);
   auto lightNode = XmlUtil::AddChildByAttr(out, getAttr("kind"), "name", name);
-  WriteAttrs(out, ExcludePredicate("kind"));
+  WriteAttrs(lightNode, ExcludePredicate("kind"));
   offset.WriteXml(lightNode);
 }
 void Light::CheckLightKindValidity(const std::string &kind) {
@@ -53,15 +53,15 @@ void Light::CheckLightKindValidity(const std::string &kind) {
     throw std::runtime_error("Unknown light type:" + kind);
   }
 }
-LightsGroup::LightsGroup(ConversionContext::Ptr ctx, pugi::xml_node &node, const std::string &parentName)
-    : AbstractElement(std::move(ctx)) {
+LightsGroup::LightsGroup(const ConversionContext::Ptr &ctx, pugi::xml_node &node, const std::string &parentName)
+    : AbstractElement(ctx) {
   CheckXmlElement(node, "lights", false);
   for (auto lightNode: node.children()) {
     lights.emplace_back(lightNode, ctx, parentName);
   }
 }
 
-LightsGroup::LightsGroup(ConversionContext::Ptr ctx, aiNode *node) : AbstractElement(std::move(ctx)) {
+LightsGroup::LightsGroup(const ConversionContext::Ptr &ctx, aiNode *node) : AbstractElement(ctx) {
   ConvertFromAiNode(node);
 }
 aiNode *LightsGroup::ConvertToAiNode() {

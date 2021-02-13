@@ -17,16 +17,7 @@ Part::Part(const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
 
 Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
   CheckXmlElement(node, "part");
-  ProcessAttributes(node, [](auto *a, std::string n, std::string v) -> void {
-                      if (n == "ref" or n == "wreck") {
-                        a->setAttr(n, v);
-                      } else {
-                        std::cerr << "Warning, unhandled attribute on part: " << a->getName() << " attribute: " << n
-                                  << ". This may work fine, just a heads up ;)" << std::endl;
-                        a->setAttr(n, v);
-                      }
-                    }
-  );
+  ProcessAttributes(node);
 
   auto lodsNode = node.child("lods");
   if (HasRef() && !lodsNode.empty()) {
@@ -106,6 +97,8 @@ void Part::ConvertFromAiNode(aiNode *node) {
     if (childName.find("|lights|")) {
       if (HasLights()) {
         throw std::runtime_error("Found two lights for part!");
+      } else {
+        lights = LightsGroup(ctx, child);
       }
     } else if (regex_match(childName, ctx->lodRegex)) {
       auto lod = VisualLod(ctx);

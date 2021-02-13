@@ -11,7 +11,7 @@ class MetadataStore {
   explicit MetadataStore(std::string metadataFilePath);
   bool HasAttribute(const std::string &name, const std::string &key);
   std::string GetAttribute(const std::string &name, const std::string &key);
-  void SetAttribute(const std::string &name, const std::string &key, std::string value);
+  void SetAttribute(const std::string &name, const std::string &key, const std::string &value);
   MetadataMap &GetMetadata(const std::string &name);
 //TODO remove these two when read/write works
   std::map<std::string, MetadataMap> GetAll();

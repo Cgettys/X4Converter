@@ -28,7 +28,7 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
     std::cerr << "Warning, could not find any <connection> nodes!" << std::endl;
   }
   for (auto connectionNode : connectionsNode.children()) {
-    connections.emplace_back(connectionNode, ctx, getName());
+    connections.emplace_back(connectionNode, ctx);
   }
 
   auto layersNode = node.child("layers");
@@ -58,7 +58,8 @@ aiNode *Component::ConvertToAiNode() {
   for (auto &conn : connections) {
     std::string connName = conn.getName();
     conn.ConvertAll(nodes);
-    nodes.MakeParent(conn.getParentName(), conn.getName());
+    auto parentName = conn.hasParent() ? conn.getParentName() : getName();
+    nodes.MakeParent(parentName, conn.getName());
   }
   // Now to unflatten everything
   nodes.PopulateChildren();
@@ -96,7 +97,8 @@ void Component::recurseOnChildren(aiNode *tgt, const ConversionContext::Ptr &ctx
       if (is_connection) {
         throw std::runtime_error("connection cannot have a connection as a parent!");
       }
-      connections.emplace_back(child, ctx, tgtName);
+      auto result = connections.emplace_back(child, ctx);
+      result.setParentName(tgtName);
     }
     recurseOnChildren(child, ctx);
   }
@@ -110,7 +112,7 @@ void Component::ConvertToGameFormat(pugi::xml_node &out) {
   }
   auto compNode = XmlUtil::AddChildByAttr(out, "component", "name", getName());
   auto connsNode = XmlUtil::AddChild(compNode, "connections");
-  auto src = getAttr("source");;
+  auto src = getAttr("source");
   XmlUtil::AddChildByAttr(compNode, "source", "geometry", src);
   // TODO compare to output path and confirm if wrong
   ctx->fsUtil->SetSourcePathSuffix(src);
