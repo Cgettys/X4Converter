@@ -67,10 +67,7 @@ std::string Connection::getParentName() {
 
 void Connection::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
-  std::string actualName = getName();
-  boost::replace_first(actualName, "*", "");
-  boost::replace_last(actualName, "*", "");
-  setName(actualName);
+  setName(getName().substr(1, getName().size() - 2));
 
   offset.ReadAiNode(node);
 
@@ -87,7 +84,7 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
-  auto outName = getName().substr(1, getName().size() - 2);
+  auto outName = getName();
   auto node = XmlUtil::AddChildByAttr(out, "connection", "name", outName);
   WriteAttrs(node);
   offset.WriteXml(node);
