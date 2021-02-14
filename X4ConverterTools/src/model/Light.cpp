@@ -10,7 +10,7 @@ using util::XmlUtil;
 using util::AssimpUtil;
 Light::Light(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string parentName)
     : AbstractElement(ctx, Light::Qualifier), offset(node) {
-  std::string tmp = str(boost::format("%1%|light|%2%") % parentName % node.attribute("name").value());
+  std::string tmp = str(boost::format("%1%|%2%") % parentName % node.attribute("name").value());
   setName(tmp);
   std::string kind = node.name();
   CheckLightKindValidity(kind);
@@ -39,11 +39,11 @@ void Light::ConvertFromAiNode(aiNode *node) {
 
 void Light::ConvertToGameFormat(pugi::xml_node &out) {
   auto name = getName();
-  size_t pos = name.rfind("|light|");
+  size_t pos = name.rfind('|');
   if (pos == std::string::npos) {
     throw std::runtime_error("light name couldn't be parsed");
   }
-  name = name.substr(pos + 7);
+  name = name.substr(pos + 1);
   auto lightNode = XmlUtil::AddChildByAttr(out, getAttr("kind"), "name", name);
   WriteAttrs(lightNode, ExcludePredicate("kind"));
   offset.WriteXml(lightNode);
@@ -54,14 +54,16 @@ void Light::CheckLightKindValidity(const std::string &kind) {
   }
 }
 LightsGroup::LightsGroup(const ConversionContext::Ptr &ctx, pugi::xml_node &node, const std::string &parentName)
-    : AbstractElement(ctx, Light::Qualifier) {
+    : AbstractElement(ctx, LightsGroup::Qualifier) {
   CheckXmlElement(node, "lights", false);
+  setName(parentName + "|lights");
   for (auto lightNode: node.children()) {
     lights.emplace_back(lightNode, ctx, parentName);
   }
 }
 
-LightsGroup::LightsGroup(const ConversionContext::Ptr &ctx, aiNode *node) : AbstractElement(ctx, Light::Qualifier) {
+LightsGroup::LightsGroup(const ConversionContext::Ptr &ctx, aiNode *node) : AbstractElement(ctx,
+                                                                                            LightsGroup::Qualifier) {
   ConvertFromAiNode(node);
 }
 aiNode *LightsGroup::ConvertToAiNode() {

@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_conn_offset) { // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_write_conn_offset) {
   auto ctx = TestUtil::GetTestContext("TEST");
-  auto node = new aiNode("Connection02");
+  auto node = TestUtil::makeAiNode("Connection02", Connection::Qualifier);
 
   aiMatrix4x4 tmp(aiVector3D(1.0f, 1.0f, 1.0f),
                   aiQuaternion(0.976296f, -0.0f, -0.0f, -0.2164396f),
@@ -109,12 +109,12 @@ BOOST_AUTO_TEST_CASE(from_xml_has_parent) { // NOLINT(cert-err58-cpp)
   BOOST_TEST(conn.getParentName() == "anim_main");
 }
 BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
-  auto ainode = new aiNode("*Connection02*");
+  auto ainode = TestUtil::makeAiNode("Connection02", Connection::Qualifier);
 
   auto ctx = TestUtil::GetTestContext("TEST");
 
   auto conn = Connection(ainode, ctx);
-  BOOST_TEST(conn.getName() == "*Connection02*");
+  BOOST_TEST(conn.getName() == "Connection02");
   delete ainode;
 }
 
@@ -140,14 +140,15 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
   auto ctx = TestUtil::GetTestContext("TEST");
-  auto node = new aiNode("[Cn]Connection02");
+  auto node = TestUtil::makeAiNode("Connection02", Connection::Qualifier);
   std::string tagStr = "part animation iklink nocollision forceoutline detail_xl  ";
-  ctx->metadata->SetAttribute("[Cn]Connection02", "tags", tagStr);
+  ctx->metadata->SetAttribute("Connection02", "tags", tagStr);
   pugi::xml_document doc;
   auto outNode = doc.append_child("connections");
 
   auto conn = Connection(node, ctx);
   conn.ConvertToGameFormat(outNode);
+  doc.print(std::cout);
 
   auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
   BOOST_CHECK_EQUAL(std::string(connNode.attribute("tags").value()), tagStr);

@@ -83,9 +83,9 @@ aiMaterial *Material::ConvertToAiMaterial() {
 
 // TODO automate:
 // Decompress a second time
-// wine '/home/cg/Desktop/X4/DirefsUtilTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
+// wine '~/Desktop/X4/DirefsUtilTex/texconv.exe' 'C:\multimat_diff.dds' -o 'C:\multimat_diff_out' -y -f R16G16B16A16_UINT
 // Flatten
-// wine '/home/cg/Desktop/X4/DirefsUtilTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
+// wine '~/Desktop/X4/DirefsUtilTex/texassemble.exe' array-strip 'C:\multimat_diff.dds' -o 'C:\multimat_diff_flat.dds' -f R8G8B8A8_UNORM
 void Material::PopulateLayer(aiMaterial *pAiMaterial,
                              const std::string &path,
                              const char *key,

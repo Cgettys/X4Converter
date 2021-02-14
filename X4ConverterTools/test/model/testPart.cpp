@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(xml_to_ainode_read_part_name_correct) {
 
   auto part = Part(partNode, ctx);
   auto result = part.ConvertToAiNode();
-  BOOST_TEST(std::string(result->mName.C_Str()) == "anim_main");
+  TestUtil::checkAiNodeName(result, "anim_main", Part::Qualifier);
   delete result;
 }
 
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(from_xml_name_throws_on_wrong_type) {
 
 BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
   std::string partName = "testpart";
-  auto ainode = new aiNode(partName);
+  auto ainode = TestUtil::makeAiNode(partName, Part::Qualifier);
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   Part part(ctx);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE(from_ai_node_part_name) {
 
 BOOST_AUTO_TEST_CASE(ainode_to_xml_name) {
   std::string partName = "testpart";
-  auto ainode = new aiNode(partName);
+  auto ainode = TestUtil::makeAiNode(partName, Part::Qualifier);
   auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
 
   Part part(ctx);

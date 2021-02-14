@@ -48,4 +48,11 @@ void CollisionLod::ConvertToGameFormat(pugi::xml_node &out) {
     xmfFile->WriteToFile(ctx->fsUtil->GetOutputPath(getName() + ".xmf"));
   }
 }
+bool CollisionLod::MatchesPattern(std::string name) {
+  if (!matchesQualifier(name, Lod::Qualifier)) {
+    return false;
+  }
+  std::regex collisionRegex{"[[]Lo[]][^-]+\\-collision"};
+  return regex_match(name, collisionRegex);
+}
 }

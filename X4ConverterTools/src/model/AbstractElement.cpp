@@ -122,7 +122,7 @@ std::vector<aiNode *> AbstractElement::getChildren(aiNode *node) {
 }
 
 std::string AbstractElement::getQualifiedName() {
-  return name + qualifier;
+  return qualifier + name;
 };
 bool AbstractElement::matchesQualifier(const std::string &n, const std::string &q) {
   return boost::algorithm::starts_with(n, q);

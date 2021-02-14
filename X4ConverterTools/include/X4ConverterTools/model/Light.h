@@ -31,6 +31,7 @@ class Light : public AbstractElement {
 
 class LightsGroup : public AbstractElement {
  public:
+  static constexpr char Qualifier[] = "[Lg]";
   explicit LightsGroup(const ConversionContext::Ptr &ctx, pugi::xml_node &node, const std::string &parentName);
   explicit LightsGroup(const ConversionContext::Ptr &ctx, aiNode *node);
   aiNode *ConvertToAiNode() final;

@@ -42,7 +42,7 @@ void Connection::ConvertAll(NodeMap &nodes) {
   auto result = ConvertToAiNode();
   nodes.AddNode(result);
   for (auto &part : parts) {
-    std::string partName = part.getName();
+    std::string partName = part.getQualifiedName();
     auto partNode = result->FindNode(partName.c_str());
     if (partNode == nullptr) {
       throw std::runtime_error(
@@ -63,6 +63,9 @@ void Connection::setParentName(std::string parentName) {
 std::string Connection::getParentName() {
   return getAttr("parent");
 }
+std::string Connection::getParentQualifiedName() {
+  return Part::Qualifier + getParentName();
+}
 
 void Connection::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
@@ -82,7 +85,7 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
-  auto outName = getName().substr(4);
+  auto outName = getName();
   auto node = XmlUtil::AddChildByAttr(out, "connection", "name", outName);
   WriteAttrs(node);
   offset.WriteXml(node);

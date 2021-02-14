@@ -17,6 +17,8 @@ class CollisionLod : public Lod {
   void ConvertFromAiNode(aiNode *node) override;
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
+
+  static bool MatchesPattern(std::string name);
 };
 
 }

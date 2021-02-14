@@ -12,7 +12,7 @@
 namespace test {
 class TestUtil {
  public:
-  static void checkAiNodeName(aiNode *node, std::string name);
+  static void checkAiNodeName(aiNode *node, std::string name, std::string qualifier = "");
 
   static std::unique_ptr<pugi::xml_document> GetXmlDocument(const std::string &path);
 
@@ -26,6 +26,10 @@ class TestUtil {
   static void checkXuMeshFileEquality(xmf::XmfFile &lhs, xmf::XmfFile &rhs);
 
   static void checkXmfHeaderEquality(xmf::XmfFile &lFile, xmf::XmfFile &rFile);
+
+  static aiNode *makeAiNode(std::string name, std::string qualifier);
+
+  static std::string makeQualifiedName(std::string name, std::string qualifier);
 
 };
 }

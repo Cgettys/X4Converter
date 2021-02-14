@@ -16,11 +16,12 @@
 
 namespace test {
 
-void TestUtil::checkAiNodeName(aiNode *node, std::string name) {
+void TestUtil::checkAiNodeName(aiNode *node, std::string name, std::string qualifier) {
 
   BOOST_TEST_REQUIRE(node != nullptr);
-  const char *actualName = node->mName.C_Str();
-  BOOST_TEST(name == std::string(actualName));
+  auto expectedName = makeQualifiedName(name, qualifier);
+  auto actualName = std::string(node->mName.C_Str());
+  BOOST_CHECK_EQUAL(expectedName, actualName);
 }
 
 std::unique_ptr<pugi::xml_document> TestUtil::GetXmlDocument(const std::string &path) {
@@ -256,6 +257,12 @@ void TestUtil::checkXmfHeaderEquality(XmfFile &lFile, XmfFile &rFile) {
 
   // The equality function should agree:
   BOOST_TEST((lhs == rhs));
+}
+aiNode *TestUtil::makeAiNode(std::string name, std::string qualifier) {
+  return new aiNode(makeQualifiedName(name, qualifier));
+}
+std::string TestUtil::makeQualifiedName(std::string name, std::string qualifier) {
+  return qualifier + name;
 }
 
 }

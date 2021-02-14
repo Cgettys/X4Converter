@@ -63,4 +63,12 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
     xmfFile->WriteToFile(ctx->fsUtil->GetOutputPath(getName() + ".xmf"));
   }
 }
+
+bool VisualLod::MatchesPattern(std::string name) {
+  if (!matchesQualifier(name, Lod::Qualifier)) {
+    return false;
+  }
+  std::regex lodRegex("[[]Lo[]][^-]+\\-lod\\d");
+  return regex_match(name, lodRegex);
+}
 }

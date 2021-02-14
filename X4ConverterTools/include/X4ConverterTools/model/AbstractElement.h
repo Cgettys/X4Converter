@@ -26,11 +26,11 @@ class AbstractElement {
 
   virtual aiNode *ConvertToAiNode() {
     auto *result = new aiNode;
-    result->mName = aiString{getName()};
+    result->mName = aiString{getQualifiedName()};
     return result;
   }
   virtual void ConvertFromAiNode(aiNode *node) {
-    setName(node->mName.C_Str());
+    setName(parseQualifiedName(node->mName.C_Str()));
   }
 
   virtual void ConvertToGameFormat(pugi::xml_node &out) = 0;

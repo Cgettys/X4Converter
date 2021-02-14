@@ -28,6 +28,7 @@ class Connection : public AbstractElement {
   bool hasParent();
   void setParentName(std::string parentName);
   std::string getParentName();
+  std::string getParentQualifiedName();
  private:
   Offset offset;
   std::vector<Part> parts;

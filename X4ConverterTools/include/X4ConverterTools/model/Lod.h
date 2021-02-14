@@ -1,7 +1,7 @@
 #pragma once
 
 #include <X4ConverterTools/xmf/XmfFile.h>
-
+#include <boost/algorithm/string.hpp>
 #include <utility>
 #include "AbstractElement.h"
 
@@ -15,7 +15,7 @@ class Lod : public AbstractElement {
     if (!ctx->ShouldConvertGeometry()) {
       throw std::runtime_error("Should not be converting in this mode.");
     }
-    return xmfFile->ConvertToAiNode(getName());
+    return xmfFile->ConvertToAiNode(getQualifiedName());
   }
 
   void CalculateSizeAndCenter(aiNode *pNode) {

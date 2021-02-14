@@ -94,13 +94,13 @@ void Part::ConvertFromAiNode(aiNode *node) {
   for (auto &child : getChildren(node)) {
     std::string childName = child->mName.C_Str();
     // TODO check part names?
-    if (childName.find("|lights|") != std::string::npos) {
+    if (matchesQualifier(childName, Light::Qualifier)) {
       if (HasLights()) {
         throw std::runtime_error("Found two lights for part!");
       } else {
         lights = LightsGroup(ctx, child);
       }
-    } else if (regex_match(childName, ctx->lodRegex)) {
+    } else if (VisualLod::MatchesPattern(childName)) {
       auto lod = VisualLod(ctx);
       lod.ConvertFromAiNode(child);
       // The part name may be contained in the wreck name but usually not the reverse, so we check for the wreck name
@@ -112,7 +112,7 @@ void Part::ConvertFromAiNode(aiNode *node) {
       } else {
         lods.insert(std::pair<int, VisualLod>(lod.getIndex(), lod));
       }
-    } else if (regex_match(childName, ctx->collisionRegex)) {
+    } else if (CollisionLod::MatchesPattern(childName)) {
       auto lod = CollisionLod(ctx);
       lod.ConvertFromAiNode(child);
       if (MatchesWreck(childName)) {

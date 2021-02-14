@@ -47,7 +47,7 @@ Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : 
 
 aiNode *Component::ConvertToAiNode() {
   util::NodeMap nodes;
-  auto result = nodes.CreateNode(getName());
+  auto result = nodes.CreateNode(getQualifiedName());
   // Handle layers
   //nodes.CreateNode("*layers*");
   //nodes.MakeParent(getName(), "*layers*");
@@ -55,14 +55,14 @@ aiNode *Component::ConvertToAiNode() {
     auto *layerAiNode = layer.ConvertToAiNode();
     nodes.AddNode(layerAiNode);
     //nodes.MakeParent("*layers*", layer.getName());
-    nodes.MakeParent(getName(), layer.getName());
+    nodes.MakeParent(getQualifiedName(), layer.getQualifiedName());
   }
   // Convert all the nodes
   for (auto &conn : connections) {
-    std::string connName = conn.getName();
     conn.ConvertAll(nodes);
-    auto parentName = conn.hasParent() ? conn.getParentName() : getName();
-    nodes.MakeParent(parentName, conn.getName());
+    // TODO fixme
+    auto parentName = conn.hasParent() ? conn.getParentQualifiedName() : getQualifiedName();
+    nodes.MakeParent(parentName, conn.getQualifiedName());
   }
   // Now to unflatten everything
   nodes.PopulateChildren();

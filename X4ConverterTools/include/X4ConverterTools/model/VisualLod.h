@@ -17,6 +17,7 @@ class VisualLod : public Lod {
 
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
+  static bool MatchesPattern(std::string name);
 };
 
 }

@@ -17,7 +17,7 @@ Layer::Layer(const ConversionContext::Ptr &ctx) : AbstractElement(ctx, Qualifier
 Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx, Qualifier) {
   CheckXmlElement(node, "layer", false);
   layerId = id;
-  auto myName = str(format("layer|%d") % layerId);
+  auto myName = str(format("%d") % layerId);
   setName(myName);
   auto lightsNode = node.child("lights");
   lights = LightsGroup(ctx, lightsNode, myName);
@@ -40,7 +40,7 @@ aiNode *Layer::ConvertToAiNode() {
 void Layer::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
   auto myname = getName();
-  std::string id = myname.substr(myname.find('|'));
+  std::string id = myname;
   layerId = std::stoi(id);
   for (auto &child : getChildren(node)) {
     auto childName = std::string(child->mName.C_Str());
@@ -54,11 +54,13 @@ void Layer::ConvertFromAiNode(aiNode *node) {
 }
 
 void Layer::ConvertToGameFormat(pugi::xml_node &out) {
-  if (std::string(out.name()) != "layer") {
+  if (std::string(out.name()) != "layers") {
     throw std::runtime_error("layer was passed incorrect node to write to!");
   }
+  // TODO: what if we actually saw multiple layers?
+  auto layerNode = XmlUtil::AddChild(out, "layer");
   if (lights.has_value()) {
-    lights->ConvertToGameFormat(out);
+    lights->ConvertToGameFormat(layerNode);
   }
 }
 

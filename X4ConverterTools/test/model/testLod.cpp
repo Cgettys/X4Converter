@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(read_lod_name) {
   std::string expectedName = "anim_main-lod0";
   BOOST_TEST(lod.getName() == expectedName);
   auto result = lod.ConvertToAiNode();
-  BOOST_TEST(std::string(result->mName.C_Str()) == expectedName);
+  TestUtil::checkAiNodeName(result, expectedName, Lod::Qualifier);
   delete result;
 }
 // TODO rewrite/move to part
@@ -67,13 +67,14 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
 
   auto lodBackward = VisualLod(ctx2);
   auto outDoc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
-  auto outNode = doc->select_node(
+  auto outNode = outDoc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods").node();
   outNode.remove_child("lod");
   outNode.remove_child("lod");
   outNode.remove_child("lod");
   lodBackward.ConvertFromAiNode(forwardResult);
   lodBackward.ConvertToGameFormat(outNode);
+  outNode.print(std::cout);
 
   auto matsNode = outNode.find_child_by_attribute("lod", "index", "0").child("materials");
   BOOST_TEST_REQUIRE(matsNode);

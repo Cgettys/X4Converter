@@ -31,9 +31,6 @@ class ConversionContext {
 
   bool ShouldConvertGeometry() { return should_convert; };
 
-  // TODO somewhere better
-  std::regex lodRegex{"[^-]+\\-lod\\d"};
-  std::regex collisionRegex{"[^-]+\\-collision"};
   util::MetadataStore::Ptr metadata;
   util::FileSystemUtil::Ptr fsUtil;
  protected:
