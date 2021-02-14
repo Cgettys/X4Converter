@@ -12,10 +12,10 @@ using util::XmlUtil;
 using util::AssimpUtil;
 
 // TODO wreck class subclassing Part?
-Part::Part(const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Part::Part(const ConversionContext::Ptr &ctx) : AbstractElement(ctx, Qualifier) {
 }
 
-Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Part::Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx, Qualifier) {
   CheckXmlElement(node, "part");
   ProcessAttributes(node);
 
@@ -94,7 +94,7 @@ void Part::ConvertFromAiNode(aiNode *node) {
   for (auto &child : getChildren(node)) {
     std::string childName = child->mName.C_Str();
     // TODO check part names?
-    if (childName.find("|lights|")) {
+    if (childName.find("|lights|") != std::string::npos) {
       if (HasLights()) {
         throw std::runtime_error("Found two lights for part!");
       } else {

@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(from_xml_name) { // NOLINT(cert-err58-cpp)
   BOOST_TEST_REQUIRE(!node.empty());
 
   auto conn = Connection(node, ctx);
-  BOOST_TEST(conn.getName() == "*Connection02*");
+  BOOST_TEST(conn.getName() == "Connection02");
 }
 
 BOOST_AUTO_TEST_CASE(from_xml_no_parent) { // NOLINT(cert-err58-cpp)
@@ -114,48 +114,46 @@ BOOST_AUTO_TEST_CASE(from_ainode_name) { // NOLINT(cert-err58-cpp)
   auto ctx = TestUtil::GetTestContext("TEST");
 
   auto conn = Connection(ainode, ctx);
-  BOOST_TEST(conn.getName() == "Connection02");
+  BOOST_TEST(conn.getName() == "*Connection02*");
   delete ainode;
 }
-// TODO rewriteme
-//        BOOST_AUTO_TEST_CASE(xml_to_ainode_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
-//            auto ctx = TestUtil::GetTestContext("assets\\units\\size_s\\ship_arg_s_fighter_01_data");
-//            auto doc = TestUtil::GetXmlDocument("/assets/units/size_s/ship_arg_s_fighter_01.xml");
-//            auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
-//            node.remove_child("lods");
-//            BOOST_TEST_REQUIRE(!node.empty());
-//
-//            auto conn = Connection(node, ctx);
-//            auto result = conn.ConvertToAiNode();
-//            BOOST_TEST_REQUIRE(result->mNumChildren == 2);
-////        BOOST_TEST(result->mChildren[0]->mName); TODO someday
-//            TestUtil::checkAiNodeName(result->mChildren[0],
-//                                      "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ");
-//            delete doc;
-//            delete result;
-//        }
-//
 
-//        BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
-//            auto ctx = TestUtil::GetTestContext("TEST");
-//            auto node = new aiNode("*Connection02*");
-//            auto children = new aiNode *[1];
-//            std::string tagStr = "Connection02|tags|part animation iklink nocollision forceoutline detail_xl  ";
-//            children[0] = new aiNode(tagStr);
-//            node->addChildren(1, children);
-//            pugi::xml_document doc;
-//            auto outNode = doc.append_child("connections");
-//
-//            auto conn = Connection(node, ctx);
-//            conn.ConvertToGameFormat(outNode);
-//
-//            auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
-//            BOOST_TEST(std::string(connNode.attribute("tags").value()) ==
-//                       "part animation iklink nocollision forceoutline detail_xl  ");
-//
-//            delete node;
-//            delete[] children;
-//        }
+BOOST_AUTO_TEST_CASE(xml_to_ainode_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
+  auto ctx = TestUtil::GetTestContext(R"(assets\units\size_s\ship_arg_s_fighter_01)");
+  auto doc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
+  auto node = doc->select_node("/components/component/connections/connection[@name='Connection02']").node();
+  node.remove_child("lods");
+  BOOST_TEST_REQUIRE(!node.empty());
+
+  auto conn = Connection(node, ctx);
+  auto result = conn.ConvertToAiNode();
+  BOOST_TEST(result->mNumChildren == 1);
+  auto metadata = ctx->metadata->GetMetadata("Connection02");
+  BOOST_TEST_REQUIRE(metadata.count("tags") == 1);
+  BOOST_CHECK_EQUAL(metadata["tags"], "part animation iklink nocollision forceoutline detail_xl  ");
+  // TODO handle parenting better
+  BOOST_TEST_REQUIRE(metadata.count("parent") == 1);
+  BOOST_CHECK_EQUAL(metadata["parent"], "anim_main");
+
+  delete result;
+}
+
+BOOST_AUTO_TEST_CASE(ainode_to_xml_conn_attrs_tags) { // NOLINT(cert-err58-cpp)
+  auto ctx = TestUtil::GetTestContext("TEST");
+  auto node = new aiNode("[Cn]Connection02");
+  std::string tagStr = "part animation iklink nocollision forceoutline detail_xl  ";
+  ctx->metadata->SetAttribute("[Cn]Connection02", "tags", tagStr);
+  pugi::xml_document doc;
+  auto outNode = doc.append_child("connections");
+
+  auto conn = Connection(node, ctx);
+  conn.ConvertToGameFormat(outNode);
+
+  auto connNode = outNode.find_child_by_attribute("connection", "name", "Connection02");
+  BOOST_CHECK_EQUAL(std::string(connNode.attribute("tags").value()), tagStr);
+
+  delete node;
+}
 
 // TODO animations, etc
 // TODO ship_arg_s_fighter_01 restrictions

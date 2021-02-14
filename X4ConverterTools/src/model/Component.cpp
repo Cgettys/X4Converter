@@ -8,9 +8,10 @@ using namespace boost::algorithm;
 namespace model {
 using util::XmlUtil;
 
-Component::Component(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
+Component::Component(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx), Component::Qualifier) {}
 
-Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Component::Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx,
+                                                                                                Component::Qualifier) {
   CheckXmlElement(node, "component");
   if (!node.child("source")) {
     std::cerr << "source directory not specified" << std::endl;
@@ -48,12 +49,13 @@ aiNode *Component::ConvertToAiNode() {
   util::NodeMap nodes;
   auto result = nodes.CreateNode(getName());
   // Handle layers
-  auto layersNode = nodes.CreateNode("layers");
-  nodes.MakeParent(getName(), "layers");
+  //nodes.CreateNode("*layers*");
+  //nodes.MakeParent(getName(), "*layers*");
   for (auto &layer : layers) {
     auto *layerAiNode = layer.ConvertToAiNode();
     nodes.AddNode(layerAiNode);
-    nodes.MakeParent("layers", layer.getName());
+    //nodes.MakeParent("*layers*", layer.getName());
+    nodes.MakeParent(getName(), layer.getName());
   }
   // Convert all the nodes
   for (auto &conn : connections) {
@@ -77,24 +79,26 @@ void Component::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
   for (auto &child: getChildren(node)) {
     std::string childName = child->mName.C_Str();
-    if (childName.find('*') == std::string::npos) {
+    if (!starts_with(childName, "[")) {
       std::cerr << "Warning, possible non-component directly under root, ignoring: " << childName
                 << std::endl;
-    } else if (starts_with(childName, "layer")) {
+    } else if (matchesQualifier(childName, Layer::Qualifier)) {
       layers.emplace_back(child, ctx);
-    } else {
+    } else if (matchesQualifier(childName, Connection::Qualifier)) {
       connections.emplace_back(child, ctx);
       recurseOnChildren(child, ctx);
+    } else {
+      throw runtime_error("Unrecognized child type:" + childName);
     }
   }
 }
 
 void Component::recurseOnChildren(aiNode *tgt, const ConversionContext::Ptr &ctx) {
   std::string tgtName = tgt->mName.C_Str();
-  bool is_connection = tgtName.find('*') != std::string::npos;
+  bool is_connection = matchesQualifier(tgtName, Connection::Qualifier);
   for (auto &child : getChildren(tgt)) {
     std::string childName = child->mName.C_Str();
-    if (childName.find('*') != std::string::npos) {
+    if (matchesQualifier(childName, Connection::Qualifier)) {
       if (is_connection) {
         throw std::runtime_error("connection cannot have a connection as a parent!");
       }

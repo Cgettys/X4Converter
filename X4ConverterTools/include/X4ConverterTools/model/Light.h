@@ -11,6 +11,7 @@ enum LightKind {
 
 class Light : public AbstractElement {
  public:
+  static constexpr char Qualifier[] = "[Li]";
 
   explicit Light(pugi::xml_node &node, const ConversionContext::Ptr &ctx, std::string parentName);
 

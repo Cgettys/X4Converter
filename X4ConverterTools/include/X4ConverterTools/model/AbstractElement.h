@@ -10,9 +10,15 @@
 namespace model {
 class AbstractElement {
  public:
-  explicit AbstractElement(ConversionContext::Ptr ctx);
+  explicit AbstractElement(ConversionContext::Ptr ctx, std::string qualifier);
 
   virtual ~AbstractElement() = default;
+
+  std::string getQualifiedName();
+
+  static bool matchesQualifier(const std::string &n, const std::string &q);
+
+  std::string parseQualifiedName(const std::string &n);
 
   std::string getName();
 
@@ -51,6 +57,7 @@ class AbstractElement {
 
  private:
   std::string name;
+  std::string qualifier;
 
 };
 

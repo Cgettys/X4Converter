@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(xml) {
   BOOST_TEST_CHECKPOINT("Backward parsing");
   auto expectedDoc = TestUtil::GetXmlDocument(inputXMLPath);
   auto layer = expectedDoc->select_node("//components/component/layers/layer");
-  //layer.node().remove_child("lights");
+  layer.node().remove_child("lights");
   layer.node().remove_child("sounds");
   layer.node().remove_child("trailemitters");
 

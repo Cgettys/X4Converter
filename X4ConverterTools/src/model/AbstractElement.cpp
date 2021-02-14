@@ -3,11 +3,17 @@
 #include <X4ConverterTools/model/AbstractElement.h>
 #include <iostream>
 #include <X4ConverterTools/util/XmlUtil.h>
+#include <boost/algorithm/string.hpp>
 
 namespace model {
 using util::XmlUtil;
-AbstractElement::AbstractElement(ConversionContext::Ptr ctx) : ctx(std::move(ctx)) {
+AbstractElement::AbstractElement(ConversionContext::Ptr ctx, const std::string qualifier) :
+    ctx(std::move(ctx)),
+    qualifier(qualifier) {
 
+  if (qualifier.length() > 4) {
+    throw std::runtime_error("qualifier longer than allowed!");
+  }
 }
 
 std::string AbstractElement::getName() {
@@ -115,4 +121,16 @@ std::vector<aiNode *> AbstractElement::getChildren(aiNode *node) {
   return children;
 }
 
+std::string AbstractElement::getQualifiedName() {
+  return name + qualifier;
+};
+bool AbstractElement::matchesQualifier(const std::string &n, const std::string &q) {
+  return boost::algorithm::starts_with(n, q);
+}
+std::string AbstractElement::parseQualifiedName(const std::string &n) {
+  if (!matchesQualifier(n, qualifier)) {
+    throw std::runtime_error("parsed by incorrect type!");
+  }
+  return n.substr(qualifier.length());
+}
 }

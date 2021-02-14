@@ -18,6 +18,7 @@ Models the layer element and its children. waypoints, trailemitters, and sounds 
 
 class Layer : public AbstractElement {
  public:
+  static constexpr char Qualifier[] = "[La]";
   explicit Layer(const ConversionContext::Ptr &ctx);
 
   explicit Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id);

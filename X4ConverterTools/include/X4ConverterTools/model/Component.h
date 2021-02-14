@@ -10,6 +10,7 @@ namespace model {
 
 class Component : public AbstractElement {
  public:
+  static constexpr char Qualifier[] = "[Cm]";
   explicit Component(ConversionContext::Ptr ctx);
 
   explicit Component(pugi::xml_node &node, const ConversionContext::Ptr &ctx);
@@ -21,7 +22,6 @@ class Component : public AbstractElement {
   void ConvertToGameFormat(pugi::xml_node &out) override;
 
   uint32_t getNumberOfConnections();
-
  protected:
   std::vector<Connection> connections;
   std::vector<Layer> layers;

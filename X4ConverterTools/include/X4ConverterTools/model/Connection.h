@@ -11,7 +11,8 @@
 namespace model {
 class Connection : public AbstractElement {
  public:
-  explicit Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
+  static constexpr char Qualifier[] = "[Cn]";
+  explicit Connection(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx), Qualifier) {}
 
   explicit Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx);
 
@@ -27,7 +28,6 @@ class Connection : public AbstractElement {
   bool hasParent();
   void setParentName(std::string parentName);
   std::string getParentName();
-
  private:
   Offset offset;
   std::vector<Part> parts;

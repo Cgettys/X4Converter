@@ -61,12 +61,12 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
   auto shipName = "ship_arg_s_fighter_01";
   auto node = new aiNode(shipName);
   auto childrenZero = new aiNode *[2];
-  childrenZero[0] = new aiNode("*test_conn_0*");
-  childrenZero[1] = new aiNode("*test_conn_1*");
+  childrenZero[0] = new aiNode("[Cn]test_conn_0");
+  childrenZero[1] = new aiNode("[Cn]test_conn_1");
   auto childrenOne = new aiNode *[1];
-  childrenOne[0] = new aiNode("test_part_0");
+  childrenOne[0] = new aiNode("[P]test_part_0");
   auto childrenTwo = new aiNode *[1];
-  childrenTwo[0] = new aiNode("*test_conn_2*");
+  childrenTwo[0] = new aiNode("[Cn]test_conn_2");
   childrenOne[0]->addChildren(1, childrenTwo);
   childrenZero[0]->addChildren(1, childrenOne);
   node->addChildren(2, childrenZero);
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(ainode_to_xml_complicated) { // NOLINT(cert-err58-cpp)
 
   auto component = Component(ctx);
   component.ConvertFromAiNode(node);
-  BOOST_TEST(component.getNumberOfConnections() == 3);
+  BOOST_TEST_REQUIRE(component.getNumberOfConnections() == 3);
 
   component.ConvertToGameFormat(outNode);
 

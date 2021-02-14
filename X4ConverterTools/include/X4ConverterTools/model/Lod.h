@@ -8,7 +8,8 @@
 namespace model {
 class Lod : public AbstractElement {
  public:
-  explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx)) {}
+  static constexpr char Qualifier[] = "[Lo]";
+  explicit Lod(ConversionContext::Ptr ctx) : AbstractElement(std::move(ctx), Qualifier) {}
 
   aiNode *ConvertToAiNode() override {
     if (!ctx->ShouldConvertGeometry()) {

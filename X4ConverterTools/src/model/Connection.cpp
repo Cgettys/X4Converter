@@ -9,10 +9,9 @@ namespace model {
 using util::XmlUtil;
 
 Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx) :
-    AbstractElement(ctx), offset(node) {
+    AbstractElement(ctx, Connection::Qualifier), offset(node) {
   // TODO document that this gets the name as well
   CheckXmlElement(node, "connection");
-  setName("*" + getName() + "*");
 
   auto partsNode = node.child("parts");
   if (partsNode) {
@@ -24,7 +23,7 @@ Connection::Connection(pugi::xml_node &node, const ConversionContext::Ptr &ctx) 
 }
 
 Connection::Connection(aiNode *node, ConversionContext::Ptr ctx) :
-    AbstractElement(std::move(ctx)) {
+    AbstractElement(std::move(ctx), Connection::Qualifier) {
   ConvertFromAiNode(node);
 }
 
@@ -67,7 +66,6 @@ std::string Connection::getParentName() {
 
 void Connection::ConvertFromAiNode(aiNode *node) {
   AbstractElement::ConvertFromAiNode(node);
-  setName(getName().substr(1, getName().size() - 2));
 
   offset.ReadAiNode(node);
 
@@ -84,7 +82,7 @@ void Connection::ConvertToGameFormat(pugi::xml_node &out) {
   if (std::string(out.name()) != "connections") {
     throw std::runtime_error("parent of connection must be connections xml element");
   }
-  auto outName = getName();
+  auto outName = getName().substr(4);
   auto node = XmlUtil::AddChildByAttr(out, "connection", "name", outName);
   WriteAttrs(node);
   offset.WriteXml(node);

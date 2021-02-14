@@ -1,6 +1,7 @@
 #include "X4ConverterTools/util/MetadataStore.h"
 
 #include <utility>
+#include <X4ConverterTools/util/XmlUtil.h>
 namespace util {
 MetadataStore::MetadataStore(std::string metadataFilePath) : metadataPath(std::move(metadataFilePath)) {
 
@@ -19,14 +20,13 @@ void MetadataStore::WriteDocument() {
   metadoc.save_file(metadataPath.c_str());
 }
 void MetadataStore::WriteXml(pugi::xml_node &target) {
-  auto kvNode = target.child("misc");
+  auto kvNode = XmlUtil::AddChild(target, "misc");
   for (const auto &obj : allMetadata) {
-    auto objNode = kvNode.child("object");
-    objNode.child("name").set_value(obj.first.c_str());
+    auto objNode = XmlUtil::AddChildByAttr(kvNode, "object", "name", obj.first.c_str());
     for (const auto &pair : obj.second) {
-      auto attrNode = objNode.child("attribute");
-      attrNode.child("key").set_value(pair.first.c_str());
-      attrNode.child("value").set_value(pair.second.c_str());
+      auto attrNode = XmlUtil::AddChild(objNode, "attribute");
+      XmlUtil::AddChild(attrNode, "key").set_value(pair.first.c_str());
+      XmlUtil::AddChild(attrNode, "value").set_value(pair.second.c_str());
     }
   }
 }

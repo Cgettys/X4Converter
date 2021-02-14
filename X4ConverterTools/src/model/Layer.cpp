@@ -10,11 +10,11 @@ namespace model {
 using namespace boost;
 using util::AssimpUtil;
 using util::XmlUtil;
-Layer::Layer(const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+Layer::Layer(const ConversionContext::Ptr &ctx) : AbstractElement(ctx, Qualifier) {
 
 }
 
-Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx) {
+Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : AbstractElement(ctx, Qualifier) {
   CheckXmlElement(node, "layer", false);
   layerId = id;
   auto myName = str(format("layer|%d") % layerId);
@@ -23,7 +23,7 @@ Layer::Layer(pugi::xml_node &node, const ConversionContext::Ptr &ctx, int id) : 
   lights = LightsGroup(ctx, lightsNode, myName);
 }
 
-model::Layer::Layer(aiNode *node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx) {
+model::Layer::Layer(aiNode *node, const ConversionContext::Ptr &ctx) : AbstractElement(ctx, Qualifier) {
   ConvertFromAiNode(node);
 }
 

@@ -11,6 +11,7 @@
 namespace model {
 class Part : public AbstractElement {
  public:
+  static constexpr char Qualifier[] = "[P]";
   explicit Part(const ConversionContext::Ptr &ctx);
 
   explicit Part(pugi::xml_node &node, const ConversionContext::Ptr &ctx);
