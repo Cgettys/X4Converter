@@ -1,5 +1,6 @@
 #include "X4ConverterTools/model/Layer.h"
 // TODO waypoints, trailemitters
+
 #include <boost/format.hpp>
 #include <utility>
 #include <X4ConverterTools/util/XmlUtil.h>

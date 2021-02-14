@@ -6,6 +6,16 @@
 #include "Light.h"
 
 namespace model {
+/*
+Models the layer element and its children. waypoints, trailemitters, and sounds are not currently handled
+<layer>
+    <waypoints/>
+    <lights/>
+    <trailemitters/>
+    <sounds/>
+</layer>
+*/
+
 class Layer : public AbstractElement {
  public:
   explicit Layer(const ConversionContext::Ptr &ctx);

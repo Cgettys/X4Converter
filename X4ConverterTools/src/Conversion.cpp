@@ -21,6 +21,11 @@ ConvertXmlToDae(const ConversionContext::Ptr &ctx,
   ctx->SetScene(pScene);
   auto root_xml = doc.root();
   // TODO Components class?
+  // Basic structure is that each component in the .xml files has a class that handles
+  // serialization, deserialization, & conversion
+  // Binary Files are represented by collections of classes under their
+  // respective folders that likewise handle serialization, deserialization & conversion
+  // Right now, the Components, Layers, and Connections elements are not explicitly modelled
   auto componentsNode = root_xml.child("components");
   if (componentsNode.empty()) {
     throw std::runtime_error("<components> node not found");

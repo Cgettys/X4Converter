@@ -48,7 +48,8 @@ aiNode *Component::ConvertToAiNode() {
   util::NodeMap nodes;
   auto result = nodes.CreateNode(getName());
   // Handle layers
-  nodes.CreateNode("layers");
+  auto layersNode = nodes.CreateNode("layers");
+  nodes.MakeParent(getName(), "layers");
   for (auto &layer : layers) {
     auto *layerAiNode = layer.ConvertToAiNode();
     nodes.AddNode(layerAiNode);
