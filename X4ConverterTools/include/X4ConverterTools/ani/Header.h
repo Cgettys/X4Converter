@@ -1,8 +1,10 @@
 #pragma once
 
 #include <assimp/StreamReader.h>
+#include <assimp/StreamWriter.h>
 #include <boost/format.hpp>
 #include <iostream>
+#include <pugixml.hpp>
 
 namespace ani {
 class Header {
@@ -10,6 +12,8 @@ class Header {
   Header();
 
   explicit Header(Assimp::StreamReaderLE &reader);
+
+  void WriteGameFiles(Assimp::StreamWriterLE &writer);
 
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
  protected:

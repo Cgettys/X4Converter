@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assimp/StreamReader.h>
+#include <assimp/StreamWriter.h>
 #include <utility>
 #include <pugixml.hpp>
 
@@ -23,6 +24,8 @@ class Keyframe {
   explicit Keyframe(pugi::xml_node &node);
 
   explicit Keyframe(Assimp::StreamReaderLE &reader);
+
+  void WriteToGameFiles(Assimp::StreamWriterLE &writer);
 
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
   static std::string getInterpolationTypeName(InterpolationType type);

@@ -14,6 +14,7 @@ namespace fs = boost::filesystem;
 using namespace boost;
 using namespace Assimp;
 using namespace ani;
+using namespace test;
 BOOST_AUTO_TEST_SUITE(UnitTests)
 
 BOOST_AUTO_TEST_SUITE(AnimUnitTests)
@@ -21,29 +22,112 @@ BOOST_AUTO_TEST_SUITE(AnimUnitTests)
 BOOST_AUTO_TEST_CASE(ani_read_basic) {
   // TODO mock reading & writing to memory - would be faster & good form
   // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
-  auto aniFile =
-      test::TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
   IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
-  AnimFile file(sourceStream);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  AnimFile file(pStreamReader);
   std::cout << file.validate();
 }
 
+
+BOOST_AUTO_TEST_CASE(ani_read_basic_2) {
+  // TODO mock reading & writing to memory - would be faster & good form
+  // See https://github.com/assimp/assimp/blob/master/include/assimp/MemoryIOWrapper.h
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/DOOR_ARG_S_FIGHTER_01_DATA.ANI";
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  AnimFile file(pStreamReader);
+  std::cout << file.validate();
+}
+
+BOOST_AUTO_TEST_CASE(ani_header) { // NOLINT(cert-err58-cpp)
+  // TODO fixme
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  // Copy the first 16 bytes for later comparison
+  AnimFile file(pStreamReader);
+
+  pugi::xml_document doc;
+  auto rootNode = doc.root();
+  file.WriteIntermediateRepr(xmlFile.string(), rootNode);
+
+  AnimFile reverse(rootNode);
+  auto fwdHeader = file.GetHeader();
+  auto revHeader = reverse.GetHeader();
+  BOOST_CHECK_EQUAL(fwdHeader.getNumAnims(), revHeader.getNumAnims());
+  BOOST_CHECK_EQUAL(fwdHeader.getKeyOffsetBytes(),revHeader.getKeyOffsetBytes());
+  BOOST_CHECK_EQUAL(fwdHeader.getVersion(), revHeader.getVersion());
+
+}
+
+BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
+  // TODO fixme
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+  auto aniOutFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
+  auto aniBinOutFile = TestUtil::GetBasePath()  / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.out.ANI";
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+
+  // Copy ani file for later comparison
+  auto fileSize = pStreamReader.GetRemainingSize();
+  std::vector<char> buffer;
+  buffer.resize(fileSize);
+  pStreamReader.CopyAndAdvance(buffer.data(), fileSize);
+  pStreamReader.SetCurrentPos(0);
+
+  AnimFile file(pStreamReader);
+
+
+
+  IOStream *sinkStream = io->Open(aniBinOutFile.string(), "wb");
+  BOOST_TEST_REQUIRE(sinkStream != nullptr);
+  Assimp::StreamWriterLE pStreamWriter (sinkStream);
+
+  pugi::xml_document doc;
+  auto node = doc.root();
+  file.WriteGameFiles(pStreamWriter, node);
+
+  BOOST_TEST_REQUIRE(fileSize ==  pStreamWriter.GetCurrentPos());
+  pStreamWriter.Flush();
+  sinkStream->Flush();
+
+  IOStream *checkStream = io->Open(aniBinOutFile.string(), "rb");
+  BOOST_TEST_REQUIRE(checkStream != nullptr);
+  Assimp::StreamReaderLE pCheckReader (checkStream);
+  auto resultSize = pCheckReader.GetRemainingSize();
+  std::vector<char> resultBuffer;
+  resultBuffer.resize(resultSize);
+  pCheckReader.CopyAndAdvance(resultBuffer.data(), resultSize);
+
+  BOOST_TEST_REQUIRE(fileSize == resultSize);
+  BOOST_TEST(buffer == resultBuffer, boost::test_tools::per_element());
+
+  // TODO validate
+}
 BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
-  auto aniFile =
-      test::TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
-  auto xmlFile =
-      test::TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
-  auto aniOutFile =
-      test::TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+  auto aniOutFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.out.anixml";
 //auto aniFile = "test::TestUtil::GetBasePath()/test_files/struct_bt_ut_omicron_superyard_data.ani";
 //        auto aniFile =current_path().string()+"/assets/fx/lensflares/LENSFLARES_DATA.ANI";
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
   IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
-  AnimFile file(sourceStream);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  AnimFile file(pStreamReader);
   std::cout << file.validate();
 
   // TODO fixme
@@ -56,30 +140,34 @@ BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO validate
 }
 
-//        BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
-//            // TODO fixme
-//            const std::string aniFile =
-//                    test::TestUtil::GetBasePath() + "/assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
-//            const std::string xmlFile =
-//                    test::TestUtil::GetBasePath() + "/assets/units/size_s/ship_gen_s_fighter_01.xml";
-//
-//            std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
-//            IOStream *sourceStream = io->Open(aniFile, "rb");
-//            BOOST_TEST_REQUIRE(sourceStream != nullptr);
-//            AnimFile file(sourceStream);
-//            std::string expected = file.validate();
-//            std::cout << "Expected:\n" << expected;
-//
-//            // TODO fixme
-//
-//            pugi::xml_document doc;
-//            file.WriteIntermediateRepr(xmlFile, doc.root());
-//            AnimFile reverse = AnimFile(doc.root());
-//            std::string actual = reverse.validate();
-//            std::cout << "Actual:\n" << actual;
-//            BOOST_TEST(expected == actual);
-//            // TODO validate better
-//        }
+BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
+  // TODO fixme
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  AnimFile file(pStreamReader);
+  std::string expected = file.validate();
+  std::cout << "Expected:\n" << expected;
+
+  // TODO fixme
+
+  pugi::xml_document doc;
+  auto rootNode = doc.root();
+  file.WriteIntermediateRepr(xmlFile.string(), rootNode);
+
+  AnimFile reverse(rootNode);
+  std::string actual = reverse.validate();
+  std::cout << "Actual:\n" << actual;
+  BOOST_TEST(expected == actual);
+  // TODO validate better
+}
+
+
+
 
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -99,8 +187,9 @@ BOOST_AUTO_TEST_CASE(ani_struct_correctness) {
 //                std::cout << filePath << std::endl;
 
       auto sourceStream = io->Open(filePath.generic_string(), "rb");
+      Assimp::StreamReaderLE pStreamReader (sourceStream);
       try {
-        AnimFile file(sourceStream);
+        AnimFile file(pStreamReader);
         std::cout << filePath.c_str() << std::endl;
         file.validate();
       } catch (std::runtime_error &e) {

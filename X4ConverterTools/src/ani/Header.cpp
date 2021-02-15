@@ -22,6 +22,13 @@ Header::Header(Assimp::StreamReaderLE &reader) {
   validate();
 }
 
+void Header::WriteGameFiles(Assimp::StreamWriterLE &writer) {
+  writer << NumAnims;
+  writer << KeyOffsetBytes;
+  writer << Version;
+  writer << Padding;
+}
+
 std::string Header::validate() {
   std::string result;
   bool valid = true;

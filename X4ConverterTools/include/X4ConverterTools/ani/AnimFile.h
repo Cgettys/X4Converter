@@ -18,7 +18,7 @@ class AnimFile {
  public:
   AnimFile();
 
-  explicit AnimFile(Assimp::IOStream *pStream);
+  explicit AnimFile(Assimp::StreamReaderLE &pStreamReader);
 
   explicit AnimFile(pugi::xml_node &node);
 

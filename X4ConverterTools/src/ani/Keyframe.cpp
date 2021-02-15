@@ -22,6 +22,7 @@ namespace ani {
 */
 
 Keyframe::Keyframe(StreamReaderLE &reader) {
+  // 128 bytes
   reader >> ValueX >> ValueY >> ValueZ;
   reader >> InterpolationX >> InterpolationY >> InterpolationZ;
   reader >> Time;
@@ -52,6 +53,33 @@ Keyframe::Keyframe(pugi::xml_node &node) {
 
 }
 
+void Keyframe::WriteToGameFiles(StreamWriterLE &writer) {
+  auto startOffset = writer.GetCurrentPos();
+  writer << ValueX << ValueY << ValueZ;
+  writer << InterpolationX << InterpolationY << InterpolationZ;
+  writer << Time;
+
+  writer << CPX1x << CPX1y;
+  writer << CPX2x << CPX2y;
+  writer << CPY1x << CPY1y;
+  writer << CPY2x << CPY2y;
+  writer << CPZ1x << CPZ1y;
+  writer << CPZ2x << CPZ2y;
+
+  writer << Tens;
+  writer << Cont;
+  writer << Bias;
+  writer << EaseIn;
+  writer << EaseOut;
+  writer << Deriv;
+  writer << DerivInX << DerivInY << DerivInZ;
+  writer << DerivOutX << DerivOutY << DerivOutZ;
+  writer << AngleKey;
+  auto finishOffset = writer.GetCurrentPos();
+  if (finishOffset - startOffset != 128) {
+    throw runtime_error("Keyframe should have been 128 bytes");
+  }
+}
 std::string Keyframe::validate() {
   bool valid = true;
   std::stringstream ret;

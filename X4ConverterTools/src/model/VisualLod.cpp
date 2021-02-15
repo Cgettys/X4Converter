@@ -47,8 +47,9 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
     }
     XmlUtil::WriteAttr(lodNode, "index", std::to_string(index));
     auto matsNode = XmlUtil::AddChild(lodNode, "materials");
-    // TODO write out xmfFile
     int matIdx = 1;
+    // XML appears to just reiterate what's in the .XMF file (maybe preloading of textures?)
+    // So we just regenerate it rather than requiring humans to do so manually
     for (auto mat : xmfFile->GetMaterials()) {
       // TODO ordering
       // TODO debug source of uninit.
@@ -58,7 +59,6 @@ void VisualLod::ConvertToGameFormat(pugi::xml_node &out) {
       XmlUtil::WriteAttr(matNode, "ref", matName);
     }
   }
-
   if (ctx->ShouldConvertGeometry()) {
     xmfFile->WriteToFile(ctx->fsUtil->GetOutputPath(getName() + ".xmf"));
   }

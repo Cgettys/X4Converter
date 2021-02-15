@@ -66,8 +66,7 @@ BOOST_AUTO_TEST_CASE(lod_round_trip) { // NOLINT(cert-err58-cpp)
   ctx2->SetScene(&scene);
 
   auto lodBackward = VisualLod(ctx2);
-  auto outDoc = TestUtil::GetXmlDocument("assets/units/size_s/ship_arg_s_fighter_01.xml");
-  auto outNode = outDoc->select_node(
+  auto outNode = doc->select_node(
       "/components/component/connections/connection[@name='Connection01']/parts/part/lods").node();
   outNode.remove_child("lod");
   outNode.remove_child("lod");

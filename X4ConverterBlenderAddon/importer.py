@@ -83,7 +83,7 @@ class ImportAsset(Operator, ImportHelper):
         bpy.ops.wm.collada_import(filepath=dae_path)
         
         if (self.delete_lods):
-            bpy.ops.object.select_pattern(pattern="*lod[123456789]*", case_sensitive=True, extend=False)
+            bpy.ops.object.select_pattern(pattern="[[]lo[]]lod[1-9]", case_sensitive=True, extend=False)
             bpy.ops.object.delete(use_global=True)
         else:
             for obj in ctx.scene.objects:

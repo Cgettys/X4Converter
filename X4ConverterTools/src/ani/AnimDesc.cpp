@@ -62,30 +62,6 @@ AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
 
 }
 
-// Export
-void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
-  for (char &c : Name) {
-    writer << c;
-
-  }
-
-  for (char &c : SubName) {
-    writer << c;
-  }
-
-  SafeName = std::string(Name);
-  SafeSubName = std::string(SubName);
-  writer << NumPosKeys;
-  writer << NumRotKeys;
-  writer << NumScaleKeys;
-  writer << NumPreScaleKeys;
-  writer << NumPostScaleKeys;
-  writer << Duration;
-  for (int &i : Padding) {
-    writer << i;
-  }
-}
-
 void AnimDesc::read_frames(StreamReaderLE &reader) {
   for (int i = 0; i < NumPosKeys; i++) {
     posKeys.emplace_back(reader);
@@ -101,6 +77,45 @@ void AnimDesc::read_frames(StreamReaderLE &reader) {
   }
   for (int i = 0; i < NumPostScaleKeys; i++) {
     postScaleKeys.emplace_back(reader);
+  }
+}
+// Export
+void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
+  //  TODO: populate the Num fields from # of frames earlier
+  for (char &c : Name) {
+    writer << c;
+
+  }
+
+  for (char &c : SubName) {
+    writer << c;
+  }
+
+  writer << NumPosKeys;
+  writer << NumRotKeys;
+  writer << NumScaleKeys;
+  writer << NumPreScaleKeys;
+  writer << NumPostScaleKeys;
+  writer << Duration;
+  for (int &i : Padding) {
+    writer << i;
+  }
+}
+void AnimDesc::write_frames(StreamWriterLE &writer) {
+  for (int i = 0; i < NumPosKeys; i++) {
+    posKeys[i].WriteToGameFiles(writer);
+  }
+  for (int i = 0; i < NumRotKeys; i++) {
+    rotKeys[i].WriteToGameFiles(writer);
+  }
+  for (int i = 0; i < NumScaleKeys; i++) {
+    scaleKeys[i].WriteToGameFiles(writer);
+  }
+  for (int i = 0; i < NumPreScaleKeys; i++) {
+    preScaleKeys[i].WriteToGameFiles(writer);
+  }
+  for (int i = 0; i < NumPostScaleKeys; i++) {
+    postScaleKeys[i].WriteToGameFiles(writer);
   }
 }
 

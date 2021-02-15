@@ -11,9 +11,7 @@ AnimFile::AnimFile() : header() {
 
 }
 
-AnimFile::AnimFile(IOStream *pStream) {        // TODO endian handling??
-  // TODO pass this in instead of pstream?
-  auto pStreamReader = StreamReaderLE(pStream, false);
+AnimFile::AnimFile(Assimp::StreamReaderLE &pStreamReader) {
   header = Header(pStreamReader);
   descs = std::vector<AnimDesc>();
   for (int i = 0; i < header.getNumAnims(); i++) {
@@ -142,7 +140,24 @@ void AnimFile::HandleConnection(pugi::xml_node &tgtNode, pugi::xml_node &conn) c
 }
 
 void AnimFile::WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node &node) {
-  // TODO
+  auto numAnims = descs.size();
+  header.setNumAnims(numAnims);
+
+  // Write header
+  header.WriteGameFiles(writer);
+  // Write animation descriptions
+  for (int i = 0; i < numAnims; i++) {
+    descs[i].WriteToGameFiles(writer);
+  }
+  if (writer.GetCurrentPos() != header.getKeyOffsetBytes()) {
+    std::string err = str(format("AnimFile: current position (%1%) does not align with the data offset (%2%)") %
+        writer.GetCurrentPos() % header.getKeyOffsetBytes());
+    throw std::runtime_error(err);
+  }
+  // Write corresponding keyframes
+  for (int i = 0; i < numAnims; i++) {
+    descs[i].write_frames(writer);
+  }
 }
 
 }

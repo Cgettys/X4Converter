@@ -19,8 +19,9 @@ class AnimDesc {
 
   AnimDesc(const std::string &partName, pugi::xml_node node);
 
+  // Read the metadata
   explicit AnimDesc(Assimp::StreamReaderLE &reader);
-
+  // Read the actual keyframes
   void read_frames(Assimp::StreamReaderLE &reader);
 
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
@@ -28,8 +29,11 @@ class AnimDesc {
 
   void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType, std::string axis) const;
 
+  // Write the metadata
   void WriteToGameFiles(Assimp::StreamWriterLE &writer);
 
+  // Write the actual keyframes
+  void write_frames(Assimp::StreamWriterLE &writer);
   std::string SafeSubName;
  protected:
   char Name[64] = {0};
