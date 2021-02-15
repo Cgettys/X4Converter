@@ -225,55 +225,13 @@ std::string AnimDesc::validate() {
       ret.append("PADDING MUST BE 0");
     }
   }
-  ret.append("Position Keyframes:\n");
-  for (int i = 0; i < NumPosKeys; i++) {
-    try {
-      ret.append(posKeys[i].validate());
-    } catch (std::exception &e) {
-      ret.append(e.what());
-      valid = false;
-    }
-  }
 
-  ret.append("Rotation Keyframes:\n");
-  for (int i = 0; i < NumRotKeys; i++) {
-    try {
-      ret.append(rotKeys[i].validate());
-    } catch (std::exception &e) {
-      ret.append(e.what());
-      valid = false;
-    }
-  }
+  valid &= validateFrameType(ret, "Position", NumPosKeys, posKeys);
+  valid &= validateFrameType(ret, "Rotation", NumRotKeys, rotKeys);
+  valid &= validateFrameType(ret, "Scale", NumScaleKeys, scaleKeys);
+  valid &= validateFrameType(ret, "PreScale", NumPreScaleKeys, preScaleKeys);
+  valid &= validateFrameType(ret, "PostScale", NumPostScaleKeys, postScaleKeys);
 
-  ret.append("Scale Keyframes:\n");
-  for (int i = 0; i < NumScaleKeys; i++) {
-    try {
-      ret.append(scaleKeys[i].validate());
-    } catch (std::exception &e) {
-      ret.append(e.what());
-      valid = false;
-    }
-  }
-
-  ret.append("Prescale Keyframes:\n");
-  for (int i = 0; i < NumPreScaleKeys; i++) {
-    try {
-      ret.append(preScaleKeys[i].validate());
-    } catch (std::exception &e) {
-      ret.append(e.what());
-      valid = false;
-    }
-  }
-
-  ret.append("PostScale Keyframes:\n");
-  for (int i = 0; i < NumPostScaleKeys; i++) {
-    try {
-      ret.append(postScaleKeys[i].validate());
-    } catch (std::exception &e) {
-      ret.append(e.what());
-      valid = false;
-    }
-  }
   if (NumPreScaleKeys || NumPostScaleKeys) {
     ret.append("WARNING: Pre/Post scale keyframes are not yet supported by this converter");
   }
@@ -287,6 +245,29 @@ std::string AnimDesc::validate() {
   return ret;
 }
 
+bool AnimDesc::validateFrameType(std::string &ret,
+                                 std::string name,
+                                 size_t expectedFrameCount,
+                                 std::vector<Keyframe> frames) {
+  auto valid = true;
+  auto actualFrameCount = frames.size();
+  ret.append(name + " Keyframes:\n");
+  if (expectedFrameCount != actualFrameCount) {
+    ret.append(str(
+        format("Number of Keys specified in description for %1% != Number of Keys provided: %2% vs %3%") % name
+            % expectedFrameCount % actualFrameCount));
+    valid = false;
+  }
+  for (int i = 0; i < actualFrameCount; i++) {
+    try {
+      ret.append(frames[i].validate());
+    } catch (std::exception &e) {
+      ret.append(e.what());
+      valid = false;
+    }
+  }
+  return valid;
+}
 void AnimDesc::WriteIntermediateRepr(pugi::xml_node tgtNode) const {
   std::string keys[] = {"location", "rotation_euler", "scale"};
   std::string axes[] = {"X", "Y", "Z"};

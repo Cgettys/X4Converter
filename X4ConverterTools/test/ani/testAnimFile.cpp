@@ -116,6 +116,22 @@ BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
 
   // TODO validate
 }
+
+BOOST_AUTO_TEST_CASE(ani_double) { // NOLINT(cert-err58-cpp)
+  // TODO fixme
+  auto aniFile = TestUtil::GetBasePath() / "X2PEGASUS_DATA.ANI";
+  auto aniBinOutFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.out.ANI";
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader(sourceStream);
+
+  AnimFile file(pStreamReader);
+  std::cout << file.validate();
+
+  // TODO validate
+}
+
 BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
   auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";

@@ -52,5 +52,10 @@ class AnimDesc {
   std::vector<Keyframe> preScaleKeys;
   std::vector<Keyframe> postScaleKeys;
 
+  static bool validateFrameType(std::string &ret,
+                                std::string name,
+                                size_t expectedFrameCount,
+                                std::vector<Keyframe> frames);
+
 };
 }
