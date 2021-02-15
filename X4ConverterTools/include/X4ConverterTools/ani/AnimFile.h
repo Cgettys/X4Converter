@@ -27,17 +27,15 @@ class AnimFile {
   std::string validate(); // Debug method
   [[nodiscard]] Header GetHeader() const;
 
-  void SetHeader(Header header);
-
   void WriteIntermediateRepr(const std::string &xmlPath, pugi::xml_node &tgtNode) const;
 
   void HandleConnection(pugi::xml_node &tgtNode, pugi::xml_node &conn) const;
 
   void WriteGameFiles(Assimp::StreamWriterLE &writer, pugi::xml_node &node);
 
+  std::vector<AnimDesc> descs;
  protected:
   Header header = Header();
-  std::vector<AnimDesc> descs;
 
 };
 }

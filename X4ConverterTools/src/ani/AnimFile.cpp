@@ -51,9 +51,6 @@ Header AnimFile::GetHeader() const {
   return header;
 }
 
-void AnimFile::SetHeader(Header h) {
-  header = h;
-}
 
 std::string AnimFile::validate() {
   std::string s;

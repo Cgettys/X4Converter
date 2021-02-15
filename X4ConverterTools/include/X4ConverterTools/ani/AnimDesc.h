@@ -34,11 +34,23 @@ class AnimDesc {
 
   // Write the actual keyframes
   void write_frames(Assimp::StreamWriterLE &writer);
+  std::string SafeName;
   std::string SafeSubName;
+
  protected:
+  std::vector<Keyframe> posKeys;
+  std::vector<Keyframe> rotKeys;
+  std::vector<Keyframe> scaleKeys;
+  std::vector<Keyframe> preScaleKeys;
+  std::vector<Keyframe> postScaleKeys;
+  static bool validateFrameType(std::string &ret,
+                                std::string name,
+                                size_t expectedFrameCount,
+                                std::vector<Keyframe> frames);
+ private:
+  // Physical representation
   char Name[64] = {0};
   char SubName[64] = {0};
-  std::string SafeName;
   int NumPosKeys = 0;
   int NumRotKeys = 0;
   int NumScaleKeys = 0;
@@ -46,16 +58,5 @@ class AnimDesc {
   int NumPostScaleKeys = 0;
   float Duration = 0;
   int Padding[2] = {0};
-  std::vector<Keyframe> posKeys;
-  std::vector<Keyframe> rotKeys;
-  std::vector<Keyframe> scaleKeys;
-  std::vector<Keyframe> preScaleKeys;
-  std::vector<Keyframe> postScaleKeys;
-
-  static bool validateFrameType(std::string &ret,
-                                std::string name,
-                                size_t expectedFrameCount,
-                                std::vector<Keyframe> frames);
-
 };
 }

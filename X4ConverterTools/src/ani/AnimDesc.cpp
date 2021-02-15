@@ -31,33 +31,26 @@ AnimDesc::AnimDesc(StreamReaderLE &reader) {
 // Export Conversion
 AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
   // TODO validate against what's actually written
-  std::fill(Name, Name + sizeof(Name), 0);
-  std::fill(SubName, SubName + sizeof(SubName), 0);
   SafeName = partName;
-  memcpy(Name, partName.c_str(), partName.size());
   SafeSubName = node.attribute("subname").as_string();
-  memcpy(SubName, SafeSubName.c_str(), SafeSubName.size());
   // TODO validate better
   auto locNode = node.child("location");
   if (locNode) {
     for (auto &keyNode : locNode.children()) {
       posKeys.emplace_back(keyNode);
     }
-    NumPosKeys = numeric_cast<int>(posKeys.size());
   }
   auto rotNode = node.child("rotation_euler");
   if (rotNode) {
     for (auto &keyNode : rotNode.children()) {
       rotKeys.emplace_back(keyNode);
     }
-    NumRotKeys = numeric_cast<int>(rotKeys.size());
   }
   auto scaleNode = node.child("scale");
   if (scaleNode) {
     for (auto &keyNode : scaleNode.children()) {
       scaleKeys.emplace_back(keyNode);
     }
-    NumScaleKeys = numeric_cast<int>(scaleKeys.size());
   }
 
 }
@@ -81,7 +74,26 @@ void AnimDesc::read_frames(StreamReaderLE &reader) {
 }
 // Export
 void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
-  //  TODO: populate the Num fields from # of frames earlier
+  // Copy names into their character buffers
+  // Not sure if 63 or 64 is the limit, not pushing it
+  if (SafeName.size() > 63) {
+    throw runtime_error("Name cannot be longer than 63 bytes");
+  }
+  if (SafeSubName.size() > 63) {
+    throw runtime_error("SubName cannot be longer than 63 bytes");
+  }
+  std::fill(Name, Name + sizeof(Name), 0);
+  std::fill(SubName, SubName + sizeof(SubName), 0);
+  memcpy(Name, SafeName.c_str(), SafeName.size());
+  memcpy(SubName, SafeSubName.c_str(), SafeSubName.size());
+
+  // Populate the Num XYZ fields from their respective vectors' sizes
+  NumPosKeys = numeric_cast<int>(posKeys.size());
+  NumRotKeys = numeric_cast<int>(rotKeys.size());
+  NumScaleKeys = numeric_cast<int>(scaleKeys.size());
+  NumPreScaleKeys = numeric_cast<int>(preScaleKeys.size());
+  NumPostScaleKeys = numeric_cast<int>(postScaleKeys.size());
+
   for (char &c : Name) {
     writer << c;
 

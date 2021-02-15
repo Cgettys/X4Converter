@@ -118,16 +118,46 @@ BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
 }
 
 BOOST_AUTO_TEST_CASE(ani_double) { // NOLINT(cert-err58-cpp)
-  // TODO fixme
+  // File path for input, output
   auto aniFile = TestUtil::GetBasePath() / "X2PEGASUS_DATA.ANI";
-  auto aniBinOutFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.out.ANI";
+  auto aniBinOutFile = TestUtil::GetBasePath() / "X2PEGASUS_DATA_OUT.ANI";
+  // Setup input
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
   IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
   Assimp::StreamReaderLE pStreamReader(sourceStream);
 
+  // Read in ANI file
   AnimFile file(pStreamReader);
+  // Print details of file
   std::cout << file.validate();
+
+  // Find the animations we care about; create copies with new names
+  std::vector<AnimDesc> interestingAnims;
+  for (const auto &desc: file.descs) {
+    if (desc.SafeName.compare("anim_ladder") == 0 || desc.SafeName.compare("anim_ladder_board") == 0) {
+      AnimDesc descCopy(desc);
+      descCopy.SafeName = descCopy.SafeName + "2";
+      interestingAnims.push_back(descCopy);
+    }
+  }
+  // We expected 8 of them based on reading through the output of file.validate
+  BOOST_TEST_REQUIRE(interestingAnims.size() == 8);
+
+  // Add them to the file
+  for (auto &desc : interestingAnims) {
+    file.descs.push_back(desc);
+  }
+
+  IOStream *sinkStream = io->Open(aniBinOutFile.string(), "wb");
+  BOOST_TEST_REQUIRE(sinkStream != nullptr);
+  Assimp::StreamWriterLE pStreamWriter(sinkStream);
+
+  pugi::xml_document doc;
+  auto node = doc.root();
+  file.WriteGameFiles(pStreamWriter, node);
+  std::cout << file.validate();
+
 
   // TODO validate
 }
