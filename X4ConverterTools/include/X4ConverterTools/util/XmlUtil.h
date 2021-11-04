@@ -30,7 +30,7 @@ class XmlUtil {
   static aiQuaternion ReadAttrQuat(xml_node &target);
   static void WriteAttrQuat(xml_node &target, aiQuaternion &val);
 
-  static bool WriteRotation(xml_node &offsetNode, aiQuaternion &val);
+  static void WriteRotation(xml_node &offsetNode, aiQuaternion &val);
 
   static bool HasChildren(xml_node &node);
 

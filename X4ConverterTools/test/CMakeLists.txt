@@ -30,7 +30,7 @@ target_compile_definitions(test_executable PRIVATE "X4ConverterTools_TEST=TRUE")
 target_link_libraries(test_executable Boost::unit_test_framework ${assimp_LIB} ${ZLIB_LIB} pugixml X4ConverterTools gcov)
 # declares a test with our executable
 # NOTE: You MUST set the environment variable X4_UNPACKED_ROOT to point at wherever your unpacked game files are to run tests
-# E.g. /home/cg/X4/unpacked (note that you must not include the final slash)
+# E.g. ~/X4/unpacked (note that you must not include the final slash)
 add_test(NAME tests COMMAND test_executable)
 # Doesn't work, set it the old fashioned way...
 #set_tests_properties(tests PROPERTIES ENVIRONMENT X4_UNPACKED_ROOT=${X4_UNPACKED_ROOT})

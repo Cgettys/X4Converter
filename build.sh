@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-cd build &&
-cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . -- -j8 &&
+cd cmake-build-debug &&
+cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build . -- -j16 &&
 #ctest
-./X4ConverterTools/test/test_executable
+#./X4ConverterTools/test/test_executable
 cd ..
 
-UNPACKED_DIR="/home/cg/Desktop/X4/unpacked"
+UNPACKED_DIR="$HOME/Desktop/X4/unpacked"
 #./build/X4ConverterApp/X4ConverterApp importxmf "${UNPACKED_DIR}" "${UNPACKED_DIR}/assets/units/size_s/ship_arg_s_scout_01.xml"
 #./build/X4ConverterApp/X4ConverterApp importxmf "${UNPACKED_DIR}" "${UNPACKED_DIR}/assets/units/size_l/ship_arg_l_miner_liquid_01.xml" 
 #./build/X4ConverterApp/X4ConverterApp importxmf "${UNPACKED_DIR}" "${UNPACKED_DIR}/assets/units/size_s/ship_gen_s_fighter_01.xml" 

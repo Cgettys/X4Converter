@@ -82,8 +82,6 @@ void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
   if (SafeSubName.size() > 63) {
     throw runtime_error("SubName cannot be longer than 63 bytes");
   }
-  std::fill(Name, Name + sizeof(Name), 0);
-  std::fill(SubName, SubName + sizeof(SubName), 0);
   memcpy(Name, SafeName.c_str(), SafeName.size());
   memcpy(SubName, SafeSubName.c_str(), SafeSubName.size());
 

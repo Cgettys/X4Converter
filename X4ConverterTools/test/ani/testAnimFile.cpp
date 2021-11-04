@@ -77,6 +77,7 @@ BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
   auto aniBinOutFile = TestUtil::GetBasePath()  / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.out.ANI";
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
   IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  // -prefersinglefiles -logfile debug.txt -debug all
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
   Assimp::StreamReaderLE pStreamReader (sourceStream);
 
@@ -88,6 +89,7 @@ BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
   pStreamReader.SetCurrentPos(0);
 
   AnimFile file(pStreamReader);
+  std::cout << file.validate();
 
 
 
@@ -162,6 +164,7 @@ BOOST_AUTO_TEST_CASE(ani_double) { // NOLINT(cert-err58-cpp)
   // TODO validate
 }
 
+
 BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO fixme
   auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
@@ -186,6 +189,24 @@ BOOST_AUTO_TEST_CASE(ani_out) { // NOLINT(cert-err58-cpp)
   // TODO validate
 }
 
+BOOST_AUTO_TEST_CASE(ani_envy) { // NOLINT(cert-err58-cpp)
+  // File path for input, output
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_m/ENVY_DATA.ANI";
+  auto aniBinOutFile = TestUtil::GetBasePath() / "X2PEGASUS_DATA_OUT.ANI";
+  // Setup input
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader(sourceStream);
+
+  // Read in ANI file
+  AnimFile file(pStreamReader);
+  // Print details of file
+  std::cout << file.validate();
+
+  // TODO validate
+}
+
 BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
   // TODO fixme
   auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
@@ -194,7 +215,7 @@ BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
   std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
   IOStream *sourceStream = io->Open(aniFile.string(), "rb");
   BOOST_TEST_REQUIRE(sourceStream != nullptr);
-  Assimp::StreamReaderLE pStreamReader (sourceStream);
+  Assimp::StreamReaderLE pStreamReader(sourceStream);
   AnimFile file(pStreamReader);
   std::string expected = file.validate();
   std::cout << "Expected:\n" << expected;
@@ -241,7 +262,7 @@ BOOST_AUTO_TEST_CASE(ani_struct_correctness) {
       } catch (std::runtime_error &e) {
         std::string error = str(format("Filepath: %1% Exception:\n %2%\n") % filePath.c_str() % e.what());
         // Change to BOOST_CHECK_MESSAGE if you want all the files violating the structure
-        BOOST_REQUIRE_MESSAGE(false, error);
+        BOOST_CHECK_MESSAGE(false, error);
       }
     }
   }

@@ -90,7 +90,7 @@ void XmlUtil::WriteAttrQuat(xml_node &target, aiQuaternion &val) {
   WriteAttr(target, "qw", val.w);
 }
 
-bool XmlUtil::WriteRotation(xml_node &offsetNode, aiQuaternion &val) {
+void XmlUtil::WriteRotation(xml_node &offsetNode, aiQuaternion &val) {
   if (!AssimpUtil::IsZero(val)) {
     auto quatNode = AddChild(offsetNode, "quaternion");
     WriteAttrQuat(quatNode, val);
