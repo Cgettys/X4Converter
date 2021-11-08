@@ -1,6 +1,5 @@
 #include <boost/test/unit_test.hpp>
 #include <assimp/types.h>
-#include <assimp/Importer.hpp>
 #include <assimp/IOStream.hpp>
 #include <assimp/IOSystem.hpp>
 #include <assimp/DefaultIOSystem.h>
@@ -15,8 +14,8 @@ using namespace boost;
 using namespace Assimp;
 using namespace ani;
 using namespace test;
-BOOST_AUTO_TEST_SUITE(UnitTests)
 
+BOOST_AUTO_TEST_SUITE(UnitTests) // NOLINT(cert-err58-cpp)
 BOOST_AUTO_TEST_SUITE(AnimUnitTests)
 
 BOOST_AUTO_TEST_CASE(ani_read_basic) {
@@ -30,7 +29,6 @@ BOOST_AUTO_TEST_CASE(ani_read_basic) {
   AnimFile file(pStreamReader);
   std::cout << file.validate();
 }
-
 
 BOOST_AUTO_TEST_CASE(ani_read_basic_2) {
   // TODO mock reading & writing to memory - would be faster & good form
@@ -55,21 +53,31 @@ BOOST_AUTO_TEST_CASE(ani_header) { // NOLINT(cert-err58-cpp)
   Assimp::StreamReaderLE pStreamReader (sourceStream);
   // Copy the first 16 bytes for later comparison
   AnimFile file(pStreamReader);
+  auto fwdHeader = file.GetHeader();
+  BOOST_REQUIRE_EQUAL(fwdHeader.getNumAnims(), file.descs.size());
+  // std::cout << file.validate();
 
   pugi::xml_document doc;
   auto rootNode = doc.root();
   file.WriteIntermediateRepr(xmlFile.string(), rootNode);
+  // doc.save(std::cout);
 
   AnimFile reverse(rootNode);
-  auto fwdHeader = file.GetHeader();
   auto revHeader = reverse.GetHeader();
   BOOST_CHECK_EQUAL(fwdHeader.getNumAnims(), revHeader.getNumAnims());
   BOOST_CHECK_EQUAL(fwdHeader.getKeyOffsetBytes(),revHeader.getKeyOffsetBytes());
   BOOST_CHECK_EQUAL(fwdHeader.getVersion(), revHeader.getVersion());
 
+  // Not really the header's fault, but let's check
+  BOOST_CHECK_EQUAL(fwdHeader.getNumAnims(), reverse.descs.size());
+  for (int i = 0; i < file.descs.size() && i < reverse.descs.size(); i++) {
+    auto fwdDesc = file.descs[i];
+    auto revDesc = reverse.descs[i];
+    BOOST_REQUIRE_EQUAL(fwdDesc.SafeName+"/"+fwdDesc.SafeSubName, revDesc.SafeName+"/"+revDesc.SafeSubName);
+  }
 }
 
-BOOST_AUTO_TEST_CASE(ani_roundtrip) { // NOLINT(cert-err58-cpp)
+BOOST_AUTO_TEST_CASE(ani_inmemory_roundtrip) { // NOLINT(cert-err58-cpp)
   // TODO fixme
   auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
   auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
@@ -207,8 +215,8 @@ BOOST_AUTO_TEST_CASE(ani_envy) { // NOLINT(cert-err58-cpp)
   // TODO validate
 }
 
-BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
-  // TODO fixme
+BOOST_AUTO_TEST_CASE(ani_xml_roundtrip_header) { // NOLINT(cert-err58-cpp)
+
   auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
   auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
 
@@ -220,22 +228,42 @@ BOOST_AUTO_TEST_CASE(ani_both) { // NOLINT(cert-err58-cpp)
   std::string expected = file.validate();
   std::cout << "Expected:\n" << expected;
 
+
+  pugi::xml_document doc;
+  auto rootNode = doc.root();
+  file.WriteIntermediateRepr(xmlFile.string(), rootNode);
+  doc.save(std::cout);
+
+  AnimFile reverse(rootNode);
+  BOOST_TEST(file.GetHeader().validate() == reverse.GetHeader().validate());
+}
+
+BOOST_AUTO_TEST_CASE(ani_xml_roundtrip) { // NOLINT(cert-err58-cpp)
+  // TODO fixme
+  auto aniFile = TestUtil::GetBasePath() / "assets/units/size_s/SHIP_GEN_S_FIGHTER_01_DATA.ANI";
+  auto xmlFile = TestUtil::GetBasePath() / "assets/units/size_s/ship_gen_s_fighter_01.xml";
+
+  std::unique_ptr<IOSystem> io = std::make_unique<DefaultIOSystem>();
+  IOStream *sourceStream = io->Open(aniFile.string(), "rb");
+  BOOST_TEST_REQUIRE(sourceStream != nullptr);
+  Assimp::StreamReaderLE pStreamReader(sourceStream);
+  AnimFile file(pStreamReader);
+  std::string expected = file.validate();
+  //std::cout << "Expected:\n" << expected;
+
   // TODO fixme
 
   pugi::xml_document doc;
   auto rootNode = doc.root();
   file.WriteIntermediateRepr(xmlFile.string(), rootNode);
+  //doc.save(std::cout);
 
   AnimFile reverse(rootNode);
   std::string actual = reverse.validate();
-  std::cout << "Actual:\n" << actual;
+  //std::cout << "Actual:\n" << actual;
   BOOST_TEST(expected == actual);
   // TODO validate better
 }
-
-
-
-
 
 BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

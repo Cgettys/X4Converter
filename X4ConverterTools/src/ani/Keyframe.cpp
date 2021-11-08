@@ -49,8 +49,23 @@ Keyframe::Keyframe(StreamReaderLE &reader) {
 }
 // Export Conversion
 
-Keyframe::Keyframe(pugi::xml_node &node) {
+Keyframe::Keyframe(pugi::xml_node &xNode, pugi::xml_node &yNode, pugi::xml_node &zNode) {
 
+  if (!xNode || !yNode || !zNode) {
+    throw std::runtime_error("A keyframe must exist for all three axes or not at all");
+  }
+  if (strcmp(xNode.name(), "frame") != 0 || strcmp(yNode.name(), "frame") != 0 || strcmp(zNode.name(), "frame") != 0) {
+    throw std::runtime_error("expected <frame> element");
+  }
+  auto frameTime = xNode.attribute("id").as_float();
+  if (yNode.attribute("id").as_float() != frameTime || zNode.attribute("id").as_float() != frameTime) {
+    throw std::runtime_error(
+        "A key frame must exist for all three axes or not at all; the times for the different axes did not match");
+  }
+  Time = frameTime;
+  ReadChannel(xNode, Axis::X);
+  ReadChannel(yNode, Axis::Y);
+  ReadChannel(zNode, Axis::Z);
 }
 
 void Keyframe::WriteToGameFiles(StreamWriterLE &writer) {
@@ -88,8 +103,10 @@ std::string Keyframe::validate() {
   // TODO finish making use of stringstream
   ret << str(format("\t\tValue: (%1%, %2%, %3%)\n") % ValueX % ValueY % ValueZ);
 
-  ret << str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") % InterpolationX % InterpolationY %
-      InterpolationZ);
+  ret << str(format("\t\tInterpolation Types: (%1%, %2%, %3%)\n") %
+      static_cast<std::underlying_type_t<InterpolationType>>(InterpolationX) %
+      static_cast<std::underlying_type_t<InterpolationType>>(InterpolationY) %
+      static_cast<std::underlying_type_t<InterpolationType>>(InterpolationZ));
 
   if (!checkInterpolationType(InterpolationX)) {
     valid = false;
@@ -104,8 +121,8 @@ std::string Keyframe::validate() {
     ret << "\t\tInterpolationX is not handled by the converter at present\n";
   }
   ret << str(format("\t\tInterpolation Types - Readable: (%1%, %2%, %3%)\n") %
-      getInterpolationTypeName(InterpolationX) % getInterpolationTypeName(InterpolationY) %
-      getInterpolationTypeName(InterpolationZ));
+      GetInterpolationTypeStr(InterpolationX) % GetInterpolationTypeStr(InterpolationY) %
+      GetInterpolationTypeStr(InterpolationZ));
 
   ret << str(format("\t\tTime: %1%\n") % Time);
 
@@ -129,25 +146,25 @@ std::string Keyframe::validate() {
   ret << str(format("\t\tAngleKey: %1%\n") % AngleKey);
   // Wrong
   // TODO what exactly was I checking here again?
-  float comp = std::numeric_limits<float>::min();
-  if (InterpolationX == 2) {
-    if (std::abs(CPX1x) > comp || std::abs(CPX1y) > comp | std::abs(CPX2x) > comp || std::abs(CPX2y) > comp) {
-      ret << "Interpolation Type for X was 2, but CP were not!\n";
-      valid = false;
-    }
-  }
-  if (InterpolationY == 2) {
-    if (std::abs(CPY1x) > comp || std::abs(CPY1y) > comp || std::abs(CPY2x) > comp || std::abs(CPY2y) > comp) {
-      ret << "Interpolation Type for Y was  2, but CP were not!\n";
-      valid = false;
-    }
-  }
-  if (InterpolationZ == 2) {
-    if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
-      ret << "Interpolation Type for Z was 2, but CP were not!\n";
-      valid = false;
-    }
-  }
+//  float comp = std::numeric_limits<float>::min();
+//  if (InterpolationX == 2) {
+//    if (std::abs(CPX1x) > comp || std::abs(CPX1y) > comp | std::abs(CPX2x) > comp || std::abs(CPX2y) > comp) {
+//      ret << "Interpolation Type for X was 2, but CP were not!\n";
+//      valid = false;
+//    }
+//  }
+//  if (InterpolationY == 2) {
+//    if (std::abs(CPY1x) > comp || std::abs(CPY1y) > comp || std::abs(CPY2x) > comp || std::abs(CPY2y) > comp) {
+//      ret << "Interpolation Type for Y was  2, but CP were not!\n";
+//      valid = false;
+//    }
+//  }
+//  if (InterpolationZ == 2) {
+//    if (std::abs(CPZ1x) > comp || std::abs(CPZ1y) > comp || std::abs(CPZ2x) > comp || std::abs(CPZ2y) > comp) {
+//      ret << "Interpolation Type for Z was 2, but CP were not!\n";
+//      valid = false;
+//    }
+//  }
 
   if (Tens != 0) {
     ret << "Unsupported parameter: Tens";
@@ -188,70 +205,95 @@ std::string Keyframe::validate() {
 
 bool Keyframe::checkInterpolationType(InterpolationType type) {
 
-  if (type == INTERPOLATION_TCB) {
+  if (type == InterpolationType::INTERPOLATION_TCB) {
 
     std::cerr << "Warning, TCB Interpolation is not handled, but is valid for convenience." << std::endl;
     return true;
   }
-  return (type == INTERPOLATION_STEP || type == INTERPOLATION_BEZIER || type == INTERPOLATION_LINEAR);
+  return (type == InterpolationType::INTERPOLATION_STEP || type == InterpolationType::INTERPOLATION_BEZIER
+      || type == InterpolationType::INTERPOLATION_LINEAR);
 }
 
-std::string Keyframe::getInterpolationTypeName(InterpolationType type) {
-  if (type > INTERPOLATION_TCB) {
-    throw std::runtime_error("Type name not in enumeration");
+void Keyframe::setValueByAxis(Axis axis, float value) {
+  if (axis == Axis::X) {
+    ValueX = value;
+  } else if (axis == Axis::Y) {
+    ValueY = value;
+  } else if (axis == Axis::Z) {
+    ValueY = value;
   } else {
-    const std::string InterpolationTypeName[] = {"UNKNOWN", "STEP", "LINEAR", "QUADRATIC", "CUBIC", "BEZIER",
-                                                 "BEZIER_LINEARTIME", "TCB"};
-    return InterpolationTypeName[type];
+    throw std::runtime_error("Invalid axis!");
   }
 }
 
-float Keyframe::getValueByAxis(const std::string &axis) {
-  if (axis == "X") {
+float Keyframe::getValueByAxis(Axis axis) {
+  if (axis == Axis::X) {
     return ValueX;
-  } else if (axis == "Y") {
+  } else if (axis == Axis::Y) {
     return ValueY;
-  } else if (axis == "Z") {
+  } else if (axis == Axis::Z) {
     return ValueZ;
   } else {
     throw std::runtime_error("Invalid axis!");
   }
-
 }
 
-InterpolationType Keyframe::getInterpByAxis(const std::string &axis) {
-  if (axis == "X") {
+void Keyframe::setInterpByAxis(Axis axis, InterpolationType value) {
+  if (axis == Axis::X) {
+    InterpolationX = value;
+  } else if (axis == Axis::Y) {
+    InterpolationY = value;
+  } else if (axis == Axis::Z) {
+    InterpolationZ = value;
+  } else {
+    throw std::runtime_error("Invalid axis!");
+  }
+}
+
+InterpolationType Keyframe::getInterpByAxis(Axis axis) {
+  if (axis == Axis::X) {
     return InterpolationX;
-  } else if (axis == "Y") {
+  } else if (axis == Axis::Y) {
     return InterpolationY;
-  } else if (axis == "Z") {
+  } else if (axis == Axis::Z) {
     return InterpolationZ;
   } else {
     throw std::runtime_error("Invalid axis!");
   }
-
 }
 
-void Keyframe::WriteChannel(pugi::xml_node &node, std::string &axis) {
+void Keyframe::ReadChannel(pugi::xml_node &node, Axis axis) {
   InterpolationType interp = getInterpByAxis(axis);
-  if (!checkInterpolationType(interp) || interp == INTERPOLATION_TCB) {
+  if (!checkInterpolationType(interp) || interp == InterpolationType::INTERPOLATION_TCB) {
     throw std::runtime_error("Cannot write keyframe");
   }
-  // TODO verify assumptions about framerate/encode them into a check
-  int frameNum = numeric_cast<int>(30.0 * Time);
   auto tgtNode = node.append_child("frame");
-  tgtNode.append_attribute("id").set_value(frameNum);
-  auto interpStr = getInterpolationTypeName(interp);
+  tgtNode.append_attribute("id").set_value(FormatUtil::formatFloat(Time).c_str());
+  auto interpStr = GetInterpolationTypeStr(interp);
+  auto value = getValueByAxis(axis);
+  tgtNode.append_attribute("value").set_value(FormatUtil::formatFloat(value).c_str());
+  ReadHandle(tgtNode, axis, false);
+  ReadHandle(tgtNode, axis, true);
+  tgtNode.append_attribute("interpolation").set_value(interpStr);
+}
+
+void Keyframe::WriteChannel(pugi::xml_node &node, Axis axis) {
+  InterpolationType interp = getInterpByAxis(axis);
+  if (!checkInterpolationType(interp) || interp == InterpolationType::INTERPOLATION_TCB) {
+    throw std::runtime_error("Cannot write keyframe");
+  }
+  auto tgtNode = node.append_child("frame");
+  tgtNode.append_attribute("id").set_value(FormatUtil::formatFloat(Time).c_str());
+  auto interpStr = GetInterpolationTypeStr(interp);
   auto value = getValueByAxis(axis);
   tgtNode.append_attribute("value").set_value(FormatUtil::formatFloat(value).c_str());
   WriteHandle(tgtNode, axis, false);
   WriteHandle(tgtNode, axis, true);
-  tgtNode.append_attribute("interpolation").set_value(interpStr.c_str());
+  tgtNode.append_attribute("interpolation").set_value(interpStr);
 
 }
 
-void Keyframe::WriteHandle(pugi::xml_node node, std::string &axis, bool right) {
-
+void Keyframe::WriteHandle(pugi::xml_node node, Axis axis, bool right) {
   pugi::xml_node tgtNode;
   if (right) {
     tgtNode = node.append_child("handle_left");
@@ -263,25 +305,65 @@ void Keyframe::WriteHandle(pugi::xml_node node, std::string &axis, bool right) {
   tgtNode.append_attribute("Y").set_value(FormatUtil::formatFloat(handle.second).c_str());
 }
 
-std::pair<float, float> Keyframe::getControlPoint(const std::string &axis, bool right) {
+void Keyframe::ReadHandle(pugi::xml_node node, Axis axis, bool right) {
+  pugi::xml_node tgtNode;
+  if (right) {
+    tgtNode = node.child("handle_left");
+  } else {
+    tgtNode = node.child("handle_right");
+  }
+  auto handle = std::make_pair(tgtNode.attribute("X").as_float(), tgtNode.attribute("Y").as_float());
+  setControlPoint(axis, handle, right);
+}
+
+std::pair<float, float> Keyframe::getControlPoint(Axis axis, bool right) {
 
   if (!right) {
-    if (axis == "X") {
+    if (axis == Axis::X) {
       return std::make_pair(CPX1x, CPX1y);
-    } else if (axis == "Y") {
+    } else if (axis == Axis::Y) {
       return std::make_pair(CPY1x, CPY1y);
-    } else if (axis == "Z") {
+    } else if (axis == Axis::Z) {
       return std::make_pair(CPZ1x, CPZ1y);
     } else {
       throw std::runtime_error("Invalid axis!");
     }
   } else {
-    if (axis == "X") {
+    if (axis == Axis::X) {
       return std::make_pair(CPX2x, CPX2y);
-    } else if (axis == "Y") {
+    } else if (axis == Axis::Y) {
       return std::make_pair(CPY2x, CPY2y);
-    } else if (axis == "Z") {
+    } else if (axis == Axis::Z) {
       return std::make_pair(CPZ2x, CPZ2y);
+    } else {
+      throw std::runtime_error("Invalid axis!");
+    }
+  }
+}
+void Keyframe::setControlPoint(Axis axis, std::pair<float, float> cp, bool right) {
+  if (!right) {
+    if (axis == Axis::X) {
+      CPX1x = cp.first;
+      CPX1y = cp.second;
+    } else if (axis == Axis::Y) {
+      CPY1x = cp.first;
+      CPY1y = cp.second;
+    } else if (axis == Axis::Z) {
+      CPZ1x = cp.first;
+      CPZ1y = cp.second;
+    } else {
+      throw std::runtime_error("Invalid axis!");
+    }
+  } else {
+    if (axis == Axis::X) {
+      CPX2x = cp.first;
+      CPX2y = cp.second;
+    } else if (axis == Axis::Y) {
+      CPY2x = cp.first;
+      CPY2y = cp.second;
+    } else if (axis == Axis::Z) {
+      CPZ2x = cp.first;
+      CPZ2y = cp.second;
     } else {
       throw std::runtime_error("Invalid axis!");
     }

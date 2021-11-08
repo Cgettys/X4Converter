@@ -135,6 +135,7 @@ class ImportAsset(Operator, ImportHelper):
     
         anim_name = anim.attrib['subname']
         action_name = part_name + anim_name
+
         anim_metadata = part_metadata[anim_name]
         frame_offset = anim_metadata[0]
         if  obj.animation_data is None:

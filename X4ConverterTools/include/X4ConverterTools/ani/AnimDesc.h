@@ -21,19 +21,20 @@ class AnimDesc {
 
   // Read the metadata
   explicit AnimDesc(Assimp::StreamReaderLE &reader);
-  // Read the actual keyframes
+  // Read the actual keyframes from .ANI
   void read_frames(Assimp::StreamReaderLE &reader);
 
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
   void WriteIntermediateRepr(pugi::xml_node tgtNode) const;
 
-  void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType, std::string axis) const;
+  void WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType, Axis axis) const;
 
   // Write the metadata
   void WriteToGameFiles(Assimp::StreamWriterLE &writer);
 
-  // Write the actual keyframes
+  // Write the actual keyframes to .ANI
   void write_frames(Assimp::StreamWriterLE &writer);
+
   std::string SafeName;
   std::string SafeSubName;
 
@@ -58,5 +59,11 @@ class AnimDesc {
   int NumPostScaleKeys = 0;
   float Duration = 0;
   int Padding[2] = {0};
+  // Read Keyframes back from XML
+  void ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
+                                     const char *keytype,
+                                     std::vector<Keyframe> &frameDest);
+  // Populate the Num XYZ fields from their respective vectors' sizes
+  void PopulateNumFields();
 };
 }

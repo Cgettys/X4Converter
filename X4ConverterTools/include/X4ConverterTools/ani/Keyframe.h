@@ -4,9 +4,11 @@
 #include <assimp/StreamWriter.h>
 #include <utility>
 #include <pugixml.hpp>
+#include "Axis.h"
+#include <unordered_map>
 
 namespace ani {
-enum InterpolationType {
+enum class InterpolationType : uint32_t {
   INTERPOLATION_UNKNOWN,                /**< Unknown interpolation. */
   INTERPOLATION_STEP,                    /**< No interpolation. */
   INTERPOLATION_LINEAR,                /**< Linear interpolation.*/
@@ -16,32 +18,72 @@ enum InterpolationType {
   INTERPOLATION_BEZIER_LINEARTIME,    /**< Bezier interpolation with linear time. */
   INTERPOLATION_TCB                    /**< TCB interpolation (using tension, continuity and bias generated hermite tangents). */
 };
-
+inline constexpr const char *GetInterpolationTypeStr(InterpolationType interp) {
+  switch (interp) {
+    case InterpolationType::INTERPOLATION_UNKNOWN:
+      return "UNKNOWN";
+    case InterpolationType::INTERPOLATION_STEP:
+      return "STEP";
+    case InterpolationType::INTERPOLATION_LINEAR:
+      return "LINEAR";
+    case InterpolationType::INTERPOLATION_QUADRATIC:
+      return "QUADRATIC";
+    case InterpolationType::INTERPOLATION_CUBIC:
+      return "CUBIC";
+    case InterpolationType::INTERPOLATION_BEZIER:
+      return "BEZIER";
+    case InterpolationType::INTERPOLATION_BEZIER_LINEARTIME:
+      return "BEZIER_LINEARTIME";
+    case InterpolationType::INTERPOLATION_TCB:
+      return "TCB";
+    default:
+      throw std::runtime_error("Type name not in enumeration");
+  }
+}
+const std::unordered_map<std::string, InterpolationType> interpolationMap = {
+    {"UNKNOWN", InterpolationType::INTERPOLATION_UNKNOWN},
+    {"STEP", InterpolationType::INTERPOLATION_STEP},
+    {"LINEAR", InterpolationType::INTERPOLATION_LINEAR},
+    {"QUADRATIC", InterpolationType::INTERPOLATION_QUADRATIC},
+    {"CUBIC", InterpolationType::INTERPOLATION_CUBIC},
+    {"BEZIER", InterpolationType::INTERPOLATION_BEZIER},
+    {"BEZIER_LINEARTIME", InterpolationType::INTERPOLATION_BEZIER_LINEARTIME},
+    {"TCB", InterpolationType::INTERPOLATION_TCB}
+};
+inline const InterpolationType GetInterpolationType(std::string interpStr) {
+  auto result = interpolationMap.find(interpStr);
+  if (result == interpolationMap.end()) {
+    throw std::runtime_error("Type name not in enumeration");
+  }
+  return result->second;
+}
 class Keyframe {
  public:
   Keyframe() = default;
 
-  explicit Keyframe(pugi::xml_node &node);
+  explicit Keyframe(pugi::xml_node &xNode, pugi::xml_node &yNode, pugi::xml_node &zNode);
 
   explicit Keyframe(Assimp::StreamReaderLE &reader);
 
   void WriteToGameFiles(Assimp::StreamWriterLE &writer);
 
   std::string validate();// Debug method - throws exception if invalid, else returns human readable string
-  static std::string getInterpolationTypeName(InterpolationType type);
 
   static bool checkInterpolationType(InterpolationType type);
 
-  void WriteChannel(pugi::xml_node &node, std::string &axis);
+  void ReadChannel(pugi::xml_node &node, Axis axis);
+  void WriteChannel(pugi::xml_node &node, Axis axis);
 
  protected:
-  float getValueByAxis(const std::string &axis);
+  void setValueByAxis(Axis axis, float value);
+  float getValueByAxis(Axis axis);
 
-  InterpolationType getInterpByAxis(const std::string &axis);
-
-  void WriteHandle(pugi::xml_node node, std::string &axis, bool right);
-
-  std::pair<float, float> getControlPoint(const std::string &axis, bool right);
+  void setInterpByAxis(Axis axis, InterpolationType value);
+  InterpolationType getInterpByAxis(Axis axis);
+  void ReadHandle(pugi::xml_node node, Axis axis, bool right);
+  void WriteHandle(pugi::xml_node node, Axis axis, bool right);
+  void setControlPoint(Axis axis, std::pair<float, float> cp, bool right);
+  std::pair<float, float> getControlPoint(Axis axis, bool right);
 
   // Note that these add up to exactly 128 bytes
   float ValueX, ValueY, ValueZ;                          /**< The key's actual value (position, rotation, etc.). 12*/

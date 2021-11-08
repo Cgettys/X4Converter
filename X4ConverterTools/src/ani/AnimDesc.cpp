@@ -34,25 +34,40 @@ AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
   SafeName = partName;
   SafeSubName = node.attribute("subname").as_string();
   // TODO validate better
-  auto locNode = node.child("location");
-  if (locNode) {
-    for (auto &keyNode : locNode.children()) {
-      posKeys.emplace_back(keyNode);
-    }
-  }
-  auto rotNode = node.child("rotation_euler");
-  if (rotNode) {
-    for (auto &keyNode : rotNode.children()) {
-      rotKeys.emplace_back(keyNode);
-    }
-  }
-  auto scaleNode = node.child("scale");
-  if (scaleNode) {
-    for (auto &keyNode : scaleNode.children()) {
-      scaleKeys.emplace_back(keyNode);
-    }
-  }
+  ReadAniXmlKeyframesForKeytype(node, "position", posKeys);
+  ReadAniXmlKeyframesForKeytype(node, "rotation_euler", rotKeys);
+  ReadAniXmlKeyframesForKeytype(node, "scale", scaleKeys);
+  ReadAniXmlKeyframesForKeytype(node, "prescale", preScaleKeys);
+  ReadAniXmlKeyframesForKeytype(node, "postscale", postScaleKeys);
+  PopulateNumFields();
+}
 
+void AnimDesc::ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
+                                             const char *keytype,
+                                             std::vector<Keyframe> &frameDest) {
+  auto keyNode = node.child(keytype);
+  if (keyNode) {
+    auto xNode = keyNode.child("X");
+    auto yNode = keyNode.child("Y");
+    auto zNode = keyNode.child("Y");
+    if ((xNode || yNode || zNode) && (!xNode || !yNode || !zNode)) {
+      throw std::runtime_error("Either all or no axes should be specified");
+    }
+    auto xChild = xNode.first_child();
+    auto yChild = yNode.first_child();
+    auto zChild = zNode.first_child();
+    if (!xChild && !yChild && !zChild) {
+      return; // No frames, return early
+    }
+    // Loop through all keyframes
+    while (xChild || yChild || zChild) {
+      frameDest.emplace_back(xChild, yChild, zChild);
+
+      xChild = xChild.next_sibling();
+      yChild = yChild.next_sibling();
+      zChild = zChild.next_sibling();
+    }
+  }
 }
 
 void AnimDesc::read_frames(StreamReaderLE &reader) {
@@ -85,12 +100,7 @@ void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
   memcpy(Name, SafeName.c_str(), SafeName.size());
   memcpy(SubName, SafeSubName.c_str(), SafeSubName.size());
 
-  // Populate the Num XYZ fields from their respective vectors' sizes
-  NumPosKeys = numeric_cast<int>(posKeys.size());
-  NumRotKeys = numeric_cast<int>(rotKeys.size());
-  NumScaleKeys = numeric_cast<int>(scaleKeys.size());
-  NumPreScaleKeys = numeric_cast<int>(preScaleKeys.size());
-  NumPostScaleKeys = numeric_cast<int>(postScaleKeys.size());
+  PopulateNumFields();
 
   for (char &c : Name) {
     writer << c;
@@ -111,6 +121,15 @@ void AnimDesc::WriteToGameFiles(StreamWriterLE &writer) {
     writer << i;
   }
 }
+
+void AnimDesc::PopulateNumFields() {
+  NumPosKeys = numeric_cast<int>(posKeys.size());
+  NumRotKeys = numeric_cast<int>(rotKeys.size());
+  NumScaleKeys = numeric_cast<int>(scaleKeys.size());
+  NumPreScaleKeys = numeric_cast<int>(preScaleKeys.size());
+  NumPostScaleKeys = numeric_cast<int>(postScaleKeys.size());
+}
+
 void AnimDesc::write_frames(StreamWriterLE &writer) {
   for (int i = 0; i < NumPosKeys; i++) {
     posKeys[i].WriteToGameFiles(writer);
@@ -279,17 +298,17 @@ bool AnimDesc::validateFrameType(std::string &ret,
   return valid;
 }
 void AnimDesc::WriteIntermediateRepr(pugi::xml_node tgtNode) const {
-  std::string keys[] = {"location", "rotation_euler", "scale"};
-  std::string axes[] = {"X", "Y", "Z"};
+  std::string keys[] = {"location", "rotation_euler", "scale", "prescale", "postscale"};
+  Axis axes[] = {Axis::X, Axis::Y, Axis::Z};
   for (std::string &key : keys) {
-    for (std::string &axis: axes) {
+    for (auto axis: axes) {
       WriteIntermediateReprOfChannel(tgtNode, key, axis);
     }
   }
 }
 
 void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std::string &keyType,
-                                              std::string axis) const {
+                                              Axis axis) const {
 
   std::vector<Keyframe> frames;
   if (keyType == "location") {
@@ -298,13 +317,17 @@ void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std:
     frames = rotKeys;
   } else if (keyType == "scale") {
     frames = scaleKeys;
+  } else if (keyType == "prescale") {
+    frames = preScaleKeys;
+  } else if (keyType == "postscale") {
+    frames = postScaleKeys;
   } else {
     throw runtime_error("Invalid keyType");
   }
-
-  if (frames.empty()) {
-    return;
-  }
+//NB: it's valid and probably expected for parents not to have actual keyframes
+//  if (frames.empty()) {
+//    return;
+//  }
   std::vector<std::string> namePortions;
   algo::split(namePortions, SafeName, is_any_of(" "));
   std::string namePortion = namePortions[0];
@@ -340,11 +363,14 @@ void AnimDesc::WriteIntermediateReprOfChannel(pugi::xml_node tgtNode, const std:
     animRoot.append_child(keyType.c_str());
   }
 
-  pugi::xml_node channelRoot = animRoot.child(keyType.c_str());
-  if (!channelRoot.child(axis.c_str())) {
-    channelRoot.append_child(axis.c_str());
+  if (frames.empty()) {
+    return;
   }
-  pugi::xml_node axisRoot = channelRoot.child(axis.c_str());
+  pugi::xml_node channelRoot = animRoot.child(keyType.c_str());
+  if (!channelRoot.child(GetAxisString(axis))) {
+    channelRoot.append_child(GetAxisString(axis));
+  }
+  pugi::xml_node axisRoot = channelRoot.child(GetAxisString(axis));
   for (auto f : frames) {
     f.WriteChannel(axisRoot, axis);
   }
