@@ -17,7 +17,7 @@ class AnimDesc {
  public:
   AnimDesc() = default;
 
-  AnimDesc(const std::string &partName, pugi::xml_node node);
+  AnimDesc(const std::string &partName, pugi::xml_node node, pugi::xml_node animMeta);
 
   // Read the metadata
   explicit AnimDesc(Assimp::StreamReaderLE &reader);
@@ -59,6 +59,10 @@ class AnimDesc {
   int NumPostScaleKeys = 0;
   float Duration = 0;
   int Padding[2] = {0};
+
+  // Used for calculating Duration
+  float MinSeenTime = std::numeric_limits<float>::max();
+  float MaxSeenTime = std::numeric_limits<float>::min();
   // Read Keyframes back from XML
   void ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
                                      const char *keytype,

@@ -366,5 +366,8 @@ void Keyframe::setControlPoint(Axis axis, std::pair<float, float> cp, bool right
     }
   }
 }
+float Keyframe::GetTime() {
+  return Time;
+}
 
 }

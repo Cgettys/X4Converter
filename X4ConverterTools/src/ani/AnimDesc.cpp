@@ -29,7 +29,7 @@ AnimDesc::AnimDesc(StreamReaderLE &reader) {
 }
 
 // Export Conversion
-AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
+AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node, pugi::xml_node animMeta) {
   // TODO validate against what's actually written
   SafeName = partName;
   SafeSubName = node.attribute("subname").as_string();
@@ -40,12 +40,27 @@ AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node) {
   ReadAniXmlKeyframesForKeytype(node, "prescale", preScaleKeys);
   ReadAniXmlKeyframesForKeytype(node, "postscale", postScaleKeys);
   PopulateNumFields();
+//  // TODO null checks
+  auto start = animMeta.child("frames").attribute("start").as_int();
+  auto end = animMeta.child("frames").attribute("end").as_int();
+  if (NumPosKeys + NumRotKeys + NumScaleKeys + NumPreScaleKeys + NumPostScaleKeys == 0) {
+    Duration = (end - start) / 30.0;
+    if (start == 1) {
+      Duration = (1 + end - start) / 30.0;
+    }
+  } else {
+    Duration = MaxSeenTime - MinSeenTime;
+  }
+  if (Duration == 0.0) {
+    Duration = 1 / 30.0;
+  }
 }
 
 void AnimDesc::ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
                                              const char *keytype,
                                              std::vector<Keyframe> &frameDest) {
   auto keyNode = node.child(keytype);
+  // TODO we should probably check that keyframe times increase monotonically on the source side
   if (keyNode) {
     auto xNode = keyNode.child("X");
     auto yNode = keyNode.child("Y");
@@ -67,6 +82,11 @@ void AnimDesc::ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
       yChild = yChild.next_sibling();
       zChild = zChild.next_sibling();
     }
+  }
+  for (auto &frame : frameDest) {
+    auto time = frame.GetTime();
+    MaxSeenTime = std::max(MaxSeenTime, time);
+    MinSeenTime = std::min(MinSeenTime, time);
   }
 }
 

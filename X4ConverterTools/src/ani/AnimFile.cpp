@@ -32,17 +32,21 @@ AnimFile::AnimFile(Assimp::StreamReaderLE &pStreamReader) {
 AnimFile::AnimFile(pugi::xml_node &node) {
   header = Header();
   pugi::xml_node dataNode = node.child("data");
+  pugi::xml_node metaNode = node.child("metadata");
   for (auto &part : dataNode.children()) {
     std::string partName = part.attribute("name").as_string();
     for (auto &animCat : part.children()) {
       for (auto &anim : animCat.children()) {
         // TODO move this one layer down and assert only 1 category
-        descs.emplace_back(partName, anim);
+        auto subName = anim.attribute("subname").value();
+        // TODO some throw statements here
+        auto partMeta = metaNode.find_child_by_attribute("connection", "name", partName.c_str());
+        auto animMeta = partMeta.find_child_by_attribute("animation", "subname", subName);
+        descs.emplace_back(partName, anim, animMeta);
       }
     }
   }
   header.setNumAnims(numeric_cast<int>(descs.size()));
-  pugi::xml_node metaNode = node.child("metadata");
 }
 
 AnimFile::~AnimFile() = default;
@@ -110,7 +114,10 @@ void AnimFile::HandleConnection(pugi::xml_node &tgtNode, pugi::xml_node &conn) c
   if (animMetas.empty()) {
     return;
   }
-  pugi::xml_node outMetaNode = tgtNode.append_child("metadata");
+  pugi::xml_node outMetaNode = tgtNode.child("metadata");
+  if (!outMetaNode) {
+    outMetaNode = tgtNode.append_child("metadata");
+  }
   pugi::xml_node outConnNode = outMetaNode.append_child("connection");
   outConnNode.append_attribute("name").set_value(name.c_str());
 

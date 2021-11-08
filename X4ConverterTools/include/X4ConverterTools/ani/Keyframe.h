@@ -74,6 +74,8 @@ class Keyframe {
   void ReadChannel(pugi::xml_node &node, Axis axis);
   void WriteChannel(pugi::xml_node &node, Axis axis);
 
+  float GetTime();
+
  protected:
   void setValueByAxis(Axis axis, float value);
   float getValueByAxis(Axis axis);
