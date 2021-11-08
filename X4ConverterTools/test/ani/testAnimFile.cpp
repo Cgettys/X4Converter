@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(ani_xml_roundtrip) { // NOLINT(cert-err58-cpp)
   pugi::xml_document doc;
   auto rootNode = doc.root();
   file.WriteIntermediateRepr(xmlFile.string(), rootNode);
-  //doc.save(std::cout);
+  doc.save(std::cout);
 
   AnimFile reverse(rootNode);
   std::string actual = reverse.validate();
@@ -270,6 +270,53 @@ BOOST_AUTO_TEST_CASE(ani_xml_roundtrip) { // NOLINT(cert-err58-cpp)
     BOOST_REQUIRE_EQUAL(fwdDesc.validate(), revDesc.validate());
   }
   BOOST_TEST(expected == actual);
+}
+
+BOOST_AUTO_TEST_CASE(ani_keyframe_fromxml) { // NOLINT(cert-err58-cpp)
+  pugi::xml_document doc;
+  auto docStr =
+      "<location><X>"
+      "<frame id=\"0.00000000e+00\" value=\"0.00000000e+00\" interpolation=\"STEP\">\n"
+      "<handle_right X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "<handle_left X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "</frame>\n"
+      "</X>"
+      "<Y>"
+      "<frame id=\"0.00000000e+00\" value=\"0.00000000e+00\" interpolation=\"STEP\">\n"
+      "<handle_right X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "<handle_left X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "</frame>\n"
+      "</Y>"
+      "<Z>"
+      "<frame id=\"0.00000000e+00\" value=\"0.00000000e+00\" interpolation=\"STEP\">\n"
+      "<handle_right X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "<handle_left X=\"0.00000000e+00\" Y=\"-0.00000000e+00\" />\n"
+      "</frame>\n"
+      "</Z></location>";
+  doc.load_string(docStr);
+  auto loc = doc.root().child("location");
+  auto xChild = loc.child("X").child("frame");
+  auto yChild = loc.child("Y").child("frame");
+  auto zChild = loc.child("Z").child("frame");
+  Keyframe myFrame(xChild, yChild, zChild);
+  auto expected = "\tKeyFrame: \n"
+                  "\t\tValue: (0, 0, 0)\n"
+                  "\t\tInterpolation Types: (1, 1, 1)\n"
+                  "\t\tInterpolation Types - Readable: (STEP, STEP, STEP)\n"
+                  "\t\tTime: 0\n"
+                  "\t\tCPX1: (0, -0)\n"
+                  "\t\tCPX2: (0, -0)\n"
+                  "\t\tCPY1: (0, -0)\n"
+                  "\t\tCPY2: (0, -0)\n"
+                  "\t\tCPZ1: (0, -0)\n"
+                  "\t\tCPZ2: (0, -0)\n"
+                  "\t\tTens: 0 Cont: 0 Bias: 0\n"
+                  "\t\tEaseIn: 0 EaseOut: 0\n"
+                  "\t\tDeriv: 0\n"
+                  "\t\tDerivIn:  (0, 0, 0)\n"
+                  "\t\tDerivOut: (0, 0, 0)\n"
+                  "\t\tAngleKey: 0\n";
+  BOOST_CHECK_EQUAL(myFrame.validate(), expected);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

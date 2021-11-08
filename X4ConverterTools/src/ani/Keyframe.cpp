@@ -5,6 +5,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <X4ConverterTools/util/FormatUtil.h>
 #include <sstream>
+#include <string>
 using namespace boost;
 using namespace Assimp;
 using namespace util;
@@ -57,8 +58,9 @@ Keyframe::Keyframe(pugi::xml_node &xNode, pugi::xml_node &yNode, pugi::xml_node 
   if (strcmp(xNode.name(), "frame") != 0 || strcmp(yNode.name(), "frame") != 0 || strcmp(zNode.name(), "frame") != 0) {
     throw std::runtime_error("expected <frame> element");
   }
-  auto frameTime = xNode.attribute("id").as_float();
-  if (yNode.attribute("id").as_float() != frameTime || zNode.attribute("id").as_float() != frameTime) {
+  auto frameTime = FormatUtil::parseFloat(xNode.attribute("id"));
+  if (FormatUtil::parseFloat(yNode.attribute("id")) != frameTime
+      || FormatUtil::parseFloat(zNode.attribute("id")) != frameTime) {
     throw std::runtime_error(
         "A key frame must exist for all three axes or not at all; the times for the different axes did not match");
   }
@@ -66,6 +68,11 @@ Keyframe::Keyframe(pugi::xml_node &xNode, pugi::xml_node &yNode, pugi::xml_node 
   ReadChannel(xNode, Axis::X);
   ReadChannel(yNode, Axis::Y);
   ReadChannel(zNode, Axis::Z);
+  AngleKey = 0;
+  // TODO check all 3 are the same
+//  if (xNode.attribute("anglekey")) {
+//    AngleKey = xNode.attribute("anglekey").as_uint();
+//  }
 }
 
 void Keyframe::WriteToGameFiles(StreamWriterLE &writer) {
@@ -220,7 +227,7 @@ void Keyframe::setValueByAxis(Axis axis, float value) {
   } else if (axis == Axis::Y) {
     ValueY = value;
   } else if (axis == Axis::Z) {
-    ValueY = value;
+    ValueZ = value;
   } else {
     throw std::runtime_error("Invalid axis!");
   }
@@ -263,7 +270,7 @@ InterpolationType Keyframe::getInterpByAxis(Axis axis) {
 }
 
 void Keyframe::ReadChannel(pugi::xml_node &node, Axis axis) {
-  auto value = node.attribute("value").as_float();
+  auto value = FormatUtil::parseFloat(node.attribute("value"));
   setValueByAxis(axis, value);
   ReadHandle(node, axis, false);
   ReadHandle(node, axis, true);
@@ -284,6 +291,9 @@ void Keyframe::WriteChannel(pugi::xml_node &node, Axis axis) {
   auto interpStr = GetInterpolationTypeStr(interp);
   auto value = getValueByAxis(axis);
   tgtNode.append_attribute("value").set_value(FormatUtil::formatFloat(value).c_str());
+//  if (AngleKey != 0) {
+//    tgtNode.append_attribute("anglekey").set_value(AngleKey);
+//  }
   WriteHandle(tgtNode, axis, false);
   WriteHandle(tgtNode, axis, true);
   tgtNode.append_attribute("interpolation").set_value(interpStr);
@@ -309,8 +319,9 @@ void Keyframe::ReadHandle(pugi::xml_node node, Axis axis, bool right) {
   } else {
     tgtNode = node.child("handle_right");
   }
-  auto handle = std::make_pair(tgtNode.attribute("X").as_float(), tgtNode.attribute("Y").as_float());
-  setControlPoint(axis, handle, right);
+  auto cpX = FormatUtil::parseFloat(tgtNode.attribute("X"));
+  auto cpY = FormatUtil::parseFloat(tgtNode.attribute("Y"));
+  setControlPoint(axis, cpX, cpY, right);
 }
 
 std::pair<float, float> Keyframe::getControlPoint(Axis axis, bool right) {
@@ -337,30 +348,30 @@ std::pair<float, float> Keyframe::getControlPoint(Axis axis, bool right) {
     }
   }
 }
-void Keyframe::setControlPoint(Axis axis, std::pair<float, float> cp, bool right) {
+void Keyframe::setControlPoint(Axis axis, float cpX, float cpY, bool right) {
   if (!right) {
     if (axis == Axis::X) {
-      CPX1x = cp.first;
-      CPX1y = cp.second;
+      CPX1x = cpX;
+      CPX1y = cpY;
     } else if (axis == Axis::Y) {
-      CPY1x = cp.first;
-      CPY1y = cp.second;
+      CPY1x = cpX;
+      CPY1y = cpY;
     } else if (axis == Axis::Z) {
-      CPZ1x = cp.first;
-      CPZ1y = cp.second;
+      CPZ1x = cpX;
+      CPZ1y = cpY;
     } else {
       throw std::runtime_error("Invalid axis!");
     }
   } else {
     if (axis == Axis::X) {
-      CPX2x = cp.first;
-      CPX2y = cp.second;
+      CPX2x = cpX;
+      CPX2y = cpY;
     } else if (axis == Axis::Y) {
-      CPY2x = cp.first;
-      CPY2y = cp.second;
+      CPY2x = cpX;
+      CPY2y = cpY;
     } else if (axis == Axis::Z) {
-      CPZ2x = cp.first;
-      CPZ2y = cp.second;
+      CPZ2x = cpX;
+      CPZ2y = cpY;
     } else {
       throw std::runtime_error("Invalid axis!");
     }

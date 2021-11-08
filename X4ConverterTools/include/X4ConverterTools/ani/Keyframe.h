@@ -75,7 +75,6 @@ class Keyframe {
   void WriteChannel(pugi::xml_node &node, Axis axis);
 
   float GetTime();
-
  protected:
   void setValueByAxis(Axis axis, float value);
   float getValueByAxis(Axis axis);
@@ -84,7 +83,7 @@ class Keyframe {
   InterpolationType getInterpByAxis(Axis axis);
   void ReadHandle(pugi::xml_node node, Axis axis, bool right);
   void WriteHandle(pugi::xml_node node, Axis axis, bool right);
-  void setControlPoint(Axis axis, std::pair<float, float> cp, bool right);
+  void setControlPoint(Axis axis, float cpX, float cpY, bool right);
   std::pair<float, float> getControlPoint(Axis axis, bool right);
 
   // Note that these add up to exactly 128 bytes

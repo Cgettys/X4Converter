@@ -34,26 +34,28 @@ AnimDesc::AnimDesc(const std::string &partName, pugi::xml_node node, pugi::xml_n
   SafeName = partName;
   SafeSubName = node.attribute("subname").as_string();
   // TODO validate better
-  ReadAniXmlKeyframesForKeytype(node, "position", posKeys);
+  ReadAniXmlKeyframesForKeytype(node, "location", posKeys);
   ReadAniXmlKeyframesForKeytype(node, "rotation_euler", rotKeys);
   ReadAniXmlKeyframesForKeytype(node, "scale", scaleKeys);
   ReadAniXmlKeyframesForKeytype(node, "prescale", preScaleKeys);
   ReadAniXmlKeyframesForKeytype(node, "postscale", postScaleKeys);
   PopulateNumFields();
 //  // TODO null checks
-  auto start = animMeta.child("frames").attribute("start").as_int();
-  auto end = animMeta.child("frames").attribute("end").as_int();
-  if (NumPosKeys + NumRotKeys + NumScaleKeys + NumPreScaleKeys + NumPostScaleKeys == 0) {
-    Duration = (end - start) / 30.0;
+  auto framesNode = animMeta.child("frames");
+  if (framesNode) {
+    auto start = framesNode.attribute("start").as_int();
+    auto end = framesNode.attribute("end").as_int();
     if (start == 1) {
-      Duration = (1 + end - start) / 30.0;
+      Duration = (1 + end - start) / 30.0f;
+    } else {
+      Duration = (end - start) / 30.0f;
     }
-  } else {
+  } else if (NumPosKeys + NumRotKeys + NumScaleKeys + NumPreScaleKeys + NumPostScaleKeys > 0) {
     Duration = MaxSeenTime - MinSeenTime;
+  } else {
+    Duration = 0.0f;
   }
-  if (Duration == 0.0) {
-    Duration = 1 / 30.0;
-  }
+  Duration = std::max(Duration, 1 / 30.0f);
 }
 
 void AnimDesc::ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
@@ -64,7 +66,7 @@ void AnimDesc::ReadAniXmlKeyframesForKeytype(const pugi::xml_node &node,
   if (keyNode) {
     auto xNode = keyNode.child("X");
     auto yNode = keyNode.child("Y");
-    auto zNode = keyNode.child("Y");
+    auto zNode = keyNode.child("Z");
     if ((xNode || yNode || zNode) && (!xNode || !yNode || !zNode)) {
       throw std::runtime_error("Either all or no axes should be specified");
     }
