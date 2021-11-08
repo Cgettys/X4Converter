@@ -263,18 +263,15 @@ InterpolationType Keyframe::getInterpByAxis(Axis axis) {
 }
 
 void Keyframe::ReadChannel(pugi::xml_node &node, Axis axis) {
-  InterpolationType interp = getInterpByAxis(axis);
+  auto value = node.attribute("value").as_float();
+  setValueByAxis(axis, value);
+  ReadHandle(node, axis, false);
+  ReadHandle(node, axis, true);
+  auto interp = GetInterpolationType(node.attribute("interpolation").value());
   if (!checkInterpolationType(interp) || interp == InterpolationType::INTERPOLATION_TCB) {
-    throw std::runtime_error("Cannot write keyframe");
+    throw std::runtime_error("Cannot read keyframe");
   }
-  auto tgtNode = node.append_child("frame");
-  tgtNode.append_attribute("id").set_value(FormatUtil::formatFloat(Time).c_str());
-  auto interpStr = GetInterpolationTypeStr(interp);
-  auto value = getValueByAxis(axis);
-  tgtNode.append_attribute("value").set_value(FormatUtil::formatFloat(value).c_str());
-  ReadHandle(tgtNode, axis, false);
-  ReadHandle(tgtNode, axis, true);
-  tgtNode.append_attribute("interpolation").set_value(interpStr);
+  setInterpByAxis(axis, interp);
 }
 
 void Keyframe::WriteChannel(pugi::xml_node &node, Axis axis) {

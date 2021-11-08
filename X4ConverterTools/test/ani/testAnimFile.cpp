@@ -226,13 +226,13 @@ BOOST_AUTO_TEST_CASE(ani_xml_roundtrip_header) { // NOLINT(cert-err58-cpp)
   Assimp::StreamReaderLE pStreamReader(sourceStream);
   AnimFile file(pStreamReader);
   std::string expected = file.validate();
-  std::cout << "Expected:\n" << expected;
+  //std::cout << "Expected:\n" << expected;
 
 
   pugi::xml_document doc;
   auto rootNode = doc.root();
   file.WriteIntermediateRepr(xmlFile.string(), rootNode);
-  doc.save(std::cout);
+  //doc.save(std::cout);
 
   AnimFile reverse(rootNode);
   BOOST_TEST(file.GetHeader().validate() == reverse.GetHeader().validate());
@@ -261,8 +261,15 @@ BOOST_AUTO_TEST_CASE(ani_xml_roundtrip) { // NOLINT(cert-err58-cpp)
   AnimFile reverse(rootNode);
   std::string actual = reverse.validate();
   //std::cout << "Actual:\n" << actual;
-  BOOST_TEST(expected == actual);
   // TODO validate better
+  BOOST_CHECK_EQUAL(file.descs.size(), reverse.descs.size());
+  for (int i = 0; i < file.descs.size() && i < reverse.descs.size(); i++) {
+    auto fwdDesc = file.descs[i];
+    auto revDesc = reverse.descs[i];
+    BOOST_REQUIRE_EQUAL(fwdDesc.SafeName + "/" + fwdDesc.SafeSubName, revDesc.SafeName + "/" + revDesc.SafeSubName);
+    BOOST_REQUIRE_EQUAL(fwdDesc.validate(), revDesc.validate());
+  }
+  BOOST_TEST(expected == actual);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
